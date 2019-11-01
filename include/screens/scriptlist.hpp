@@ -23,24 +23,27 @@
 *         or requiring that modified versions of such material be marked in
 *         reasonable ways as different from the original version.
 */
-#ifndef MAINMENU_HPP
-#define MAINMENU_HPP
+#ifndef SCRIPTLIST_HPP
+#define SCRIPTLIST_HPP
 
 #include "screens/screen.hpp"
+#include "screens/screenCommon.hpp"
 
-#include "utils/structs.hpp"
+#include "utils/fileBrowse.h"
 
-#include <vector>
-class MainMenu : public Screen
+class ScriptList : public Screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	ScriptList();
+
 private:
-	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // ScriptList.
-		{90, 160, 140, 35, -1}, // Settings? 
-	};
+	std::vector<DirEntry> dirContents;
+	uint selectedFile = 0;
+	int keyRepeatDelay = 0;
+	int fastMode = false;
+	bool dirChanged = true;
 };
 
 #endif

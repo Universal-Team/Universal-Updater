@@ -31,12 +31,22 @@
 #include "screens/mainMenu.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/structs.hpp"
+
 #include <3ds.h>
-#include <unistd.h>
+#include <dirent.h>
 
 bool exiting = false;
 
 touchPosition touch;
+
+// If button Position pressed -> Do something.
+bool touching(touchPosition touch, Structs::ButtonPos button) {
+	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))
+		return true;
+	else
+		return false;
+}
 
 int main()
 {
@@ -46,6 +56,10 @@ int main()
 	sdmcInit();
 	cfguInit();
 	Lang::load(1);
+	// Create Folder if missing.
+	mkdir("sdmc:/3ds", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users

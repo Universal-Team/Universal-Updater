@@ -38,9 +38,9 @@
 #include <unordered_map>
 #include <wchar.h>
 
-#define BarColor 		C2D_Color32(0, 102, 204, 255)
-#define TopBGColor 		C2D_Color32(51, 153, 255, 255)
-#define BottomBGColor 	C2D_Color32(0, 64, 128, 255)
+#define BarColor 		C2D_Color32(57, 84, 114, 255)
+#define TopBGColor 		C2D_Color32(96, 168, 192, 255)
+#define BottomBGColor 	C2D_Color32(38, 44, 77, 255)
 #define BLACK 			C2D_Color32(0, 0, 0, 255)
 #define WHITE 			C2D_Color32(255, 255, 255, 255)
 #define TextColor		C2D_Color32(102, 179, 255, 255)

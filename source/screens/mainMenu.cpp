@@ -24,17 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "download.hpp"
 #include "screens/mainMenu.hpp"
-#include "screens/screenCommon.hpp"
+#include "screens/scriptlist.hpp"
 
 extern bool exiting;
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, TextColor, "Universal-Updater", 400);
 	Gui::DrawString(395-Gui::GetStringWidth(0.72f, VERSION_STRING), 218, 0.72f, WHITE, VERSION_STRING);
 	Gui::DrawBottom();
+
+	// Draw 2 'Buttons'.
+	Gui::Draw_Rect(mainButtons[0].x, mainButtons[0].y, mainButtons[0].w, mainButtons[0].h, TopBGColor);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2, mainButtons[0].y+10, 0.6f, WHITE, Lang::get("SCRIPTLIST"), 140);
+	Gui::Draw_Rect(mainButtons[1].x, mainButtons[1].y, mainButtons[1].w, mainButtons[1].h, TopBGColor);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2, mainButtons[1].y+10, 0.6f, WHITE, Lang::get("SETTINGS"), 140);
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -42,7 +48,9 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		exiting = true;
 	}
 
-	if (hDown & KEY_X) {
-		updateBootstrap(true);
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			Gui::setScreen(std::make_unique<ScriptList>());
+		}
 	}
 }

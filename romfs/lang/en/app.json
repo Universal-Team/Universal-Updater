@@ -12,5 +12,8 @@
 	"DOWNLOAD_NDSBOOTSTRAP_NIGHTLY":	"Downloading nds-bootstrap...\n(Nightly)",
 	"EXTRACT_NDSBOOTSTRAP_NIGHTLY":		"Extracting nds-bootstrap...\n(Nightly)",
 	"DOWNLOAD_NDSBOOTSTRAP_RELEASE":	"Downloading nds-bootstrap...\n(Release)",
-	"EXTRACT_NDSBOOTSTRAP_RELEASE":		"Extracting nds-bootstrap...\n(Release)"
+	"EXTRACT_NDSBOOTSTRAP_RELEASE":		"Extracting nds-bootstrap...\n(Release)",
+
+	"SCRIPTLIST":						"Scriptlist",
+	"SETTINGS":							"Settings"
 }

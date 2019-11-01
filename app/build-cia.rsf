@@ -1,6 +1,6 @@
 BasicInfo:
-  Title                   : "LeafEdit"
-  ProductCode             : "CTR-H-LEDT"
+  Title                   : "UNIV-UPDATER"
+  ProductCode             : "CTR-H-UVUP"
   Logo                    : Homebrew # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 RomFs:
@@ -8,7 +8,7 @@ RomFs:
 
 TitleInfo:
   Category                : Application
-  UniqueId                : 0x43921
+  UniqueId                : 0x43917
 
 Option:
   UseOnSD                 : true # true if App is to be installed to SD

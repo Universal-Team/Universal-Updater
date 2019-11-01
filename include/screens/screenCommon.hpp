@@ -29,6 +29,8 @@
 
 #include "gui.hpp"
 
+#include "lang/lang.hpp"
+
 extern C3D_RenderTarget* top;
 extern C3D_RenderTarget* bottom;
 

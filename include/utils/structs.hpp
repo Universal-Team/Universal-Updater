@@ -23,24 +23,23 @@
 *         or requiring that modified versions of such material be marked in
 *         reasonable ways as different from the original version.
 */
-#ifndef MAINMENU_HPP
-#define MAINMENU_HPP
 
-#include "screens/screen.hpp"
+#ifndef STRUCTS_HPP
+#define STRUCTS_HPP
 
-#include "utils/structs.hpp"
+#include <string>
 
-#include <vector>
-class MainMenu : public Screen
+class Structs
 {
 public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-private:
-	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // ScriptList.
-		{90, 160, 140, 35, -1}, // Settings? 
+	struct ButtonPos {
+		int x;
+		int y;
+		int w;
+		int h;
+		int link;
 	};
+private:
 };
 
 #endif
