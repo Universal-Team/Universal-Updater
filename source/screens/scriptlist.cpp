@@ -58,6 +58,7 @@ Info parseInfo(std::string fileName) {
 	return info;
 }
 
+
 std::vector<Info> fileInfo;
 
 ScriptList::ScriptList() {
@@ -69,21 +70,61 @@ ScriptList::ScriptList() {
 	}
 }
 
+
 void ScriptList::Draw(void) const {
 	std::string titleinfo;
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, TextColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
-		titleinfo = fileInfo[i].title + '\n' + fileInfo[i].description;
-		Gui::Draw_Rect(0, 40+(i*57), 320, 45, TopBGColor);
+		titleinfo = fileInfo[screenPos + i].title + '\n' + fileInfo[screenPos + i].description;
+		if(screenPos + i == selection) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, SelectedColor);
+		} else { 
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, UnselectedColor);
+		}
 		Gui::DrawString(0, 40+(i*57), 0.7f, WHITE, titleinfo, 320);
 	}
 }
 
+
+
 void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (keyRepeatDelay)	keyRepeatDelay--;
 	if (hDown & KEY_B) {
 		Gui::screenBack();
 		return;
+	}
+
+	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+		if (selection < (int)fileInfo.size()-1) {
+			selection++;
+		} else {
+			selection = 0;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
+	}
+
+	if (hHeld & KEY_UP && !keyRepeatDelay) {
+		if (selection > 0) {
+			selection--;
+		} else {
+			selection = (int)fileInfo.size()-1;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
+	}
+
+	if(selection < screenPos) {
+		screenPos = selection;
+	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+		screenPos = selection - ENTRIES_PER_SCREEN + 1;
 	}
 }
