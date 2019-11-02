@@ -90,34 +90,54 @@ void runFunctions(void) {
 		std::string type = json.at(choice).at(i).at("type");
 
 		if(type == "deleteFile") {
-			std::string file = json.at(choice).at(i).at("file");
-			std::string message = json.at(choice).at(i).at("message");
-			download::deleteFileList(file, message);
+			bool missing = false;
+			std::string file, message;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else    missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			if(!missing)	download::deleteFileList(file, message);
 
 		} else if(type == "downloadFile") {
-			std::string file = json.at(choice).at(i).at("file");
-			std::string output = json.at(choice).at(i).at("output");
-			std::string message = json.at(choice).at(i).at("message");
-			download::downloadFile(file, output, message);
-
+			bool missing = false;
+			std::string file, output, message;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			if(!missing)	download::downloadFile(file, output, message);
+		
 		} else if(type == "downloadRelease") {
-			std::string repo = json.at(choice).at(i).at("repo");
-			std::string file = json.at(choice).at(i).at("file");
-			std::string output = json.at(choice).at(i).at("output");
-			std::string message = json.at(choice).at(i).at("message");
-			download::downloadRelease(repo, file, output, message);
-
+			bool missing = false;
+			std::string repo, file, output, message;
+			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			if(!missing)	download::downloadRelease(repo, file, output, message);
+			
 		} else if(type == "extractFile") {
-			std::string file = json.at(choice).at(i).at("file");
-			std::string input = json.at(choice).at(i).at("input");
-			std::string output = json.at(choice).at(i).at("output");
-			std::string message = json.at(choice).at(i).at("message");
-			download::extractFileList(file, input, output, message);
+			bool missing = false;
+			std::string file, input, output, message;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("input"))	file = json.at(choice).at(i).at("input");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			if(!missing)	download::extractFileList(file, input, output, message);
 
 		} else if(type == "installCia") {
-			std::string file = json.at(choice).at(i).at("file");
-			std::string message = json.at(choice).at(i).at("message");
-			download::installFileList(file, message);
+			bool missing = false;
+			std::string file, message;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else    missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			if(!missing)	download::installFileList(file, message);
 		}
 	}
 	doneMsg();
