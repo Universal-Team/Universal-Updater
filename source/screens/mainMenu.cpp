@@ -74,7 +74,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
 			case 2:
-				mode = 0;
+				mode = 1;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
 		}
