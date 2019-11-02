@@ -81,6 +81,21 @@ void DisplayMsg(std::string text) {
 	C3D_FrameEnd(0);
 }
 
+void Gui::DisplayWarnMsg(std::string Text)
+{
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(top, BLACK);
+	C2D_TargetClear(bottom, BLACK);
+	Gui::DrawTop();
+	Gui::DrawStringCentered(0, 2, 0.6f, Config::TxtColor, Text.c_str(), 400);
+	Gui::DrawBottom();
+	C3D_FrameEnd(0);
+	for (int i = 0; i < 60*3; i++) {
+		gspWaitForVBlank();
+	}
+}
+
 void Gui::DrawStringCentered(float x, float y, float size, u32 color, std::string Text, int maxWidth) {
 	Gui::DrawString((currentScreen ? 200 : 160)+x-(std::min(maxWidth, (int)Gui::GetStringWidth(size, Text))/2), y, size, color, Text, maxWidth);
 }

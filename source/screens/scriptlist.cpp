@@ -62,6 +62,19 @@ Info parseInfo(std::string fileName) {
 	return info;
 }
 
+void checkForValidate(void) {
+	FILE* file = fopen(currentFile.c_str(), "rt");
+	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	std::string version;
+	version = get(json, "info", "version");
+	if (version != "1") {
+		Gui::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
+	}
+}
+
+
 // Objects like Release or Nightly.
 std::vector<std::string> parseObjects(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
@@ -235,10 +248,15 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 	}
 
 	if (hDown & KEY_A) {
-		currentFile = dirContents[selection].name;
-		fileInfo2 = parseObjects(currentFile);
-		selection = 0;
-		mode = 1;
+		if (fileInfo.size() == 0) {
+			Gui::DisplayWarnMsg(Lang::get("WHAT_DO_YOU_TRY"));
+		} else {
+			currentFile = dirContents[selection].name;
+			checkForValidate();
+			fileInfo2 = parseObjects(currentFile);
+			selection = 0;
+			mode = 1;
+		}
 	}
 
 	if(selection < screenPos) {
@@ -275,8 +293,12 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		}
 	}
 	if (hDown & KEY_A) {
-		choice = fileInfo2[selection2];
-		runFunctions();
+		if (fileInfo2.size() == 0) {
+			Gui::DisplayWarnMsg(Lang::get("WHAT_DO_YOU_TRY"));
+		} else {
+			choice = fileInfo2[selection2];
+			runFunctions();
+		}
 	}
 
 	if (hDown & KEY_B) {

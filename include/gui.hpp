@@ -68,6 +68,8 @@ namespace Gui
 	// Basic GUI.
 	void DrawTop(void);
 	void DrawBottom(void);
+
+	void DisplayWarnMsg(std::string Text);
 }
 
 void DisplayMsg(std::string text);
