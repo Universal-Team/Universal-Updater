@@ -8,9 +8,11 @@ trigger:
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 variables:
-  REPOSITORY_NAME: $(Build.Repository.Name)
-  DEVKITPRO: /opt/devkitpro
-  DEVKITARM: /opt/devkitpro/devkitARM
+  - group: 'Secrets (Universal-Team webhook)'
+  - name: REPOSITORY_NAME
+    value: $(Build.Repository.Name)
+  - name: DEVKITARM
+    value: /opt/devkitpro/devkitARM
 
 jobs:
   - job: build3DS
