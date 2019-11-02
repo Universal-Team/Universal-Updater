@@ -157,18 +157,21 @@ ScriptList::ScriptList() {
 }
 
 void ScriptList::DrawList(void) const {
-	std::string titleinfo;
+	std::string line1;
+	std::string line2;
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
-		titleinfo = fileInfo[screenPos + i].title + '\n' + fileInfo[screenPos + i].description;
+		line1 = fileInfo[screenPos + i].title;
+		line2 = fileInfo[screenPos + i].description;
 		if(screenPos + i == selection) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
 		} else { 
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
-		Gui::DrawString(0, 40+(i*57), 0.7f, Config::TxtColor, titleinfo, 320);
+		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
+		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 	}
 }
 
@@ -193,7 +196,7 @@ void ScriptList::DrawSingleObject(void) const {
 		} else { 
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
-		Gui::DrawString(0, 40+(i*57), 0.7f, Config::TxtColor, info, 320);
+		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, Config::TxtColor, info, 320);
 	}
 }
 
