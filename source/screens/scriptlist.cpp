@@ -137,7 +137,7 @@ void runFunctions(void) {
 			std::string file, input, output, message;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else	missing = true;
-			if(json.at(choice).at(i).contains("input"))	file = json.at(choice).at(i).at("input");
+			if(json.at(choice).at(i).contains("input"))	input = json.at(choice).at(i).at("input");
 			else	missing = true;
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
