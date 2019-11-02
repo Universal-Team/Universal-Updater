@@ -30,7 +30,7 @@ steps:
     sudo apt install p7zip-full haveged qrencode
     sudo dpkg -i pacman.deb
     sudo dkp-pacman -Sy
-    sudo dkp-pacman -S 3ds-dev --noconfirm
+    sudo dkp-pacman -S 3ds-dev 3ds-curl 3ds-libarchive 3ds-liblzma 3ds-mbedtls 3ds-bzip2 3ds-zlib --noconfirm
     curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
     sudo 7z e bannertool.zip linux-x86_64/bannertool
     sudo chmod +x bannertool
