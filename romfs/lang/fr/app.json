@@ -8,8 +8,8 @@
 	"KB_DOWNLOADED": "KB c'est telecharger.",
 	"FILE_EXTRACTED": "fichier extrait.",
 	"FILES_EXTRACTED": "fichiers extrait.",
-	"SCRIPTLIST": "Listescriptes",
-	"LANGUAGE": "Language",
+	"SCRIPTLIST": "ListeScript",
+	"LANGUAGE": "Le language",
 	"COLORS": "Couleurs",
 	"SELECT_LANG": "Choisissez le language.",
 	"BAR_COLOR": "Couleur de la Bar",
@@ -17,10 +17,10 @@
 	"BOTTOM_BG_COLOR": "Couleur du fond du fond",
 	"TEXT_COLOR": "Texte en couleurs",
 	"SELECTED_COLOR": "Couleur selectioner",
-	"UNSELECTED_COLOR": "Unselected Color",
-	"ENTER_RED_RGB": "Enter the Red RGB.",
-	"ENTER_GREEN_RGB": "Enter the Green RGB.",
+	"UNSELECTED_COLOR": "Couleur non-selectioner",
+	"ENTER_RED_RGB": "Entrer l'RGB Rouge.",
+	"ENTER_GREEN_RGB": "Entrer l'RGB Vert.",
 	"ENTER_BLUE_RGB": "Enter the Blue RGB.",
-	"WHAT_DO_YOU_TRY": "What are you trying to do? :P",
-	"INCOMPATIBLE_SCRIPT": "You have an incompatible script."
+	"WHAT_DO_YOU_TRY": "Qu'est que tu essaye de faire ? :P",
+	"INCOMPATIBLE_SCRIPT": "Vous avez un script uncompatible."
 }
