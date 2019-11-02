@@ -20,5 +20,7 @@
 	"UNSELECTED_COLOR": "Unselected Color",
 	"ENTER_RED_RGB": "Enter the Red RGB.",
 	"ENTER_GREEN_RGB": "Enter the Green RGB.",
-	"ENTER_BLUE_RGB": "Enter the Blue RGB."
+	"ENTER_BLUE_RGB": "Enter the Blue RGB.",
+	"WHAT_DO_YOU_TRY": "What are you trying to do? :P",
+	"INCOMPATIBLE_SCRIPT": "You have an incompatible script."
 }
