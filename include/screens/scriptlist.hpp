@@ -37,15 +37,23 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 	ScriptList();
-	void showParsedObjects(void) const;
 
 private:
+	void DrawList(void) const;
+	void DrawSingleObject(void) const;
+
+	void ListSelection(u32 hDown, u32 hHeld);
+	void SelectFunction(u32 hDown, u32 hHeld);
+
+	int mode = 0;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
 	mutable int selection = 0;
+	mutable int screenPos2 = 0;
+	mutable int selection2 = 0;
+
 	int keyRepeatDelay = 0;
 	int fastMode = false;
-	bool dirChanged = true;
 };
 
 #endif

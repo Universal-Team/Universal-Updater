@@ -67,6 +67,9 @@ void notConnectedMsg(void);
  */
 void notImplemented(void);
 
+// Display the done msg.
+void doneMsg(void);
+
 /**
  * Get info from the GitHub API about a Release.
  * repo is where to get from. (Ex. "RocketRobz/TWiLightMenu")
@@ -100,7 +103,10 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
  */
 std::vector<ThemeEntry> getThemeList(std::string repo, std::string path);
 
-/**
- * Update nds-bootstrap to the latest build.
- */
-void updateBootstrap(bool nightly);
+namespace download {
+	void downloadRelease(std::string repo, std::string file, std::string output, std::string message);
+	void downloadFile(std::string file, std::string output, std::string message);
+	void deleteFileList(std::string file, std::string message);
+	void installFileList(std::string file, std::string message);
+	void extractFileList(std::string file, std::string input, std::string output, std::string message);
+}

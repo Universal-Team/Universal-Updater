@@ -626,45 +626,49 @@ void displayProgressBar() {
 	}
 }
 
-
-void updateBootstrap(bool nightly) {
-	if(nightly) {
-		snprintf(progressBarMsg, sizeof(progressBarMsg), (Lang::get("DOWNLOAD_NDSBOOTSTRAP_NIGHTLY")).c_str());
-		showProgressBar = true;
-		progressBarType = 0;
-		Threads::create((ThreadFunc)displayProgressBar);
-		if (downloadToFile("https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true", "/nds-bootstrap-nightly.7z") != 0) {
-			showProgressBar = false;
-			downloadFailed();
-			return;
-		}
-
-		snprintf(progressBarMsg, sizeof(progressBarMsg), (Lang::get("EXTRACT_NDSBOOTSTRAP_NIGHTLY")).c_str());
-		filesExtracted = 0;
-		progressBarType = 1;
-		extractArchive("/nds-bootstrap-nightly.7z", "nds-bootstrap/", "/_nds/");
+void download::downloadRelease(std::string repo, std::string file, std::string output, std::string message) {
+	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+	showProgressBar = true;
+	progressBarType = 0;
+	Threads::create((ThreadFunc)displayProgressBar);
+	if (downloadFromRelease("https://github.com/" + repo, file, output) != 0) {
 		showProgressBar = false;
-
-		deleteFile("sdmc:/nds-bootstrap-nightly.7z");
-	} else {
-		DisplayMsg(Lang::get("DOWNLOAD_NDSBOOTSTRAP_RELEASE"));
-		snprintf(progressBarMsg, sizeof(progressBarMsg), (Lang::get("DOWNLOAD_NDSBOOTSTRAP_RELEASE")).c_str());
-		showProgressBar = true;
-		progressBarType = 0;
-		Threads::create((ThreadFunc)displayProgressBar);
-		if (downloadFromRelease("https://github.com/ahezard/nds-bootstrap", "nds-bootstrap\\.zip", "/nds-bootstrap-release.zip") != 0) {
-			showProgressBar = false;
-			downloadFailed();
-			return;
-		}
-
-		snprintf(progressBarMsg, sizeof(progressBarMsg), (Lang::get("EXTRACT_NDSBOOTSTRAP_RELEASE")).c_str());
-		filesExtracted = 0;
-		progressBarType = 1;
-		extractArchive("/nds-bootstrap-release.zip", "/", "/_nds/");
-		showProgressBar = false;
-
-		deleteFile("sdmc:/nds-bootstrap-release.zip");
+		downloadFailed();
+		return;
 	}
-	doneMsg();
+	showProgressBar = false;
+}
+
+
+void download::downloadFile(std::string file, std::string output, std::string message) {
+	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+	showProgressBar = true;
+	progressBarType = 0;
+	Threads::create((ThreadFunc)displayProgressBar);
+	if (downloadToFile(file, output) != 0) {
+		showProgressBar = false;
+		downloadFailed();
+		return;
+	}
+	showProgressBar = false;
+}
+
+void download::deleteFileList(std::string file, std::string message) {
+	DisplayMsg(message);
+	deleteFile(file.c_str());
+}
+
+void download::installFileList(std::string file, std::string message) {
+	DisplayMsg(message);
+	installCia(file.c_str());
+}
+
+void download::extractFileList(std::string file, std::string input, std::string output, std::string message) {
+	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+	showProgressBar = true;
+	filesExtracted = 0;
+	progressBarType = 1;
+	Threads::create((ThreadFunc)displayProgressBar);
+	extractArchive(file, input, output);
+	showProgressBar = false;
 }
