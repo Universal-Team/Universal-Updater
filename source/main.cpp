@@ -31,10 +31,12 @@
 #include "screens/mainMenu.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/config.hpp"
 #include "utils/structs.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
+#include <unistd.h>
 
 bool exiting = false;
 
@@ -55,12 +57,18 @@ int main()
 	romfsInit();
 	sdmcInit();
 	cfguInit();
-	Lang::load(1);
 	// Create Folder if missing.
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 
+	Config::loadConfig();
+	// We need to make sure, the file exist.
+	if(access("sdmc:/3ds/Universal-Updater/Settings.ini", F_OK) == -1 ) {
+		Config::saveConfig();
+	}
+	Lang::load(1);
+	
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 

@@ -23,29 +23,45 @@
 *         or requiring that modified versions of such material be marked in
 *         reasonable ways as different from the original version.
 */
+#ifndef SETTINGS_HPP
+#define SETTINGS_HPP
 
-#ifndef STRUCTS_HPP
-#define STRUCTS_HPP
+#include "screens/screen.hpp"
+#include "screens/screenCommon.hpp"
 
-#include <string>
+#include "utils/structs.hpp"
 
-class Structs
+#include <vector>
+
+class Settings : public Screen
 {
 public:
-	struct ButtonPos {
-		int x;
-		int y;
-		int w;
-		int h;
-		int link;
+	void Draw(void) const override;
+	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+private:
+	void DrawLanguageSelection(void) const;
+	void DrawColorChanging(void) const;
+	void LanguageSelection(u32 hDown, touchPosition touch);
+	void colorChanging(u32 hDown, touchPosition touch);
+
+	std::vector<Structs::ButtonPos> langBlocks = {
+		{37, 52, 20, 20, -1},
+		{37, 92, 20, 20, -1},
+		{37, 132, 20, 20, -1},
+		{37, 172, 20, 20, -1},
+		{177, 52, 20, 20, -1},
+		{177, 92, 20, 20, -1},
+		{177, 132, 20, 20, -1},
+		{177, 172, 20, 20, -1},
+		{293, 213, 27, 27, -1},
 	};
 
-	struct Key {
-		std::string character;
-		int x;
-		int y;
+	std::vector<Structs::ButtonPos> buttons = {
+		{10, 85, 95, 41, -1},
+		{115, 85, 95, 41, -1},
+		{220, 85, 95, 41, -1},
 	};
-private:
+
 };
 
 #endif

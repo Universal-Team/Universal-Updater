@@ -28,6 +28,8 @@
 
 #include "screens/screenCommon.hpp"
 
+#include "utils/config.hpp"
+
 #include <3ds.h>
 #include <assert.h>
 #include <stdarg.h>
@@ -74,7 +76,7 @@ void DisplayMsg(std::string text) {
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawString(10, 40, 0.45f, WHITE, text, 380);
+	Gui::DrawString(10, 40, 0.45f, Config::TxtColor, text, 380);
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -146,14 +148,14 @@ void Gui::ScreenDraw(C3D_RenderTarget * screen)
 
 void Gui::DrawTop(void) {
 	Gui::ScreenDraw(top);
-	Gui::Draw_Rect(0, 0, 400, 30, BarColor);
-	Gui::Draw_Rect(0, 30, 400, 180, TopBGColor);
-	Gui::Draw_Rect(0, 210, 400, 30, BarColor);
+	Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
+	Gui::Draw_Rect(0, 30, 400, 180, Config::Color2);
+	Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
 }
 
 void Gui::DrawBottom(void) {
 	Gui::ScreenDraw(bottom);
-	Gui::Draw_Rect(0, 0, 320, 30, BarColor);
-	Gui::Draw_Rect(0, 30, 320, 180, BottomBGColor);
-	Gui::Draw_Rect(0, 210, 320, 30, BarColor);
+	Gui::Draw_Rect(0, 0, 320, 30, Config::Color1);
+	Gui::Draw_Rect(0, 30, 320, 180, Config::Color3);
+	Gui::Draw_Rect(0, 210, 320, 30, Config::Color1);
 }

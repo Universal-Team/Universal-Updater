@@ -29,6 +29,7 @@
 #include "screens/mainMenu.hpp"
 #include "screens/scriptlist.hpp"
 
+#include "utils/config.hpp"
 #include "utils/parse.hpp"
 
 #include <algorithm>
@@ -138,16 +139,16 @@ ScriptList::ScriptList() {
 void ScriptList::DrawList(void) const {
 	std::string titleinfo;
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, TextColor, "Universal-Updater", 400);
+	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 		titleinfo = fileInfo[screenPos + i].title + '\n' + fileInfo[screenPos + i].description;
 		if(screenPos + i == selection) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, SelectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
 		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
-		Gui::DrawString(0, 40+(i*57), 0.7f, WHITE, titleinfo, 320);
+		Gui::DrawString(0, 40+(i*57), 0.7f, Config::TxtColor, titleinfo, 320);
 	}
 }
 
@@ -163,16 +164,16 @@ void ScriptList::Draw(void) const {
 void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, TextColor, "Universal-Updater", 400);
+	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 		info = fileInfo2[screenPos2 + i];
 		if(screenPos2 + i == selection2) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, SelectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
 		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
-		Gui::DrawString(0, 40+(i*57), 0.7f, WHITE, info, 320);
+		Gui::DrawString(0, 40+(i*57), 0.7f, Config::TxtColor, info, 320);
 	}
 }
 

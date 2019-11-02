@@ -9,11 +9,20 @@
 	"FILE_EXTRACTED":		"file extracted.",
 	"FILES_EXTRACTED":		"files extracted.",
 
-	"DOWNLOAD_NDSBOOTSTRAP_NIGHTLY":	"Downloading nds-bootstrap...\n(Nightly)",
-	"EXTRACT_NDSBOOTSTRAP_NIGHTLY":		"Extracting nds-bootstrap...\n(Nightly)",
-	"DOWNLOAD_NDSBOOTSTRAP_RELEASE":	"Downloading nds-bootstrap...\n(Release)",
-	"EXTRACT_NDSBOOTSTRAP_RELEASE":		"Extracting nds-bootstrap...\n(Release)",
-
 	"SCRIPTLIST":						"Scriptlist",
-	"SETTINGS":							"Settings"
+	"LANGUAGE":							"Language",
+	"COLORS":							"Colors",
+
+
+	"SELECT_LANG":						"Choose the current language.",
+	"BAR_COLOR":						"Bar Color",
+	"TOP_BG_COLOR":						"Top Background Color",
+	"BOTTOM_BG_COLOR":					"Bottom Background Color",
+	"TEXT_COLOR":						"Text Color",
+	"SELECTED_COLOR":					"Selected Color",
+	"UNSELECTED_COLOR":					"Unselected Color",
+
+	"ENTER_RED_RGB":					"Enter the Red RGB.",
+	"ENTER_GREEN_RGB":					"Enter the Green RGB.",
+	"ENTER_BLUE_RGB":					"Enter the Blue RGB."
 }

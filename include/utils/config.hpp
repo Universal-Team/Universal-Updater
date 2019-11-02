@@ -24,28 +24,19 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef STRUCTS_HPP
-#define STRUCTS_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <string>
 
-class Structs
-{
-public:
-	struct ButtonPos {
-		int x;
-		int y;
-		int w;
-		int h;
-		int link;
-	};
+namespace Config {
 
-	struct Key {
-		std::string character;
-		int x;
-		int y;
-	};
-private:
-};
+	// [UI]
+	extern int lang; // The current Language.
+	extern int Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor; // Colors!
+
+	void loadConfig();
+	void saveConfig();
+}
 
 #endif

@@ -31,15 +31,18 @@
 #include "utils/structs.hpp"
 
 #include <vector>
+
 class MainMenu : public Screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
+	int Selection = 0;
 	std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35, -1}, // ScriptList.
-		{90, 160, 140, 35, -1}, // Settings? 
+		{90, 100, 140, 35, -1}, // Language.
+		{90, 160, 140, 35, -1}, // Colors.
 	};
 };
 

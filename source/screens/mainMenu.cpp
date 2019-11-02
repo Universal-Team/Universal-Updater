@@ -25,22 +25,32 @@
 */
 
 #include "screens/mainMenu.hpp"
+#include "screens/settings.hpp"
 #include "screens/scriptlist.hpp"
 
+#include "utils/config.hpp"
+
+extern int mode;
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, TextColor, "Universal-Updater", 400);
-	Gui::DrawString(395-Gui::GetStringWidth(0.72f, VERSION_STRING), 218, 0.72f, WHITE, VERSION_STRING);
+	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawString(395-Gui::GetStringWidth(0.72f, VERSION_STRING), 218, 0.72f, Config::TxtColor, VERSION_STRING);
 	Gui::DrawBottom();
 
-	// Draw 2 'Buttons'.
-	Gui::Draw_Rect(mainButtons[0].x, mainButtons[0].y, mainButtons[0].w, mainButtons[0].h, TopBGColor);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2, mainButtons[0].y+10, 0.6f, WHITE, Lang::get("SCRIPTLIST"), 140);
-	Gui::Draw_Rect(mainButtons[1].x, mainButtons[1].y, mainButtons[1].w, mainButtons[1].h, TopBGColor);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2, mainButtons[1].y+10, 0.6f, WHITE, Lang::get("SETTINGS"), 140);
+	for (int i = 0; i < 3; i++) {
+		if (Selection == i) {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+		}
+	}
+
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -48,9 +58,37 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		exiting = true;
 	}
 
+	if (hDown & KEY_UP) {
+		if(Selection > 0)	Selection--;
+	} else if (hDown & KEY_DOWN) {
+		if(Selection < 2)	Selection++;
+	}
+
+	if (hDown & KEY_A) {
+		switch(Selection) {
+			case 0:
+				Gui::setScreen(std::make_unique<ScriptList>());
+				break;
+			case 1:
+				mode = 0;
+				Gui::setScreen(std::make_unique<Settings>());
+				break;
+			case 2:
+				mode = 0;
+				Gui::setScreen(std::make_unique<Settings>());
+				break;
+		}
+	}
+
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<ScriptList>());
+		} else if (touching(touch, mainButtons[1])) {
+			mode = 0;
+			Gui::setScreen(std::make_unique<Settings>());
+		} else if (touching(touch, mainButtons[2])) {
+			mode = 1;
+			Gui::setScreen(std::make_unique<Settings>());
 		}
 	}
 }

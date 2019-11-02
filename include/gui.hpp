@@ -27,6 +27,7 @@
 #ifndef GUI_HPP
 #define GUI_HPP
 
+#include "colors.hpp"
 #include "screens/screen.hpp"
 
 #include <3ds.h>
@@ -37,15 +38,6 @@
 #include <string.h>
 #include <unordered_map>
 #include <wchar.h>
-
-#define BarColor 		C2D_Color32(57, 84, 114, 255)
-#define TopBGColor 		C2D_Color32(96, 168, 192, 255)
-#define BottomBGColor 	C2D_Color32(38, 44, 77, 255)
-#define SelectedColor	C2D_Color32(120, 192, 216, 255)
-#define UnselectedColor	C2D_Color32(77, 118, 132, 255)
-#define BLACK 			C2D_Color32(0, 0, 0, 255)
-#define WHITE 			C2D_Color32(255, 255, 255, 255)
-#define TextColor		C2D_Color32(102, 179, 255, 255)
 
 namespace Gui
 {
