@@ -23,6 +23,6 @@
 	"ENTER_BLUE_RGB": "ブルーRGB値を入力してください",
 	"WHAT_DO_YOU_TRY": "何をしようとしていますか？ :P",
 	"INCOMPATIBLE_SCRIPT": "これは非対応スクリプト",
-	"DELETE_PROMPT": "Are you sure you want to delete this Directory?",
-	"CONFIRM_OR_CANCEL": "Press A to confirm, B to cancel."
+	"DELETE_PROMPT": "このディレクトリを削除してもよろしいですか？",
+	"CONFIRM_OR_CANCEL": "Aを押して確認し、Bを押してキャンセルします"
 }
