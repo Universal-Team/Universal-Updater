@@ -34,18 +34,23 @@
 
 #include <algorithm>
 #include <fstream>
+#include <regex>
 #include <unistd.h>
 
 #define ENTRIES_PER_SCREEN 3
+
+bool isScriptSelected = false;
 
 // Information like Title and Description.
 struct Info {
 	std::string title;
 	std::string description;
 };
+
 std::string choice;
 std::string currentFile;
 std::string selectedTitle;
+std::string longDesc = "";
 
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
@@ -94,6 +99,25 @@ std::vector<std::string> parseObjects(std::string fileName) {
 		}
 	}
 	return objs;
+}
+
+std::string longDescription() {
+	std::string out;
+	FILE* file = fopen(currentFile.c_str(), "rt");
+
+	if(!file) {
+		printf("File not found\n");
+		fclose(file);
+		return "";
+	}
+
+	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	if (json.at("info").contains("longDescription"))    out = json.at("info").at("longDescription");
+	else if (json.at("info").contains("description")) out = json.at("info").at("description");
+	else out = "";
+	return out;
 }
 
 // Because we need `#include <fstream>`.
@@ -194,6 +218,53 @@ void runFunctions(void) {
 
 std::vector<Info> fileInfo;
 std::vector<std::string> fileInfo2;
+std::vector<std::string> lines;
+
+
+u32 getColor(std::string colorString) {
+	if(colorString.length() < 7 || std::regex_search(colorString.substr(1), std::regex("[^0-9a-f]"))) { // invalid color
+		return 0;
+	}
+
+	int r = std::stoi(colorString.substr(1, 2), nullptr, 16);
+	int g = std::stoi(colorString.substr(3, 2), nullptr, 16);
+	int b = std::stoi(colorString.substr(5, 2), nullptr, 16);
+	return RGBA8(r, g, b, 0xFF);
+}
+
+// Color listing!
+u32 barColor;
+u32 bgColor;
+u32 TextColor;
+u32 selected;
+u32 unselected;
+
+void loadColors() {
+	FILE* file = fopen(currentFile.c_str(), "rt");
+	if(!file) {
+		printf("File not found\n");
+		fclose(file);
+		return;
+	}
+	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	u32 colorTemp;
+	colorTemp = getColor(get(json, "info", "barColor"));
+	barColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "bgColor"));
+	bgColor = colorTemp == 0 ? Config::Color3 : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "textColor"));
+	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "selectedColor"));
+	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "unselectedColor"));
+	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
+}
 
 ScriptList::ScriptList() {
 	dirContents.clear();
@@ -232,20 +303,31 @@ void ScriptList::Draw(void) const {
 	}
 }
 
+void loadLongDesc(void) {
+	lines.clear();
+	while(longDesc.find('\n') != longDesc.npos) {
+		lines.push_back(longDesc.substr(0, longDesc.find('\n')));
+		longDesc = longDesc.substr(longDesc.find('\n')+1);
+	}
+	lines.push_back(longDesc.substr(0, longDesc.find('\n')));
+}
+
 void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-	Gui::DrawStringCentered(0, 214, 0.7f, Config::TxtColor, selectedTitle, 400);
+	Gui::DrawStringCentered(0, 2, 0.8f, TextColor, selectedTitle, 400);
+	for(uint i=0;i<lines.size();i++) {
+		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
+	}
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 		info = fileInfo2[screenPos2 + i];
 		if(screenPos2 + i == selection2) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
 		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 		}
-		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, Config::TxtColor, info, 320);
+		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 	}
 }
 
@@ -287,8 +369,12 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		if (fileInfo.size() != 0) {
 			currentFile = dirContents[selection].name;
 			selectedTitle = fileInfo[selection].title;
+			longDesc = longDescription();
 			checkForValidate();
 			fileInfo2 = parseObjects(currentFile);
+			loadColors();
+			loadLongDesc();
+			isScriptSelected = true;
 			selection = 0;
 			mode = 1;
 		}
@@ -337,6 +423,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 	if (hDown & KEY_B) {
 		selection2 = 0;
 		fileInfo2.clear();
+		isScriptSelected = false;
 		mode = 0;
 	}
 

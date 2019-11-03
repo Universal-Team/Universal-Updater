@@ -43,6 +43,11 @@ C3D_RenderTarget* bottom;
 C2D_TextBuf sizeBuf;
 std::stack<std::unique_ptr<Screen>> screens;
 bool currentScreen = false;
+extern bool isScriptSelected;
+
+extern u32 barColor;
+extern u32 bgColor;
+extern u32 TextColor;
 
 // Clear Text.
 void Gui::clearTextBufs(void)
@@ -76,7 +81,11 @@ void DisplayMsg(std::string text) {
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawString(10, 40, 0.45f, Config::TxtColor, text, 380);
+	if (isScriptSelected == false) {
+		Gui::DrawString(10, 40, 0.45f, Config::TxtColor, text, 380);
+	} else if (isScriptSelected == true) {
+		Gui::DrawString(10, 40, 0.45f, TextColor, text, 380);
+	}
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -88,7 +97,11 @@ void Gui::DisplayWarnMsg(std::string Text)
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.6f, Config::TxtColor, Text.c_str(), 400);
+	if (isScriptSelected == false) {
+		Gui::DrawStringCentered(0, 2, 0.6f, Config::TxtColor, Text, 400);
+	} else if (isScriptSelected == true) {
+		Gui::DrawStringCentered(0, 2, 0.6f, TextColor, Text, 400);
+	}
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 	for (int i = 0; i < 60*3; i++) {
@@ -163,16 +176,28 @@ void Gui::ScreenDraw(C3D_RenderTarget * screen)
 
 void Gui::DrawTop(void) {
 	Gui::ScreenDraw(top);
-	Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
-	Gui::Draw_Rect(0, 30, 400, 180, Config::Color2);
-	Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
+	if (isScriptSelected == false) {
+		Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
+		Gui::Draw_Rect(0, 30, 400, 180, Config::Color2);
+		Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
+	} else if (isScriptSelected == true) {
+		Gui::Draw_Rect(0, 0, 400, 30, barColor);
+		Gui::Draw_Rect(0, 30, 400, 180, bgColor);
+		Gui::Draw_Rect(0, 210, 400, 30, barColor);
+	}
 }
 
 void Gui::DrawBottom(void) {
 	Gui::ScreenDraw(bottom);
-	Gui::Draw_Rect(0, 0, 320, 30, Config::Color1);
-	Gui::Draw_Rect(0, 30, 320, 180, Config::Color3);
-	Gui::Draw_Rect(0, 210, 320, 30, Config::Color1);
+	if (isScriptSelected == false) {
+		Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
+		Gui::Draw_Rect(0, 30, 400, 180, Config::Color3);
+		Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
+	} else if (isScriptSelected == true) {
+		Gui::Draw_Rect(0, 0, 400, 30, barColor);
+		Gui::Draw_Rect(0, 30, 400, 180, bgColor);
+		Gui::Draw_Rect(0, 210, 400, 30, barColor);
+	}
 }
 
 // Display a Message, which needs to be confirmed with A/B.
@@ -183,8 +208,13 @@ bool Gui::promptMsg(std::string promptMsg)
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, Config::TxtColor, promptMsg.c_str(), 400);
-	Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 214, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+	if (isScriptSelected == false) {
+		Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, Config::TxtColor, promptMsg.c_str(), 400);
+		Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 214, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+	} else if (isScriptSelected == true) {
+		Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, TextColor, promptMsg.c_str(), 400);
+		Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 214, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+	}
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 	while(1)
