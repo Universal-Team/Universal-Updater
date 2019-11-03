@@ -41,16 +41,17 @@
 
 bool isScriptSelected = false;
 
-// Information like Title and Description.
+// Information like Title and Author.
 struct Info {
 	std::string title;
-	std::string description;
+	std::string author;
 };
 
 std::string choice;
 std::string currentFile;
 std::string selectedTitle;
-std::string longDesc = "";
+std::string Desc = "";
+nlohmann::json jsonFile;
 
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
@@ -64,7 +65,7 @@ Info parseInfo(std::string fileName) {
 
 	Info info;
 	info.title = get(json, "info", "title");
-	info.description = get(json, "info", "description");
+	info.author = get(json, "info", "author");
 	return info;
 }
 
@@ -80,6 +81,13 @@ void checkForValidate(void) {
 	}
 }
 
+nlohmann::json openScriptFile() {
+	FILE* file = fopen(currentFile.c_str(), "rt");
+	nlohmann::json jsonFile;
+	if(file)    jsonFile = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+	return jsonFile;
+}
 
 // Objects like Release or Nightly.
 std::vector<std::string> parseObjects(std::string fileName) {
@@ -101,21 +109,9 @@ std::vector<std::string> parseObjects(std::string fileName) {
 	return objs;
 }
 
-std::string longDescription() {
-	std::string out;
-	FILE* file = fopen(currentFile.c_str(), "rt");
-
-	if(!file) {
-		printf("File not found\n");
-		fclose(file);
-		return "";
-	}
-
-	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
-
-	if (json.at("info").contains("longDescription"))    out = json.at("info").at("longDescription");
-	else if (json.at("info").contains("description")) out = json.at("info").at("description");
+std::string Description(nlohmann::json &json) {
+	std::string out = "";
+	if (json.at("info").contains("description")) out = json.at("info").at("description");
 	else out = "";
 	return out;
 }
@@ -128,10 +124,7 @@ Result createFile(const char * path) {
 	return 0;
 }
 
-void runFunctions(void) {
-	FILE* file = fopen(currentFile.c_str(), "rt");
-	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
+void runFunctions(nlohmann::json &json) {
 	for(int i=0;i<(int)json.at(choice).size();i++) {
 		std::string type = json.at(choice).at(i).at("type");
 
@@ -234,27 +227,22 @@ u32 getColor(std::string colorString) {
 
 // Color listing!
 u32 barColor;
-u32 bgColor;
+u32 bgTopColor;
+u32 bgBottomColor;
 u32 TextColor;
 u32 selected;
 u32 unselected;
 
-void loadColors() {
-	FILE* file = fopen(currentFile.c_str(), "rt");
-	if(!file) {
-		printf("File not found\n");
-		fclose(file);
-		return;
-	}
-	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
-
+void loadColors(nlohmann::json &json) {
 	u32 colorTemp;
 	colorTemp = getColor(get(json, "info", "barColor"));
-	barColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "bgColor"));
-	bgColor = colorTemp == 0 ? Config::Color3 : colorTemp;
+	colorTemp = getColor(get(json, "info", "bgTopColor"));
+	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "bgBottomColor"));
+	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
 
 	colorTemp = getColor(get(json, "info", "textColor"));
 	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
@@ -283,7 +271,7 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 		line1 = fileInfo[screenPos + i].title;
-		line2 = fileInfo[screenPos + i].description;
+		line2 = fileInfo[screenPos + i].author;
 		if(screenPos + i == selection) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
 		} else { 
@@ -303,13 +291,13 @@ void ScriptList::Draw(void) const {
 	}
 }
 
-void loadLongDesc(void) {
+void loadDesc(void) {
 	lines.clear();
-	while(longDesc.find('\n') != longDesc.npos) {
-		lines.push_back(longDesc.substr(0, longDesc.find('\n')));
-		longDesc = longDesc.substr(longDesc.find('\n')+1);
+	while(Desc.find('\n') != Desc.npos) {
+		lines.push_back(Desc.substr(0, Desc.find('\n')));
+		Desc = Desc.substr(Desc.find('\n')+1);
 	}
-	lines.push_back(longDesc.substr(0, longDesc.find('\n')));
+	lines.push_back(Desc.substr(0, Desc.find('\n')));
 }
 
 void ScriptList::DrawSingleObject(void) const {
@@ -369,11 +357,12 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		if (fileInfo.size() != 0) {
 			currentFile = dirContents[selection].name;
 			selectedTitle = fileInfo[selection].title;
-			longDesc = longDescription();
+			jsonFile = openScriptFile();
+			Desc = Description(jsonFile);
 			checkForValidate();
 			fileInfo2 = parseObjects(currentFile);
-			loadColors();
-			loadLongDesc();
+			loadColors(jsonFile);
+			loadDesc();
 			isScriptSelected = true;
 			selection = 0;
 			mode = 1;
@@ -416,8 +405,18 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 	if (hDown & KEY_A) {
 		if (fileInfo2.size() != 0) {
 			choice = fileInfo2[selection2];
-			runFunctions();
+			runFunctions(jsonFile);
 		}
+	}
+
+	if (hDown & KEY_SELECT) {
+		Config::Color1 = barColor;
+		Config::Color2 = bgTopColor;
+		Config::Color3 = bgBottomColor;
+		Config::TxtColor = TextColor;
+		Config::SelectedColor = selected;
+		Config::UnselectedColor = unselected;
+		Config::saveConfig();
 	}
 
 	if (hDown & KEY_B) {

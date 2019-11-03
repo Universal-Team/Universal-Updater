@@ -46,7 +46,8 @@ bool currentScreen = false;
 extern bool isScriptSelected;
 
 extern u32 barColor;
-extern u32 bgColor;
+extern u32 bgTopColor;
+extern u32 bgBottomColor;
 extern u32 TextColor;
 
 // Clear Text.
@@ -182,7 +183,7 @@ void Gui::DrawTop(void) {
 		Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
 	} else if (isScriptSelected == true) {
 		Gui::Draw_Rect(0, 0, 400, 30, barColor);
-		Gui::Draw_Rect(0, 30, 400, 180, bgColor);
+		Gui::Draw_Rect(0, 30, 400, 180, bgTopColor);
 		Gui::Draw_Rect(0, 210, 400, 30, barColor);
 	}
 }
@@ -195,7 +196,7 @@ void Gui::DrawBottom(void) {
 		Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
 	} else if (isScriptSelected == true) {
 		Gui::Draw_Rect(0, 0, 400, 30, barColor);
-		Gui::Draw_Rect(0, 30, 400, 180, bgColor);
+		Gui::Draw_Rect(0, 30, 400, 180, bgBottomColor);
 		Gui::Draw_Rect(0, 210, 400, 30, barColor);
 	}
 }
