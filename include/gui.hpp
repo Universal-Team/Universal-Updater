@@ -70,6 +70,7 @@ namespace Gui
 	void DrawBottom(void);
 
 	void DisplayWarnMsg(std::string Text);
+	bool promptMsg(std::string promptMsg);
 }
 
 void DisplayMsg(std::string text);

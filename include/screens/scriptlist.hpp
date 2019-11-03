@@ -56,4 +56,5 @@ private:
 	int fastMode = false;
 };
 
+Result createFile(const char * path);
 #endif

@@ -45,6 +45,7 @@ struct Info {
 };
 std::string choice;
 std::string currentFile;
+std::string selectedTitle;
 
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
@@ -93,6 +94,14 @@ std::vector<std::string> parseObjects(std::string fileName) {
 		}
 	}
 	return objs;
+}
+
+// Because we need `#include <fstream>`.
+Result createFile(const char * path) {
+	std::ofstream ofstream;
+	ofstream.open(path, std::ofstream::out | std::ofstream::app);
+	ofstream.close();
+	return 0;
 }
 
 void runFunctions(void) {
@@ -151,6 +160,32 @@ void runFunctions(void) {
 			else    missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 			if(!missing)	download::installFileList(file, message);
+
+		} else if (type == "mkdir") {
+			bool missing = false;
+			std::string directory, message;
+			if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+			else	missing = true;
+			if(!missing)	makeDirs(directory.c_str());
+
+		} else if (type == "rmdir") {
+			bool missing = false;
+			std::string directory, message, promptmsg;
+			if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+			else	missing = true;
+			promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
+			if(!missing) {
+				if (Gui::promptMsg(promptmsg)) {
+					removeDirRecursive(directory.c_str());
+				}
+			}
+
+		} else if (type == "mkfile") {
+			bool missing = false;
+			std::string file;
+			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+			else	missing = true;
+			if(!missing)	createFile(file.c_str());
 		}
 	}
 	doneMsg();
@@ -201,6 +236,7 @@ void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawStringCentered(0, 214, 0.7f, Config::TxtColor, selectedTitle, 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 		info = fileInfo2[screenPos2 + i];
@@ -248,10 +284,9 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 	}
 
 	if (hDown & KEY_A) {
-		if (fileInfo.size() == 0) {
-			Gui::DisplayWarnMsg(Lang::get("WHAT_DO_YOU_TRY"));
-		} else {
+		if (fileInfo.size() != 0) {
 			currentFile = dirContents[selection].name;
+			selectedTitle = fileInfo[selection].title;
 			checkForValidate();
 			fileInfo2 = parseObjects(currentFile);
 			selection = 0;
@@ -293,9 +328,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		}
 	}
 	if (hDown & KEY_A) {
-		if (fileInfo2.size() == 0) {
-			Gui::DisplayWarnMsg(Lang::get("WHAT_DO_YOU_TRY"));
-		} else {
+		if (fileInfo2.size() != 0) {
 			choice = fileInfo2[selection2];
 			runFunctions();
 		}

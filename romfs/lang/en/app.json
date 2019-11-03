@@ -27,5 +27,8 @@
 	"ENTER_BLUE_RGB":					"Enter the Blue RGB.",
 
 	"WHAT_DO_YOU_TRY":					"What are you trying to do? :P",
-	"INCOMPATIBLE_SCRIPT":				"You have an incompatible script."
+	"INCOMPATIBLE_SCRIPT":				"You have an incompatible script.",
+
+	"DELETE_PROMPT":					"Are you sure you want to delete this Directory?",
+	"CONFIRM_OR_CANCEL":				"Press A to confirm, B to cancel."
 }

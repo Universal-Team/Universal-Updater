@@ -174,3 +174,27 @@ void Gui::DrawBottom(void) {
 	Gui::Draw_Rect(0, 30, 320, 180, Config::Color3);
 	Gui::Draw_Rect(0, 210, 320, 30, Config::Color1);
 }
+
+// Display a Message, which needs to be confirmed with A/B.
+bool Gui::promptMsg(std::string promptMsg)
+{
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(top, BLACK);
+	C2D_TargetClear(bottom, BLACK);
+	Gui::DrawTop();
+	Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, Config::TxtColor, promptMsg.c_str(), 400);
+	Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 214, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+	Gui::DrawBottom();
+	C3D_FrameEnd(0);
+	while(1)
+	{
+		gspWaitForVBlank();
+		hidScanInput();
+		if(hidKeysDown() & KEY_A) {
+			return true;
+		} else if(hidKeysDown() & KEY_B) {
+			return false;
+		}
+	}
+}
