@@ -95,6 +95,9 @@ Result installCia(const char * ciaPath)
 	}
 
 	media = getTitleDestination(info.titleID);
+	if (info.titleID == 0x0004000004391700) {
+		updatingSelf = true;
+	}
 
 	if (!updatingSelf) {
 		ret = deletePrevious(info.titleID, media);
