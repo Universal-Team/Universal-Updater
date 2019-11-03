@@ -24,5 +24,8 @@
 	"WHAT_DO_YOU_TRY": "Was machst du da? :P",
 	"INCOMPATIBLE_SCRIPT": "Sie haben ein inkompatibles Skript.",
 	"DELETE_PROMPT": "Möchten Sie den Ordner wirklich entfernen?",
-	"CONFIRM_OR_CANCEL": "Drück A zum bestätigen, B zum abbrechen."
+	"CONFIRM_OR_CANCEL": "Drück A zum bestätigen, B zum abbrechen.",
+	"GETTING_SCRIPT_LIST": "Getting Script List...",
+	"B_BACK": ": Back",
+	"A_CHOOSE": ": Choose"
 }
