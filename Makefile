@@ -94,7 +94,7 @@ RSF_FILE	:=	app/build-cia.rsf
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations \
+CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
 			-DVERSION_STRING=\"$(GIT_VER)\" \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)

@@ -30,7 +30,6 @@
 #include "screens/scriptlist.hpp"
 
 #include "utils/config.hpp"
-#include "utils/parse.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -52,6 +51,16 @@ std::string currentFile;
 std::string selectedTitle;
 std::string Desc = "";
 nlohmann::json jsonFile;
+
+std::string get(nlohmann::json json, const std::string &key, const std::string &key2) {
+	if(!json.contains(key))	return "MISSING: " + key;
+	if(!json.at(key).is_object())	return "NOT OBJECT: " + key;
+
+	if(!json.at(key).contains(key2))	return "MISSING: " + key + "." + key2;
+	if(!json.at(key).at(key2).is_string())	return "NOT STRING: " + key + "." + key2;
+
+	return json.at(key).at(key2).get_ref<const std::string&>();
+}
 
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
