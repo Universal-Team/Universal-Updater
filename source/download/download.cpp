@@ -32,6 +32,7 @@
 
 #include "screens/screenCommon.hpp"
 
+#include "utils/config.hpp"
 #include "utils/extract.hpp"
 #include "utils/fileBrowse.h"
 #include "utils/inifile.h"
@@ -671,4 +672,75 @@ void download::extractFileList(std::string file, std::string input, std::string 
 	Threads::create((ThreadFunc)displayProgressBar);
 	extractArchive(file, input, output);
 	showProgressBar = false;
+}
+
+// Script Browse.
+void downloadScripts(void) {
+	int keyRepeatDelay = 0;
+	std::string ScriptsPath = Config::ScriptPath;
+
+	DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
+
+	std::vector<ThemeEntry> scriptList;
+	scriptList = getThemeList("Universal-Team/extras", "Scripts");
+	makeDirs(ScriptsPath.c_str());
+
+	for(uint i=0;i<scriptList.size();i++) {
+		if(scriptList[i].name.size() < 4 || scriptList[i].name.substr(scriptList[i].name.size()-4) != "json") {
+			scriptList.erase(scriptList.begin()+i);
+			i--;
+		}
+	}
+
+	int selectedScript = 0;
+	while(1) {
+		gspWaitForVBlank();
+		hidScanInput();
+		const u32 hDown = hidKeysDown();
+		const u32 hHeld = hidKeysHeld();
+		if(keyRepeatDelay)	keyRepeatDelay--;
+		if(hDown & KEY_A) {
+			mkdir((scriptList[selectedScript].sdPath).c_str(), 0777);
+			DisplayMsg((Lang::get("DOWNLOADING") +scriptList[selectedScript].name).c_str());
+			downloadToFile(scriptList[selectedScript].downloadUrl, ScriptsPath.c_str() +scriptList[selectedScript].name);
+		} else if(hDown & KEY_B) {
+			selectedScript = 0;
+			return;
+		} else if(hHeld & KEY_UP && !keyRepeatDelay) {
+			if(selectedScript > 0) {
+				selectedScript--;
+				keyRepeatDelay = 3;
+			}
+		} else if(hHeld & KEY_DOWN && !keyRepeatDelay) {
+			if(selectedScript < (int)scriptList.size()-1) {
+				selectedScript++;
+				keyRepeatDelay = 3;
+			}
+		} else if(hHeld & KEY_LEFT && !keyRepeatDelay) {
+			selectedScript -= 10;
+			if(selectedScript < 0) {
+				selectedScript = 0;
+			}
+			keyRepeatDelay = 3;
+		} else if(hHeld & KEY_RIGHT && !keyRepeatDelay) {
+			selectedScript += 10;
+			if(selectedScript > (int)scriptList.size()) {
+				selectedScript = scriptList.size()-1;
+			}
+			keyRepeatDelay = 3;
+		}
+		std::string scriptText;
+		for(int i=(selectedScript<10) ? 0 : selectedScript-10;i<(int)scriptList.size()&&i<((selectedScript<10) ? 11 : selectedScript+1);i++) {
+			if(i == selectedScript) {
+				scriptText += "> " + scriptList[i].name + "\n";
+			} else {
+				scriptText += "  " + scriptList[i].name + "\n";
+			}
+		}
+		for(uint i=0;i<((scriptList.size()<10) ? 11-scriptList.size() : 0);i++) {
+			scriptText += "\n";
+		}
+		scriptText += Lang::get("B_BACK") + "           " +Lang::get("A_CHOOSE");
+		DisplayMsg(scriptText.c_str());
+	}
 }

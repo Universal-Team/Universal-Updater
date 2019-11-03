@@ -265,7 +265,7 @@ void loadColors(nlohmann::json &json) {
 
 ScriptList::ScriptList() {
 	dirContents.clear();
-	chdir(SCRIPTS_PATH);
+	chdir(Config::ScriptPath.c_str());
 	getDirectoryContents(dirContents);
 	for(uint i=0;i<dirContents.size();i++) {
 		fileInfo.push_back(parseInfo(dirContents[i].name));

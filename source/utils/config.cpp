@@ -26,6 +26,7 @@
 
 #include "gui.hpp"
 
+#include "utils/common.hpp"
 #include "utils/inifile.h"
 #include "utils/config.hpp"
 
@@ -44,6 +45,7 @@ int Config::Color3;
 int Config::TxtColor;
 int Config::SelectedColor;
 int Config::UnselectedColor;
+std::string Config::ScriptPath;
 
 void Config::loadConfig() {
 	// [UI]
@@ -54,6 +56,7 @@ void Config::loadConfig() {
 	Config::TxtColor = settingsini.GetInt("UI", "TEXTCOLOR", WHITE);
 	Config::SelectedColor = settingsini.GetInt("UI", "SELECTEDCOLOR", SelectedColordefault);
 	Config::UnselectedColor = settingsini.GetInt("UI", "UNSELECTEDCOLOR", UnselectedColordefault);
+	Config::ScriptPath = settingsini.GetString("UI", "SCRIPTPATH", SCRIPTS_PATH);
 }
 
 void Config::saveConfig() {
@@ -65,5 +68,6 @@ void Config::saveConfig() {
 	settingsini.SetInt("UI", "TEXTCOLOR", Config::TxtColor);
 	settingsini.SetInt("UI", "SELECTEDCOLOR", Config::SelectedColor);
 	settingsini.SetInt("UI", "UNSELECTEDCOLOR", Config::UnselectedColor);
+	settingsini.SetString("UI", "SCRIPTPATH", Config::ScriptPath);
 	settingsini.SaveIniFile("sdmc:/3ds/Universal-Updater/Settings.ini");
 }

@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "download/download.hpp"
 #include "screens/mainMenu.hpp"
 #include "screens/settings.hpp"
 #include "screens/scriptlist.hpp"
@@ -90,5 +91,9 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			mode = 1;
 			Gui::setScreen(std::make_unique<Settings>());
 		}
+	}
+
+	if (hDown & KEY_X) {
+		downloadScripts();
 	}
 }

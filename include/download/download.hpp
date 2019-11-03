@@ -110,3 +110,5 @@ namespace download {
 	void installFileList(std::string file, std::string message);
 	void extractFileList(std::string file, std::string input, std::string output, std::string message);
 }
+
+void downloadScripts(void);

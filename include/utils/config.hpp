@@ -34,6 +34,7 @@ namespace Config {
 	// [UI]
 	extern int lang; // The current Language.
 	extern int Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor; // Colors!
+	extern std::string ScriptPath;
 
 	void loadConfig();
 	void saveConfig();

@@ -59,4 +59,4 @@ using json = nlohmann::json;
 extern char * arg0;
 
 #define WORKING_DIR       "/"
-#define SCRIPTS_PATH	"/3ds/Universal-Updater/scripts/" // The Scripts will be here.
+#define SCRIPTS_PATH	"sdmc:/3ds/Universal-Updater/scripts/" // The Scripts will be here.
