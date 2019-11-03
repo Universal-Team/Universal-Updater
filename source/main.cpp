@@ -67,7 +67,7 @@ int main()
 	if(access("sdmc:/3ds/Universal-Updater/Settings.ini", F_OK) == -1 ) {
 		Config::saveConfig();
 	}
-	Lang::load(1);
+	Lang::load(Config::lang);
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
