@@ -25,7 +25,7 @@
 	"INCOMPATIBLE_SCRIPT": "Tienes un script incompatible.",
 	"DELETE_PROMPT": "¿Seguro que quieres eliminar este directorio?",
 	"CONFIRM_OR_CANCEL": "Pulsa A para confirmar o B para cancelar.",
-	"GETTING_SCRIPT_LIST": "Getting Script List...",
+	"GETTING_SCRIPT_LIST": "Obteniendo lista de scripts...",
 	"B_BACK": ": Back",
 	"A_CHOOSE": ": Choose"
 }
