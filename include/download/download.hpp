@@ -47,7 +47,7 @@ struct ThemeEntry {
 };
 
 Result downloadToFile(std::string url, std::string path);
-Result downloadFromRelease(std::string url, std::string asset, std::string path);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases);
 
 void displayProgressBar();
 
@@ -104,7 +104,7 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 std::vector<ThemeEntry> getThemeList(std::string repo, std::string path);
 
 namespace download {
-	void downloadRelease(std::string repo, std::string file, std::string output, std::string message);
+	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
 	void downloadFile(std::string file, std::string output, std::string message);
 	void deleteFileList(std::string file, std::string message);
 	void installFileList(std::string file, std::string message);

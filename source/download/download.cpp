@@ -198,7 +198,7 @@ Result downloadToFile(std::string url, std::string path)
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path)
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -221,7 +221,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path)
 	std::string repoOwner = result[1].str(), repoName = result[2].str();
 
 	std::stringstream apiurlStream;
-	apiurlStream << "https://api.github.com/repos/" << repoOwner << "/" << repoName << "/releases/latest";
+	apiurlStream << "https://api.github.com/repos/" << repoOwner << "/" << repoName << (includePrereleases ? "/releases" : "/releases/latest");
 	std::string apiurl = apiurlStream.str();
 
 	printf("Downloading latest release from repo:\n%s\nby:\n%s\n", repoName.c_str(), repoOwner.c_str());
@@ -259,6 +259,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path)
 	printf("Looking for asset with matching name:\n%s\n", asset.c_str());
 	std::string assetUrl;
 	json parsedAPI = json::parse(result_buf);
+	if(includePrereleases)	parsedAPI = parsedAPI[0];
 	if (parsedAPI["assets"].is_array()) {
 		for (auto jsonAsset : parsedAPI["assets"]) {
 			if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
@@ -627,12 +628,12 @@ void displayProgressBar() {
 	}
 }
 
-void download::downloadRelease(std::string repo, std::string file, std::string output, std::string message) {
+void download::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressBarType = 0;
 	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadFromRelease("https://github.com/" + repo, file, output) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, output, includePrereleases) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		return;

@@ -156,7 +156,7 @@ void runFunctions(nlohmann::json &json) {
 			if(!missing)	download::downloadFile(file, output, message);
 		
 		} else if(type == "downloadRelease") {
-			bool missing = false;
+			bool missing = false, includePrereleases = false;
 			std::string repo, file, output, message;
 			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
 			else	missing = true;
@@ -164,8 +164,9 @@ void runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
+			if(json.at(choice).at(i).contains("includePrereleases"))	includePrereleases = json.at(choice).at(i).at("includePrereleases");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::downloadRelease(repo, file, output, message);
+			if(!missing)	download::downloadRelease(repo, file, output, includePrereleases, message);
 			
 		} else if(type == "extractFile") {
 			bool missing = false;
