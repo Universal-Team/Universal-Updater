@@ -38,7 +38,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-	Gui::DrawString(395-Gui::GetStringWidth(0.72f, VERSION_STRING), 218, 0.72f, Config::TxtColor, VERSION_STRING);
+	Gui::DrawString(397-Gui::GetStringWidth(0.5f, VERSION_STRING), 237-Gui::GetStringHeight(0.5f, VERSION_STRING), 0.5f, Config::TxtColor, VERSION_STRING);
 	Gui::DrawBottom();
 
 	for (int i = 0; i < 3; i++) {

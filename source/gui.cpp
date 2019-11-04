@@ -119,7 +119,11 @@ void Gui::DrawString(float x, float y, float size, u32 color, std::string Text, 
 	C2D_Text c2d_text;
 	C2D_TextParse(&c2d_text, sizeBuf, Text.c_str());
 	C2D_TextOptimize(&c2d_text);
-	C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, std::min(size, size*(maxWidth/Gui::GetStringWidth(size, Text))), size, color);
+	if(maxWidth == 0) {
+		C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, size, size, color);
+	} else {
+		C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, std::min(size, size*(maxWidth/Gui::GetStringWidth(size, Text))), size, color);
+	}
 }
 
 
