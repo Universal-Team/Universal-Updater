@@ -25,7 +25,7 @@
 	"INCOMPATIBLE_SCRIPT": "Nesuderinamas skriptas.",
 	"DELETE_PROMPT": "Ar jūs tikrai norite ištrinti šį aplanką?",
 	"CONFIRM_OR_CANCEL": "A - patvirtinti, B - atšaukti.",
-	"GETTING_SCRIPT_LIST": "Getting Script List...",
-	"B_BACK": ": Back",
+	"GETTING_SCRIPT_LIST": "Gaunamas skriptų sąrašas...",
+	"B_BACK": ": Grįžti",
 	"A_CHOOSE": ": Choose"
 }
