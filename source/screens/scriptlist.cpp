@@ -164,7 +164,8 @@ void runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
-			if(json.at(choice).at(i).contains("includePrereleases"))	includePrereleases = json.at(choice).at(i).at("includePrereleases");
+			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
+				includePrereleases = json.at(choice).at(i).at("includePrereleases");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 			if(!missing)	download::downloadRelease(repo, file, output, includePrereleases, message);
 			
