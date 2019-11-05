@@ -27,5 +27,6 @@
 	"CONFIRM_OR_CANCEL": "Drück A zum bestätigen, B zum abbrechen.",
 	"GETTING_SCRIPT_LIST": "Skriptliste wird abgerufen...",
 	"B_BACK": "\\uE001: Zurück",
-	"A_CHOOSE": "\\uE000: Wählen"
+	"A_CHOOSE": "\\uE000: Wählen",
+	"SCRIPTBROWSE": "Scriptbrowse"
 }
