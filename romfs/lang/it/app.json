@@ -27,5 +27,6 @@
 	"CONFIRM_OR_CANCEL": "Premi A per confermare, B per annullare.",
 	"GETTING_SCRIPT_LIST": "Mostra la lista degli script...",
 	"B_BACK": ": Indietro",
-	"A_CHOOSE": ": Scegli"
+	"A_CHOOSE": ": Scegli",
+	"SCRIPTBROWSE": "Scriptbrowse"
 }
