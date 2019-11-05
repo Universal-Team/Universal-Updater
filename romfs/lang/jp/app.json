@@ -27,5 +27,6 @@
 	"CONFIRM_OR_CANCEL": "Aを押して確認し、Bを押してキャンセルします",
 	"GETTING_SCRIPT_LIST": "Getting Script List...",
 	"B_BACK": ": Back",
-	"A_CHOOSE": ": Choose"
+	"A_CHOOSE": ": Choose",
+	"SCRIPTBROWSE": "Scriptbrowse"
 }
