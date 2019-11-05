@@ -34,5 +34,6 @@
 
 	"GETTING_SCRIPT_LIST":				"Getting Script List...",
 	"B_BACK":							"\uE001: Back",
-	"A_CHOOSE":							"\uE000: Choose"
+	"A_CHOOSE":							"\uE000: Choose",
+	"SCRIPTBROWSE":						"Scriptbrowse"
 }

@@ -25,9 +25,12 @@
 */
 
 #include "download/download.hpp"
+
 #include "screens/mainMenu.hpp"
-#include "screens/settings.hpp"
+#include "screens/scriptBrowse.hpp"
 #include "screens/scriptlist.hpp"
+#include "screens/settings.hpp"
+
 
 #include "utils/config.hpp"
 
@@ -41,7 +44,7 @@ void MainMenu::Draw(void) const {
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, VERSION_STRING), 237-Gui::GetStringHeight(0.5f, VERSION_STRING), 0.5f, Config::TxtColor, VERSION_STRING);
 	Gui::DrawBottom();
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (Selection == i) {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
 		} else {
@@ -49,9 +52,10 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTBROWSE")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTBROWSE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -59,10 +63,14 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		exiting = true;
 	}
 
-	if (hDown & KEY_UP) {
-		if(Selection > 0)	Selection--;
-	} else if (hDown & KEY_DOWN) {
-		if(Selection < 2)	Selection++;
+	if(hDown & KEY_UP) {
+		if(Selection > 1)	Selection -= 2;
+	} else if(hDown & KEY_DOWN) {
+		if(Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
+	} else if (hDown & KEY_LEFT) {
+		if (Selection%2) Selection--;
+	} else if (hDown & KEY_RIGHT) {
+		if (!(Selection%2)) Selection++;
 	}
 
 	if (hDown & KEY_A) {
@@ -71,10 +79,13 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<ScriptList>());
 				break;
 			case 1:
+				Gui::setScreen(std::make_unique<ScriptBrowse>());
+				break;
+			case 2:
 				mode = 0;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
-			case 2:
+			case 3:
 				mode = 1;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
@@ -85,9 +96,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<ScriptList>());
 		} else if (touching(touch, mainButtons[1])) {
+			Gui::setScreen(std::make_unique<ScriptBrowse>());
+		} else if (touching(touch, mainButtons[2])) {
 			mode = 0;
 			Gui::setScreen(std::make_unique<Settings>());
-		} else if (touching(touch, mainButtons[2])) {
+		} else if (touching(touch, mainButtons[3])) {
 			mode = 1;
 			Gui::setScreen(std::make_unique<Settings>());
 		}

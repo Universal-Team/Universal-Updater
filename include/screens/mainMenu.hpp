@@ -39,10 +39,11 @@ public:
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
 	int Selection = 0;
-	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // ScriptList.
-		{90, 100, 140, 35, -1}, // Language.
-		{90, 160, 140, 35, -1}, // Colors.
+	std::vector<Structs::ButtonPos> mainButtons = {		
+		{10, 75, 140, 35, -1}, // ScriptList.
+		{170, 75, 140, 35, -1}, // ScriptBrowse.
+		{10, 140, 140, 35, -1}, // Language.
+		{170, 140, 140, 35, -1}, // Colors.
 	};
 };
 
