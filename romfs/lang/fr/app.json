@@ -27,5 +27,6 @@
 	"CONFIRM_OR_CANCEL": "Press A to confirm, B to cancel.",
 	"GETTING_SCRIPT_LIST": "Getting Script List...",
 	"B_BACK": ": Back",
-	"A_CHOOSE": ": Choose"
+	"A_CHOOSE": ": Choose",
+	"SCRIPTBROWSE": "Scriptbrowse"
 }
