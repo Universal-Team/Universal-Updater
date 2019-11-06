@@ -29,6 +29,7 @@
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/config.hpp"
 #include "utils/fileBrowse.h"
 
 class ScriptBrowse : public Screen
@@ -36,8 +37,10 @@ class ScriptBrowse : public Screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	ScriptBrowse();
 
 private:
+	nlohmann::json currentFile;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
 	mutable int selection = 0;

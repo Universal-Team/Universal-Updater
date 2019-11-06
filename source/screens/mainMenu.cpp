@@ -53,7 +53,7 @@ void MainMenu::Draw(void) const {
 	}
 
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTBROWSE")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTBROWSE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
 }
@@ -104,9 +104,5 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			mode = 1;
 			Gui::setScreen(std::make_unique<Settings>());
 		}
-	}
-
-	if (hDown & KEY_X) {
-		downloadScripts();
 	}
 }

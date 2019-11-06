@@ -35,5 +35,10 @@
 	"GETTING_SCRIPT_LIST":				"Getting Script List...",
 	"B_BACK":							"\uE001: Back",
 	"A_CHOOSE":							"\uE000: Choose",
-	"SCRIPTBROWSE":						"Scriptbrowse"
+	"SCRIPTBROWSE":						"Scriptbrowse",
+	"GET_SCRIPTS":						"Get Scripts",
+	"INSTALLED_REV":					"Installed revision: ",
+	"CURRENT_REV":						"Current revision: ",
+	"AUTHOR":							"author: ",
+	"TITLE":							"title: "
 }

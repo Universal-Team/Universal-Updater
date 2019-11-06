@@ -160,3 +160,15 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 void getDirectoryContents(std::vector<DirEntry>& dirContents) {
 	getDirectoryContents(dirContents, {});
 }
+
+std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList) {
+	std::vector<std::string> dirContents;
+	DIR* pdir = opendir(name.c_str());
+	struct dirent *pent;
+	while ((pent = readdir(pdir)) != NULL) {
+		if(nameEndsWith(pent->d_name, extensionList))
+			dirContents.push_back(pent->d_name);
+	}
+	closedir(pdir);
+	return dirContents;
+}
