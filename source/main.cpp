@@ -84,6 +84,7 @@ int main()
 		Gui::clearTextBufs();
 		Gui::mainLoop(hDown, hHeld, touch);
 		C3D_FrameEnd(0);
+		gspWaitForVBlank();
 	}
 
 	Gui::exit();
