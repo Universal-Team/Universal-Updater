@@ -96,6 +96,7 @@ void ScriptBrowse::Draw(void) const {
 
 
 void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (keyRepeatDelay)	keyRepeatDelay--;
 	if (hDown & KEY_B) {
 		jsonFileBrowse.clear();
 		Gui::screenBack();
@@ -134,5 +135,11 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			DisplayMsg(fileName);
 			downloadToFile(jsonFileBrowse[selection]["url"], Config::ScriptPath + std::string(jsonFileBrowse[selection]["title"])+ ".json");
 		}
+	}
+
+	if(selection < screenPos) {
+		screenPos = selection;
+	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+		screenPos = selection - ENTRIES_PER_SCREEN + 1;
 	}
 }
