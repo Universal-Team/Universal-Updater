@@ -28,10 +28,10 @@
 	"GETTING_SCRIPT_LIST": "Gaunamas skriptų sąrašas...",
 	"B_BACK": ": Grįžti",
 	"A_CHOOSE": ": Pasirinkti",
-	"SCRIPTBROWSE": "Scriptbrowse",
-	"GET_SCRIPTS": "Get Scripts",
-	"INSTALLED_REV": "Installed revision: ",
-	"CURRENT_REV": "Current revision: ",
-	"AUTHOR": "author: ",
-	"TITLE": "title: "
+	"SCRIPTBROWSE": "Skriptų naršyklė",
+	"GET_SCRIPTS": "Gauti skriptų",
+	"INSTALLED_REV": "Įdiegta revizija: ",
+	"CURRENT_REV": "Dabartinė revizija: ",
+	"AUTHOR": "autorius: ",
+	"TITLE": "pavadinimas: "
 }
