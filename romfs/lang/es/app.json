@@ -29,9 +29,9 @@
 	"B_BACK": "\\uE001: Volver",
 	"A_CHOOSE": "\\uE000: Elegir",
 	"SCRIPTBROWSE": "Navegación de scripts",
-	"GET_SCRIPTS": "Get Scripts",
-	"INSTALLED_REV": "Installed revision: ",
-	"CURRENT_REV": "Current revision: ",
-	"AUTHOR": "author: ",
-	"TITLE": "title: "
+	"GET_SCRIPTS": "Obtener scripts",
+	"INSTALLED_REV": "Revisión instalada: ",
+	"CURRENT_REV": "Revisión actual: ",
+	"AUTHOR": "autor: ",
+	"TITLE": "titulo: "
 }
