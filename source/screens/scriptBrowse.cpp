@@ -32,65 +32,99 @@
 #include "utils/fileBrowse.h"
 #include "utils/json.hpp"
 
+#include <unistd.h>
+
 #define ENTRIES_PER_SCREEN 3
 
-nlohmann::json jsonFileBrowse;
+nlohmann::json infoJson;
 
-std::string metaFile = "sdmc:/3ds/Universal-Updater/ScriptInfo.json";
+#define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"
 
 extern std::string get(nlohmann::json json, const std::string &key, const std::string &key2);
 
-nlohmann::json openMetaFile() {
-	FILE* file = fopen(metaFile.c_str(), "rt");
-	nlohmann::json jsonFile;
-	if(file)    jsonFile = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
-	return jsonFile;
-}
-
-nlohmann::json parseInfo() {
-    FILE* file = fopen(metaFile.c_str(), "rt");
-    if(!file) {
-        printf("File not found\n");
-        fclose(file);
-        return {"", ""};
-    }
-    nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
-    fclose(file);
-
+void fixInfo(nlohmann::json &json) {
     for(uint i=0;i<json.size();i++) {
         if(!json[i].contains("title"))    json[i]["title"] = "TITLE";
         if(!json[i].contains("author"))    json[i]["author"] = "AUTHOR";
         if(!json[i].contains("revision"))    json[i]["revision"] = 0;
+        if(!json[i].contains("curRevision"))    json[i]["curRevision"] = 0;
         if(!json[i].contains("version"))    json[i]["revision"] = 0;
     }
-    return json;
 }
 
+nlohmann::json infoFromScript(const std::string &path) {
+	nlohmann::json in, out;
+
+	FILE* file = fopen(path.c_str(), "r");
+	if(!file) {
+		fclose(file);
+		return out;
+	}
+	in = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	if(in.contains("info")) {
+		if(in["info"].contains("title") && in["info"]["title"].is_string())	out["title"] = in["info"]["title"];
+		if(in["info"].contains("author") && in["info"]["author"].is_string())	out["author"] = in["info"]["author"];
+		if(in["info"].contains("version") && in["info"]["version"].is_number())	out["version"] = in["info"]["version"];
+		if(in["info"].contains("revision") && in["info"]["revision"].is_number())	out["revision"] = in["info"]["revision"];
+	}
+
+	return out;
+}
+
+void findExistingFiles(nlohmann::json &json) {
+	nlohmann::json current;
+	chdir(Config::ScriptPath.c_str());
+	std::vector<DirEntry> dirContents;
+	getDirectoryContents(dirContents);
+	for(uint i=0;i<dirContents.size();i++) {
+		current[i] = infoFromScript(dirContents[i].name);
+	}
+	fixInfo(current);
+
+	for(uint i=0;i<json.size();i++) {
+		for(uint j=0;j<current.size();j++) {
+				DisplayMsg(std::string(current[j]["title"])+":"+std::to_string(i)+":"+std::to_string(j));
+				for(int i=0;i<10;i++)	gspWaitForVBlank();
+			if(current[j]["title"] == json[i]["title"]) {
+				Gui::DrawString(0, 0, .5f, WHITE, json[i]["title"]);
+				json[i]["curRevision"] = current[j]["revision"];
+			}
+		}
+	}
+}
 
 ScriptBrowse::ScriptBrowse() {
 	DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
-	downloadToFile("https://github.com/Universal-Team/extras/raw/master/ScriptsInfo/scriptInfo.json", "sdmc:/3ds/Universal-Updater/ScriptInfo.json");
-	jsonFileBrowse = parseInfo();
+
+	// Get repo info
+	downloadToFile("https://github.com/Universal-Team/extras/raw/master/ScriptsInfo/scriptInfo.json", metaFile);
+	FILE* file = fopen(metaFile, "r");
+	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+	fixInfo(infoJson);
+
+	findExistingFiles(infoJson);
 }
 
 void ScriptBrowse::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTBROWSE"), 400);
 
-	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(jsonFileBrowse[screenPos+selection]["title"]), 400);
-	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(jsonFileBrowse[screenPos+selection]["author"]), 400);
-	Gui::DrawStringCentered(0, 120, 0.7f, Config::TxtColor, Lang::get("INSTALLED_REV"), 400);
-	Gui::DrawStringCentered(0, 140, 0.7f, Config::TxtColor, Lang::get("CURRENT_REV")+ std::to_string(jsonFileBrowse[screenPos+selection]["revision"].get<int64_t>()), 400);
+	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(infoJson[screenPos+selection]["title"]), 400);
+	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(infoJson[screenPos+selection]["author"]), 400);
+	Gui::DrawStringCentered(0, 120, 0.7f, Config::TxtColor, Lang::get("INSTALLED_REV") + std::to_string(int64_t(infoJson[screenPos+selection]["curRevision"])), 400);
+	Gui::DrawStringCentered(0, 140, 0.7f, Config::TxtColor, Lang::get("CURRENT_REV")+ std::to_string(int64_t(infoJson[screenPos+selection]["revision"])), 400);
 	Gui::DrawBottom();
-	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)jsonFileBrowse.size();i++) {
+	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 		if(screenPos + i == selection) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
 		} else { 
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
-		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, jsonFileBrowse[screenPos+i]["title"], 320);
-		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, jsonFileBrowse[screenPos+i]["author"], 320);
+		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
+		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
 	}
 }
 
@@ -98,13 +132,13 @@ void ScriptBrowse::Draw(void) const {
 void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 	if (hDown & KEY_B) {
-		jsonFileBrowse.clear();
+		infoJson.clear();
 		Gui::screenBack();
 		return;
 	}
 
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
-		if (selection < (int)jsonFileBrowse.size()-1) {
+		if (selection < (int)infoJson.size()-1) {
 			selection++;
 		} else {
 			selection = 0;
@@ -120,7 +154,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (selection > 0) {
 			selection--;
 		} else {
-			selection = (int)jsonFileBrowse.size()-1;
+			selection = (int)infoJson.size()-1;
 		}
 		if (fastMode == true) {
 			keyRepeatDelay = 3;
@@ -130,10 +164,10 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
-		if (jsonFileBrowse.size() != 0) {
-			std::string fileName = Lang::get("DOWNLOADING") + std::string(jsonFileBrowse[selection]["title"]);
+		if (infoJson.size() != 0) {
+			std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[selection]["title"]);
 
-		std::string titleFix = jsonFileBrowse[selection]["title"]; 
+		std::string titleFix = infoJson[selection]["title"]; 
 		for (int i = 0; i < (int)titleFix.size(); i++) {
    			if (titleFix[i] == '/') {
         		titleFix[i] = '-';
@@ -141,7 +175,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 			DisplayMsg(fileName);
 
-			downloadToFile(jsonFileBrowse[selection]["url"], Config::ScriptPath + titleFix + ".json");
+			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json");
 		}
 	}
 
