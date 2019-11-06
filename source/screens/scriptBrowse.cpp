@@ -132,8 +132,16 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		if (jsonFileBrowse.size() != 0) {
 			std::string fileName = Lang::get("DOWNLOADING") + std::string(jsonFileBrowse[selection]["title"]);
+
+		std::string titleFix = jsonFileBrowse[selection]["title"]; 
+		for (int i = 0; i < (int)titleFix.size(); i++) {
+   			if (titleFix[i] == '/') {
+        		titleFix[i] = '-';
+    		}
+		}
 			DisplayMsg(fileName);
-			downloadToFile(jsonFileBrowse[selection]["url"], Config::ScriptPath + std::string(jsonFileBrowse[selection]["title"])+ ".json");
+
+			downloadToFile(jsonFileBrowse[selection]["url"], Config::ScriptPath + titleFix + ".json");
 		}
 	}
 

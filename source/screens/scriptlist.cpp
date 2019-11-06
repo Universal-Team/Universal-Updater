@@ -278,7 +278,7 @@ void loadColors(nlohmann::json &json) {
 ScriptList::ScriptList() {
 	dirContents.clear();
 	chdir(Config::ScriptPath.c_str());
-	getDirectoryContents(dirContents);
+	getDirectoryContents(dirContents, {"json"});
 	for(uint i=0;i<dirContents.size();i++) {
 		fileInfo.push_back(parseInfo(dirContents[i].name));
 	}
@@ -375,7 +375,8 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 	}
 
 	if (hDown & KEY_A) {
-		if (fileInfo.size() != 0) {
+		if (dirContents[selection].isDirectory) {
+		} else if (fileInfo.size() != 0) {
 			currentFile = dirContents[selection].name;
 			selectedTitle = fileInfo[selection].title;
 			jsonFile = openScriptFile();
