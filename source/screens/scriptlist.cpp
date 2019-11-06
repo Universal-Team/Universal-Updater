@@ -62,6 +62,15 @@ std::string get(nlohmann::json json, const std::string &key, const std::string &
 	return json.at(key).at(key2).get_ref<const std::string&>();
 }
 
+int getNum(nlohmann::json json, const std::string &key, const std::string &key2) {
+	if(!json.contains(key))	return 0;
+	if(!json.at(key).is_object())	return 0;
+
+	if(!json.at(key).contains(key2))	return 0;
+	if(!json.at(key).at(key2).is_number())	return 0;
+	return json.at(key).at(key2).get_ref<const int64_t&>();
+}
+
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
 	if(!file) {
@@ -85,7 +94,8 @@ void checkForValidate(void) {
 
 	std::string version;
 	version = get(json, "info", "version");
-	if (version != "1") {
+	int ver = getNum(json, "info", "version");
+	if (ver < SCRIPT_VERSION || ver > SCRIPT_VERSION) {
 		Gui::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
 	}
 }
