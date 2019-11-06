@@ -355,10 +355,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		} else {
 			selection = 0;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
@@ -367,10 +367,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		} else {
 			selection = (int)fileInfo.size()-1;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 
@@ -406,10 +406,10 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		} else {
 			selection2 = 0;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
@@ -418,10 +418,10 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		} else {
 			selection2 = (int)fileInfo2.size()-1;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 	if (hDown & KEY_A) {

@@ -141,10 +141,10 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			selection = 0;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 
@@ -154,10 +154,10 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			selection = (int)infoJson.size()-1;
 		}
-		if (fastMode) {
+		if (fastMode == true) {
 			keyRepeatDelay = 3;
-		} else {
-			keyRepeatDelay = 12;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
 		}
 	}
 
