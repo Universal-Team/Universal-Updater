@@ -190,6 +190,14 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	if (hDown & KEY_R) {
+		fastMode = true;
+	}
+
+	if (hDown & KEY_L) {
+		fastMode = false;
+	}
+	
 	if(selection < screenPos) {
 		screenPos = selection;
 	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {

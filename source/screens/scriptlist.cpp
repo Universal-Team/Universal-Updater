@@ -391,6 +391,14 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		}
 	}
 
+	if (hDown & KEY_R) {
+		fastMode = true;
+	}
+
+	if (hDown & KEY_L) {
+		fastMode = false;
+	}
+
 	if(selection < screenPos) {
 		screenPos = selection;
 	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
@@ -431,6 +439,14 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		}
 	}
 
+	if (hDown & KEY_R) {
+		fastMode = true;
+	}
+
+	if (hDown & KEY_L) {
+		fastMode = false;
+	}
+	
 	if (hDown & KEY_SELECT) {
 		Config::Color1 = barColor;
 		Config::Color2 = bgTopColor;
