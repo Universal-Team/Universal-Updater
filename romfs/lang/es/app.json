@@ -33,5 +33,8 @@
 	"INSTALLED_REV": "Revisión instalada: ",
 	"CURRENT_REV": "Revisión actual: ",
 	"AUTHOR": "autor: ",
-	"TITLE": "titulo: "
+	"TITLE": "titulo: ",
+	"FUTURE_SCRIPT": "This Script is a Future Script.",
+	"OUTDATED_SCRIPT": "This Script is outdated.",
+	"UP-TO-DATE": "This Script is Up-To-Date."
 }
