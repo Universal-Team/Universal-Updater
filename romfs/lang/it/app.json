@@ -29,12 +29,12 @@
 	"B_BACK": ": Indietro",
 	"A_CHOOSE": ": Scegli",
 	"SCRIPTBROWSE": "Naviga tra gli script",
-	"GET_SCRIPTS": "Get Scripts",
-	"INSTALLED_REV": "Installed revision: ",
-	"CURRENT_REV": "Current revision: ",
-	"AUTHOR": "author: ",
-	"TITLE": "title: ",
-	"FUTURE_SCRIPT": "This Script is a Future Script.",
-	"OUTDATED_SCRIPT": "This Script is outdated.",
-	"UP-TO-DATE": "This Script is Up-To-Date."
+	"GET_SCRIPTS": "Ottieni script",
+	"INSTALLED_REV": "Revisione installata: ",
+	"CURRENT_REV": "Revisione attuale: ",
+	"AUTHOR": "autore: ",
+	"TITLE": "titolo: ",
+	"FUTURE_SCRIPT": "Questo script è uno script futuro.",
+	"OUTDATED_SCRIPT": "Questo script è obsoleto.",
+	"UP-TO-DATE": "Questo script è aggiornato."
 }
