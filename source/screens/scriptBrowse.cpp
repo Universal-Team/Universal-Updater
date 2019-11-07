@@ -187,6 +187,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			DisplayMsg(fileName);
 
 			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json");
+			infoJson[selection]["curRevision"] = infoJson[selection]["revision"];
 		}
 	}
 
@@ -197,7 +198,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_L) {
 		fastMode = false;
 	}
-	
+
 	if(selection < screenPos) {
 		screenPos = selection;
 	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
