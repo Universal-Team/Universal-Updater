@@ -26,12 +26,12 @@
 	"DELETE_PROMPT": "このディレクトリを削除してもよろしいですか？",
 	"CONFIRM_OR_CANCEL": "Aを押して確認し、Bを押してキャンセルします",
 	"GETTING_SCRIPT_LIST": "スクリプトのリストを取得中…",
-	"B_BACK": "\\uE001：戻る",
+	"B_BACK": "：戻る",
 	"A_CHOOSE": "：選択する",
-	"SCRIPTBROWSE": "Scriptbrowse",
-	"GET_SCRIPTS": "Get Scripts",
-	"INSTALLED_REV": "Installed revision: ",
-	"CURRENT_REV": "Current revision: ",
-	"AUTHOR": "author: ",
-	"TITLE": "title: "
+	"SCRIPTBROWSE": "スクリプトブラウズ",
+	"GET_SCRIPTS": "スクリプトを取得する",
+	"INSTALLED_REV": "インストール済みバージョン：",
+	"CURRENT_REV": "現在のスクリプトバージョン：",
+	"AUTHOR": "作者：",
+	"TITLE": "タイトル："
 }
