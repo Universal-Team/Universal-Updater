@@ -110,10 +110,10 @@ void ScriptBrowse::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTBROWSE"), 400);
 
-	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(infoJson[screenPos+selection]["title"]), 400);
-	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(infoJson[screenPos+selection]["author"]), 400);
-	Gui::DrawStringCentered(0, 120, 0.7f, Config::TxtColor, Lang::get("INSTALLED_REV") + std::to_string(int64_t(infoJson[screenPos+selection]["curRevision"])), 400);
-	Gui::DrawStringCentered(0, 140, 0.7f, Config::TxtColor, Lang::get("CURRENT_REV")+ std::to_string(int64_t(infoJson[screenPos+selection]["revision"])), 400);
+	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(infoJson[selection]["title"]), 400);
+	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(infoJson[selection]["author"]), 400);
+	Gui::DrawStringCentered(0, 120, 0.7f, Config::TxtColor, Lang::get("INSTALLED_REV") + std::to_string(int64_t(infoJson[selection]["curRevision"])), 400);
+	Gui::DrawStringCentered(0, 140, 0.7f, Config::TxtColor, Lang::get("CURRENT_REV")+ std::to_string(int64_t(infoJson[selection]["revision"])), 400);
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 		if(screenPos + i == selection) {
