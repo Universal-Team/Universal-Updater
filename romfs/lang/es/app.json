@@ -34,7 +34,7 @@
 	"CURRENT_REV": "Revisión actual: ",
 	"AUTHOR": "autor: ",
 	"TITLE": "titulo: ",
-	"FUTURE_SCRIPT": "This Script is a Future Script.",
-	"OUTDATED_SCRIPT": "This Script is outdated.",
-	"UP-TO-DATE": "This Script is Up-To-Date."
+	"FUTURE_SCRIPT": "Este script es un script futuro.",
+	"OUTDATED_SCRIPT": "Este script está desactualizado.",
+	"UP-TO-DATE": "Este script esta actualizado."
 }
