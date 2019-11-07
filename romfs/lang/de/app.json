@@ -24,5 +24,17 @@
 	"WHAT_DO_YOU_TRY": "Was machst du da? :P",
 	"INCOMPATIBLE_SCRIPT": "Sie haben ein inkompatibles Skript.",
 	"DELETE_PROMPT": "Möchten Sie den Ordner wirklich entfernen?",
-	"CONFIRM_OR_CANCEL": "Drück A zum bestätigen, B zum abbrechen."
+	"CONFIRM_OR_CANCEL": "Drück A zum bestätigen, B zum abbrechen.",
+	"GETTING_SCRIPT_LIST": "Skriptliste wird abgerufen...",
+	"B_BACK": "\\uE001: Zurück",
+	"A_CHOOSE": "\\uE000: Wählen",
+	"SCRIPTBROWSE": "Skript-Browser",
+	"GET_SCRIPTS": "Skripts holen",
+	"INSTALLED_REV": "Installierte Revision: ",
+	"CURRENT_REV": "Aktuelle Revision: ",
+	"AUTHOR": "Autor: ",
+	"TITLE": "Titel: ",
+	"FUTURE_SCRIPT": "Dieses Skript ist ein Zukunfts Skript.",
+	"OUTDATED_SCRIPT": "Dieses Skript ist veraltet.",
+	"UP-TO-DATE": "Dieses Skript ist auf dem neusten Stand."
 }

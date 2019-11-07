@@ -23,6 +23,18 @@
 	"ENTER_BLUE_RGB": "Įveskite mėlynos spalvos vertę.",
 	"WHAT_DO_YOU_TRY": "Ką bandai padaryti?",
 	"INCOMPATIBLE_SCRIPT": "Nesuderinamas skriptas.",
-	"DELETE_PROMPT": "Are you sure you want to delete this Directory?",
-	"CONFIRM_OR_CANCEL": "Press A to confirm, B to cancel."
+	"DELETE_PROMPT": "Ar jūs tikrai norite ištrinti šį aplanką?",
+	"CONFIRM_OR_CANCEL": "A - patvirtinti, B - atšaukti.",
+	"GETTING_SCRIPT_LIST": "Gaunamas skriptų sąrašas...",
+	"B_BACK": ": Grįžti",
+	"A_CHOOSE": ": Pasirinkti",
+	"SCRIPTBROWSE": "Skriptų naršyklė",
+	"GET_SCRIPTS": "Gauti skriptų",
+	"INSTALLED_REV": "Įdiegta revizija: ",
+	"CURRENT_REV": "Dabartinė revizija: ",
+	"AUTHOR": "autorius: ",
+	"TITLE": "pavadinimas: ",
+	"FUTURE_SCRIPT": "This Script is a Future Script.",
+	"OUTDATED_SCRIPT": "This Script is outdated.",
+	"UP-TO-DATE": "This Script is Up-To-Date."
 }

@@ -24,5 +24,17 @@
 	"WHAT_DO_YOU_TRY": "¿Qué estás intentando hacer? :P",
 	"INCOMPATIBLE_SCRIPT": "Tienes un script incompatible.",
 	"DELETE_PROMPT": "¿Seguro que quieres eliminar este directorio?",
-	"CONFIRM_OR_CANCEL": "Pulsa A para confirmar o B para cancelar."
+	"CONFIRM_OR_CANCEL": "Pulsa A para confirmar o B para cancelar.",
+	"GETTING_SCRIPT_LIST": "Obteniendo lista de scripts...",
+	"B_BACK": "\\uE001: Volver",
+	"A_CHOOSE": "\\uE000: Elegir",
+	"SCRIPTBROWSE": "Navegación de scripts",
+	"GET_SCRIPTS": "Obtener scripts",
+	"INSTALLED_REV": "Revisión instalada: ",
+	"CURRENT_REV": "Revisión actual: ",
+	"AUTHOR": "autor: ",
+	"TITLE": "titulo: ",
+	"FUTURE_SCRIPT": "Este script es un script futuro.",
+	"OUTDATED_SCRIPT": "Este script está desactualizado.",
+	"UP-TO-DATE": "Este script esta actualizado."
 }
