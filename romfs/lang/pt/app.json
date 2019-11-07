@@ -28,13 +28,13 @@
 	"GETTING_SCRIPT_LIST": "A obter a lista de Scripts...",
 	"B_BACK": ": Voltar",
 	"A_CHOOSE": ": Escolher",
-	"SCRIPTBROWSE": "Scriptbrowse",
+	"SCRIPTBROWSE": "Navegador de Scripts",
 	"GET_SCRIPTS": "Obter Scripts",
 	"INSTALLED_REV": "Revisão instalada: ",
 	"CURRENT_REV": "Revisão atual: ",
 	"AUTHOR": "autor: ",
 	"TITLE": "título: ",
-	"FUTURE_SCRIPT": "This Script is a Future Script.",
+	"FUTURE_SCRIPT": "Este Script é um Script Futuro.",
 	"OUTDATED_SCRIPT": "Este Script está desatualizado.",
 	"UP-TO-DATE": "Este Script está atualizado."
 }
