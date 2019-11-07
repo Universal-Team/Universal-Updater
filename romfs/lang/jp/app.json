@@ -34,7 +34,7 @@
 	"CURRENT_REV": "現在のスクリプトバージョン：",
 	"AUTHOR": "作者：",
 	"TITLE": "タイトル：",
-	"FUTURE_SCRIPT": "This Script is a Future Script.",
-	"OUTDATED_SCRIPT": "This Script is outdated.",
-	"UP-TO-DATE": "This Script is Up-To-Date."
+	"FUTURE_SCRIPT": "このスクリプトは未来のスクリプトです。",
+	"OUTDATED_SCRIPT": "このスクリプトは古すぎます。",
+	"UP-TO-DATE": "このスクリプトは最新です。"
 }
