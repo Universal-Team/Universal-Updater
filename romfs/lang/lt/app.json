@@ -37,10 +37,10 @@
 	"FUTURE_SCRIPT": "Šis skriptas yra iš ateities.",
 	"OUTDATED_SCRIPT": "Šis skriptas yra pasenęs.",
 	"UP-TO-DATE": "Šis skriptas yra atnaujintas.",
-	"FTP_MODE": "FTP Mode",
-	"FTP_INITIALIZED": "FTP Initialized.",
-	"FAILED_GET_IP": "Failed to get IP.",
-	"FAILED_INITIALIZE_FTP": "Failed to initialize FTP.",
-	"B_FTP_EXIT": "Press B to exit from FTP.",
-	"WIFI_NOT_ENABLED": "WiFi not enabled."
+	"FTP_MODE": "FTP režimas",
+	"FTP_INITIALIZED": "FTP inicijuotas.",
+	"FAILED_GET_IP": "Nepavyko gauti IP adreso.",
+	"FAILED_INITIALIZE_FTP": "Nepavyko inicijuoti FTP.",
+	"B_FTP_EXIT": "Paspauskite B kad išeitumėte.",
+	"WIFI_NOT_ENABLED": "WiFi nėra įjungtas."
 }
