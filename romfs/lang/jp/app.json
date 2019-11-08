@@ -36,5 +36,11 @@
 	"TITLE": "タイトル：",
 	"FUTURE_SCRIPT": "このスクリプトは未来のスクリプトです。",
 	"OUTDATED_SCRIPT": "このスクリプトは古すぎます。",
-	"UP-TO-DATE": "このスクリプトは最新です。"
+	"UP-TO-DATE": "このスクリプトは最新です。",
+	"FTP_MODE": "FTP Mode",
+	"FTP_INITIALIZED": "FTP Initialized.",
+	"FAILED_GET_IP": "Failed to get IP.",
+	"FAILED_INITIALIZE_FTP": "Failed to initialize FTP.",
+	"B_FTP_EXIT": "Press B to exit from FTP.",
+	"WIFI_NOT_ENABLED": "WiFi not enabled."
 }
