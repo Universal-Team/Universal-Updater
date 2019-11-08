@@ -26,6 +26,7 @@
 
 #include "download/download.hpp"
 
+#include "screens/ftpScreen.hpp"
 #include "screens/mainMenu.hpp"
 #include "screens/scriptBrowse.hpp"
 #include "screens/scriptlist.hpp"
@@ -90,6 +91,10 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
 		}
+	}
+
+	if (hDown & KEY_X) {
+		Gui::setScreen(std::make_unique<FTPScreen>());
 	}
 
 	if (hDown & KEY_TOUCH) {

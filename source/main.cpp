@@ -57,6 +57,7 @@ int main()
 	romfsInit();
 	sdmcInit();
 	cfguInit();
+	acInit();
 	// Create Folder if missing.
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
@@ -90,6 +91,7 @@ int main()
 	Gui::exit();
 	gfxExit();
 	cfguExit();
+	acExit();
 	romfsExit();
 	sdmcExit();
 	return 0;
