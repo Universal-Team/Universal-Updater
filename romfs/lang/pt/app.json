@@ -36,5 +36,11 @@
 	"TITLE": "título: ",
 	"FUTURE_SCRIPT": "Este Script é um Script Futuro.",
 	"OUTDATED_SCRIPT": "Este Script está desatualizado.",
-	"UP-TO-DATE": "Este Script está atualizado."
+	"UP-TO-DATE": "Este Script está atualizado.",
+	"FTP_MODE": "FTP Mode",
+	"FTP_INITIALIZED": "FTP Initialized.",
+	"FAILED_GET_IP": "Failed to get IP.",
+	"FAILED_INITIALIZE_FTP": "Failed to initialize FTP.",
+	"B_FTP_EXIT": "Press B to exit from FTP.",
+	"WIFI_NOT_ENABLED": "WiFi not enabled."
 }
