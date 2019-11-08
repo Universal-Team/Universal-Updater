@@ -37,10 +37,10 @@
 	"FUTURE_SCRIPT": "Questo script è uno script futuro.",
 	"OUTDATED_SCRIPT": "Questo script è obsoleto.",
 	"UP-TO-DATE": "Questo script è aggiornato.",
-	"FTP_MODE": "FTP Mode",
-	"FTP_INITIALIZED": "FTP Initialized.",
-	"FAILED_GET_IP": "Failed to get IP.",
-	"FAILED_INITIALIZE_FTP": "Failed to initialize FTP.",
-	"B_FTP_EXIT": "Press B to exit from FTP.",
-	"WIFI_NOT_ENABLED": "WiFi not enabled."
+	"FTP_MODE": "Modalità FTP",
+	"FTP_INITIALIZED": "FTP inizializzato.",
+	"FAILED_GET_IP": "Impossibile ottenere l'IP.",
+	"FAILED_INITIALIZE_FTP": "Inizializzazione FTP non riuscita.",
+	"B_FTP_EXIT": "Premi B per uscire da FTP.",
+	"WIFI_NOT_ENABLED": "WiFi non abilitato."
 }
