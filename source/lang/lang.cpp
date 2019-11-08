@@ -11,7 +11,7 @@ std::string Lang::get(const std::string &key) {
 	return appJson.at(key).get_ref<const std::string&>();
 }
 
-std::string langs[] = {"de", "en", "es", "fr", "it", "jp", "lt", "pt"};
+std::string langs[] = {"br", "de", "en", "es", "fr", "it", "jp", "lt", "pt", "ru"};
 
 void Lang::load(int lang) {
 	FILE* values;
