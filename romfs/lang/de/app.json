@@ -42,5 +42,5 @@
 	"FAILED_GET_IP": "Fehler beim Abrufen der IP.",
 	"FAILED_INITIALIZE_FTP": "FTP-Initialisierung fehlgeschlagen.",
 	"B_FTP_EXIT": "Drücken Sie B zum Beenden des FTP.",
-	"WIFI_NOT_ENABLED": "WiFi not enabled."
+	"WIFI_NOT_ENABLED": "WLAN nicht aktiviert."
 }
