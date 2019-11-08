@@ -49,7 +49,7 @@ std::string Config::ScriptPath;
 
 void Config::loadConfig() {
 	// [UI]
-	Config::lang = settingsini.GetInt("UI", "LANGUAGE", 1);
+	Config::lang = settingsini.GetInt("UI", "LANGUAGE", 2);
 	Config::Color1 = settingsini.GetInt("UI", "BARCOLOR", BarColor);
 	Config::Color2 = settingsini.GetInt("UI", "TOPBGCOLOR", TopBGColor);
 	Config::Color3 = settingsini.GetInt("UI", "BOTTOMBGCOLOR", BottomBGColor);
