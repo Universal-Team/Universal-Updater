@@ -129,9 +129,9 @@ void ScriptBrowse::Draw(void) const {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 		}
 
-		if(infoJson[screenPos+i]["curRevision"] < infoJson[selection]["revision"]) {
+		if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
 			Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
-		} else if(infoJson[screenPos+i]["curRevision"] == infoJson[selection]["revision"]) {
+		} else {
 			Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
 		}
 		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
