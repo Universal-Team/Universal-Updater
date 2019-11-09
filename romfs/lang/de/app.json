@@ -36,5 +36,11 @@
 	"TITLE": "Titel: ",
 	"FUTURE_SCRIPT": "Dieses Skript ist ein Zukunfts Skript.",
 	"OUTDATED_SCRIPT": "Dieses Skript ist veraltet.",
-	"UP-TO-DATE": "Dieses Skript ist auf dem neusten Stand."
+	"UP-TO-DATE": "Dieses Skript ist auf dem neusten Stand.",
+	"FTP_MODE": "FTP Modus",
+	"FTP_INITIALIZED": "FTP initialisiert.",
+	"FAILED_GET_IP": "Fehler beim Abrufen der IP.",
+	"FAILED_INITIALIZE_FTP": "FTP-Initialisierung fehlgeschlagen.",
+	"B_FTP_EXIT": "Drücken Sie B zum Beenden des FTP.",
+	"WIFI_NOT_ENABLED": "WLAN nicht aktiviert."
 }

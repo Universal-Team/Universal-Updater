@@ -34,7 +34,13 @@
 	"CURRENT_REV": "Dabartinė revizija: ",
 	"AUTHOR": "autorius: ",
 	"TITLE": "pavadinimas: ",
-	"FUTURE_SCRIPT": "This Script is a Future Script.",
-	"OUTDATED_SCRIPT": "This Script is outdated.",
-	"UP-TO-DATE": "This Script is Up-To-Date."
+	"FUTURE_SCRIPT": "Šis skriptas yra iš ateities.",
+	"OUTDATED_SCRIPT": "Šis skriptas yra pasenęs.",
+	"UP-TO-DATE": "Šis skriptas yra atnaujintas.",
+	"FTP_MODE": "FTP režimas",
+	"FTP_INITIALIZED": "FTP inicijuotas.",
+	"FAILED_GET_IP": "Nepavyko gauti IP adreso.",
+	"FAILED_INITIALIZE_FTP": "Nepavyko inicijuoti FTP.",
+	"B_FTP_EXIT": "Paspauskite B kad išeitumėte.",
+	"WIFI_NOT_ENABLED": "WiFi nėra įjungtas."
 }
