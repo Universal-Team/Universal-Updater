@@ -674,3 +674,10 @@ void download::extractFileList(std::string file, std::string input, std::string 
 	extractArchive(file, input, output);
 	showProgressBar = false;
 }
+
+void download::displayTimeMsg(std::string message, int seconds) {
+	DisplayMsg(message);
+	for (int i = 0; i < 60*seconds; i++) {
+		gspWaitForVBlank();
+	}
+}

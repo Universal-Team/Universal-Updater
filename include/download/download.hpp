@@ -109,4 +109,5 @@ namespace download {
 	void deleteFileList(std::string file, std::string message);
 	void installFileList(std::string file, std::string message);
 	void extractFileList(std::string file, std::string input, std::string output, std::string message);
+	void displayTimeMsg(std::string message, int seconds);
 }

@@ -224,6 +224,17 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else	missing = true;
 			if(!missing)	createFile(file.c_str());
+
+		} else if (type == "timeMsg") {
+			bool missing = false;
+			std::string message;
+			int seconds;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
+			seconds = json.at(choice).at(i).at("seconds");
+			else	missing = true;
+			if(!missing)	download::displayTimeMsg(message, seconds);
 		}
 	}
 	doneMsg();
