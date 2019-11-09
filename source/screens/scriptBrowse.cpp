@@ -41,11 +41,13 @@ nlohmann::json infoJson;
 #define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"
 
 extern std::string get(nlohmann::json json, const std::string &key, const std::string &key2);
+std::string maxScripts;
 
 void fixInfo(nlohmann::json &json) {
     for(uint i=0;i<json.size();i++) {
         if(!json[i].contains("title"))    json[i]["title"] = "TITLE";
         if(!json[i].contains("author"))    json[i]["author"] = "AUTHOR";
+		if(!json[i].contains("shortDesc"))	json[i]["shortDesc"] = "SHORTDESC";
         if(!json[i].contains("revision"))    json[i]["revision"] = 0;
         if(!json[i].contains("curRevision"))    json[i]["curRevision"] = 0;
         if(!json[i].contains("version"))    json[i]["revision"] = 0;
@@ -66,6 +68,7 @@ nlohmann::json infoFromScript(const std::string &path) {
 	if(in.contains("info")) {
 		if(in["info"].contains("title") && in["info"]["title"].is_string())	out["title"] = in["info"]["title"];
 		if(in["info"].contains("author") && in["info"]["author"].is_string())	out["author"] = in["info"]["author"];
+		if(in["info"].contains("shortDesc") && in["info"]["shortDesc"].is_string())	out["shortDesc"] = in["info"]["shortDesc"];
 		if(in["info"].contains("version") && in["info"]["version"].is_number())	out["version"] = in["info"]["version"];
 		if(in["info"].contains("revision") && in["info"]["revision"].is_number())	out["revision"] = in["info"]["revision"];
 	}
@@ -102,24 +105,26 @@ ScriptBrowse::ScriptBrowse() {
 	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	fixInfo(infoJson);
-
 	findExistingFiles(infoJson);
+	maxScripts = std::to_string(infoJson.size());
 }
 
 void ScriptBrowse::Draw(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTBROWSE"), 400);
+	std::string revision = std::to_string(int64_t(infoJson[selection]["curRevision"]));
+	revision += " / ";
+	revision += std::to_string(int64_t(infoJson[selection]["revision"]));
 
-	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(infoJson[selection]["title"]), 400);
-	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(infoJson[selection]["author"]), 400);
-	Gui::DrawStringCentered(0, 120, 0.7f, Config::TxtColor, Lang::get("INSTALLED_REV") + std::to_string(int64_t(infoJson[selection]["curRevision"])), 400);
-	Gui::DrawStringCentered(0, 140, 0.7f, Config::TxtColor, Lang::get("CURRENT_REV")+ std::to_string(int64_t(infoJson[selection]["revision"])), 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
+	Gui::DrawStringCentered(0, 3, 0.8f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+
+	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
 	if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 160, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 400);
 	} else if(infoJson[selection]["curRevision"] == infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 160, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 400);
+		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 400);
 	} else if(infoJson[selection]["curRevision"] > infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 160, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
@@ -134,6 +139,7 @@ void ScriptBrowse::Draw(void) const {
 		} else {
 			Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
 		}
+		Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
 		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
 	}
