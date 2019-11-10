@@ -63,11 +63,11 @@ int main()
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 
-	Config::loadConfig();
 	// We need to make sure, the file exist.
-	if(access("sdmc:/3ds/Universal-Updater/Settings.ini", F_OK) == -1 ) {
-		Config::saveConfig();
+	if(access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) == -1 ) {
+		Config::initializeNewConfig();
 	}
+	Config::load();
 	Lang::load(Config::lang);
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users

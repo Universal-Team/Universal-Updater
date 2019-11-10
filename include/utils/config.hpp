@@ -30,14 +30,25 @@
 #include <string>
 
 namespace Config {
-
 	// [UI]
 	extern int lang; // The current Language.
 	extern int Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor; // Colors!
 	extern std::string ScriptPath;
 
-	void loadConfig();
-	void saveConfig();
+	void load();
+	void save();
+	void initializeNewConfig();
+
+	bool getBool(const std::string &key);
+	void setBool(const std::string &key, bool v);
+
+	int getInt(const std::string &key);
+	void setInt(const std::string &key, int v);
+
+	std::string getString(const std::string &key);
+	void setString(const std::string &key, const std::string &v);
+
+	int getLang(const std::string &key);
 }
 
 #endif

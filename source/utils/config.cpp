@@ -27,16 +27,11 @@
 #include "gui.hpp"
 
 #include "utils/common.hpp"
-#include "utils/inifile.h"
 #include "utils/config.hpp"
+#include "utils/json.hpp"
 
 #include <string>
 #include <unistd.h>
-
-using std::string;
-using std::wstring;
-
-static CIniFile settingsini( "sdmc:/3ds/Universal-Updater/Settings.ini" );
 
 int Config::lang; // Current Language.
 int Config::Color1;
@@ -46,28 +41,96 @@ int Config::TxtColor;
 int Config::SelectedColor;
 int Config::UnselectedColor;
 std::string Config::ScriptPath;
+nlohmann::json configJson;
 
-void Config::loadConfig() {
-	// [UI]
-	Config::lang = settingsini.GetInt("UI", "LANGUAGE", 2);
-	Config::Color1 = settingsini.GetInt("UI", "BARCOLOR", BarColor);
-	Config::Color2 = settingsini.GetInt("UI", "TOPBGCOLOR", TopBGColor);
-	Config::Color3 = settingsini.GetInt("UI", "BOTTOMBGCOLOR", BottomBGColor);
-	Config::TxtColor = settingsini.GetInt("UI", "TEXTCOLOR", WHITE);
-	Config::SelectedColor = settingsini.GetInt("UI", "SELECTEDCOLOR", SelectedColordefault);
-	Config::UnselectedColor = settingsini.GetInt("UI", "UNSELECTEDCOLOR", UnselectedColordefault);
-	Config::ScriptPath = settingsini.GetString("UI", "SCRIPTPATH", SCRIPTS_PATH);
+void Config::load() {
+	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
+	if(file) {
+		configJson = nlohmann::json::parse(file, nullptr, false);
+		Config::Color1 = getInt("BARCOLOR");
+		Config::Color2 = getInt("TOPBGCOLOR");
+		Config::Color3 = getInt("BOTTOMBGCOLOR");
+		Config::TxtColor = getInt("TEXTCOLOR");
+		Config::SelectedColor = getInt("SELECTEDCOLOR");
+		Config::UnselectedColor = getInt("UNSELECTEDCOLOR");
+		Config::ScriptPath = getString("SCRIPTPATH");
+		Config::lang = getInt("LANGUAGE");
+		fclose(file);
+	} else {
+		Config::Color1 = BarColor;
+		Config::Color2 = TopBGColor;
+		Config::Color3 = BottomBGColor;
+		Config::TxtColor = WHITE;
+		Config::SelectedColor = SelectedColordefault;
+		Config::UnselectedColor = UnselectedColordefault;
+		Config::ScriptPath = SCRIPTS_PATH;
+		Config::lang = 2;
+	}
 }
 
-void Config::saveConfig() {
-	// [UI]
-	settingsini.SetInt("UI", "LANGUAGE", Config::lang);
-	settingsini.SetInt("UI", "BARCOLOR", Config::Color1);
-	settingsini.SetInt("UI", "TOPBGCOLOR", Config::Color2);
-	settingsini.SetInt("UI", "BOTTOMBGCOLOR", Config::Color3);
-	settingsini.SetInt("UI", "TEXTCOLOR", Config::TxtColor);
-	settingsini.SetInt("UI", "SELECTEDCOLOR", Config::SelectedColor);
-	settingsini.SetInt("UI", "UNSELECTEDCOLOR", Config::UnselectedColor);
-	settingsini.SetString("UI", "SCRIPTPATH", Config::ScriptPath);
-	settingsini.SaveIniFile("sdmc:/3ds/Universal-Updater/Settings.ini");
+void Config::save() {
+	Config::setInt("BARCOLOR", Config::Color1);
+	Config::setInt("TOPBGCOLOR", Config::Color2);
+	Config::setInt("BOTTOMBGCOLOR", Config::Color3);
+	Config::setInt("TEXTCOLOR", Config::TxtColor);
+	Config::setInt("SELECTEDCOLOR", Config::SelectedColor);
+	Config::setInt("UNSELECTEDCOLOR", Config::UnselectedColor);
+	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
+	Config::setInt("LANGUAGE", 2);
+	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
+	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+	fclose(file);
+}
+
+void Config::initializeNewConfig() {
+	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
+	if(file) configJson = nlohmann::json::parse(file, nullptr, false);
+	Config::setInt("BARCOLOR", BarColor);
+	Config::setInt("TOPBGCOLOR", TopBGColor);
+	Config::setInt("BOTTOMBGCOLOR", BottomBGColor);
+	Config::setInt("TEXTCOLOR", WHITE);
+	Config::setInt("SELECTEDCOLOR", SelectedColordefault);
+	Config::setInt("UNSELECTEDCOLOR", UnselectedColordefault);
+	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
+	Config::setInt("LANGUAGE", 2);
+	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+	fclose(file);
+}
+
+
+bool Config::getBool(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return false;
+	}
+	return configJson.at(key).get_ref<const bool&>();
+}
+void Config::setBool(const std::string &key, bool v) {
+	configJson[key] = v;
+}
+
+int Config::getInt(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return 0;
+	}
+	return configJson.at(key).get_ref<const int64_t&>();
+}
+void Config::setInt(const std::string &key, int v) {
+	configJson[key] = v;
+}
+
+std::string Config::getString(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return "";
+	}
+	return configJson.at(key).get_ref<const std::string&>();
+}
+void Config::setString(const std::string &key, const std::string &v) {
+	configJson[key] = v;
+}
+
+int Config::getLang(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return 1;
+	}
+	return configJson.at(key).get_ref<const int64_t&>();
 }

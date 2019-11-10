@@ -309,7 +309,7 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(fileInfo[selection].title), 400);
 	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[selection].author), 400);
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
-	
+
 	Gui::DrawBottom();
 	if (listMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
@@ -508,7 +508,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		Config::TxtColor = TextColor;
 		Config::SelectedColor = selected;
 		Config::UnselectedColor = unselected;
-		Config::saveConfig();
+		Config::save();
 	}
 
 	if (hDown & KEY_B) {

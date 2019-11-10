@@ -35,7 +35,6 @@
 #include "utils/config.hpp"
 #include "utils/extract.hpp"
 #include "utils/fileBrowse.h"
-#include "utils/inifile.h"
 #include "utils/thread.hpp"
 
 #include <sys/stat.h>
