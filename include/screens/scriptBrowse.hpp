@@ -40,9 +40,10 @@ public:
 	ScriptBrowse();
 
 private:
-	nlohmann::json currentFile;
+	int listMode = 0;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
+	mutable int screenPosList = 0;
 	mutable int selection = 0;
 	int keyRepeatDelay = 0;
 	int fastMode = false;

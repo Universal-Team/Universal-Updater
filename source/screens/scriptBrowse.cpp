@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #define ENTRIES_PER_SCREEN 3
+#define ENTRIES_PER_LIST 7
 
 nlohmann::json infoJson;
 
@@ -127,21 +128,39 @@ void ScriptBrowse::Draw(void) const {
 		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
-	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
-		if(screenPos + i == selection) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
-		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
-		}
+	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
-		if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
-			Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
-		} else {
-			Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	if (listMode == 0) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
+			if(screenPos + i == selection) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
+			} else { 
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			}
+
+			if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
+				Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+			} else {
+				Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+			}
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
 		}
-		Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
-		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
-		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
+	} else if (listMode == 1) {
+		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
+			if(screenPosList + i == selection) {
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
+			} else { 
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::UnselectedColor);
+			}
+
+			if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
+				Gui::Draw_Rect(300, 35+(i*25), 10, 10, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+			} else {
+				Gui::Draw_Rect(300, 35+(i*25), 10, 10, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+			}
+			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 320);
+		}
 	}
 }
 
@@ -205,9 +224,25 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		fastMode = false;
 	}
 
-	if(selection < screenPos) {
-		screenPos = selection;
-	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-		screenPos = selection - ENTRIES_PER_SCREEN + 1;
+	if (hDown & KEY_X) {
+		if (listMode == 0) {
+			listMode = 1;
+		} else {
+			listMode = 0;
+		}
+	}
+
+	if (listMode == 0) {
+		if(selection < screenPos) {
+			screenPos = selection;
+		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+			screenPos = selection - ENTRIES_PER_SCREEN + 1;
+		}
+	} else if (listMode == 1) {
+		if(selection < screenPosList) {
+			screenPosList = selection;
+		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
+			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
 	}
 }
