@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #define ENTRIES_PER_SCREEN 3
+#define ENTRIES_PER_LIST 7
 
 bool isScriptSelected = false;
 
@@ -44,6 +45,7 @@ bool isScriptSelected = false;
 struct Info {
 	std::string title;
 	std::string author;
+	std::string shortDesc;
 };
 
 std::string choice;
@@ -84,6 +86,7 @@ Info parseInfo(std::string fileName) {
 	Info info;
 	info.title = get(json, "info", "title");
 	info.author = get(json, "info", "author");
+	info.shortDesc = get(json, "info", "shortDesc");
 	return info;
 }
 
@@ -298,22 +301,40 @@ ScriptList::ScriptList() {
 void ScriptList::DrawList(void) const {
 	std::string line1;
 	std::string line2;
+	std::string scriptAmount = std::to_string(selection +1) + " / " + std::to_string(fileInfo.size());
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 237-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
+
+	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(fileInfo[selection].title), 400);
+	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[selection].author), 400);
+	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
+	
 	Gui::DrawBottom();
-	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
-		line1 = fileInfo[screenPos + i].title;
-		line2 = fileInfo[screenPos + i].author;
-		if(screenPos + i == selection) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
-		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+	if (listMode == 0) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
+			line1 = fileInfo[screenPos + i].title;
+			line2 = fileInfo[screenPos + i].author;
+			if(screenPos + i == selection) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
+			} else { 
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			}
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 		}
-		Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
-		Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+	} else if (listMode == 1) {
+		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size();i++) {
+			line1 = fileInfo[screenPosList + i].title;
+			if(screenPosList + i == selection) {
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
+			} else { 
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::UnselectedColor);
+			}
+			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, Config::TxtColor, line1, 320);
+		}
 	}
 }
-
 
 void ScriptList::Draw(void) const {
 	if (mode == 0){
@@ -334,20 +355,34 @@ void loadDesc(void) {
 
 void ScriptList::DrawSingleObject(void) const {
 	std::string info;
+	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(fileInfo2.size());
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.8f, TextColor, selectedTitle, 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
 	for(uint i=0;i<lines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
 	Gui::DrawBottom();
-	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
-		info = fileInfo2[screenPos2 + i];
-		if(screenPos2 + i == selection2) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
-		} else { 
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
+	if (listMode == 0) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
+			info = fileInfo2[screenPos2 + i];
+			if(screenPos2 + i == selection2) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
+			} else { 
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
+			}
+			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
-		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
+	} else if (listMode == 1) {
+		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size();i++) {
+			info = fileInfo2[screenPosList2 + i];
+			if(screenPosList2 + i == selection2) {
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, selected);
+			} else { 
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, unselected);
+			}
+			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, TextColor, info, 320);
+		}
 	}
 }
 
@@ -410,10 +445,18 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		fastMode = false;
 	}
 
-	if(selection < screenPos) {
-		screenPos = selection;
-	} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-		screenPos = selection - ENTRIES_PER_SCREEN + 1;
+	if (listMode == 0) {
+		if(selection < screenPos) {
+			screenPos = selection;
+		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+			screenPos = selection - ENTRIES_PER_SCREEN + 1;
+		}
+	} else if (listMode == 1) {
+		if(selection < screenPosList) {
+			screenPosList = selection;
+		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
+			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
 	}
 }
 
@@ -475,10 +518,18 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		mode = 0;
 	}
 
-	if(selection2 < screenPos2) {
-		screenPos2 = selection2;
-	} else if (selection2 > screenPos2 + ENTRIES_PER_SCREEN - 1) {
-		screenPos2 = selection2 - ENTRIES_PER_SCREEN + 1;
+	if (listMode == 0) {
+		if(selection2 < screenPos2) {
+			screenPos2 = selection2;
+		} else if (selection2 > screenPos2 + ENTRIES_PER_SCREEN - 1) {
+			screenPos2 = selection2 - ENTRIES_PER_SCREEN + 1;
+		}
+	} else if (listMode == 1) {
+		if(selection2 < screenPosList2) {
+			screenPosList2 = selection2;
+		} else if (selection2 > screenPosList2 + ENTRIES_PER_LIST - 1) {
+			screenPosList2 = selection2 - ENTRIES_PER_LIST + 1;
+		}
 	}
 }
 
@@ -488,5 +539,13 @@ void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		ListSelection(hDown, hHeld);
 	} else if (mode == 1) {
 		SelectFunction(hDown, hHeld);
+	}
+
+	if (hDown & KEY_X) {
+		if (listMode == 0) {
+			listMode = 1;
+		} else {
+			listMode = 0;
+		}
 	}
 }

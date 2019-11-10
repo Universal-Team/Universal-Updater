@@ -46,10 +46,13 @@ private:
 	void SelectFunction(u32 hDown, u32 hHeld);
 
 	int mode = 0;
+	int listMode = 0;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
+	mutable int screenPosList = 0;
 	mutable int selection = 0;
 	mutable int screenPos2 = 0;
+	mutable int screenPosList2 = 0;
 	mutable int selection2 = 0;
 
 	int keyRepeatDelay = 0;
