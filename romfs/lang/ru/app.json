@@ -42,5 +42,6 @@
 	"FAILED_GET_IP": "Не удается получить IP.",
 	"FAILED_INITIALIZE_FTP": "Не удалось инициализировать FTP.",
 	"B_FTP_EXIT": "Нажмите B для выхода из FTP.",
-	"WIFI_NOT_ENABLED": "WiFi не включен."
+	"WIFI_NOT_ENABLED": "WiFi не включен.",
+	"SCRIPTCREATOR": "Script Creator"
 }
