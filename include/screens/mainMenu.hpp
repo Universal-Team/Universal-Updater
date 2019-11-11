@@ -40,10 +40,12 @@ public:
 private:
 	int Selection = 0;
 	std::vector<Structs::ButtonPos> mainButtons = {		
-		{10, 75, 140, 35, -1}, // ScriptList.
-		{170, 75, 140, 35, -1}, // ScriptBrowse.
-		{10, 140, 140, 35, -1}, // Language.
-		{170, 140, 140, 35, -1}, // Colors.
+		{10, 40, 140, 35, -1}, // Scriptlist.
+		{170, 40, 140, 35, -1}, // ScriptBrowse.
+		{10, 100, 140, 35, -1}, // TinyDB.
+		{170, 100, 140, 35, -1}, // ScriptCreator.
+		{10, 160, 140, 35, -1}, // Language.
+		{170, 160, 140, 35, -1}, // Colors.
 	};
 };
 

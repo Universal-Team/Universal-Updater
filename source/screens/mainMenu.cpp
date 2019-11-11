@@ -29,15 +29,20 @@
 #include "screens/ftpScreen.hpp"
 #include "screens/mainMenu.hpp"
 #include "screens/scriptBrowse.hpp"
+#include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 #include "screens/settings.hpp"
-
+#include "screens/tinyDB.hpp"
 
 #include "utils/config.hpp"
 
 extern int mode;
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern bool checkWifiStatus(void);
+
+// This is for the Script Creator, so no one can access it for now, until it is stable or so.
+bool isTesting = false;
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
@@ -45,7 +50,7 @@ void MainMenu::Draw(void) const {
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, VERSION_STRING), 237-Gui::GetStringHeight(0.5f, VERSION_STRING), 0.5f, Config::TxtColor, VERSION_STRING);
 	Gui::DrawBottom();
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		if (Selection == i) {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
 		} else {
@@ -55,8 +60,10 @@ void MainMenu::Draw(void) const {
 
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TinyDB"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "TinyDB", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -64,13 +71,19 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		exiting = true;
 	}
 
-	if(hDown & KEY_UP) {
+	if (hDown & KEY_UP) {
 		if(Selection > 1)	Selection -= 2;
-	} else if(hDown & KEY_DOWN) {
-		if(Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
-	} else if (hDown & KEY_LEFT) {
+	}
+
+	if (hDown & KEY_DOWN) {
+		if(Selection < 4)	Selection += 2;
+	}
+
+	if (hDown & KEY_LEFT) {
 		if (Selection%2) Selection--;
-	} else if (hDown & KEY_RIGHT) {
+	}
+
+	if (hDown & KEY_RIGHT) {
 		if (!(Selection%2)) Selection++;
 	}
 
@@ -80,13 +93,25 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<ScriptList>());
 				break;
 			case 1:
-				Gui::setScreen(std::make_unique<ScriptBrowse>());
+				if (checkWifiStatus() == true) {
+					Gui::setScreen(std::make_unique<ScriptBrowse>());
+				} else {
+					notConnectedMsg();
+				}
 				break;
 			case 2:
+				Gui::setScreen(std::make_unique<TinyDB>());
+				break;
+			case 3:
+				if (isTesting == true) {
+					Gui::setScreen(std::make_unique<ScriptCreator>());
+				}
+				break;
+			case 4:
 				mode = 0;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
-			case 3:
+			case 5:
 				mode = 1;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
@@ -94,18 +119,31 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_X) {
-		Gui::setScreen(std::make_unique<FTPScreen>());
+		if (checkWifiStatus() == true) {
+			Gui::setScreen(std::make_unique<FTPScreen>());
+		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<ScriptList>());
 		} else if (touching(touch, mainButtons[1])) {
-			Gui::setScreen(std::make_unique<ScriptBrowse>());
-		} else if (touching(touch, mainButtons[2])) {
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<ScriptBrowse>());
+			} else {
+				notConnectedMsg();
+			}
+
+ 		} else if (touching(touch, mainButtons[2])) {
+			Gui::setScreen(std::make_unique<TinyDB>());
+		} else if (touching(touch, mainButtons[3])) {
+			if (isTesting == true) {
+				Gui::setScreen(std::make_unique<ScriptCreator>());
+			}
+		} else if (touching(touch, mainButtons[4])) {
 			mode = 0;
 			Gui::setScreen(std::make_unique<Settings>());
-		} else if (touching(touch, mainButtons[3])) {
+		} else if (touching(touch, mainButtons[5])) {
 			mode = 1;
 			Gui::setScreen(std::make_unique<Settings>());
 		}

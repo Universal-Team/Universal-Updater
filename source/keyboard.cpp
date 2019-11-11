@@ -150,3 +150,24 @@ int Input::getUint(int max, std::string Text) {
 	if(i>max)	return 255;
 	return i;
 }
+
+std::string Input::getString(const std::string &hint, uint maxLength)
+{
+	std::string string;
+	C3D_FrameEnd(0);
+	SwkbdState state;
+	const char *hintText = hint.c_str();
+	swkbdInit(&state, SWKBD_TYPE_NORMAL, 2, maxLength);
+	swkbdSetHintText(&state, hintText);
+	swkbdSetValidation(&state, SWKBD_NOTBLANK_NOTEMPTY, SWKBD_FILTER_PROFANITY, 0);
+	char input[maxLength + 1]	= {0};
+	SwkbdButton ret = swkbdInputText(&state, input, sizeof(input));
+	input[maxLength]		= '\0';
+	if (ret == SWKBD_BUTTON_CONFIRM)
+	{
+		string = input;
+		return string;
+	} else {
+		return "";
+	}
+}
