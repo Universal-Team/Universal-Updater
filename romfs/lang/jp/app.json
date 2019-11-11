@@ -42,5 +42,6 @@
 	"FAILED_GET_IP": "Failed to get IP.",
 	"FAILED_INITIALIZE_FTP": "Failed to initialize FTP.",
 	"B_FTP_EXIT": "Press B to exit from FTP.",
-	"WIFI_NOT_ENABLED": "WiFi not enabled."
+	"WIFI_NOT_ENABLED": "WiFi not enabled.",
+	"SCRIPTCREATOR": "Script Creator"
 }
