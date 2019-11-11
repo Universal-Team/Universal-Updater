@@ -41,7 +41,7 @@
 	"FTP_INITIALIZED": "FTPが初期化されました",
 	"FAILED_GET_IP": "IPを取得できませんでした",
 	"FAILED_INITIALIZE_FTP": "FTPの初期化に失敗しました",
-	"B_FTP_EXIT": "Press B to exit from FTP.",
-	"WIFI_NOT_ENABLED": "WiFi not enabled.",
-	"SCRIPTCREATOR": "Script Creator"
+	"B_FTP_EXIT": "Bを押してFTPに閉じます",
+	"WIFI_NOT_ENABLED": "WiFiが有効になっていません！",
+	"SCRIPTCREATOR": "スクリプトの作成"
 }
