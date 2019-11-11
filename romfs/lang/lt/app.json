@@ -42,5 +42,6 @@
 	"FAILED_GET_IP": "Nepavyko gauti IP adreso.",
 	"FAILED_INITIALIZE_FTP": "Nepavyko inicijuoti FTP.",
 	"B_FTP_EXIT": "Paspauskite B kad išeitumėte.",
-	"WIFI_NOT_ENABLED": "WiFi nėra įjungtas."
+	"WIFI_NOT_ENABLED": "WiFi nėra įjungtas.",
+	"SCRIPTCREATOR": "Script Creator"
 }
