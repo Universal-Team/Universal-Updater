@@ -42,5 +42,6 @@
 	"FAILED_GET_IP": "Impossibile ottenere l'IP.",
 	"FAILED_INITIALIZE_FTP": "Inizializzazione FTP non riuscita.",
 	"B_FTP_EXIT": "Premi B per uscire da FTP.",
-	"WIFI_NOT_ENABLED": "WiFi non abilitato."
+	"WIFI_NOT_ENABLED": "WiFi non abilitato.",
+	"SCRIPTCREATOR": "Script Creator"
 }
