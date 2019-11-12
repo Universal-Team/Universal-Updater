@@ -1,4 +1,6 @@
 --atlas -f rgba -z auto
 
+sprites/search.png
+
 sprites/credits/discord.png
 sprites/credits/voltZ.png

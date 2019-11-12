@@ -99,7 +99,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 2:
-				Gui::setScreen(std::make_unique<TinyDB>());
+				if (checkWifiStatus() == true) {
+					Gui::setScreen(std::make_unique<TinyDB>());
+				} else {
+					notConnectedMsg();
+				}
 				break;
 			case 3:
 				if (isTesting == true) {
@@ -112,6 +116,8 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			case 5:
 				if (checkWifiStatus() == true) {
 					Gui::setScreen(std::make_unique<FTPScreen>());
+				} else {
+					notConnectedMsg();
 				}
 				break;
 		}
@@ -134,7 +140,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
  		} else if (touching(touch, mainButtons[2])) {
-			Gui::setScreen(std::make_unique<TinyDB>());
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<TinyDB>());
+			} else {
+				notConnectedMsg();
+			}
 		} else if (touching(touch, mainButtons[3])) {
 			if (isTesting == true) {
 				Gui::setScreen(std::make_unique<ScriptCreator>());
@@ -144,6 +154,8 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[5])) {
 			if (checkWifiStatus() == true) {
 				Gui::setScreen(std::make_unique<FTPScreen>());
+			} else {
+				notConnectedMsg();
 			}
 		}
 	}

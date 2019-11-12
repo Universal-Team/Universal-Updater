@@ -128,6 +128,9 @@ void ScriptBrowse::Draw(void) const {
 		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
+	Gui::Draw_Rect(0, 0, 27, 30, WHITE);
+	Gui::sprite(sprites_search_idx, -3, 0);
+	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
 	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
 	if (listMode == 0) {

@@ -67,5 +67,7 @@
 	"SCRIPTCREATORS":					"All Script Creators",
 	"CREATING_SCRIPTS":					"- For creating Scripts for Universal-Updater.",
 	"SHOW_QR":							"Click here to show the QR Code.",
-	"LINK":								"Join our Discord: https://discord.gg/KDJCfGF"
+	"LINK":								"Join our Discord: https://discord.gg/KDJCfGF",
+
+	"TINYDB_DOWNLOADING":					"Downloading database of available titles from TinyDB..."
 }

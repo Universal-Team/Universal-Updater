@@ -24,20 +24,195 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "download/download.hpp"
+
 #include "screens/tinyDB.hpp"
 
 #include "utils/config.hpp"
+#include "utils/fileBrowse.h"
+#include "utils/json.hpp"
+
+#define ENTRIES_PER_SCREEN 3
+#define ENTRIES_PER_LIST 7
+
+// JSON file for TinyDB.
+nlohmann::json tinyDBJson;
+std::string selectedOption;
+
+#define tinyDBFile "sdmc:/3ds/Universal-Updater/TinyDB.json"
+
+extern std::string get(nlohmann::json json, const std::string &key, const std::string &key2);
+std::string maxEntries;
+
+// Parse the Objects.
+std::vector<std::string> parseObjects() {
+	FILE* file = fopen(tinyDBFile, "rt");
+	if(!file) {
+		printf("File not found\n");
+		fclose(file);
+		return {{""}};
+	}
+	tinyDBJson = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	std::vector<std::string> objs;
+	for(auto it = tinyDBJson.begin();it != tinyDBJson.end(); it++) {
+		if(it.key() != "info") {
+			objs.push_back(it.key());
+		}
+	}
+	return objs;
+}
+
+std::vector<std::string> tinyDBList;
+
+TinyDB::TinyDB() {
+	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
+	downloadToFile("https://tinydb.eiphax.tech/api/universal.json?raw=true", tinyDBFile);
+    tinyDBList = parseObjects();
+}
 
 // To-Do.
 void TinyDB::Draw(void) const {
-    Gui::DrawTop();
+    std::string info;
+    Gui::ScreenDraw(top);
+	Gui::Draw_Rect(0, 0, 400, 30, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 30, 400, 180, C2D_Color32(140, 140, 140, 255));
+	Gui::Draw_Rect(0, 210, 400, 30, C2D_Color32(63, 81, 181, 255));
+
     Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
-    Gui::DrawBottom();
+    std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
+    Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+
+
+    Gui::ScreenDraw(bottom);
+	Gui::Draw_Rect(0, 0, 320, 30, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 30, 320, 180, C2D_Color32(140, 140, 140, 255));
+	Gui::Draw_Rect(0, 210, 320, 30, C2D_Color32(63, 81, 181, 255));
+
+    // Search Icon.
+	Gui::sprite(sprites_search_idx, -3, 0);
+	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
+
+    if (listMode == 0) {
+    	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
+	    	info = tinyDBList[screenPos + i];
+		    if(screenPos + i == selection) {
+			    Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
+	    	} else { 
+		    	Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
+		    }
+    		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, info, 320);
+    	}
+	} else if (listMode == 1) {
+		for(int i=0;i<ENTRIES_PER_LIST && i<(int)tinyDBList.size();i++) {
+			info = tinyDBList[screenPosList + i];
+			if(screenPosList + i == selection) {
+				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
+			}
+			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, Config::TxtColor, info, 320);
+		}
+	}
 }
 
 void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+    if (keyRepeatDelay)	keyRepeatDelay--;
     if (hDown & KEY_B) {
         Gui::screenBack();
         return;
     }
+
+	if (hDown & KEY_R) {
+		fastMode = true;
+	}
+
+	if (hDown & KEY_L) {
+		fastMode = false;
+	}
+
+	if (hHeld & KEY_UP && !keyRepeatDelay) {
+		if (selection > 0) {
+			selection--;
+		} else {
+			selection = (int)tinyDBList.size()-1;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
+	}
+
+	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+		if (selection < (int)tinyDBList.size()-1) {
+			selection++;
+		} else {
+			selection = 0;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
+	}
+
+	if (listMode == 0) {
+		if(selection < screenPos) {
+			screenPos = selection;
+		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+			screenPos = selection - ENTRIES_PER_SCREEN + 1;
+		}
+	} else if (listMode == 1) {
+		if(selection < screenPosList) {
+			screenPosList = selection;
+		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
+			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
+	}
+
+	if (hDown & KEY_X) {
+		if (listMode == 0) {
+			listMode = 1;
+		} else {
+			listMode = 0;
+		}
+	}
+
+    if (hDown & KEY_A) {
+        selectedOption = tinyDBList[selection];
+        execute();
+    }
+}
+
+void TinyDB::execute() {
+	for(int i=0;i<(int)tinyDBJson.at(selectedOption).size();i++) {
+		std::string type = tinyDBJson.at(selectedOption).at(i).at("type");
+		if(type == "deleteFile") {
+			bool missing = false;
+			std::string file, message;
+			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			else    missing = true;
+			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(!missing)	download::deleteFileList(file, message);
+
+		} else if(type == "downloadFile") {
+			bool missing = false;
+			std::string file, output, message;
+			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			else	missing = true;
+			if(tinyDBJson.at(selectedOption).at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at(i).at("output");
+			else	missing = true;
+			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(!missing)	download::downloadFile(file, output, message);
+		
+		} else if(type == "installCia") {
+			bool missing = false;
+			std::string file, message;
+			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			else    missing = true;
+			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(!missing)	download::installFileList(file, message);
+		}
+	}
+	doneMsg();
 }
