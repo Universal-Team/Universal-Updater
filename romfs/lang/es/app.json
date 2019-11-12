@@ -56,5 +56,6 @@
 	"SCRIPTCREATORS": "Todos los creadores de scripts",
 	"CREATING_SCRIPTS": "- Por crear Scripts para Universal-Updater.",
 	"SHOW_QR": "Haga clic aquí para mostrar el código QR.",
-	"LINK": "Servidor de Discord: https://discord.gg/KDJCfGF"
+	"LINK": "Servidor de Discord: https://discord.gg/KDJCfGF",
+	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB..."
 }
