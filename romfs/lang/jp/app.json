@@ -9,6 +9,7 @@
 	"FILE_EXTRACTED": "抽出されたファイル",
 	"FILES_EXTRACTED": "抽出されたファイル",
 	"SCRIPTLIST": "スクリプトリスト",
+	"SETTINGS": "Settings",
 	"LANGUAGE": "言語",
 	"COLORS": "色",
 	"SELECT_LANG": "言語を選択する",
@@ -43,5 +44,17 @@
 	"FAILED_INITIALIZE_FTP": "FTPの初期化に失敗しました",
 	"B_FTP_EXIT": "Bを押してFTPに閉じます",
 	"WIFI_NOT_ENABLED": "WiFiが有効になっていません！",
-	"SCRIPTCREATOR": "スクリプトの作成"
+	"SCRIPTCREATOR": "スクリプトの作成",
+	"CREDITS": "Credits",
+	"DEVELOPED_BY": "Developed by: Universal-Team.",
+	"MAIN_DEV": "Main Developer: VoltZ",
+	"CURRENT_VERSION": "Current version: ",
+	"MANY_THANKS": "Many Thanks to:",
+	"TRANSLATORS": "All our Translators",
+	"HELP_TRANSLATE": "- For helping translate Universal-Updater's strings.",
+	"HELP_OUT": "- For helping out by Universal-Updater.",
+	"SCRIPTCREATORS": "All Script Creators",
+	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
+	"SHOW_QR": "Click here to show the QR Code.",
+	"LINK": "Join our Discord: https://discord.gg/KDJCfGF"
 }
