@@ -18,3 +18,5 @@ makerom*
 *.pfs0
 *.nso
 *.nacp
+build/sprites.h
+*.t3x

@@ -53,8 +53,8 @@ bool touching(touchPosition touch, Structs::ButtonPos button) {
 int main()
 {
 	gfxInitDefault();
-	Gui::init();
 	romfsInit();
+	Gui::init();
 	sdmcInit();
 	cfguInit();
 	acInit();

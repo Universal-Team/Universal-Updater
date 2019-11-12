@@ -29,7 +29,7 @@
 #include "utils/common.hpp"
 
 #define APP_TITLE "Universal-Updater"
-#define V_STRING "1.0.0"
+#define VERSION_STRING "2.0.0"
 
 enum DownloadError {
 	DL_ERROR_NONE = 0,

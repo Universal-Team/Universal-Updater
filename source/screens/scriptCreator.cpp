@@ -33,8 +33,9 @@
 // The to editing script.
 nlohmann::json editScript;
 
-void ScriptCreator::openJson() {
-	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Test.json", "r");
+void ScriptCreator::openJson(std::string fileName) {
+	std::string scriptFile = Config::ScriptPath + fileName;
+	FILE* file = fopen(scriptFile.c_str(), "r");
 	if(file) editScript = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 }
@@ -55,37 +56,66 @@ void ScriptCreator::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
 	Gui::DrawBottom();
+
+	for (int i = 0; i < 2; i++) {
+		if (Selection == i) {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+		}
+	}
+
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NEW_SCRIPT")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("NEW_SCRIPT"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("EXISTING_SCRIPT")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("EXISTING_SCRIPT"), 140);
 }
 
 // Testing purpose for now.
 ScriptCreator::ScriptCreator() {
-	openJson();
+	openJson("Test.json");
 }
 
-void ScriptCreator::save() {
-	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Test.json", "w");
+void ScriptCreator::save(std::string fileName) {
+	std::string scriptFile = Config::ScriptPath + fileName;
+	FILE* file = fopen(scriptFile.c_str(), "w");
 	if(file)	fwrite(editScript.dump(1, '\t').c_str(), 1, editScript.dump(1, '\t').size(), file);
 	fclose(file);
 }
 
+// Importaant to make Scripts valid.
+void ScriptCreator::setInfoStuff(void) {
+	// Get needed things.
+	const std::string &test = Input::getString("Enter the Title of the script.", 50);
+	const std::string &test2 = Input::getString("Enter the Author name of the script.", 50);
+	const std::string &test3 = Input::getString("Enter the short description of the script.", 80);
+	const std::string &test4 = Input::getString("Enter the long description of the script.", 300);
+	int scriptRevision = Input::getUint(99, "Enter the script revision.");
+	// Set the real JSON stuff.
+	setString("info", "title", test);
+	setString("info", "author", test2);
+	setString("info", "shortDesc", test3);
+	setString("info", "description", test4);
+	setInt("info", "version", 2);
+	setInt("info", "revision", scriptRevision);
+}
+
+
+
 void ScriptCreator::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		save();
+		save("Test.json");
 		Gui::screenBack();
 		return;
 	}
 
-	if (hDown & KEY_X) {
-		const std::string &test = Input::getString("Enter the Title of the Script.", 50);
-		const std::string &test2 = Input::getString("Enter the Author name of the Script.", 50);
-		const std::string &test3 = Input::getString("Enter the short description of the Script.", 80);
-		const std::string &test4 = Input::getString("Enter the long description of the Script.", 300);
+	if (hDown & KEY_UP) {
+		if(Selection == 1)	Selection = 0;
+	}
 
-		setString("info", "title", test);
-		setString("info", "author", test2);
-		setString("info", "shortDesc", test3);
-		setString("info", "description", test4);
-		setInt("info", "version", 2);
-		setInt("info", "revision", 1);
+	if (hDown & KEY_DOWN) {
+		if(Selection == 0)	Selection = 1;
+	}
+
+	if (hDown & KEY_X) {
+		setInfoStuff();
 	}
 }

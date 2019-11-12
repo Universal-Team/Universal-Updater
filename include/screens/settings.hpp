@@ -39,10 +39,29 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
+	// Credits stuff.
+	int DisplayMode = 1;
+	int delay = 120;
+	bool discordText = false;
+
+	int colorMode = 0;
+	int mode = 0;
+	int Selection = 0;
+
+	void DrawSubMenu(void) const;
 	void DrawLanguageSelection(void) const;
 	void DrawColorChanging(void) const;
+	void DrawCreditsScreen(void) const;
+	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void LanguageSelection(u32 hDown, touchPosition touch);
 	void colorChanging(u32 hDown, touchPosition touch);
+	void CreditsLogic(u32 hDown, touchPosition touch);
+
+	std::vector<Structs::ButtonPos> mainButtons = {
+		{90, 40, 140, 35, -1}, // Language.
+		{90, 100, 140, 35, -1}, // Colors.
+		{90, 160, 140, 35, -1}, // Misc.
+	};
 
 	std::vector<Structs::ButtonPos> langBlocks = {
 		{37, 32, 20, 20, -1},
@@ -63,6 +82,9 @@ private:
 		{220, 85, 95, 41, -1},
 	};
 
+	std::vector<Structs::ButtonPos> barPos = {
+		{0, 210, 320, 30, -1},
+	};
 };
 
 #endif

@@ -32,15 +32,35 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-int mode;
-int colorMode = 0;
-
 void Settings::Draw(void) const {
 	if (mode == 0) {
-		DrawLanguageSelection();
+		DrawSubMenu();
 	} else if (mode == 1) {
+		DrawLanguageSelection();
+	} else if (mode == 2) {
 		DrawColorChanging();
+	} else if (mode == 3) {
+		DrawCreditsScreen();
 	}
+}
+
+
+void Settings::DrawSubMenu(void) const {
+	Gui::DrawTop();
+	Gui::DrawString((400-Gui::GetStringWidth(0.8f, "Universal-Updater"))/2, 2, 0.8f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawBottom();
+
+	for (int i = 0; i < 3; i++) {
+		if (Selection == i) {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+		}
+	}
+
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("CREDITS")))/2, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("CREDITS"), 140);
 }
 
 void Settings::DrawLanguageSelection(void) const {
@@ -138,6 +158,77 @@ void Settings::DrawColorChanging(void) const {
 	}
 }
 
+void Settings::DrawCreditsScreen(void) const {
+	if (DisplayMode == 1) {
+		Gui::DrawTop();
+		std::string title = "Universal-Updater - ";
+		title += Lang::get("CREDITS");
+
+		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 2, 0.8f, Config::TxtColor, title.c_str(), 400);
+		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("DEVELOPED_BY")))/2, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
+		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("MAIN_DEV")))/2, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
+		Gui::sprite(sprites_voltZ_idx, 150, 110);
+		std::string currentVersion = Lang::get("CURRENT_VERSION");
+		currentVersion += V_STRING;
+		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 215, 0.72f, Config::TxtColor, currentVersion, 400);
+		Gui::DrawBottom();
+		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 2, 0.8f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("TRANSLATORS")))/2, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_TRANSLATE")))/2, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.7f, "Pk11"))/2, 100, 0.7f, Config::TxtColor, "Pk11", 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_OUT")))/2, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("SCRIPTCREATORS")))/2, 160, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("CREATING_SCRIPTS")))/2, 190, 0.5f, Config::TxtColor, Lang::get("CREATING_SCRIPTS"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 217, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
+	} else if (DisplayMode == 2) {
+		Gui::DrawTop();
+		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
+		Gui::sprite(sprites_discord_idx, 115, 35);
+		Gui::DrawBottom();
+		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+	}
+}
+
+
+void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (hDown & KEY_UP) {
+		if(Selection > 0)	Selection--;
+	}
+
+	if (hDown & KEY_DOWN) {
+		if(Selection < 2)	Selection++;
+	}
+
+	if (hDown & KEY_A) {
+		switch(Selection) {
+			case 0:
+				mode = 1;
+				break;
+			case 1:
+				mode = 2;
+				break;
+			case 2:
+				mode = 3;
+				break;
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			mode = 1;
+		} else if (touching(touch, mainButtons[1])) {
+			mode = 2;
+ 		} else if (touching(touch, mainButtons[2])) {
+			mode = 3;
+		}
+	}
+
+	if (hDown & KEY_B) {
+		Gui::screenBack();
+		return;
+	}
+}
+
 void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		for (int language = 0; language < 10; language++) {
@@ -150,10 +241,10 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
-		return;
+		mode = 0;
 	}
 }
+
 
 void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	int red;
@@ -162,8 +253,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 
 	if (hDown & KEY_B) {
 		Config::save();
-		Gui::screenBack();
-		return;
+		mode = 0;
 	}
 
 	if (hDown & KEY_L || hDown & KEY_LEFT) {
@@ -235,11 +325,38 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 }
 
+void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
+	gspWaitForVBlank();
+	if(delay > 0) {
+		delay--;
+	} else {
+		delay = 120;
+		discordText = !discordText;
+	}
+	if (DisplayMode == 1) {
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, barPos[0])) {
+				DisplayMode = 2;
+			}
+		}
+		if (hDown & KEY_B) {
+			mode = 0;
+		}
+	} else if (DisplayMode == 2) {
+		if (hDown & KEY_B) {
+			DisplayMode = 1;
+		}
+	}
+}
 
 void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
-		LanguageSelection(hDown, touch);
+		SubMenuLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {
+		LanguageSelection(hDown, touch);
+	} else if (mode == 2) {
 		colorChanging(hDown, touch);
+	} else if (mode == 3) {
+		CreditsLogic(hDown, touch);
 	}
 }

@@ -42,6 +42,7 @@ C3D_RenderTarget* bottom;
 
 C2D_TextBuf sizeBuf;
 std::stack<std::unique_ptr<Screen>> screens;
+C2D_SpriteSheet sprites;
 bool currentScreen = false;
 extern bool isScriptSelected;
 
@@ -64,6 +65,7 @@ Result Gui::init(void)
 	C2D_Prepare();
 	top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+	sprites = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
 	sizeBuf = C2D_TextBufNew(4096);
 	return 0;
 }
@@ -72,6 +74,7 @@ Result Gui::init(void)
 void Gui::exit(void)
 {
 	C2D_TextBufDelete(sizeBuf);
+	C2D_SpriteSheetFree(sprites);
 	C2D_Fini();
 	C3D_Fini();
 }
@@ -89,6 +92,11 @@ void DisplayMsg(std::string text) {
 	}
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
+}
+
+void Gui::sprite(int key, int x, int y, float ScaleX, float ScaleY)
+{
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, key), x, y, 0.5f, NULL, ScaleX, ScaleY);
 }
 
 void Gui::DisplayWarnMsg(std::string Text)

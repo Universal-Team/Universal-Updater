@@ -36,7 +36,6 @@
 
 #include "utils/config.hpp"
 
-extern int mode;
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool checkWifiStatus(void);
@@ -47,7 +46,7 @@ bool isTesting = false;
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-	Gui::DrawString(397-Gui::GetStringWidth(0.5f, VERSION_STRING), 237-Gui::GetStringHeight(0.5f, VERSION_STRING), 0.5f, Config::TxtColor, VERSION_STRING);
+	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
 	Gui::DrawBottom();
 
 	for (int i = 0; i < 6; i++) {
@@ -62,8 +61,8 @@ void MainMenu::Draw(void) const {
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TinyDB"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "TinyDB", 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -108,12 +107,12 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 4:
-				mode = 0;
 				Gui::setScreen(std::make_unique<Settings>());
 				break;
 			case 5:
-				mode = 1;
-				Gui::setScreen(std::make_unique<Settings>());
+				if (checkWifiStatus() == true) {
+					Gui::setScreen(std::make_unique<FTPScreen>());
+				}
 				break;
 		}
 	}
@@ -141,11 +140,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<ScriptCreator>());
 			}
 		} else if (touching(touch, mainButtons[4])) {
-			mode = 0;
 			Gui::setScreen(std::make_unique<Settings>());
 		} else if (touching(touch, mainButtons[5])) {
-			mode = 1;
-			Gui::setScreen(std::make_unique<Settings>());
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<FTPScreen>());
+			}
 		}
 	}
 }

@@ -45,7 +45,7 @@ extern "C" {
 	#include "utils/cia.h"
 }
 
-#define  USER_AGENT   APP_TITLE "-" V_STRING
+#define  USER_AGENT   APP_TITLE "-" VERSION_STRING
 
 static char* result_buf = NULL;
 static size_t result_sz = 0;

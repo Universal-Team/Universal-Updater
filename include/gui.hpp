@@ -28,6 +28,8 @@
 #define GUI_HPP
 
 #include "colors.hpp"
+#include "sprites.h"
+
 #include "screens/screen.hpp"
 
 #include <3ds.h>
@@ -55,6 +57,9 @@ namespace Gui
 	// Clear Text.
 	void clearTextBufs(void);
 
+	// Draw a Sprite from the sheet.
+	void sprite(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
+	
 	// Misc.
 	bool Draw_Rect(float x, float y, float w, float h, u32 color);
 

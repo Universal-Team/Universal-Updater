@@ -1,15 +1,16 @@
 {
-	"DOWNLOAD_FAILED":		"Download Failed!",
-	"NOT_IMPLEMENTED":		"Not Implemented Yet.",
-	"DONE":					"Done!",
-	"CONNECT_WIFI":			"Please Connect to WiFi.",
-	"DOWNLOADING":			"Downloading: ",
-	"CURRENTLY_EXTRACTING":	"\nCurrently extracting:\n",
-	"KB_DOWNLOADED":		"KB downloaded.",
-	"FILE_EXTRACTED":		"file extracted.",
-	"FILES_EXTRACTED":		"files extracted.",
+	"DOWNLOAD_FAILED":					"Download Failed!",
+	"NOT_IMPLEMENTED":					"Not Implemented Yet.",
+	"DONE":								"Done!",
+	"CONNECT_WIFI":						"Please Connect to WiFi.",
+	"DOWNLOADING":						"Downloading: ",
+	"CURRENTLY_EXTRACTING":				"\nCurrently extracting:\n",
+	"KB_DOWNLOADED":					"KB downloaded.",
+	"FILE_EXTRACTED":					"file extracted.",
+	"FILES_EXTRACTED":					"files extracted.",
 
 	"SCRIPTLIST":						"Scriptlist",
+	"SETTINGS":							"Settings",
 	"LANGUAGE":							"Language",
 	"COLORS":							"Colors",
 
@@ -53,5 +54,18 @@
 	"B_FTP_EXIT":						"Press B to exit from FTP.",
 	"WIFI_NOT_ENABLED":					"WiFi not enabled.",
 
-	"SCRIPTCREATOR":					"Script Creator"
+	"SCRIPTCREATOR":					"Script Creator",
+
+	"CREDITS":							"Credits",
+	"DEVELOPED_BY":						"Developed by: Universal-Team.",
+	"MAIN_DEV":							"Main Developer: VoltZ",
+	"CURRENT_VERSION":					"Current version: ",
+	"MANY_THANKS":						"Many Thanks to:",
+	"TRANSLATORS":						"All our Translators",
+	"HELP_TRANSLATE":					"- For helping translate Universal-Updater's strings.",
+	"HELP_OUT":							"- For helping out by Universal-Updater.",
+	"SCRIPTCREATORS":					"All Script Creators",
+	"CREATING_SCRIPTS":					"- For creating Scripts for Universal-Updater.",
+	"SHOW_QR":							"Click here to show the QR Code.",
+	"LINK":								"Join our Discord: https://discord.gg/KDJCfGF"
 }

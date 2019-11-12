@@ -30,6 +30,9 @@
 #include "screens/screenCommon.hpp"
 
 #include "utils/json.hpp"
+#include "utils/structs.hpp"
+
+#include <vector>
 
 class ScriptCreator : public Screen
 {
@@ -39,13 +42,19 @@ public:
 	ScriptCreator();
 
 private:
-	void openJson();
-	void save();
-
+	int Selection = 0;
+	void openJson(std::string fileName);
+	void save(std::string fileName);
+	void setInfoStuff(void);
 
 	void setBool(const std::string &object, const std::string &key, bool v);
 	void setInt(const std::string &object, const std::string &key, int v);
 	void setString(const std::string &object, const std::string &key, const std::string &v);
+
+	std::vector<Structs::ButtonPos> mainButtons = {
+		{90, 40, 140, 35, -1}, // New Script.
+		{90, 100, 140, 35, -1}, // Existing Script.
+	};
 };
 
 #endif
