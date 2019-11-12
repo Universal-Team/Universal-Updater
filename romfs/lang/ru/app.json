@@ -9,6 +9,7 @@
 	"FILE_EXTRACTED": "файл извлечен.",
 	"FILES_EXTRACTED": "файлы извлечены.",
 	"SCRIPTLIST": "Список скриптов",
+	"SETTINGS": "Settings",
 	"LANGUAGE": "Язык",
 	"COLORS": "Цветы",
 	"SELECT_LANG": "Выберите текущий язык.",
@@ -43,5 +44,17 @@
 	"FAILED_INITIALIZE_FTP": "Не удалось инициализировать FTP.",
 	"B_FTP_EXIT": "Нажмите B для выхода из FTP.",
 	"WIFI_NOT_ENABLED": "WiFi не включен.",
-	"SCRIPTCREATOR": "Script Creator"
+	"SCRIPTCREATOR": "Script Creator",
+	"CREDITS": "Credits",
+	"DEVELOPED_BY": "Developed by: Universal-Team.",
+	"MAIN_DEV": "Main Developer: VoltZ",
+	"CURRENT_VERSION": "Current version: ",
+	"MANY_THANKS": "Many Thanks to:",
+	"TRANSLATORS": "All our Translators",
+	"HELP_TRANSLATE": "- For helping translate Universal-Updater's strings.",
+	"HELP_OUT": "- For helping out by Universal-Updater.",
+	"SCRIPTCREATORS": "All Script Creators",
+	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
+	"SHOW_QR": "Click here to show the QR Code.",
+	"LINK": "Join our Discord: https://discord.gg/KDJCfGF"
 }
