@@ -33,11 +33,11 @@
 	"GET_SCRIPTS": "Gauti skriptų",
 	"INSTALLED_REV": "Įdiegta revizija: ",
 	"CURRENT_REV": "Dabartinė revizija: ",
-	"AUTHOR": "autorius: ",
-	"TITLE": "pavadinimas: ",
-	"FUTURE_SCRIPT": "Šis skriptas yra iš ateities.",
-	"OUTDATED_SCRIPT": "Šis skriptas yra pasenęs.",
-	"UP-TO-DATE": "Šis skriptas yra atnaujintas.",
+	"AUTHOR": "Author: ",
+	"TITLE": "Title: ",
+	"FUTURE_SCRIPT": "This script is a future script.",
+	"OUTDATED_SCRIPT": "This script is outdated.",
+	"UP-TO-DATE": "This script is up-to-date.",
 	"FTP_MODE": "FTP režimas",
 	"FTP_INITIALIZED": "FTP inicijuotas.",
 	"FAILED_GET_IP": "Nepavyko gauti IP adreso.",
@@ -57,5 +57,10 @@
 	"CREATING_SCRIPTS": "- nes kūrė Universal-Updater skriptus.",
 	"SHOW_QR": "Spauskite čia dėl QR kodo.",
 	"LINK": "Prisijunkite prie mūsų Discord: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Parsisiunčiami duomenys iš TinyDB..."
+	"TINYDB_DOWNLOADING": "Parsisiunčiami duomenys iš TinyDB...",
+	"RELEASE_TAG": "Release Tag: ",
+	"DESC": "Desc: ",
+	"RELEASE_ID": "Release ID: ",
+	"TITLE_ID": "Title ID: ",
+	"FILE_SIZE": "File size: "
 }
