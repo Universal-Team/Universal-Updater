@@ -40,12 +40,12 @@
 	"GET_SCRIPTS":						"Get Scripts",
 	"INSTALLED_REV":					"Installed revision: ",
 	"CURRENT_REV":						"Current revision: ",
-	"AUTHOR":							"author: ",
-	"TITLE":							"title: ",
+	"AUTHOR":							"Author: ",
+	"TITLE":							"Title: ",
 
-	"FUTURE_SCRIPT":					"This Script is a Future Script.",
-	"OUTDATED_SCRIPT":					"This Script is outdated.",
-	"UP-TO-DATE":						"This Script is Up-To-Date.",
+	"FUTURE_SCRIPT":					"This script is a future script.",
+	"OUTDATED_SCRIPT":					"This script is outdated.",
+	"UP-TO-DATE":						"This script is up-to-date.",
 
 	"FTP_MODE":							"FTP Mode",
 	"FTP_INITIALIZED":					"FTP Initialized.",
@@ -69,5 +69,10 @@
 	"SHOW_QR":							"Click here to show the QR Code.",
 	"LINK":								"Join our Discord: https://discord.gg/KDJCfGF",
 
-	"TINYDB_DOWNLOADING":					"Downloading database of available titles from TinyDB..."
+	"TINYDB_DOWNLOADING":				"Downloading database of available titles from TinyDB...",
+	"RELEASE_TAG":						"Release Tag: ",
+	"DESC":								"Desc: ",
+	"RELEASE_ID":						"Release ID: ",
+	"TITLE_ID":							"Title ID: ",
+	"FILE_SIZE":						"File size: "
 }

@@ -66,10 +66,28 @@ std::vector<std::string> parseObjects() {
 
 std::vector<std::string> tinyDBList;
 
+// adapted from GM9i's byte parsing.
+std::string parseBytes(int bytes) {
+    char out[32];
+    if(bytes == 1)
+        snprintf(out, sizeof(out), "%d Byte", bytes);
+    else if(bytes < 1024)
+        snprintf(out, sizeof(out), "%d Bytes", bytes);
+    else if(bytes < 1024 * 1024)
+        snprintf(out, sizeof(out), "%.1f KB", (float)bytes / 1024);
+    else if (bytes < 1024 * 1024 * 1024)
+        snprintf(out, sizeof(out), "%.1f MB", (float)bytes / 1024 / 1024);
+    else
+        snprintf(out, sizeof(out), "%.1f GB", (float)bytes / 1024 / 1024 / 1024);
+
+    return out;
+}
+
 TinyDB::TinyDB() {
 	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
-	downloadToFile("https://tinydb.eiphax.tech/api/universal.json?raw=true", tinyDBFile);
+	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile);
     tinyDBList = parseObjects();
+	selectedOption = tinyDBList[0];
 }
 
 // To-Do.
@@ -80,6 +98,14 @@ void TinyDB::Draw(void) const {
 	Gui::Draw_Rect(0, 30, 400, 180, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 210, 400, 30, C2D_Color32(63, 81, 181, 255));
 
+	if (selection != 0) {
+		Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(tinyDBJson[selectedOption]["info"]["author"]), 400);
+		Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(tinyDBJson[selectedOption]["info"]["description"]), 400);
+		Gui::DrawStringCentered(0, 95, 0.6f, Config::TxtColor, Lang::get("RELEASE_TAG") + std::string(tinyDBJson[selectedOption]["info"]["releaseTag"]), 400);
+		Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
+		Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
+		Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + parseBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
+	}
     Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
     std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
     Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
@@ -133,8 +159,10 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
 		if (selection > 0) {
 			selection--;
+			selectedOption = tinyDBList[selection];
 		} else {
 			selection = (int)tinyDBList.size()-1;
+			selectedOption = tinyDBList[selection];
 		}
 		if (fastMode == true) {
 			keyRepeatDelay = 3;
@@ -146,8 +174,10 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
 		if (selection < (int)tinyDBList.size()-1) {
 			selection++;
+			selectedOption = tinyDBList[selection];
 		} else {
 			selection = 0;
+			selectedOption = tinyDBList[selection];
 		}
 		if (fastMode == true) {
 			keyRepeatDelay = 3;
@@ -179,38 +209,37 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
     if (hDown & KEY_A) {
-        selectedOption = tinyDBList[selection];
         execute();
     }
 }
 
 void TinyDB::execute() {
 	for(int i=0;i<(int)tinyDBJson.at(selectedOption).size();i++) {
-		std::string type = tinyDBJson.at(selectedOption).at(i).at("type");
+		std::string type = tinyDBJson.at(selectedOption).at("script").at(i).at("type");
 		if(type == "deleteFile") {
 			bool missing = false;
 			std::string file, message;
-			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else    missing = true;
-			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
 			if(!missing)	download::deleteFileList(file, message);
 
 		} else if(type == "downloadFile") {
 			bool missing = false;
 			std::string file, output, message;
-			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else	missing = true;
-			if(tinyDBJson.at(selectedOption).at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at(i).at("output");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at("script").at(i).at("output");
 			else	missing = true;
-			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
 			if(!missing)	download::downloadFile(file, output, message);
-		
+
 		} else if(type == "installCia") {
 			bool missing = false;
 			std::string file, message;
-			if(tinyDBJson.at(selectedOption).at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at(i).at("file");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else    missing = true;
-			if(tinyDBJson.at(selectedOption).at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at(i).at("message");
+			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
 			if(!missing)	download::installFileList(file, message);
 		}
 	}
