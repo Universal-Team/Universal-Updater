@@ -33,11 +33,11 @@
 	"GET_SCRIPTS": "Obtenir des scripts",
 	"INSTALLED_REV": "Version installée: ",
 	"CURRENT_REV": "Version actuelle: ",
-	"AUTHOR": "auteur: ",
-	"TITLE": "titre: ",
-	"FUTURE_SCRIPT": "Ce Script est un futur Script.",
-	"OUTDATED_SCRIPT": "Ce script est obsolète.",
-	"UP-TO-DATE": "Ce script est à jour.",
+	"AUTHOR": "Author: ",
+	"TITLE": "Title: ",
+	"FUTURE_SCRIPT": "This script is a future script.",
+	"OUTDATED_SCRIPT": "This script is outdated.",
+	"UP-TO-DATE": "This script is up-to-date.",
 	"FTP_MODE": "Mode FTP",
 	"FTP_INITIALIZED": "FTP initialisé.",
 	"FAILED_GET_IP": "Impossible d'obtenir l'IP.",
@@ -57,5 +57,10 @@
 	"CREATING_SCRIPTS": "- D'avoir créé des scripts pour Universal-Updater.",
 	"SHOW_QR": "Cliquez ici pour afficher le QR code.",
 	"LINK": "Rejoignez notre Discord : https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Téléchargement de la base de données des titres disponibles sur TinyDB..."
+	"TINYDB_DOWNLOADING": "Téléchargement de la base de données des titres disponibles sur TinyDB...",
+	"RELEASE_TAG": "Release Tag: ",
+	"DESC": "Desc: ",
+	"RELEASE_ID": "Release ID: ",
+	"TITLE_ID": "Title ID: ",
+	"FILE_SIZE": "File size: "
 }
