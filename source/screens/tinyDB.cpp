@@ -98,14 +98,12 @@ void TinyDB::Draw(void) const {
 	Gui::Draw_Rect(0, 30, 400, 180, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 210, 400, 30, C2D_Color32(63, 81, 181, 255));
 
-	if (selection != 0) {
-		Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(tinyDBJson[selectedOption]["info"]["author"]), 400);
-		Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(tinyDBJson[selectedOption]["info"]["description"]), 400);
-		Gui::DrawStringCentered(0, 95, 0.6f, Config::TxtColor, Lang::get("RELEASE_TAG") + std::string(tinyDBJson[selectedOption]["info"]["releaseTag"]), 400);
-		Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
-		Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
-		Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + parseBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
-	}
+	Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(tinyDBJson[selectedOption]["info"]["author"]), 400);
+	Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(tinyDBJson[selectedOption]["info"]["description"]), 400);
+	Gui::DrawStringCentered(0, 95, 0.6f, Config::TxtColor, Lang::get("RELEASE_TAG") + std::string(tinyDBJson[selectedOption]["info"]["releaseTag"]), 400);
+	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
+	Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
+	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + parseBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
     Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
     std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
     Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);

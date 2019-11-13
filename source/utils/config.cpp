@@ -75,8 +75,8 @@ void Config::save() {
 	Config::setInt("TEXTCOLOR", Config::TxtColor);
 	Config::setInt("SELECTEDCOLOR", Config::SelectedColor);
 	Config::setInt("UNSELECTEDCOLOR", Config::UnselectedColor);
-	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
-	Config::setInt("LANGUAGE", 2);
+	Config::setString("SCRIPTPATH", Config::ScriptPath);
+	Config::setInt("LANGUAGE", Config::lang);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
