@@ -33,11 +33,11 @@
 	"GET_SCRIPTS": "スクリプトを取得する",
 	"INSTALLED_REV": "インストール済みバージョン：",
 	"CURRENT_REV": "現在のスクリプトバージョン：",
-	"AUTHOR": "作者：",
-	"TITLE": "タイトル：",
-	"FUTURE_SCRIPT": "このスクリプトは未来のスクリプトです。",
-	"OUTDATED_SCRIPT": "このスクリプトは古すぎます。",
-	"UP-TO-DATE": "このスクリプトは最新です。",
+	"AUTHOR": "Author: ",
+	"TITLE": "Title: ",
+	"FUTURE_SCRIPT": "This script is a future script.",
+	"OUTDATED_SCRIPT": "This script is outdated.",
+	"UP-TO-DATE": "This script is up-to-date.",
 	"FTP_MODE": "FTPモード",
 	"FTP_INITIALIZED": "FTPが初期化されました",
 	"FAILED_GET_IP": "IPを取得できませんでした",
@@ -57,5 +57,10 @@
 	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
 	"SHOW_QR": "Click here to show the QR Code.",
 	"LINK": "Join our Discord: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB..."
+	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB...",
+	"RELEASE_TAG": "Release Tag: ",
+	"DESC": "Desc: ",
+	"RELEASE_ID": "Release ID: ",
+	"TITLE_ID": "Title ID: ",
+	"FILE_SIZE": "File size: "
 }
