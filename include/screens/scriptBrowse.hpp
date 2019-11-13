@@ -40,7 +40,6 @@ public:
 	ScriptBrowse();
 
 private:
-	int listMode = 0;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
 	mutable int screenPosList = 0;

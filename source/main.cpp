@@ -87,7 +87,7 @@ int main()
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
 	}
-
+	Config::save();
 	Gui::exit();
 	gfxExit();
 	cfguExit();

@@ -40,7 +40,6 @@ private:
 	void execute();
 	mutable int selection = 0;
 	int screenPos = 0;
-	int listMode = 0;
 	mutable int screenPosList = 0;
 	int keyRepeatDelay = 0;
 	int fastMode = false;

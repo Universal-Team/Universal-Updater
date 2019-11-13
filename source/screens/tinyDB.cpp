@@ -118,7 +118,7 @@ void TinyDB::Draw(void) const {
 	Gui::sprite(sprites_search_idx, -3, 0);
 	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
 
-    if (listMode == 0) {
+    if (Config::viewMode == 0) {
     	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
 	    	info = tinyDBList[screenPos + i];
 		    if(screenPos + i == selection) {
@@ -128,7 +128,7 @@ void TinyDB::Draw(void) const {
 		    }
     		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, info, 320);
     	}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)tinyDBList.size();i++) {
 			info = tinyDBList[screenPosList + i];
 			if(screenPosList + i == selection) {
@@ -184,13 +184,13 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		if(selection < screenPos) {
 			screenPos = selection;
 		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 			screenPos = selection - ENTRIES_PER_SCREEN + 1;
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		if(selection < screenPosList) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
@@ -199,10 +199,10 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_X) {
-		if (listMode == 0) {
-			listMode = 1;
+		if (Config::viewMode == 0) {
+			Config::viewMode = 1;
 		} else {
-			listMode = 0;
+			Config::viewMode = 0;
 		}
 	}
 

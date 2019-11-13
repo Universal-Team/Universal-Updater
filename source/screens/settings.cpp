@@ -235,7 +235,6 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 			if (touching(touch, langBlocks[language])) {
 				Config::lang = language;
 				Lang::load(Config::lang);
-				Config::save();
 			}
 		}
 	}
@@ -252,7 +251,6 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	int blue;
 
 	if (hDown & KEY_B) {
-		Config::save();
 		mode = 0;
 	}
 

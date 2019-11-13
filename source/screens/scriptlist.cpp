@@ -311,7 +311,7 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
 
 	Gui::DrawBottom();
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 			line1 = fileInfo[screenPos + i].title;
 			line2 = fileInfo[screenPos + i].author;
@@ -323,7 +323,7 @@ void ScriptList::DrawList(void) const {
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size();i++) {
 			line1 = fileInfo[screenPosList + i].title;
 			if(screenPosList + i == selection) {
@@ -363,7 +363,7 @@ void ScriptList::DrawSingleObject(void) const {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
 	Gui::DrawBottom();
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 			info = fileInfo2[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
@@ -373,7 +373,7 @@ void ScriptList::DrawSingleObject(void) const {
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size();i++) {
 			info = fileInfo2[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
@@ -445,13 +445,13 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		fastMode = false;
 	}
 
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		if(selection < screenPos) {
 			screenPos = selection;
 		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 			screenPos = selection - ENTRIES_PER_SCREEN + 1;
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		if(selection < screenPosList) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
@@ -518,13 +518,13 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 		mode = 0;
 	}
 
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		if(selection2 < screenPos2) {
 			screenPos2 = selection2;
 		} else if (selection2 > screenPos2 + ENTRIES_PER_SCREEN - 1) {
 			screenPos2 = selection2 - ENTRIES_PER_SCREEN + 1;
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		if(selection2 < screenPosList2) {
 			screenPosList2 = selection2;
 		} else if (selection2 > screenPosList2 + ENTRIES_PER_LIST - 1) {
@@ -542,10 +542,10 @@ void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_X) {
-		if (listMode == 0) {
-			listMode = 1;
+		if (Config::viewMode == 0) {
+			Config::viewMode = 1;
 		} else {
-			listMode = 0;
+			Config::viewMode = 0;
 		}
 	}
 }

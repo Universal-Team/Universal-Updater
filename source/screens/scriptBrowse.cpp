@@ -133,7 +133,7 @@ void ScriptBrowse::Draw(void) const {
 	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
 	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 			if(screenPos + i == selection) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
@@ -149,7 +149,7 @@ void ScriptBrowse::Draw(void) const {
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
 			if(screenPosList + i == selection) {
 				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
@@ -228,20 +228,20 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_X) {
-		if (listMode == 0) {
-			listMode = 1;
+		if (Config::viewMode == 0) {
+			Config::viewMode = 1;
 		} else {
-			listMode = 0;
+			Config::viewMode = 0;
 		}
 	}
 
-	if (listMode == 0) {
+	if (Config::viewMode == 0) {
 		if(selection < screenPos) {
 			screenPos = selection;
 		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 			screenPos = selection - ENTRIES_PER_SCREEN + 1;
 		}
-	} else if (listMode == 1) {
+	} else if (Config::viewMode == 1) {
 		if(selection < screenPosList) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
