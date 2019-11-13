@@ -33,11 +33,11 @@
 	"GET_SCRIPTS": "Получить скрипты",
 	"INSTALLED_REV": "Установленная версия: ",
 	"CURRENT_REV": "Текущая версия: ",
-	"AUTHOR": "автор: ",
-	"TITLE": "заголовок: ",
-	"FUTURE_SCRIPT": "Этот скрипт является будущим скриптом.",
-	"OUTDATED_SCRIPT": "Этот скрипт устарел.",
-	"UP-TO-DATE": "Этот скрипт обновленный по дате.",
+	"AUTHOR": "Author: ",
+	"TITLE": "Title: ",
+	"FUTURE_SCRIPT": "This script is a future script.",
+	"OUTDATED_SCRIPT": "This script is outdated.",
+	"UP-TO-DATE": "This script is up-to-date.",
 	"FTP_MODE": "Режим FTP",
 	"FTP_INITIALIZED": "FTP инициализован.",
 	"FAILED_GET_IP": "Не удается получить IP.",
@@ -57,5 +57,10 @@
 	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
 	"SHOW_QR": "Click here to show the QR Code.",
 	"LINK": "Join our Discord: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB..."
+	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB...",
+	"RELEASE_TAG": "Release Tag: ",
+	"DESC": "Desc: ",
+	"RELEASE_ID": "Release ID: ",
+	"TITLE_ID": "Title ID: ",
+	"FILE_SIZE": "File size: "
 }
