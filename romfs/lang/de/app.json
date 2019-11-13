@@ -52,10 +52,10 @@
 	"MANY_THANKS": "Vielen Dank an:",
 	"TRANSLATORS": "Alle unsere Übersetzer",
 	"HELP_TRANSLATE": "- Für die Hilfe beim Übersetzen bei Universal-Updater.",
-	"HELP_OUT": "- For helping out by Universal-Updater.",
-	"SCRIPTCREATORS": "All Script Creators",
-	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
-	"SHOW_QR": "Click here to show the QR Code.",
-	"LINK": "Join our Discord: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB..."
+	"HELP_OUT": "- Für das helfen bei Universal-Updater.",
+	"SCRIPTCREATORS": "Alle Skript-Ersteller",
+	"CREATING_SCRIPTS": "Für das erstellen von Skripten für Universal-Updater.",
+	"SHOW_QR": "Klicke hier, um den QR Code anzuzeigen.",
+	"LINK": "Discord link: https://discord.gg/KDJCfGF",
+	"TINYDB_DOWNLOADING": "Downloaden der Datenbank der verfügbaren Titel von TinyDB..."
 }
