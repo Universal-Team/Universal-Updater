@@ -33,11 +33,11 @@
 	"GET_SCRIPTS": "Get Bruh",
 	"INSTALLED_REV": "Installed Bruh: ",
 	"CURRENT_REV": "Current Bruh: ",
-	"AUTHOR": "Bruhthor: ",
-	"TITLE": "Bruhtle: ",
-	"FUTURE_SCRIPT": "This Script is a Bruh Script.",
-	"OUTDATED_SCRIPT": "This Script is Bruh.",
-	"UP-TO-DATE": "This Script is Up-To-Bruh.",
+	"AUTHOR": "Author: ",
+	"TITLE": "Title: ",
+	"FUTURE_SCRIPT": "This script is a future script.",
+	"OUTDATED_SCRIPT": "This script is outdated.",
+	"UP-TO-DATE": "This script is up-to-date.",
 	"FTP_MODE": "FTP Bruh",
 	"FTP_INITIALIZED": "Bruh Initialized.",
 	"FAILED_GET_IP": "Failed to get Bruh.",
@@ -57,5 +57,10 @@
 	"CREATING_SCRIPTS": "- For creating Bruh for Universal-Updater.",
 	"SHOW_QR": "Click here to show the Bruh Code.",
 	"LINK": "Join our Bruh: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Downloading Bruh of available Bruh from TinyDB..."
+	"TINYDB_DOWNLOADING": "Downloading Bruh of available Bruh from TinyDB...",
+	"RELEASE_TAG": "Release Tag: ",
+	"DESC": "Desc: ",
+	"RELEASE_ID": "Release ID: ",
+	"TITLE_ID": "Title ID: ",
+	"FILE_SIZE": "File size: "
 }
