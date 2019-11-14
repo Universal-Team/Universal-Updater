@@ -52,15 +52,15 @@
 	"MANY_THANKS": "多くのおかげで:",
 	"TRANSLATORS": "すべての翻訳者",
 	"HELP_TRANSLATE": "- Universal-Updaterの翻訳を支援します",
-	"HELP_OUT": "- For helping out by Universal-Updater.",
+	"HELP_OUT": "- Universal-Updaterの開発を支援します",
 	"SCRIPTCREATORS": "すべてのスクリプト作成者",
-	"CREATING_SCRIPTS": "- For creating Scripts for Universal-Updater.",
+	"CREATING_SCRIPTS": "- Universal-Updaterのスクリプトを作成しています",
 	"SHOW_QR": "こちらをクリックしてQRコードを表示します",
 	"LINK": "Discordの招待: https://discord.gg/KDJCfGF",
-	"TINYDB_DOWNLOADING": "Downloading database of available titles from TinyDB...",
-	"RELEASE_TAG": "Release Tag: ",
+	"TINYDB_DOWNLOADING": "TinyDBから利用可能なタイトルのデータベースをダウンロードしています…",
+	"RELEASE_TAG": "リリースタグ：",
 	"DESC": "説明：",
-	"RELEASE_ID": "Release ID: ",
-	"TITLE_ID": "Title ID: ",
-	"FILE_SIZE": "File size: "
+	"RELEASE_ID": "リリースID：",
+	"TITLE_ID": "タイトルID：",
+	"FILE_SIZE": "ファイルサイズ："
 }
