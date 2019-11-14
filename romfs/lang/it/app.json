@@ -60,7 +60,7 @@
 	"TINYDB_DOWNLOADING": "Scaricamento database dei titoli disponibili su TinyDB...",
 	"RELEASE_TAG": "Release Tag: ",
 	"DESC": "Desc: ",
-	"RELEASE_ID": "Release ID: ",
-	"TITLE_ID": "Title ID: ",
+	"RELEASE_ID": "Rilascio ID: ",
+	"TITLE_ID": "Titolo ID: ",
 	"FILE_SIZE": "Dimensioni file: "
 }
