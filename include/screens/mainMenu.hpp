@@ -38,7 +38,14 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
+	void DrawMainMenu(void) const;
+	void DisplayTestbar(void) const;
+	void ProgressBarLogic(u32 hDown, u32 hHeld);
+
+	int keyRepeatDelay = 3;
+	int mode = 0;
 	int Selection = 0;
+
 	std::vector<Structs::ButtonPos> mainButtons = {		
 		{10, 40, 140, 35, -1}, // Scriptlist.
 		{170, 40, 140, 35, -1}, // ScriptBrowse.
