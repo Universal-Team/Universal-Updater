@@ -49,6 +49,7 @@ extern "C" {
 
 static char* result_buf = NULL;
 static size_t result_sz = 0;
+static Handle* result_fileHandle = nullptr;
 static size_t result_written = 0;
 std::vector<std::string> _topText;
 std::string jsonName;
@@ -102,6 +103,18 @@ static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata)
 	return bsz;
 }
 
+static size_t handle_data_to_file(char* ptr, size_t size, size_t nmemb, void* userdata)
+{
+	(void) userdata;
+	const size_t bsz = size*nmemb;
+
+	u32 bytesWritten = 0;
+	FSFILE_Write(*result_fileHandle, &bytesWritten, result_written, ptr, bsz, 0);
+
+	result_written += bsz;
+	return bsz;
+}
+
 static Result setupContext(CURL *hnd, const char * url)
 {
 	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
@@ -115,6 +128,18 @@ static Result setupContext(CURL *hnd, const char * url)
 	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
+
+	return 0;
+}
+
+static Result setupContextForDirectToFileDownload(CURL *hnd, const char * url)
+{
+	Result ret = setupContext(hnd, url);
+	if (ret != 0) {
+		return ret;
+	}
+
+	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, handle_data_to_file);
 
 	return 0;
 }
@@ -137,21 +162,7 @@ Result downloadToFile(std::string url, std::string path)
 		return ret;
 	}
 
-	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, url.c_str());
-	if (ret != 0) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = NULL;
-		result_sz = 0;
-		result_written = 0;
-		return ret;
-	}
-
 	Handle fileHandle;
-	u64 offset = 0;
-	u32 bytesWritten = 0;
 
 	ret = openFile(&fileHandle, path.c_str(), true);
 	if (R_FAILED(ret)) {
@@ -165,6 +176,22 @@ Result downloadToFile(std::string url, std::string path)
 		return DL_ERROR_WRITEFILE;
 	}
 
+	result_fileHandle = &fileHandle;
+
+	CURL *hnd = curl_easy_init();
+	ret = setupContextForDirectToFileDownload(hnd, url.c_str());
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = NULL;
+		result_fileHandle = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		FSFILE_Close(fileHandle);
+		return ret;
+	}
+
 	u64 startTime = osGetTime();
 
 	CURLcode cres = curl_easy_perform(hnd);
@@ -176,12 +203,12 @@ Result downloadToFile(std::string url, std::string path)
 		free(result_buf);
 		free(socubuf);
 		result_buf = NULL;
+		result_fileHandle = nullptr;
 		result_sz = 0;
 		result_written = 0;
+		FSFILE_Close(fileHandle);
 		return -1;
 	}
-
-	FSFILE_Write(fileHandle, &bytesWritten, offset, result_buf, result_written, 0);
 
 	u64 endTime = osGetTime();
 	u64 totalTime = endTime - startTime;
@@ -191,6 +218,7 @@ Result downloadToFile(std::string url, std::string path)
 	free(result_buf);
 	free(socubuf);
 	result_buf = NULL;
+	result_fileHandle = nullptr;
 	result_sz = 0;
 	result_written = 0;
 	FSFILE_Close(fileHandle);
