@@ -44,6 +44,7 @@ public:
 		std::string character;
 		int x;
 		int y;
+		int w;
 	};
 private:
 };

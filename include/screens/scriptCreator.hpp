@@ -44,12 +44,21 @@ public:
 private:
 	int Selection = 0;
 	void openJson(std::string fileName);
-	void save(std::string fileName);
+	void createNewJson(std::string fileName);
+	void save();
 	void setInfoStuff(void);
+	void createDownloadRelease();
 
 	void setBool(const std::string &object, const std::string &key, bool v);
+	void setBool2(const std::string &object, const std::string &key, const std::string &key2, bool v);
+
 	void setInt(const std::string &object, const std::string &key, int v);
+	void setInt2(const std::string &object, const std::string &key, const std::string &key2, int v);
+
 	void setString(const std::string &object, const std::string &key, const std::string &v);
+	void setString2(const std::string &object, const std::string &key, const std::string &key2, const std::string &v);
+
+	void createEntry(const std::string &Entryname);
 
 	std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35, -1}, // New Script.

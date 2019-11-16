@@ -30,6 +30,8 @@
 
 #include "utils/config.hpp"
 
+#include <fstream>
+
 // The to editing script.
 nlohmann::json editScript;
 
@@ -40,16 +42,29 @@ void ScriptCreator::openJson(std::string fileName) {
 	fclose(file);
 }
 
+// BOOL.
 void ScriptCreator::setBool(const std::string &object, const std::string &key, bool v) {
 	editScript[object][key] = v;
 }
+void ScriptCreator::setBool2(const std::string &object, const std::string &key, const std::string &key2, bool v) {
+	editScript[object][key][key2] = v;
+}
 
+
+// INT.
 void ScriptCreator::setInt(const std::string &object, const std::string &key, int v) {
 	editScript[object][key] = v;
 }
+void ScriptCreator::setInt2(const std::string &object, const std::string &key, const std::string &key2, int v) {
+	editScript[object][key][key2] = v;
+}
 
+// STRING
 void ScriptCreator::setString(const std::string &object, const std::string &key, const std::string &v) {
 	editScript[object][key] = v;
+}
+void ScriptCreator::setString2(const std::string &object, const std::string &key, const std::string &key2, const std::string &v) {
+	editScript[object][key][key2] = v;
 }
 
 void ScriptCreator::Draw(void) const {
@@ -69,14 +84,80 @@ void ScriptCreator::Draw(void) const {
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("EXISTING_SCRIPT")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("EXISTING_SCRIPT"), 140);
 }
 
-// Testing purpose for now.
-ScriptCreator::ScriptCreator() {
-	openJson("Test.json");
+std::string jsonFileName;
+
+void ScriptCreator::createNewJson(std::string fileName) {
+	std::ofstream ofstream;
+	ofstream.open(fileName.c_str(), std::ofstream::out | std::ofstream::app);
+	ofstream.close();
 }
 
-void ScriptCreator::save(std::string fileName) {
-	std::string scriptFile = Config::ScriptPath + fileName;
-	FILE* file = fopen(scriptFile.c_str(), "w");
+// Test.
+void ScriptCreator::createDownloadRelease() {
+	// Repo.
+	std::string repo = Input::getString(50, "Enter the name of the Owner.");
+	repo += "/";
+	repo += Input::getString(50, "Enter the name of the repo.");
+	// File.
+	std::string file = Input::getString(50, "Enter the name of the file.");
+	// Output.
+	std::string output = Input::getString(50, "Enter the name of the Output path.");
+	// Prerelease.
+	bool prerelease = true;
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+
+	editScript["Test"] = { {{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}} };
+}
+
+// To-Do.
+/*
+void ScriptCreator::createDownloadFile(const std::string &Entryname, const std::string &file, const std::string output, const std::string &message) {
+	editScript[Entryname] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
+}
+
+void ScriptCreator::createDeleteFile(const std::string &Entryname, const std::string &file, const std::string &message) {
+	editScript[Entryname] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
+}
+
+void ScriptCreator::createExtractFile(const std::string &Entryname, const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
+	editScript[Entryname] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
+}
+
+void ScriptCreator::createInstallCia(const std::string &Entryname, const std::string &file, const std::string &message) {
+	editScript[Entryname] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
+}
+
+void ScriptCreator::createMkDir(const std::string &Entryname, const std::string &directory) {
+	editScript[Entryname] = { {{"type", "mkdir"}, {"directory", directory}} };
+}
+
+void ScriptCreator::createRmDir(const std::string &Entryname, const std::string &directory) {
+	editScript[Entryname] = { {{"type", "rmdir"}, {"directory", directory}} };
+}
+
+void ScriptCreator::createMkFile(const std::string &Entryname, const std::string &file) {
+	editScript[Entryname] = { {{"type", "mkfile"}, {"file", file}} };
+}
+
+void ScriptCreator::createTimeMsg(const std::string &Entryname, const std::string &message, int seconds) {
+	editScript[Entryname] = { {{"type", "rmdir"}, {"message", message}, {"seconds", seconds}} };
+}
+*/
+
+// Testing purpose for now.
+ScriptCreator::ScriptCreator() {
+	jsonFileName = Config::ScriptPath;
+	jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
+	if (jsonFileName != "") {
+		jsonFileName += ".json";
+		createNewJson(jsonFileName);
+		openJson(jsonFileName);
+	}
+}
+
+void ScriptCreator::save() {
+	FILE* file = fopen(jsonFileName.c_str(), "w");
 	if(file)	fwrite(editScript.dump(1, '\t').c_str(), 1, editScript.dump(1, '\t').size(), file);
 	fclose(file);
 }
@@ -84,10 +165,10 @@ void ScriptCreator::save(std::string fileName) {
 // Importaant to make Scripts valid.
 void ScriptCreator::setInfoStuff(void) {
 	// Get needed things.
-	const std::string &test = Input::getString("Enter the Title of the script.", 50);
-	const std::string &test2 = Input::getString("Enter the Author name of the script.", 50);
-	const std::string &test3 = Input::getString("Enter the short description of the script.", 80);
-	const std::string &test4 = Input::getString("Enter the long description of the script.", 300);
+	const std::string &test = Input::getString(50, "Enter the Title of the script.");
+	const std::string &test2 = Input::getString(50, "Enter the Author name of the script.");
+	const std::string &test3 = Input::getString(80, "Enter the short description of the script.");
+	const std::string &test4 = Input::getString(300, "Enter the long description of the script.");
 	int scriptRevision = Input::getUint(99, "Enter the script revision.");
 	// Set the real JSON stuff.
 	setString("info", "title", test);
@@ -102,7 +183,7 @@ void ScriptCreator::setInfoStuff(void) {
 
 void ScriptCreator::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		save("Test.json");
+		save();
 		Gui::screenBack();
 		return;
 	}
@@ -115,7 +196,11 @@ void ScriptCreator::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if(Selection == 0)	Selection = 1;
 	}
 
-	if (hDown & KEY_X) {
+	if (hDown & KEY_Y) {
 		setInfoStuff();
+	}
+
+	if (hDown & KEY_X) {
+		createDownloadRelease();
 	}
 }

@@ -41,6 +41,7 @@ int Config::TxtColor;
 int Config::SelectedColor;
 int Config::UnselectedColor;
 int Config::viewMode;
+int Config::ColorKeys;
 std::string Config::ScriptPath;
 nlohmann::json configJson;
 
@@ -57,6 +58,7 @@ void Config::load() {
 		Config::ScriptPath = getString("SCRIPTPATH");
 		Config::lang = getInt("LANGUAGE");
 		Config::viewMode = getInt("VIEWMODE");
+		Config::ColorKeys = getInt("COLORKEYS");
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -68,6 +70,7 @@ void Config::load() {
 		Config::ScriptPath = SCRIPTS_PATH;
 		Config::lang = 2;
 		Config::viewMode = 0;
+		Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
 	}
 }
 
@@ -81,6 +84,7 @@ void Config::save() {
 	Config::setString("SCRIPTPATH", Config::ScriptPath);
 	Config::setInt("LANGUAGE", Config::lang);
 	Config::setInt("VIEWMODE", Config::viewMode);
+	Config::setInt("COLORKEYS", Config::ColorKeys);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -98,6 +102,7 @@ void Config::initializeNewConfig() {
 	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
 	Config::setInt("LANGUAGE", 2);
 	Config::setInt("VIEWMODE", 0);
+	Config::setInt("COLORKEYS", C2D_Color32(0, 0, 200, 255));
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }

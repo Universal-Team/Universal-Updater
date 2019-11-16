@@ -5,12 +5,13 @@
 
 namespace Input {
 	void DrawNumpad();
+	void drawKeyboard();
 	std::string Numpad(std::string Text);
 	std::string Numpad(uint maxLength, std::string Text);
 	// -1 if invaild text entered
 	int getUint(int max, std::string Text);
-
-	std::string getString(const std::string &hint, uint maxLength);
+	std::string getString(std::string Text);
+	std::string getString(uint maxLength, std::string Text);
 }
 
 #endif
