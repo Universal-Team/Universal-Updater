@@ -19,6 +19,7 @@
 	"TEXT_COLOR": "テキストの色",
 	"SELECTED_COLOR": "選択中の色",
 	"UNSELECTED_COLOR": "選択中ない色",
+	"PROGRESSBAR_COLOR": "Progressbar Color",
 	"ENTER_RED_RGB": "レッドRGB値を入力してください",
 	"ENTER_GREEN_RGB": "グリーンRGB値を入力してください",
 	"ENTER_BLUE_RGB": "ブルーRGB値を入力してください",
