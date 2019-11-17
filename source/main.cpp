@@ -57,8 +57,8 @@ bool touching(touchPosition touch, Structs::ButtonPos button) {
 
 void loadSoundEffects(void) {
 	if (dspFound == true) {
-		if( access( "sdmc:/3ds/Universal-Updater/Music.wav", F_OK ) != -1 ) {
-			bgm = new sound("sdmc:/3ds/Universal-Updater/Music.wav", 1, true);
+		if( access( Config::MusicPath.c_str(), F_OK ) != -1 ) {
+			bgm = new sound(Config::MusicPath, 1, true);
 			songIsFound = true;
 		}
 	}

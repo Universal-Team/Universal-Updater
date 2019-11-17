@@ -60,4 +60,5 @@ extern char * arg0;
 
 #define WORKING_DIR       "/"
 #define SCRIPTS_PATH	"sdmc:/3ds/Universal-Updater/scripts/" // The Scripts will be here.
+#define MUSIC_PATH      "sdmc:/3ds/Universal-Updater/Music.wav" // Default Music File / Path.
 #define SCRIPT_VERSION 2

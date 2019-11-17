@@ -44,6 +44,7 @@ int Config::viewMode;
 int Config::ColorKeys;
 int Config::progressbarColor;
 std::string Config::ScriptPath;
+std::string Config::MusicPath;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -117,6 +118,12 @@ void Config::load() {
 			Config::progressbarColor = getInt("PROGRESSBARCOLOR");
 		}
 
+		if(!configJson.contains("MUSICPATH")) {
+			Config::MusicPath = MUSIC_PATH;
+		} else {
+			Config::MusicPath = getString("MUSICPATH");
+		}
+
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -130,6 +137,7 @@ void Config::load() {
 		Config::viewMode = 0;
 		Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
 		Config::progressbarColor = WHITE;
+		Config::MusicPath = MUSIC_PATH;
 	}
 }
 
@@ -145,6 +153,7 @@ void Config::save() {
 	Config::setInt("VIEWMODE", Config::viewMode);
 	Config::setInt("COLORKEYS", Config::ColorKeys);
 	Config::setInt("PROGRESSBARCOLOR", Config::progressbarColor);
+	Config::setString("MUSICPATH", Config::MusicPath);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -164,6 +173,7 @@ void Config::initializeNewConfig() {
 	Config::setInt("VIEWMODE", 0);
 	Config::setInt("COLORKEYS", C2D_Color32(0, 0, 200, 255));
 	Config::setInt("PROGRESSBARCOLOR", WHITE);
+	Config::setString("MUSICPATH", MUSIC_PATH);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
