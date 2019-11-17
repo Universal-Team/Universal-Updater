@@ -45,6 +45,8 @@ touchPosition touch;
 sound *bgm = NULL;
 bool songIsFound = false;
 
+int fadealpha = 255;
+bool fadein = true;
 
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -120,6 +122,14 @@ int main()
 		Gui::mainLoop(hDown, hHeld, touch);
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
+
+		if (fadein == true) {
+			fadealpha -= 3;
+			if (fadealpha < 0) {
+				fadealpha = 0;
+				fadein = false;
+			}
+		}
 	}
 
 	if (songIsFound == true) {

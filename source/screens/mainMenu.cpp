@@ -39,6 +39,8 @@
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool checkWifiStatus(void);
+extern int fadealpha;
+extern bool fadein;
 
 u64 current = 0;
 u64 total = 100;
@@ -58,6 +60,7 @@ void MainMenu::DrawMainMenu(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 	Gui::DrawBottom();
 
 	for (int i = 0; i < 6; i++) {
@@ -74,6 +77,7 @@ void MainMenu::DrawMainMenu(void) const {
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
 void MainMenu::DisplayTestbar(void) const {
