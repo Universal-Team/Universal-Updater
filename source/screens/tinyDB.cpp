@@ -31,6 +31,7 @@
 #include "utils/config.hpp"
 #include "utils/fileBrowse.h"
 #include "utils/json.hpp"
+#include "utils/formatting.hpp"
 
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
@@ -66,23 +67,6 @@ std::vector<std::string> parseObjects() {
 
 std::vector<std::string> tinyDBList;
 
-// adapted from GM9i's byte parsing.
-std::string parseBytes(int bytes) {
-    char out[32];
-    if(bytes == 1)
-        snprintf(out, sizeof(out), "%d Byte", bytes);
-    else if(bytes < 1024)
-        snprintf(out, sizeof(out), "%d Bytes", bytes);
-    else if(bytes < 1024 * 1024)
-        snprintf(out, sizeof(out), "%.1f KB", (float)bytes / 1024);
-    else if (bytes < 1024 * 1024 * 1024)
-        snprintf(out, sizeof(out), "%.1f MB", (float)bytes / 1024 / 1024);
-    else
-        snprintf(out, sizeof(out), "%.1f GB", (float)bytes / 1024 / 1024 / 1024);
-
-    return out;
-}
-
 TinyDB::TinyDB() {
 	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
 	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile);
@@ -103,7 +87,7 @@ void TinyDB::Draw(void) const {
 	Gui::DrawStringCentered(0, 95, 0.6f, Config::TxtColor, Lang::get("RELEASE_TAG") + std::string(tinyDBJson[selectedOption]["info"]["releaseTag"]), 400);
 	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
 	Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
-	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + parseBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
+	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
     Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
     std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
     Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
