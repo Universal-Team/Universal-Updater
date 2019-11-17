@@ -19,6 +19,7 @@
 	"TEXT_COLOR": "Цвет текста",
 	"SELECTED_COLOR": "Выбранный цвет",
 	"UNSELECTED_COLOR": "Невыбранный цвет",
+	"PROGRESSBAR_COLOR": "Progressbar Color",
 	"ENTER_RED_RGB": "Войти в Красную RGB.",
 	"ENTER_GREEN_RGB": "Введите зелёный RGB.",
 	"ENTER_BLUE_RGB": "Введите синий RGB.",
