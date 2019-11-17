@@ -19,6 +19,7 @@
 	"TEXT_COLOR": "Couleur du texte",
 	"SELECTED_COLOR": "Couleur selectionée",
 	"UNSELECTED_COLOR": "Couleur non-selectionée",
+	"PROGRESSBAR_COLOR": "Progressbar Color",
 	"ENTER_RED_RGB": "Entrez la valeur Rouge du RGB.",
 	"ENTER_GREEN_RGB": "Entrez la valeur verte du RGB.",
 	"ENTER_BLUE_RGB": "Entrez la valeur bleu du RGB.",
