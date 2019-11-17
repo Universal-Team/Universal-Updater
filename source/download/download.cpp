@@ -69,6 +69,9 @@ bool progressBarType = 0; // 0 = Download | 1 = Extract
 #define TIMEOPT CURLINFO_TOTAL_TIME_T
 #define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3000000
 
+extern u32 progressBar;
+extern bool isScriptSelected;
+
 // following function is from
 // https://github.com/angelsl/libctrfgh/blob/master/curl_test/src/main.c
 static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata)
@@ -702,11 +705,13 @@ void displayProgressBar() {
 
         Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
         Gui::Draw_Rect(30, 120, 340, 30, BLACK);
-        Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, WHITE);
+		if (isScriptSelected == true) {
+        	Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
+		} else {
+			Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
+		}
         Gui::DrawBottom();
         C3D_FrameEnd(0);
-
-		//DisplayMsg(str);
 		gspWaitForVBlank();
 	}
 }

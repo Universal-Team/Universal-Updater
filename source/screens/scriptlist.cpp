@@ -267,6 +267,7 @@ u32 bgBottomColor;
 u32 TextColor;
 u32 selected;
 u32 unselected;
+u32 progressBar;
 
 void loadColors(nlohmann::json &json) {
 	u32 colorTemp;
@@ -287,6 +288,9 @@ void loadColors(nlohmann::json &json) {
 
 	colorTemp = getColor(get(json, "info", "unselectedColor"));
 	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
+
+	colorTemp = getColor(get(json, "info", "progressbarColor"));
+	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
 }
 
 ScriptList::ScriptList() {

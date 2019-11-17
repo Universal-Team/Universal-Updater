@@ -22,6 +22,7 @@
 	"TEXT_COLOR":						"Text Color",
 	"SELECTED_COLOR":					"Selected Color",
 	"UNSELECTED_COLOR":					"Unselected Color",
+	"PROGRESSBAR_COLOR":				"Progressbar Color",
 
 	"ENTER_RED_RGB":					"Enter the Red RGB.",
 	"ENTER_GREEN_RGB":					"Enter the Green RGB.",

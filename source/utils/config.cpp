@@ -42,6 +42,7 @@ int Config::SelectedColor;
 int Config::UnselectedColor;
 int Config::viewMode;
 int Config::ColorKeys;
+int Config::progressbarColor;
 std::string Config::ScriptPath;
 nlohmann::json configJson;
 
@@ -49,16 +50,73 @@ void Config::load() {
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
 	if(file) {
 		configJson = nlohmann::json::parse(file, nullptr, false);
-		Config::Color1 = getInt("BARCOLOR");
-		Config::Color2 = getInt("TOPBGCOLOR");
-		Config::Color3 = getInt("BOTTOMBGCOLOR");
-		Config::TxtColor = getInt("TEXTCOLOR");
-		Config::SelectedColor = getInt("SELECTEDCOLOR");
-		Config::UnselectedColor = getInt("UNSELECTEDCOLOR");
-		Config::ScriptPath = getString("SCRIPTPATH");
-		Config::lang = getInt("LANGUAGE");
-		Config::viewMode = getInt("VIEWMODE");
-		Config::ColorKeys = getInt("COLORKEYS");
+
+		if(!configJson.contains("BARCOLOR")) {
+			Config::Color1 = BarColor;
+		} else {
+			Config::Color1 = getInt("BARCOLOR");
+		}
+
+		if(!configJson.contains("TOPBGCOLOR")) {
+			Config::Color2 = TopBGColor;
+		} else {
+			Config::Color2 = getInt("TOPBGCOLOR");
+		}
+
+		if(!configJson.contains("BOTTOMBGCOLOR")) {
+			Config::Color3 = BottomBGColor;
+		} else {
+			Config::Color3 = getInt("BOTTOMBGCOLOR");
+		}
+
+		if(!configJson.contains("TEXTCOLOR")) {
+			Config::TxtColor = WHITE;
+		} else {
+			Config::TxtColor = getInt("TEXTCOLOR");
+		}
+
+		if(!configJson.contains("UNSELECTEDCOLOR")) {
+			Config::UnselectedColor = UnselectedColordefault;
+		} else {
+			Config::UnselectedColor = getInt("UNSELECTEDCOLOR");
+		}
+
+		if(!configJson.contains("SELECTEDCOLOR")) {
+			Config::SelectedColor = SelectedColordefault;
+		} else {
+			Config::SelectedColor = getInt("SELECTEDCOLOR");
+		}
+
+		if(!configJson.contains("SCRIPTPATH")) {
+			Config::ScriptPath = SCRIPTS_PATH;
+		} else {
+			Config::ScriptPath = getString("SCRIPTPATH");
+		}
+
+		if(!configJson.contains("LANGUAGE")) {
+			Config::lang = 2;
+		} else {
+			Config::lang = getInt("LANGUAGE");
+		}
+
+		if(!configJson.contains("VIEWMODE")) {
+			Config::viewMode = 0;
+		} else {
+			Config::viewMode = getInt("VIEWMODE");
+		}
+
+		if(!configJson.contains("COLORKEYS")) {
+			Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
+		} else {
+			Config::ColorKeys = getInt("COLORKEYS");
+		}
+
+		if(!configJson.contains("PROGRESSBARCOLOR")) {
+			Config::progressbarColor = WHITE;
+		} else {
+			Config::progressbarColor = getInt("PROGRESSBARCOLOR");
+		}
+
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -71,6 +129,7 @@ void Config::load() {
 		Config::lang = 2;
 		Config::viewMode = 0;
 		Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
+		Config::progressbarColor = WHITE;
 	}
 }
 
@@ -85,6 +144,7 @@ void Config::save() {
 	Config::setInt("LANGUAGE", Config::lang);
 	Config::setInt("VIEWMODE", Config::viewMode);
 	Config::setInt("COLORKEYS", Config::ColorKeys);
+	Config::setInt("PROGRESSBARCOLOR", Config::progressbarColor);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -103,6 +163,8 @@ void Config::initializeNewConfig() {
 	Config::setInt("LANGUAGE", 2);
 	Config::setInt("VIEWMODE", 0);
 	Config::setInt("COLORKEYS", C2D_Color32(0, 0, 200, 255));
+	Config::setInt("PROGRESSBARCOLOR", WHITE);
+
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }

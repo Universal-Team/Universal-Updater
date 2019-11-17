@@ -102,24 +102,27 @@ void Settings::DrawColorChanging(void) const {
 	} else if (colorMode == 5) {
 		Gui::Draw_Rect(0, 40, 400, 45, Config::UnselectedColor);
 		Gui::DrawStringCentered(0, 45, 0.7f, Config::TxtColor, Lang::get("UNSELECTED_COLOR"), 320);
+	} else if (colorMode == 6) {
+		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::progressbarColor);
 	}
 
 
 
 	Gui::DrawBottom();
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
-			Gui::Draw_Rect(25 + i * 25, 5, 16, 16, Config::SelectedColor);
+			Gui::Draw_Rect(25 + i * 25, 5, 16, 16, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
-	Gui::DrawString(29 + 0 * 25, 5, 0.5f, Config::TxtColor, "1", 400);
-	Gui::DrawString(29 + 1 * 25, 5, 0.5f, Config::TxtColor, "2", 400);
-	Gui::DrawString(29 + 2 * 25, 5, 0.5f, Config::TxtColor, "3", 400);
-	Gui::DrawString(29 + 3 * 25, 5, 0.5f, Config::TxtColor, "4", 400);
-	Gui::DrawString(29 + 4 * 25, 5, 0.5f, Config::TxtColor, "5", 400);
-	Gui::DrawString(29 + 5 * 25, 5, 0.5f, Config::TxtColor, "6", 400);
+	Gui::DrawString(29 + 0 * 25, 5, 0.5f, WHITE, "1", 400);
+	Gui::DrawString(29 + 1 * 25, 5, 0.5f, WHITE, "2", 400);
+	Gui::DrawString(29 + 2 * 25, 5, 0.5f, WHITE, "3", 400);
+	Gui::DrawString(29 + 3 * 25, 5, 0.5f, WHITE, "4", 400);
+	Gui::DrawString(29 + 4 * 25, 5, 0.5f, WHITE, "5", 400);
+	Gui::DrawString(29 + 5 * 25, 5, 0.5f, WHITE, "6", 400);
+	Gui::DrawString(29 + 6 * 25, 5, 0.5f, WHITE, "7", 400);
 
 	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
 	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
@@ -127,34 +130,39 @@ void Settings::DrawColorChanging(void) const {
 
 	if (colorMode == 0) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BAR_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color1, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color1, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color1, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 0).c_str(), 400);
 	} else if (colorMode == 1) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TOP_BG_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color2, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color2, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color2, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 0).c_str(), 400);
 	} else if (colorMode == 2) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BOTTOM_BG_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color3, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color3, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::Color3, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 0).c_str(), 400);
 	} else if (colorMode == 3) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::TxtColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::TxtColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::TxtColor, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 0).c_str(), 400);
 	} else if (colorMode == 4) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("SELECTED_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::SelectedColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::SelectedColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::SelectedColor, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::SelectedColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::SelectedColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::SelectedColor, 0).c_str(), 400);
 	} else if (colorMode == 5) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("UNSELECTED_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::UnselectedColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::UnselectedColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, Config::TxtColor, ColorHelper::getColorName(Config::UnselectedColor, 0).c_str(), 400);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::UnselectedColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::UnselectedColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::UnselectedColor, 0).c_str(), 400);
+	} else if (colorMode == 6) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("PROGRESSBAR_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 0).c_str(), 400);
 	}
 }
 
@@ -259,7 +267,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 
 	if (hDown & KEY_R || hDown & KEY_RIGHT) {
-		if(colorMode < 5)	colorMode++;
+		if(colorMode < 6)	colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -279,6 +287,8 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::SelectedColor = RGBA8(red, ColorHelper::getColorValue(Config::SelectedColor, 1), ColorHelper::getColorValue(Config::SelectedColor, 0), 255);
 				} else if (colorMode == 5) {
 					Config::UnselectedColor = RGBA8(red, ColorHelper::getColorValue(Config::UnselectedColor, 1), ColorHelper::getColorValue(Config::UnselectedColor, 0), 255);
+				} else if (colorMode == 6) {
+					Config::progressbarColor = RGBA8(red, ColorHelper::getColorValue(Config::progressbarColor, 1), ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
 				}
 			}
 
@@ -299,6 +309,8 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::SelectedColor = RGBA8(ColorHelper::getColorValue(Config::SelectedColor, 2), green, ColorHelper::getColorValue(Config::SelectedColor, 0), 255);
 				} else if (colorMode == 5) {
 					Config::UnselectedColor = RGBA8(ColorHelper::getColorValue(Config::UnselectedColor, 2), green, ColorHelper::getColorValue(Config::UnselectedColor, 0), 255);
+				} else if (colorMode == 6) {
+					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), green, ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
 				}
 			}
 		} else if (touching(touch, buttons[2])) {
@@ -317,6 +329,8 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::SelectedColor = RGBA8(ColorHelper::getColorValue(Config::SelectedColor, 2), ColorHelper::getColorValue(Config::SelectedColor, 1), blue, 255);
 				} else if (colorMode == 5) {
 					Config::UnselectedColor = RGBA8(ColorHelper::getColorValue(Config::UnselectedColor, 2), ColorHelper::getColorValue(Config::UnselectedColor, 1), blue, 255);
+				} else if (colorMode == 6) {
+					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), ColorHelper::getColorValue(Config::progressbarColor, 1), blue, 255);
 				}
 			}
 		}
