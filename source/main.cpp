@@ -32,6 +32,7 @@
 #include "screens/screenCommon.hpp"
 
 #include "utils/config.hpp"
+#include "utils/sound.h"
 #include "utils/structs.hpp"
 
 #include <3ds.h>
@@ -39,8 +40,11 @@
 #include <unistd.h>
 
 bool exiting = false;
-
+bool dspFound = false;
 touchPosition touch;
+sound *bgm = NULL;
+bool songIsFound = false;
+
 
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -48,6 +52,28 @@ bool touching(touchPosition touch, Structs::ButtonPos button) {
 		return true;
 	else
 		return false;
+}
+
+
+void loadSoundEffects(void) {
+	if (dspFound == true) {
+		if( access( "sdmc:/3ds/Universal-Updater/Music.wav", F_OK ) != -1 ) {
+			bgm = new sound("sdmc:/3ds/Universal-Updater/Music.wav", 1, true);
+			songIsFound = true;
+		}
+	}
+}
+
+void playMusic(void) {
+	if (songIsFound == true) {
+		bgm->play();
+	}
+}
+
+void stopMusic(void) {
+	if (songIsFound == true) {
+		bgm->stop();
+	}
 }
 
 int main()
@@ -72,6 +98,14 @@ int main()
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
+ 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+		ndspInit();
+		dspFound = true;
+		loadSoundEffects();
+		playMusic();
+	 }
+
+
 	// Loop as long as the status is not exit
 	while (aptMainLoop() && !exiting)
 	{
@@ -86,6 +120,14 @@ int main()
 		Gui::mainLoop(hDown, hHeld, touch);
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
+	}
+
+	if (songIsFound == true) {
+		stopMusic();
+	}
+	delete bgm;
+	if (dspFound == true) {
+		ndspExit();
 	}
 	Config::save();
 	Gui::exit();
