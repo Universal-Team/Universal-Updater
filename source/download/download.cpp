@@ -36,10 +36,12 @@
 #include "utils/extract.hpp"
 #include "utils/fileBrowse.h"
 #include "utils/thread.hpp"
+#include "utils/formatting.hpp"
 
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
+#include <string>
 
 extern "C" {
 	#include "utils/cia.h"
@@ -62,6 +64,10 @@ char progressBarMsg[128] = "";
 bool showProgressBar = false;
 bool progressBarType = 0; // 0 = Download | 1 = Extract
 
+#define TIME_IN_US 1  
+#define TIMETYPE curl_off_t
+#define TIMEOPT CURLINFO_TOTAL_TIME_T
+#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3000000
 
 // following function is from
 // https://github.com/angelsl/libctrfgh/blob/master/curl_test/src/main.c
@@ -115,11 +121,28 @@ static size_t handle_data_to_file(char* ptr, size_t size, size_t nmemb, void* us
 	return bsz;
 }
 
+curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero later
+curl_off_t downloadNow = 0;
+
+static int curlProgress(CURL *hnd,
+                    curl_off_t dltotal, curl_off_t dlnow,
+                    curl_off_t ultotal, curl_off_t ulnow)
+{
+  downloadTotal = dltotal;
+  downloadNow = dlnow;
+  
+  return 0;
+}
+
 static Result setupContext(CURL *hnd, const char * url)
 {
+	downloadTotal = 1;
+	downloadNow = 0;
+	curl_easy_setopt(hnd, CURLOPT_XFERINFOFUNCTION, curlProgress);
+
 	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
 	curl_easy_setopt(hnd, CURLOPT_URL, url);
-	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
+	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(hnd, CURLOPT_USERAGENT, USER_AGENT);
 	curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
@@ -646,11 +669,44 @@ void downloadTheme(std::string path) {
 	}
 }
 
+
 void displayProgressBar() {
 	char str[256];
 	while(showProgressBar) {
-		snprintf(str, sizeof(str), "%s\n%s%s\n%i %s", progressBarMsg, (!progressBarType ? "" : (Lang::get("CURRENTLY_EXTRACTING")).c_str()), (!progressBarType ? "" : extractingFile.c_str()), (!progressBarType ? (int)round(result_written/1000) : filesExtracted), (!progressBarType ? (Lang::get("KB_DOWNLOADED")).c_str() : (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED")).c_str())));
-		DisplayMsg(str);
+		if (downloadTotal < 1.0f) {
+			downloadTotal = 1.0f;
+		}
+		if (downloadTotal < downloadNow) {
+			downloadTotal = downloadNow;
+		}
+
+		if (progressBarType) {
+			snprintf(str, sizeof(str), "%i %s",  
+					filesExtracted, 
+					(filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED")).c_str())
+					);
+		} else {
+			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",  
+					formatBytes(downloadNow).c_str(),
+					formatBytes(downloadTotal).c_str(),
+					((float)downloadNow/(float)downloadTotal) * 100.0f
+					);
+		}
+
+		Gui::clearTextBufs();
+        C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+        C2D_TargetClear(top, BLACK);
+        C2D_TargetClear(bottom, BLACK);
+        Gui::DrawTop();
+        Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, progressBarMsg, 400);
+
+        Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+        Gui::Draw_Rect(30, 120, 340, 30, BLACK);
+        Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, WHITE);
+        Gui::DrawBottom();
+        C3D_FrameEnd(0);
+
+		//DisplayMsg(str);
 		gspWaitForVBlank();
 	}
 }
