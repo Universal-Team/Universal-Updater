@@ -19,6 +19,7 @@
 	"TEXT_COLOR": "Textfarbe",
 	"SELECTED_COLOR": "Ausgewählte Farbe",
 	"UNSELECTED_COLOR": "Nicht ausgewählte Farbe",
+	"PROGRESSBAR_COLOR": "Progressbar Color",
 	"ENTER_RED_RGB": "Gebe die Rote RGB an.",
 	"ENTER_GREEN_RGB": "Gebe die Grüne RGB an.",
 	"ENTER_BLUE_RGB": "Gebe die Blaue RGB an.",
