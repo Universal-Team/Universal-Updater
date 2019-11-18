@@ -19,7 +19,7 @@
 	"TEXT_COLOR": "Color del texto",
 	"SELECTED_COLOR": "Color seleccionado",
 	"UNSELECTED_COLOR": "Color no seleccionado",
-	"PROGRESSBAR_COLOR": "Progressbar Color",
+	"PROGRESSBAR_COLOR": "Color de barra de progreso",
 	"ENTER_RED_RGB": "Introduzca el RGB Rojo.",
 	"ENTER_GREEN_RGB": "Introduzca el RGB Verde.",
 	"ENTER_BLUE_RGB": "Introduzca el RGB Azul.",
