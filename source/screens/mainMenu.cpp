@@ -41,22 +41,12 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool checkWifiStatus(void);
 extern int fadealpha;
 extern bool fadein;
-
-u64 current = 0;
-u64 total = 100;
+extern void notImplemented(void);
 
 // This is for the Script Creator, so no one can access it for now, until it is stable or so.
 bool isTesting = false;
 
 void MainMenu::Draw(void) const {
-	if (mode == 0) {
-		DrawMainMenu();
-	} else if (mode == 1) {
-		DisplayTestbar();
-	}
-}
-
-void MainMenu::DrawMainMenu(void) const {
 	Gui::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
@@ -80,142 +70,97 @@ void MainMenu::DrawMainMenu(void) const {
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
-void MainMenu::DisplayTestbar(void) const {
-	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Downloading <Filename> . <Extension>...", 400);
-	std::string progressDownload = std::to_string(current);
-	progressDownload += " KB / ";
-	progressDownload += std::to_string(total);
-	progressDownload += " KB downloaded.";
-	Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, progressDownload, 400);
-	Gui::Draw_Rect(30, 120, 340, 30, BLACK);
-	Gui::Draw_Rect(31, 121, (((double)current/(double)total) * 338.0), 28, WHITE);
-	Gui::DrawBottom();
-}
-
-void MainMenu::ProgressBarLogic(u32 hDown, u32 hHeld) {
-	if (keyRepeatDelay)	keyRepeatDelay--;
-	if (hHeld & KEY_LEFT && !keyRepeatDelay) {
-		if (current > 0) {
-			current--;
-		} else {
-			current = total;
-		}
-	}
-
-	if (hHeld & KEY_RIGHT && !keyRepeatDelay) {
-		if (current < total) {
-			current++;
-		} else {
-			current = 0;
-		}
-	}
-
-	if (hDown & KEY_SELECT) {
-		mode = 0;
-	}
-}
-
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (mode == 1) {
-		ProgressBarLogic(hDown, hHeld);
-	} else {
-		if (hDown & KEY_SELECT) {
-			mode = 1;
-		}
+	if (hDown & KEY_START) {
+		exiting = true;
+	}
+	if (hDown & KEY_UP) {
+		if(Selection > 1)	Selection -= 2;
+	}
+	if (hDown & KEY_DOWN) {
+		if(Selection < 4)	Selection += 2;
+	}
+	if (hDown & KEY_LEFT) {
+		if (Selection%2) Selection--;
+	}
+	if (hDown & KEY_RIGHT) {
+		if (!(Selection%2)) Selection++;
+	}
 
-		if (hDown & KEY_START) {
-			exiting = true;
-		}
-
-		if (hDown & KEY_UP) {
-			if(Selection > 1)	Selection -= 2;
-		}
-
-		if (hDown & KEY_DOWN) {
-			if(Selection < 4)	Selection += 2;
-		}
-
-		if (hDown & KEY_LEFT) {
-			if (Selection%2) Selection--;
-		}
-
-		if (hDown & KEY_RIGHT) {
-			if (!(Selection%2)) Selection++;
-		}
-
-		if (hDown & KEY_A) {
-			switch(Selection) {
-				case 0:
-					Gui::setScreen(std::make_unique<ScriptList>());
-					break;
-				case 1:
-					if (checkWifiStatus() == true) {
-						Gui::setScreen(std::make_unique<ScriptBrowse>());
-					} else {
-						notConnectedMsg();
-					}
-					break;
-				case 2:
-					if (checkWifiStatus() == true) {
-						Gui::setScreen(std::make_unique<TinyDB>());
-					} else {
-						notConnectedMsg();
-					}
-					break;
-				case 3:
-					if (isTesting == true) {
-						Gui::setScreen(std::make_unique<ScriptCreator>());
-					}
-					break;
-					case 4:
-				Gui::setScreen(std::make_unique<Settings>());
-					break;
-				case 5:
-					if (checkWifiStatus() == true) {
-						Gui::setScreen(std::make_unique<FTPScreen>());
-					} else {
-						notConnectedMsg();
-					}
-					break;
-			}
-		}
-
-		if (hDown & KEY_X) {
-				if (checkWifiStatus() == true) {
-			Gui::setScreen(std::make_unique<FTPScreen>());
-			}
-		}
-
-		if (hDown & KEY_TOUCH) {
-			if (touching(touch, mainButtons[0])) {
+	if (hDown & KEY_A) {
+		switch(Selection) {
+			case 0:
 				Gui::setScreen(std::make_unique<ScriptList>());
-			} else if (touching(touch, mainButtons[1])) {
+				break;
+			case 1:
 				if (checkWifiStatus() == true) {
 					Gui::setScreen(std::make_unique<ScriptBrowse>());
 				} else {
 					notConnectedMsg();
 				}
-
-	 		} else if (touching(touch, mainButtons[2])) {
+				break;
+			case 2:
 				if (checkWifiStatus() == true) {
 					Gui::setScreen(std::make_unique<TinyDB>());
 				} else {
 					notConnectedMsg();
 				}
-			} else if (touching(touch, mainButtons[3])) {
+				break;
+			case 3:
 				if (isTesting == true) {
 					Gui::setScreen(std::make_unique<ScriptCreator>());
+				} else {
+					notImplemented();
 				}
-			} else if (touching(touch, mainButtons[4])) {
+				break;
+			case 4:
 				Gui::setScreen(std::make_unique<Settings>());
-			} else if (touching(touch, mainButtons[5])) {
+				break;
+			case 5:
 				if (checkWifiStatus() == true) {
 					Gui::setScreen(std::make_unique<FTPScreen>());
 				} else {
 					notConnectedMsg();
 				}
+				break;
+		}
+	}
+
+	if (hDown & KEY_X) {
+		if (checkWifiStatus() == true) {
+			Gui::setScreen(std::make_unique<FTPScreen>());
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			Gui::setScreen(std::make_unique<ScriptList>());
+		} else if (touching(touch, mainButtons[1])) {
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<ScriptBrowse>());
+			} else {
+				notConnectedMsg();
+			}
+	 		} else if (touching(touch, mainButtons[2])) {
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<TinyDB>());
+			} else {
+				notConnectedMsg();
+			}
+		} else if (touching(touch, mainButtons[3])) {
+			if (isTesting == true) {
+				Gui::setScreen(std::make_unique<ScriptCreator>());
+			} else {
+				notImplemented();
+			}
+		} else if (touching(touch, mainButtons[4])) {
+			Gui::setScreen(std::make_unique<Settings>());
+		} else if (touching(touch, mainButtons[5])) {
+			if (checkWifiStatus() == true) {
+				Gui::setScreen(std::make_unique<FTPScreen>());
+			} else {
+				notConnectedMsg();
 			}
 		}
 	}
