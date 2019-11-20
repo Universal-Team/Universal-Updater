@@ -196,7 +196,7 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void TinyDB::execute() {
-	for(int i=0;i<(int)tinyDBJson.at(selectedOption).size();i++) {
+	for(int i=0;i<(int)tinyDBJson.at(selectedOption).at("script").size();i++) {
 		std::string type = tinyDBJson.at(selectedOption).at("script").at(i).at("type");
 		if(type == "deleteFile") {
 			bool missing = false;
