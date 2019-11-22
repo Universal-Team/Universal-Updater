@@ -116,21 +116,20 @@ void ScriptBrowse::Draw(void) const {
 	revision += std::to_string(int64_t(infoJson[selection]["revision"]));
 
 	Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-	Gui::DrawStringCentered(0, 3, 0.8f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+	Gui::DrawStringCentered(0, 0, 0.8f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
 
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
 	if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 400);
 	} else if(infoJson[selection]["curRevision"] == infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 400);
+		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 400);
 	} else if(infoJson[selection]["curRevision"] > infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 215, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
-	Gui::Draw_Rect(0, 0, 27, 30, WHITE);
 	Gui::sprite(sprites_search_idx, -3, 0);
 	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
-	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 4, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
+	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {

@@ -172,22 +172,22 @@ void Settings::DrawCreditsScreen(void) const {
 		std::string title = "Universal-Updater - ";
 		title += Lang::get("CREDITS");
 
-		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 2, 0.8f, Config::TxtColor, title.c_str(), 400);
+		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 0, 0.8f, Config::TxtColor, title.c_str(), 400);
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("DEVELOPED_BY")))/2, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("MAIN_DEV")))/2, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
-		Gui::sprite(sprites_voltZ_idx, 150, 110);
+		Gui::sprite(sprites_voltZ_idx, 150, 115);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
-		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 215, 0.72f, Config::TxtColor, currentVersion, 400);
+		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
 		Gui::DrawBottom();
-		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 2, 0.8f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 1, 0.8f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("TRANSLATORS")))/2, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_TRANSLATE")))/2, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, "Pk11"))/2, 100, 0.7f, Config::TxtColor, "Pk11", 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_OUT")))/2, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("SCRIPTCREATORS")))/2, 160, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("CREATING_SCRIPTS")))/2, 190, 0.5f, Config::TxtColor, Lang::get("CREATING_SCRIPTS"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 217, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
+		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 220, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
 	} else if (DisplayMode == 2) {
 		Gui::DrawTop();
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));

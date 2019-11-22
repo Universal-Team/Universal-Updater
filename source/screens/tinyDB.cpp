@@ -40,6 +40,9 @@
 nlohmann::json tinyDBJson;
 std::string selectedOption;
 
+// For the Bar Textures.
+extern C2D_SpriteSheet sprites;
+
 #define tinyDBFile "sdmc:/3ds/Universal-Updater/TinyDB.json"
 
 extern std::string get(nlohmann::json json, const std::string &key, const std::string &key2);
@@ -78,9 +81,11 @@ TinyDB::TinyDB() {
 void TinyDB::Draw(void) const {
     std::string info;
     Gui::ScreenDraw(top);
-	Gui::Draw_Rect(0, 0, 400, 30, C2D_Color32(63, 81, 181, 255));
-	Gui::Draw_Rect(0, 30, 400, 180, C2D_Color32(140, 140, 140, 255));
-	Gui::Draw_Rect(0, 210, 400, 30, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 25, 400, 190, C2D_Color32(140, 140, 140, 255));
+	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(63, 81, 181, 255));
+	Gui::sprite(sprites_top_screen_top_idx, 0, 0);
+	Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
 
 	Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(tinyDBJson[selectedOption]["info"]["author"]), 400);
 	Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(tinyDBJson[selectedOption]["info"]["description"]), 400);
@@ -94,9 +99,11 @@ void TinyDB::Draw(void) const {
 
 
     Gui::ScreenDraw(bottom);
-	Gui::Draw_Rect(0, 0, 320, 30, C2D_Color32(63, 81, 181, 255));
-	Gui::Draw_Rect(0, 30, 320, 180, C2D_Color32(140, 140, 140, 255));
-	Gui::Draw_Rect(0, 210, 320, 30, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(63, 81, 181, 255));
+	Gui::Draw_Rect(0, 25, 320, 190, C2D_Color32(140, 140, 140, 255));
+	Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(63, 81, 181, 255));
+	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
+	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 
     // Search Icon.
 	Gui::sprite(sprites_search_idx, -3, 0);

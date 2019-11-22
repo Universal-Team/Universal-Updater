@@ -83,7 +83,7 @@ private:
 	};
 
 	std::vector<Structs::ButtonPos> barPos = {
-		{0, 210, 320, 30, -1},
+		{0, 215, 320, 25, -1},
 	};
 };
 

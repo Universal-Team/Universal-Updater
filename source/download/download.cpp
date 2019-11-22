@@ -701,7 +701,7 @@ void displayProgressBar() {
         C2D_TargetClear(top, BLACK);
         C2D_TargetClear(bottom, BLACK);
         Gui::DrawTop();
-        Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, progressBarMsg, 400);
+        Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
 
         Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
         Gui::Draw_Rect(30, 120, 340, 30, BLACK);
