@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -33,19 +33,10 @@
 #include "screens/screenCommon.hpp"
 
 #include "utils/config.hpp"
-#include "utils/extract.hpp"
-#include "utils/fileBrowse.h"
-#include "utils/thread.hpp"
 #include "utils/formatting.hpp"
 
-#include <sys/stat.h>
-#include <unistd.h>
 #include <vector>
 #include <string>
-
-extern "C" {
-	#include "utils/cia.h"
-}
 
 #define  USER_AGENT   APP_TITLE "-" VERSION_STRING
 
@@ -574,11 +565,11 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 	return jsonItem;
 }
 
-std::vector<ThemeEntry> getThemeList(std::string repo, std::string path)
+std::vector<ListEntry> getList(std::string repo, std::string path)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
-	std::vector<ThemeEntry> emptyVector;
+	std::vector<ListEntry> emptyVector;
 	if (!socubuf)
 	{
 		return emptyVector;
@@ -625,27 +616,27 @@ std::vector<ThemeEntry> getThemeList(std::string repo, std::string path)
 		return emptyVector;
 	}
 
-	std::vector<ThemeEntry> jsonItems;
+	std::vector<ListEntry> jsonItems;
 	json parsedAPI = json::parse(result_buf);
 	for(uint i=0;i<parsedAPI.size();i++) {
-		ThemeEntry themeEntry;
+		ListEntry listEntry;
 		if (parsedAPI[i]["name"].is_string()) {
-			themeEntry.name = parsedAPI[i]["name"];
+			listEntry.name = parsedAPI[i]["name"];
 		}
 		if (parsedAPI[i]["download_url"].is_string()) {
-			themeEntry.downloadUrl = parsedAPI[i]["download_url"];
+			listEntry.downloadUrl = parsedAPI[i]["download_url"];
 		}
 		if (parsedAPI[i]["path"].is_string()) {
-			themeEntry.sdPath = "sdmc:/";
-			themeEntry.sdPath += parsedAPI[i]["path"];
-			themeEntry.path = parsedAPI[i]["path"];
+			listEntry.sdPath = "sdmc:/";
+			listEntry.sdPath += parsedAPI[i]["path"];
+			listEntry.path = parsedAPI[i]["path"];
 
 			size_t pos;
-			while ((pos = themeEntry.path.find(" ")) != std::string::npos) {
-				themeEntry.path.replace(pos, 1, "%20");
+			while ((pos = listEntry.path.find(" ")) != std::string::npos) {
+				listEntry.path.replace(pos, 1, "%20");
 			}
 		}
-		jsonItems.push_back(themeEntry);
+		jsonItems.push_back(listEntry);
 	}
 
 	socExit();
@@ -657,21 +648,6 @@ std::vector<ThemeEntry> getThemeList(std::string repo, std::string path)
 
 	return jsonItems;
 }
-
-void downloadTheme(std::string path) {
-	std::vector<ThemeEntry> themeContents = getThemeList("Universal-Team/extras", path);
-	for(uint i=0;i<themeContents.size();i++) {
-		if(themeContents[i].downloadUrl != "") {
-			DisplayMsg((Lang::get("DOWNLOADING")+themeContents[i].name).c_str());
-			downloadToFile(themeContents[i].downloadUrl, themeContents[i].sdPath);
-		} else {
-			DisplayMsg((Lang::get("DOWNLOADING")+themeContents[i].name).c_str());
-			mkdir((themeContents[i].sdPath).c_str(), 0777);
-			downloadTheme(themeContents[i].path);
-		}
-	}
-}
-
 
 void displayProgressBar() {
 	char str[256];
@@ -712,60 +688,6 @@ void displayProgressBar() {
 		}
         Gui::DrawBottom();
         C3D_FrameEnd(0);
-		gspWaitForVBlank();
-	}
-}
-
-void download::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message) {
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressBarType = 0;
-	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadFromRelease("https://github.com/" + repo, file, output, includePrereleases) != 0) {
-		showProgressBar = false;
-		downloadFailed();
-		return;
-	}
-	showProgressBar = false;
-}
-
-
-void download::downloadFile(std::string file, std::string output, std::string message) {
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressBarType = 0;
-	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadToFile(file, output) != 0) {
-		showProgressBar = false;
-		downloadFailed();
-		return;
-	}
-	showProgressBar = false;
-}
-
-void download::deleteFileList(std::string file, std::string message) {
-	DisplayMsg(message);
-	deleteFile(file.c_str());
-}
-
-void download::installFileList(std::string file, std::string message) {
-	DisplayMsg(message);
-	installCia(file.c_str());
-}
-
-void download::extractFileList(std::string file, std::string input, std::string output, std::string message) {
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	filesExtracted = 0;
-	progressBarType = 1;
-	Threads::create((ThreadFunc)displayProgressBar);
-	extractArchive(file, input, output);
-	showProgressBar = false;
-}
-
-void download::displayTimeMsg(std::string message, int seconds) {
-	DisplayMsg(message);
-	for (int i = 0; i < 60*seconds; i++) {
 		gspWaitForVBlank();
 	}
 }

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "utils/fileBrowse.h"
 #include "utils/json.hpp"
 #include "utils/formatting.hpp"
+#include "utils/scriptHelper.hpp"
 
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
@@ -45,7 +46,6 @@ extern C2D_SpriteSheet sprites;
 
 #define tinyDBFile "sdmc:/3ds/Universal-Updater/TinyDB.json"
 
-extern std::string get(nlohmann::json json, const std::string &key, const std::string &key2);
 std::string maxEntries;
 
 // Parse the Objects.
@@ -211,7 +211,7 @@ void TinyDB::execute() {
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else    missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-			if(!missing)	download::deleteFileList(file, message);
+			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
 			bool missing = false;
@@ -221,7 +221,7 @@ void TinyDB::execute() {
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at("script").at(i).at("output");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-			if(!missing)	download::downloadFile(file, output, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 
 		} else if(type == "installCia") {
 			bool missing = false;
@@ -229,7 +229,7 @@ void TinyDB::execute() {
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else    missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-			if(!missing)	download::installFileList(file, message);
+			if(!missing)	ScriptHelper::installFile(file, message);
 		}
 	}
 	doneMsg();

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ enum DownloadError {
 	DL_ERROR_GIT,
 };
 
-struct ThemeEntry {
+struct ListEntry {
 	std::string downloadUrl;
 	std::string name;
 	std::string path;
@@ -101,13 +101,4 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
  * path is the path within the repo (Ex. "contents/_nds/TWiLightMenu/dsimenu/themes")
  * @return the string from the API.
  */
-std::vector<ThemeEntry> getThemeList(std::string repo, std::string path);
-
-namespace download {
-	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
-	void downloadFile(std::string file, std::string output, std::string message);
-	void deleteFileList(std::string file, std::string message);
-	void installFileList(std::string file, std::string message);
-	void extractFileList(std::string file, std::string input, std::string output, std::string message);
-	void displayTimeMsg(std::string message, int seconds);
-}
+std::vector<ListEntry> getList(std::string repo, std::string path);

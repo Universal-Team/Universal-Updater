@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 *         or requiring that modified versions of such material be marked in
 *         reasonable ways as different from the original version.
 */
+
 #ifndef SCRIPTLIST_HPP
 #define SCRIPTLIST_HPP
 
@@ -58,5 +59,4 @@ private:
 	int fastMode = false;
 };
 
-Result createFile(const char * path);
 #endif

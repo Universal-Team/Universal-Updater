@@ -24,47 +24,25 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef SCRIPTCREATOR_HPP
-#define SCRIPTCREATOR_HPP
+#ifndef SCRIPTHELPER_HPP
+#define SCRIPTHELPER_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
+#include <string>
 
-#include "utils/json.hpp"
-#include "utils/structs.hpp"
+namespace ScriptHelper {
+	// Get stuff from a JSON.
+	std::string getString(nlohmann::json json, const std::string &key, const std::string &key2);
+	int getNum(nlohmann::json json, const std::string &key, const std::string &key2);
 
-#include <vector>
+	// Script Functions.
+	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
+	void downloadFile(std::string file, std::string output, std::string message);
 
-class ScriptCreator : public Screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	ScriptCreator();
-
-private:
-	int Selection = 0;
-	void openJson(std::string fileName);
-	void createNewJson(std::string fileName);
-	void save();
-	void setInfoStuff(void);
-	void createDownloadRelease();
-
-	void setBool(const std::string &object, const std::string &key, bool v);
-	void setBool2(const std::string &object, const std::string &key, const std::string &key2, bool v);
-
-	void setInt(const std::string &object, const std::string &key, int v);
-	void setInt2(const std::string &object, const std::string &key, const std::string &key2, int v);
-
-	void setString(const std::string &object, const std::string &key, const std::string &v);
-	void setString2(const std::string &object, const std::string &key, const std::string &key2, const std::string &v);
-
-	void createEntry(const std::string &Entryname);
-
-	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // New Script.
-		{90, 100, 140, 35, -1}, // Existing Script.
-	};
-};
+	void removeFile(std::string file, std::string message);
+	void installFile(std::string file, std::string message);
+	void extractFile(std::string file, std::string input, std::string output, std::string message);
+	Result createFile(const char * path);
+	void displayTimeMsg(std::string message, int seconds);
+}
 
 #endif

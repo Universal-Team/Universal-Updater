@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "screens/scriptlist.hpp"
 
 #include "utils/config.hpp"
+#include "utils/scriptHelper.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -53,25 +54,6 @@ std::string selectedTitle;
 std::string Desc = "";
 nlohmann::json jsonFile;
 
-std::string get(nlohmann::json json, const std::string &key, const std::string &key2) {
-	if(!json.contains(key))	return "MISSING: " + key;
-	if(!json.at(key).is_object())	return "NOT OBJECT: " + key;
-
-	if(!json.at(key).contains(key2))	return "MISSING: " + key + "." + key2;
-	if(!json.at(key).at(key2).is_string())	return "NOT STRING: " + key + "." + key2;
-
-	return json.at(key).at(key2).get_ref<const std::string&>();
-}
-
-int getNum(nlohmann::json json, const std::string &key, const std::string &key2) {
-	if(!json.contains(key))	return 0;
-	if(!json.at(key).is_object())	return 0;
-
-	if(!json.at(key).contains(key2))	return 0;
-	if(!json.at(key).at(key2).is_number())	return 0;
-	return json.at(key).at(key2).get_ref<const int64_t&>();
-}
-
 Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
 	if(!file) {
@@ -83,9 +65,9 @@ Info parseInfo(std::string fileName) {
 	fclose(file);
 
 	Info info;
-	info.title = get(json, "info", "title");
-	info.author = get(json, "info", "author");
-	info.shortDesc = get(json, "info", "shortDesc");
+	info.title = ScriptHelper::getString(json, "info", "title");
+	info.author = ScriptHelper::getString(json, "info", "author");
+	info.shortDesc = ScriptHelper::getString(json, "info", "shortDesc");
 	return info;
 }
 
@@ -93,10 +75,7 @@ void checkForValidate(void) {
 	FILE* file = fopen(currentFile.c_str(), "rt");
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
-
-	std::string version;
-	version = get(json, "info", "version");
-	int ver = getNum(json, "info", "version");
+	int ver = ScriptHelper::getNum(json, "info", "version");
 	if (ver < SCRIPT_VERSION || ver > SCRIPT_VERSION) {
 		Gui::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
 	}
@@ -137,14 +116,6 @@ std::string Description(nlohmann::json &json) {
 	return out;
 }
 
-// Because we need `#include <fstream>`.
-Result createFile(const char * path) {
-	std::ofstream ofstream;
-	ofstream.open(path, std::ofstream::out | std::ofstream::app);
-	ofstream.close();
-	return 0;
-}
-
 void runFunctions(nlohmann::json &json) {
 	for(int i=0;i<(int)json.at(choice).size();i++) {
 		std::string type = json.at(choice).at(i).at("type");
@@ -155,7 +126,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else    missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::deleteFileList(file, message);
+			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
 			bool missing = false;
@@ -165,7 +136,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::downloadFile(file, output, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 		
 		} else if(type == "downloadRelease") {
 			bool missing = false, includePrereleases = false;
@@ -179,7 +150,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
 				includePrereleases = json.at(choice).at(i).at("includePrereleases");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::downloadRelease(repo, file, output, includePrereleases, message);
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
 			
 		} else if(type == "extractFile") {
 			bool missing = false;
@@ -191,7 +162,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::extractFileList(file, input, output, message);
+			if(!missing)	ScriptHelper::extractFile(file, input, output, message);
 
 		} else if(type == "installCia") {
 			bool missing = false;
@@ -199,7 +170,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else    missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	download::installFileList(file, message);
+			if(!missing)	ScriptHelper::installFile(file, message);
 
 		} else if (type == "mkdir") {
 			bool missing = false;
@@ -225,7 +196,7 @@ void runFunctions(nlohmann::json &json) {
 			std::string file;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else	missing = true;
-			if(!missing)	createFile(file.c_str());
+			if(!missing)	ScriptHelper::createFile(file.c_str());
 
 		} else if (type == "timeMsg") {
 			bool missing = false;
@@ -236,7 +207,7 @@ void runFunctions(nlohmann::json &json) {
 			if(json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
 			seconds = json.at(choice).at(i).at("seconds");
 			else	missing = true;
-			if(!missing)	download::displayTimeMsg(message, seconds);
+			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 		}
 	}
 	doneMsg();
@@ -270,25 +241,25 @@ u32 progressBar;
 
 void loadColors(nlohmann::json &json) {
 	u32 colorTemp;
-	colorTemp = getColor(get(json, "info", "barColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "barColor"));
 	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "bgTopColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgTopColor"));
 	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "bgBottomColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgBottomColor"));
 	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "textColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "textColor"));
 	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "selectedColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "selectedColor"));
 	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "unselectedColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "unselectedColor"));
 	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
 
-	colorTemp = getColor(get(json, "info", "progressbarColor"));
+	colorTemp = getColor(ScriptHelper::getString(json, "info", "progressbarColor"));
 	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
 }
 
