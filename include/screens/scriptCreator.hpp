@@ -40,16 +40,27 @@ class ScriptCreator : public Screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	ScriptCreator();
 
 private:
+	// Screen draws.
+	void DrawSubMenu(void) const;
+	void DrawScriptScreen(void) const;
+
+	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void scriptLogic(u32 hDown, u32 hHeld, touchPosition touch);
+
+	// Selection + Mode.
 	int Selection = 0;
+	int mode = 0;
+
+	// Functions.
 	void openJson(std::string fileName);
 	void createNewJson(std::string fileName);
 	void save();
 	void setInfoStuff(void);
 	void createDownloadRelease();
 
+	// 
 	void setBool(const std::string &object, const std::string &key, bool v);
 	void setBool2(const std::string &object, const std::string &key, const std::string &key2, bool v);
 
@@ -61,10 +72,23 @@ private:
 
 	void createEntry(const std::string &Entryname);
 
+	std::string jsonFileName;
+	// Main Pos.
 	std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35, -1}, // New Script.
 		{90, 100, 140, 35, -1}, // Existing Script.
 	};
+
+	// Creator Button Pos.
+	std::vector<Structs::ButtonPos> creatorButtons = {
+		{10, 40, 140, 35, -1},
+		{170, 40, 140, 35, -1},
+		{10, 100, 140, 35, -1},
+		{170, 100, 140, 35, -1},
+		{10, 160, 140, 35, -1},
+		{170, 160, 140, 35, -1},
+	};
+
 };
 
 #endif

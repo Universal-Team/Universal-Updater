@@ -44,7 +44,7 @@ extern bool fadein;
 extern void notImplemented(void);
 
 // This is for the Script Creator, so no one can access it for now, until it is stable or so.
-bool isTesting = false;
+bool isTesting = true;
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
