@@ -59,7 +59,7 @@ void Logging::createLogFile(void) {
 
 // Only write to the Log, if it is enabled in the Settings File!
 void Logging::writeToLog(std::string debugText) {
-	if (Config::Logging == true) {
+	if (Config::getBool("LOGGING") == true) {
 		std::ofstream logFile;
 		logFile.open(("sdmc:/3ds/Universal-Updater/Log.log"), std::ofstream::app);
 		std::string writeDebug = "[ ";
