@@ -25,6 +25,7 @@
 */
 
 #include "keyboard.hpp"
+#include "logging.hpp"
 
 #include "screens/scriptCreator.hpp"
 
@@ -159,6 +160,7 @@ void ScriptCreator::createDownloadRelease() {
 	std::string message = Input::getString(50, "Enter the Message.");
 
 	editScript[entryname] = { {{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createDownloadRelease();'.");
 }
 
 // To-Do.
@@ -174,6 +176,7 @@ void ScriptCreator::createDownloadFile() {
 	std::string message = Input::getString(50, "Enter the Message.");
 
 	editScript[entryname] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createDownloadFile();'.");
 }
 
 
@@ -186,6 +189,7 @@ void ScriptCreator::createDeleteFile() {
 	std::string message = Input::getString(50, "Enter the Message.");
 
 	editScript[entryname] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createDeleteFile();'.");
 }
 
 
@@ -202,6 +206,7 @@ void ScriptCreator::createExtractFile() {
 	std::string message = Input::getString(50, "Enter the Message.");
 
 	editScript[entryname] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createExtractFile();'.");
 }
 
 
@@ -214,6 +219,7 @@ void ScriptCreator::createInstallCia() {
 	std::string message = Input::getString(50, "Enter the Message.");
 
 	editScript[entryname] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createInstallCia();'.");
 }
 
 
@@ -224,6 +230,7 @@ void ScriptCreator::createMkDir() {
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
 	editScript[entryname] = { {{"type", "mkdir"}, {"directory", directory}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createMkDir();'.");
 }
 
 void ScriptCreator::createRmDir() {
@@ -233,6 +240,7 @@ void ScriptCreator::createRmDir() {
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
 	editScript[entryname] = { {{"type", "rmdir"}, {"directory", directory}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createRmDir();'.");
 }
 
 void ScriptCreator::createMkFile() {
@@ -242,6 +250,7 @@ void ScriptCreator::createMkFile() {
 	std::string file = Input::getString(50, "Enter the path to the new File.");
 
 	editScript[entryname] = { {{"type", "mkfile"}, {"file", file}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createMkFile();'.");
 }
 
 void ScriptCreator::createTimeMsg() {
@@ -253,6 +262,7 @@ void ScriptCreator::createTimeMsg() {
 	int seconds = Input::getUint(999, "Enter the Seconds for the Message to display.");
 
 	editScript[entryname] = { {{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}} };
+	Logging::writeToLog("Execute 'ScriptCreator::createTimeMsg();'.");
 }
 
 
@@ -260,6 +270,7 @@ void ScriptCreator::save() {
 	FILE* file = fopen(jsonFileName.c_str(), "w");
 	if(file)	fwrite(editScript.dump(1, '\t').c_str(), 1, editScript.dump(1, '\t').size(), file);
 	fclose(file);
+	Logging::writeToLog("Execute 'ScriptCreator::save();'.");
 }
 
 // Important to make Scripts valid.

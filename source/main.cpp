@@ -25,6 +25,7 @@
 */
 
 #include "gui.hpp"
+#include "logging.hpp"
 
 #include "lang/lang.hpp"
 
@@ -97,6 +98,11 @@ int main()
 	}
 	Config::load();
 	Lang::load(Config::lang);
+
+	if (Config::Logging == true) {
+		Logging::createLogFile();
+	}
+
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
@@ -106,7 +112,6 @@ int main()
 		loadSoundEffects();
 		playMusic();
 	 }
-
 
 	// Loop as long as the status is not exit
 	while (aptMainLoop() && !exiting)
