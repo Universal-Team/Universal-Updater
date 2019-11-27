@@ -98,20 +98,41 @@ void ScriptCreator::DrawScriptScreen(void) const {
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
 	Gui::DrawBottom();
 
-	for (int i = 0; i < 6; i++) {
-		if (Selection == i) {
-			Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::UnselectedColor);
+	// Draw Page.
+	for (int i = 0; i < 2; i++) {
+		if (i == page) {
+			Gui::DrawString(260, 3, 0.6f, Config::TxtColor, std::to_string(i+1) + " / 2", 140);
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadRelease"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "downloadRelease", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadFile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "downloadFile", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "deleteFile"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "deleteFile", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "extractFile"))/2+150-70, creatorButtons[3].y+10, 0.6f, Config::TxtColor, "extractFile", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, Config::TxtColor, "installCia", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, Config::TxtColor, "mkdir", 140);
+	if (page == 0) {
+		for (int i = 0; i < 6; i++) {
+			if (Selection == i) {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::SelectedColor);
+			} else {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::UnselectedColor);
+			}
+		}
+
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadRelease"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "downloadRelease", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadFile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "downloadFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "deleteFile"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "deleteFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "extractFile"))/2+150-70, creatorButtons[3].y+10, 0.6f, Config::TxtColor, "extractFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, Config::TxtColor, "installCia", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, Config::TxtColor, "mkdir", 140);
+	} else if (page == 1) {
+		for (int i = 0; i < 3; i++) {
+			if (Selection == i) {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::SelectedColor);
+			} else {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::UnselectedColor);
+			}
+		}
+
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "rmdir"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "rmdir", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkfile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "mkfile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TimeMsg"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "TimeMsg", 140);
+	}
 }
 
 void ScriptCreator::createNewJson(std::string fileName) {
@@ -141,39 +162,99 @@ void ScriptCreator::createDownloadRelease() {
 }
 
 // To-Do.
-/*
-void ScriptCreator::createDownloadFile(const std::string &Entryname, const std::string &file, const std::string output, const std::string &message) {
-	editScript[Entryname] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
+
+void ScriptCreator::createDownloadFile() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// URL of the file.
+	std::string file = Input::getString(50, "Enter the URL of the file.");
+	// Output.
+	std::string output = Input::getString(50, "Enter the name of the Output path.");
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+
+	editScript[entryname] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
 }
 
-void ScriptCreator::createDeleteFile(const std::string &Entryname, const std::string &file, const std::string &message) {
-	editScript[Entryname] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
+
+void ScriptCreator::createDeleteFile() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// URL of the file.
+	std::string file = Input::getString(50, "Enter the path to the file.");
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+
+	editScript[entryname] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
 }
 
-void ScriptCreator::createExtractFile(const std::string &Entryname, const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
-	editScript[Entryname] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
+
+void ScriptCreator::createExtractFile() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// File path.
+	std::string file = Input::getString(50, "Enter the path to the file.");
+	// Input of the archive.
+	std::string input = Input::getString(50, "Enter the Input of what should be extracted.");
+	// Output path.
+	std::string output = Input::getString(50, "Enter the output path.");
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+
+	editScript[entryname] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
 }
 
-void ScriptCreator::createInstallCia(const std::string &Entryname, const std::string &file, const std::string &message) {
-	editScript[Entryname] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
+
+void ScriptCreator::createInstallCia() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// File path.
+	std::string file = Input::getString(50, "Enter the path to the CIA File.");
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+
+	editScript[entryname] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
 }
 
-void ScriptCreator::createMkDir(const std::string &Entryname, const std::string &directory) {
-	editScript[Entryname] = { {{"type", "mkdir"}, {"directory", directory}} };
+
+void ScriptCreator::createMkDir() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// Directory path.
+	std::string directory = Input::getString(50, "Enter the directory path.");
+
+	editScript[entryname] = { {{"type", "mkdir"}, {"directory", directory}} };
 }
 
-void ScriptCreator::createRmDir(const std::string &Entryname, const std::string &directory) {
-	editScript[Entryname] = { {{"type", "rmdir"}, {"directory", directory}} };
+void ScriptCreator::createRmDir() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// Directory path.
+	std::string directory = Input::getString(50, "Enter the directory path.");
+
+	editScript[entryname] = { {{"type", "rmdir"}, {"directory", directory}} };
 }
 
-void ScriptCreator::createMkFile(const std::string &Entryname, const std::string &file) {
-	editScript[Entryname] = { {{"type", "mkfile"}, {"file", file}} };
+void ScriptCreator::createMkFile() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// File path.
+	std::string file = Input::getString(50, "Enter the path to the new File.");
+
+	editScript[entryname] = { {{"type", "mkfile"}, {"file", file}} };
 }
 
-void ScriptCreator::createTimeMsg(const std::string &Entryname, const std::string &message, int seconds) {
-	editScript[Entryname] = { {{"type", "rmdir"}, {"message", message}, {"seconds", seconds}} };
+void ScriptCreator::createTimeMsg() {
+	// Entry name.
+	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
+	// Message.
+	std::string message = Input::getString(50, "Enter the Message.");
+	// Seconds.
+	int seconds = Input::getUint(999, "Enter the Seconds for the Message to display.");
+
+	editScript[entryname] = { {{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}} };
 }
-*/
+
 
 void ScriptCreator::save() {
 	FILE* file = fopen(jsonFileName.c_str(), "w");
@@ -247,24 +328,85 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		mode = 0;
 	}
 
-	if (hDown & KEY_UP) {
-		if(Selection > 1)	Selection -= 2;
+	// Page 1.
+	if (page == 0) {
+		if (hDown & KEY_UP) {
+			if(Selection > 1)	Selection -= 2;
+		}
+		if (hDown & KEY_DOWN) {
+			if(Selection < 4)	Selection += 2;
+		}
+		if (hDown & KEY_LEFT) {
+			if (Selection%2) Selection--;
+		}
+		if (hDown & KEY_RIGHT) {
+			if (!(Selection%2)) Selection++;
+		}
+	} else if (page == 1) {
+		if (hDown & KEY_UP) {
+			if (Selection == 2)	Selection = 0;
+		}
+		if (hDown & KEY_RIGHT) {
+			if (Selection == 0)	Selection = 1;
+		}
+		if (hDown & KEY_LEFT) {
+			if (Selection == 1)	Selection = 0;
+		}
+		if (hDown & KEY_DOWN) {
+			if (Selection == 0)	Selection = 2;
+		}
 	}
-	if (hDown & KEY_DOWN) {
-		if(Selection < 4)	Selection += 2;
+
+	// Page 2.
+
+	if (hDown & KEY_R) {
+		if (page == 0) {
+			page = 1;
+			Selection = 0;
+		}
 	}
-	if (hDown & KEY_LEFT) {
-		if (Selection%2) Selection--;
-	}
-	if (hDown & KEY_RIGHT) {
-		if (!(Selection%2)) Selection++;
+
+	if (hDown & KEY_L) {
+		if (page == 1) {
+			page = 0;
+			Selection = 0;
+		}
 	}
 
 	if (hDown & KEY_A) {
-		switch(Selection) {
-			case 0:
-				createDownloadRelease();
-				break;
+		if (page == 0) {
+			switch(Selection) {
+				case 0:
+					createDownloadRelease();
+					break;
+				case 1:
+					createDownloadFile();
+					break;
+				case 2:
+					createDeleteFile();
+					break;
+				case 3:
+					createExtractFile();
+					break;
+				case 4:
+					createInstallCia();
+					break;
+				case 5:
+					createMkDir();
+					break;
+			}
+		} else if (page == 1) {
+			switch(Selection) {
+				case 0:
+					createRmDir();
+					break;
+				case 1:
+					createMkFile();
+					break;
+				case 2:
+					createTimeMsg();
+					break;
+			}
 		}
 	}
 

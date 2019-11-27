@@ -52,13 +52,26 @@ private:
 	// Selection + Mode.
 	int Selection = 0;
 	int mode = 0;
+	int page = 0;
 
 	// Functions.
 	void openJson(std::string fileName);
 	void createNewJson(std::string fileName);
 	void save();
 	void setInfoStuff(void);
+
+	// Creating Functions. -> Page 1.
 	void createDownloadRelease();
+	void createDownloadFile();
+	void createDeleteFile();
+	void createExtractFile();
+	void createInstallCia();
+	void createMkDir();
+
+	// Creating Functions. -> Page 2.
+	void createRmDir();
+	void createMkFile();
+	void createTimeMsg();
 
 	// 
 	void setBool(const std::string &object, const std::string &key, bool v);

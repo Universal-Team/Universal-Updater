@@ -121,7 +121,7 @@ std::string Input::Numpad(uint maxLength, std::string Text)
 			C2D_TargetClear(top, BLACK);
 			C2D_TargetClear(bottom, BLACK);
 			Gui::DrawTop();
-			Gui::DrawString((400-Gui::GetStringWidth(0.8f, Text))/2, 2, 0.8f, WHITE, Text, 400);
+			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, WHITE, Text, 400);
 			Gui::DrawString(180, 212, 0.8, WHITE, (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 400);
 			if(cursorBlink < -20)	cursorBlink = 20;
 			Gui::ScreenDraw(bottom);
