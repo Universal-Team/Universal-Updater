@@ -35,11 +35,8 @@
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
-#include <random>
 #include <stack>
 #include <string.h>
-#include <unordered_map>
-#include <wchar.h>
 
 namespace Gui
 {

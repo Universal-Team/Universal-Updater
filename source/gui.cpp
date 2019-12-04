@@ -30,12 +30,7 @@
 
 #include "utils/config.hpp"
 
-#include <3ds.h>
 #include <assert.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stack>
 
 C3D_RenderTarget* top;
 C3D_RenderTarget* bottom;
