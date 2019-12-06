@@ -169,7 +169,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 	if (hDown & KEY_B) {
 		infoJson.clear();
-		Gui::screenBack();
+		Screen::back();
 		return;
 	}
 

@@ -232,7 +232,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Screen::back();
 		return;
 	}
 }

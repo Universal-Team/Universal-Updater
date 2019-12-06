@@ -46,9 +46,6 @@ touchPosition touch;
 sound *bgm = NULL;
 bool songIsFound = false;
 
-int fadealpha = 255;
-bool fadein = true;
-
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
 	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))
@@ -103,7 +100,7 @@ int main()
 		Logging::createLogFile();
 	}
 
-	Gui::setScreen(std::make_unique<ScreenSelection>());
+	Screen::set(std::make_unique<ScreenSelection>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
@@ -124,17 +121,9 @@ int main()
 		C2D_TargetClear(top, BLACK);
 		C2D_TargetClear(bottom, BLACK);
 		Gui::clearTextBufs();
-		Gui::mainLoop(hDown, hHeld, touch);
+		Screen::loop(hDown, hHeld, touch);
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
-
-		if (fadein == true) {
-			fadealpha -= 3;
-			if (fadealpha < 0) {
-				fadealpha = 0;
-				fadein = false;
-			}
-		}
 	}
 
 	if (songIsFound == true) {

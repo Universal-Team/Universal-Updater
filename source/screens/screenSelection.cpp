@@ -98,30 +98,30 @@ void ScreenSelection::Draw(void) const {
 void ScreenSelection::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		if (selectedScreen == 0) {
-			Gui::setScreen(std::make_unique<ScriptList>());
+			Screen::set(std::make_unique<ScriptList>());
 		} else if (selectedScreen == 1) {
             if (checkWifiStatus() == true) {
-			    Gui::setScreen(std::make_unique<ScriptBrowse>());
+			    Screen::set(std::make_unique<ScriptBrowse>());
             } else {
                 notConnectedMsg();
             }
 		} else if (selectedScreen == 2) {
             if (checkWifiStatus() == true) {
-			    Gui::setScreen(std::make_unique<TinyDB>());
+			    Screen::set(std::make_unique<TinyDB>());
             } else {
                 notConnectedMsg();
             }
 		} else if (selectedScreen == 3) {
 			if (isTesting == true) {
-                Gui::setScreen(std::make_unique<ScriptCreator>());
+                Screen::set(std::make_unique<ScriptCreator>());
             } else {
                 notImplemented();
             }
 		} else if (selectedScreen == 4) {
-            Gui::setScreen(std::make_unique<Settings>());
+            Screen::set(std::make_unique<Settings>());
         } else if (selectedScreen == 5) {
             if (checkWifiStatus() == true) {
-                Gui::setScreen(std::make_unique<FTPScreen>());
+                Screen::set(std::make_unique<FTPScreen>());
             } else {
                 notConnectedMsg();
             }

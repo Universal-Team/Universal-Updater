@@ -33,7 +33,7 @@
 #include "utils/config.hpp"
 #include "utils/fileBrowse.h"
 
-class ScriptBrowse : public Screen
+class ScriptBrowse : public screen
 {
 public:
 	void Draw(void) const override;

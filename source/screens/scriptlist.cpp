@@ -365,7 +365,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 
 	if (hDown & KEY_B) {
 		fileInfo.clear();
-		Gui::screenBack();
+		Screen::back();
 		return;
 	}
 

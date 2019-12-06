@@ -30,13 +30,10 @@
 
 #include "utils/config.hpp"
 
-#include <assert.h>
-
 C3D_RenderTarget* top;
 C3D_RenderTarget* bottom;
 
 C2D_TextBuf sizeBuf;
-std::stack<std::unique_ptr<Screen>> screens;
 C2D_SpriteSheet sprites;
 bool currentScreen = false;
 extern bool isScriptSelected;
@@ -157,33 +154,15 @@ bool Gui::Draw_Rect(float x, float y, float w, float h, u32 color) {
 	return C2D_DrawRectSolid(x, y, 0.5f, w, h, color);
 }
 
-// Mainloop the GUI.
-void Gui::mainLoop(u32 hDown, u32 hHeld, touchPosition touch) {
-	screens.top()->Draw();
-	screens.top()->Logic(hDown, hHeld, touch);
-}
-
-// Set the current Screen.
-void Gui::setScreen(std::unique_ptr<Screen> screen)
-{
-	screens.push(std::move(screen));
-}
-
-// Go a Screen back.
-void Gui::screenBack()
-{
-	screens.pop();
-}
-
 // Select, on which Screen should be drawn.
-void Gui::ScreenDraw(C3D_RenderTarget * screen)
+void Gui::setDraw(C3D_RenderTarget * screen)
 {
 	C2D_SceneBegin(screen);
 	currentScreen = screen == top ? 1 : 0;
 }
 
 void Gui::DrawTop(void) {
-	Gui::ScreenDraw(top);
+	Gui::setDraw(top);
 	if (isScriptSelected == false) {
 		Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
 		Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
@@ -200,7 +179,7 @@ void Gui::DrawTop(void) {
 }
 
 void Gui::DrawBottom(void) {
-	Gui::ScreenDraw(bottom);
+	Gui::setDraw(bottom);
 	if (isScriptSelected == false) {
 		Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
 		Gui::Draw_Rect(0, 25, 320, 190, Config::Color3);

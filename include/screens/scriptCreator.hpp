@@ -35,7 +35,7 @@
 
 #include <vector>
 
-class ScriptCreator : public Screen
+class ScriptCreator : public screen
 {
 public:
 	void Draw(void) const override;

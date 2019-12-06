@@ -26,12 +26,48 @@
 
 #include "screens/screen.hpp"
 
-class FTPScreen : public screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+#include <stack>
 
-private:
-	int ftpEnabled = 1;
-};
+// Fade stuff.
+int fadealpha = 255;
+bool fadein = true;
+
+std::stack<std::unique_ptr<screen>> screens;
+
+// Set a specific Screen.
+void Screen::set(std::unique_ptr<screen> screen2)
+{
+	screens.push(std::move(screen2));
+}
+
+// Fade into another Screen, but first do a fadeout.
+void Screen::fade(std::unique_ptr<screen> screen2, bool fadeout) {
+	if (fadeout) {
+		fadealpha += 6;
+		if (fadealpha > 255) {
+			fadealpha = 255;
+			screens.push(std::move(screen2));
+			fadein = true;
+			fadeout = false;
+		}
+	}
+}
+
+// Go a Screen back.
+void Screen::back()
+{
+	screens.pop();
+}
+
+// For the Mainloop.
+void Screen::loop(u32 hDown, u32 hHeld, touchPosition touch) {
+	screens.top()->Draw();
+	screens.top()->Logic(hDown, hHeld, touch);
+	if (fadein == true) {
+		fadealpha -= 6;
+		if (fadealpha < 0) {
+			fadealpha = 0;
+			fadein = false;
+		}
+	}
+}
