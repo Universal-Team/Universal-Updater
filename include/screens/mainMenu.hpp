@@ -24,8 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef SCREENSELECTION_HPP
-#define SCREENSELECTION_HPP
+#ifndef MAINMENU_HPP
+#define MAINMENU_HPP
 
 #include "screens/screen.hpp"
 
@@ -33,13 +33,22 @@
 
 #include <vector>
 
-class ScreenSelection : public screen
+class MainMenu : public screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	int selectedScreen = 0;
+	int Selection = 0;
+
+	std::vector<Structs::ButtonPos> mainButtons = {		
+		{10, 40, 140, 35, -1}, // Scriptlist.
+		{170, 40, 140, 35, -1}, // ScriptBrowse.
+		{10, 100, 140, 35, -1}, // TinyDB.
+		{170, 100, 140, 35, -1}, // ScriptCreator.
+		{10, 160, 140, 35, -1}, // Language.
+		{170, 160, 140, 35, -1}, // Colors.
+	};
 };
 
 #endif

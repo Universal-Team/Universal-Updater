@@ -29,8 +29,8 @@
 
 #include "lang/lang.hpp"
 
+#include "screens/mainMenu.hpp"
 #include "screens/screenCommon.hpp"
-#include "screens/screenSelection.hpp"
 
 #include "utils/config.hpp"
 #include "utils/sound.h"
@@ -100,7 +100,7 @@ int main()
 		Logging::createLogFile();
 	}
 
-	Screen::set(std::make_unique<ScreenSelection>());
+	Screen::set(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
