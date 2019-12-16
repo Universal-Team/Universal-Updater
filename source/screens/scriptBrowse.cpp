@@ -43,14 +43,14 @@ nlohmann::json infoJson;
 std::string maxScripts;
 
 void fixInfo(nlohmann::json &json) {
-    for(uint i=0;i<json.size();i++) {
-        if(!json[i].contains("title"))    json[i]["title"] = "TITLE";
-        if(!json[i].contains("author"))    json[i]["author"] = "AUTHOR";
+	for(uint i=0;i<json.size();i++) {
+		if(!json[i].contains("title"))    json[i]["title"] = "TITLE";
+		if(!json[i].contains("author"))    json[i]["author"] = "AUTHOR";
 		if(!json[i].contains("shortDesc"))	json[i]["shortDesc"] = "SHORTDESC";
-        if(!json[i].contains("revision"))    json[i]["revision"] = 0;
-        if(!json[i].contains("curRevision"))    json[i]["curRevision"] = 0;
-        if(!json[i].contains("version"))    json[i]["revision"] = 0;
-    }
+		if(!json[i].contains("revision"))    json[i]["revision"] = 0;
+		if(!json[i].contains("curRevision"))    json[i]["curRevision"] = 0;
+		if(!json[i].contains("version"))    json[i]["revision"] = 0;
+	}
 }
 
 nlohmann::json infoFromScript(const std::string &path) {
@@ -205,9 +205,9 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		std::string titleFix = infoJson[selection]["title"]; 
 		for (int i = 0; i < (int)titleFix.size(); i++) {
-   			if (titleFix[i] == '/') {
-        		titleFix[i] = '-';
-    		}
+			if (titleFix[i] == '/') {
+				titleFix[i] = '-';
+			}
 		}
 			DisplayMsg(fileName);
 

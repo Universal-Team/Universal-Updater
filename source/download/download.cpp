@@ -119,13 +119,13 @@ curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero
 curl_off_t downloadNow = 0;
 
 static int curlProgress(CURL *hnd,
-                    curl_off_t dltotal, curl_off_t dlnow,
-                    curl_off_t ultotal, curl_off_t ulnow)
+					curl_off_t dltotal, curl_off_t dlnow,
+					curl_off_t ultotal, curl_off_t ulnow)
 {
-  downloadTotal = dltotal;
-  downloadNow = dlnow;
-  
-  return 0;
+	downloadTotal = dltotal;
+	downloadNow = dlnow;
+
+	return 0;
 }
 
 static Result setupContext(CURL *hnd, const char * url)
@@ -673,21 +673,21 @@ void displayProgressBar() {
 		}
 
 		Gui::clearTextBufs();
-        C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-        C2D_TargetClear(top, BLACK);
-        C2D_TargetClear(bottom, BLACK);
-        Gui::DrawTop();
-        Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(top, BLACK);
+		C2D_TargetClear(bottom, BLACK);
+		Gui::DrawTop();
+		Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
 
-        Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
-        Gui::Draw_Rect(30, 120, 340, 30, BLACK);
+		Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 		if (isScriptSelected == true) {
-        	Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
+			Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
 		} else {
 			Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
 		}
-        Gui::DrawBottom();
-        C3D_FrameEnd(0);
+		Gui::DrawBottom();
+		C3D_FrameEnd(0);
 		gspWaitForVBlank();
 	}
 }

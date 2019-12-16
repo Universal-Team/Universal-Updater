@@ -36,6 +36,8 @@
 
 #include "utils/config.hpp"
 
+#include <unistd.h>
+
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool checkWifiStatus(void);
@@ -70,6 +72,20 @@ void MainMenu::Draw(void) const {
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
+bool MainMenu::returnScriptState() {
+	dirContents.clear();
+	chdir(Config::ScriptPath.c_str());
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, {"json"});
+	for(uint i=0;i<dirContentsTemp.size();i++) {
+		dirContents.push_back(dirContentsTemp[i]);
+	}
+
+	if (dirContents.size() == 0) {
+		return false;
+	}
+	return true;
+}
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_START) {
@@ -91,7 +107,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				Screen::set(std::make_unique<ScriptList>());
+				if (returnScriptState() == true) {
+					Screen::set(std::make_unique<ScriptList>());
+				} else {
+					Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+				}
 				break;
 			case 1:
 				if (checkWifiStatus() == true) {
@@ -135,7 +155,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Screen::set(std::make_unique<ScriptList>());
+			if (returnScriptState() == true) {
+				Screen::set(std::make_unique<ScriptList>());
+			} else {
+				Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+			}
 		} else if (touching(touch, mainButtons[1])) {
 			if (checkWifiStatus() == true) {
 				Screen::set(std::make_unique<ScriptBrowse>());

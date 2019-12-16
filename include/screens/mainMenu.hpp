@@ -29,6 +29,7 @@
 
 #include "screens/screen.hpp"
 
+#include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
 
 #include <vector>
@@ -39,8 +40,9 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
+	bool returnScriptState();
 	int Selection = 0;
-
+	std::vector<DirEntry> dirContents; // To return Script state.
 	std::vector<Structs::ButtonPos> mainButtons = {		
 		{10, 40, 140, 35, -1}, // Scriptlist.
 		{170, 40, 140, 35, -1}, // ScriptBrowse.
