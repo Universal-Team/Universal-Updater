@@ -63,5 +63,6 @@
 	"DESC": "説明：",
 	"RELEASE_ID": "リリースID：",
 	"TITLE_ID": "タイトルID：",
-	"FILE_SIZE": "ファイルサイズ："
+	"FILE_SIZE": "ファイルサイズ：",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
