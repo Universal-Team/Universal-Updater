@@ -48,7 +48,7 @@
 	"SCRIPTCREATOR": "Skript-Ersteller",
 	"CREDITS": "Credits",
 	"DEVELOPED_BY": "Entwickelt von: Universal-Team.",
-	"MAIN_DEV": "Main Developer: StackZ",
+	"MAIN_DEV": "Hauptentwickler: StackZ",
 	"CURRENT_VERSION": "Aktuelle Version: ",
 	"MANY_THANKS": "Vielen Dank an:",
 	"TRANSLATORS": "Alle unsere Übersetzer",
@@ -64,5 +64,5 @@
 	"RELEASE_ID": "Release ID: ",
 	"TITLE_ID": "Titel ID: ",
 	"FILE_SIZE": "Dateigröße: ",
-	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
+	"GET_SCRIPTS_FIRST": "Hol dir zuerst ein paar Skripte!"
 }
