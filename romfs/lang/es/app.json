@@ -63,5 +63,6 @@
 	"DESC": "Desc: ",
 	"RELEASE_ID": "ID de Lanzamiento: ",
 	"TITLE_ID": "ID del título: ",
-	"FILE_SIZE": "Tamaño del archivo: "
+	"FILE_SIZE": "Tamaño del archivo: ",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
