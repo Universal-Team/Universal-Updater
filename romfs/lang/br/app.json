@@ -63,5 +63,6 @@
 	"DESC": "Bruhsc: ",
 	"RELEASE_ID": "Bruh ID: ",
 	"TITLE_ID": "Bruhtl ID: ",
-	"FILE_SIZE": "Bruh size: "
+	"FILE_SIZE": "Bruh size: ",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
