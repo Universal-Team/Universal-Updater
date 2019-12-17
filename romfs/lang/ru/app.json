@@ -63,5 +63,6 @@
 	"DESC": "Опис: ",
 	"RELEASE_ID": "ID выпуску: ",
 	"TITLE_ID": "ID заголовку: ",
-	"FILE_SIZE": "Размер файла: "
+	"FILE_SIZE": "Размер файла: ",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
