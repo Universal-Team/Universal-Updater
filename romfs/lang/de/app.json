@@ -63,5 +63,6 @@
 	"DESC": "Desc: ",
 	"RELEASE_ID": "Release ID: ",
 	"TITLE_ID": "Titel ID: ",
-	"FILE_SIZE": "Dateigröße: "
+	"FILE_SIZE": "Dateigröße: ",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
