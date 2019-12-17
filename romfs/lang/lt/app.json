@@ -63,5 +63,6 @@
 	"DESC": "Aprašymas: ",
 	"RELEASE_ID": "Išleidimo ID: ",
 	"TITLE_ID": "Pavadinimo ID: ",
-	"FILE_SIZE": "Failo dydis: "
+	"FILE_SIZE": "Failo dydis: ",
+	"GET_SCRIPTS_FIRST": "Get some Scripts first!"
 }
