@@ -76,7 +76,6 @@
 	"RELEASE_ID":						"Release ID: ",
 	"TITLE_ID":							"Title ID: ",
 	"FILE_SIZE":						"File size: ",
-	"SCREEN_SELECT":					"Screen Selection",
 
 	"GET_SCRIPTS_FIRST":				"Get some Scripts first!"
 }
