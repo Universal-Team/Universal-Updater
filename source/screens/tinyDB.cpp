@@ -80,7 +80,7 @@ TinyDB::TinyDB() {
 // To-Do.
 void TinyDB::Draw(void) const {
     std::string info;
-    Gui::ScreenDraw(top);
+    Gui::setDraw(top);
 	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 400, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(63, 81, 181, 255));
@@ -98,7 +98,7 @@ void TinyDB::Draw(void) const {
     Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
 
 
-    Gui::ScreenDraw(bottom);
+    Gui::setDraw(bottom);
 	Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 320, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(63, 81, 181, 255));
@@ -133,7 +133,7 @@ void TinyDB::Draw(void) const {
 void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
     if (keyRepeatDelay)	keyRepeatDelay--;
     if (hDown & KEY_B) {
-        Gui::screenBack();
+        Screen::back();
         return;
     }
 

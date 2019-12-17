@@ -32,27 +32,14 @@
 
 #include "screens/screen.hpp"
 
-#include <3ds.h>
-#include <citro2d.h>
-#include <citro3d.h>
-#include <random>
-#include <stack>
-#include <string.h>
-#include <unordered_map>
-#include <wchar.h>
-
 namespace Gui
 {
 	// Init and Exit of the GUI.
 	Result init(void);
 	void exit(void);
 
-	// Screen and MainLoops.
-	void mainLoop(u32 hDown, u32 hHeld, touchPosition touch);
-	void setScreen(std::unique_ptr<Screen> screen);
-	void screenBack(void);
 	C3D_RenderTarget* target(gfxScreen_t t);
-	void ScreenDraw(C3D_RenderTarget * screen);
+	void setDraw(C3D_RenderTarget * screen);
 
 	// Clear Text.
 	void clearTextBufs(void);

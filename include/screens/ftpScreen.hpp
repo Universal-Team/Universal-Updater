@@ -26,7 +26,7 @@
 
 #include "screens/screen.hpp"
 
-class FTPScreen : public Screen
+class FTPScreen : public screen
 {
 public:
 	void Draw(void) const override;

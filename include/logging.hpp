@@ -24,33 +24,25 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef MAINMENU_HPP
-#define MAINMENU_HPP
+#ifndef LOGGING_HPP
+#define LOGGING_HPP
 
-#include "screens/screen.hpp"
+#include <fstream>
+#include <stdarg.h>
+#include <string>
+#include <time.h>
+#include <unistd.h>
 
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+namespace Logging {
+	// Create the Log File.
+	void createLogFile(void);
 
-#include <vector>
+	// Write to the Log.
+	void writeToLog(std::string debugText);
 
-class MainMenu : public screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-private:
-	bool returnScriptState();
-	int Selection = 0;
-	std::vector<DirEntry> dirContents; // To return Script state.
-	std::vector<Structs::ButtonPos> mainButtons = {		
-		{10, 40, 140, 35, -1}, // Scriptlist.
-		{170, 40, 140, 35, -1}, // ScriptBrowse.
-		{10, 100, 140, 35, -1}, // TinyDB.
-		{170, 100, 140, 35, -1}, // ScriptCreator.
-		{10, 160, 140, 35, -1}, // Language.
-		{170, 160, 140, 35, -1}, // Colors.
-	};
-};
+	// Other needed stuff. ;P
+	std::string logDate(void);
+	std::string format(const std::string& fmt_str, ...);
+}
 
 #endif

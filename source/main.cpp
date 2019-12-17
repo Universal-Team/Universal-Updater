@@ -25,6 +25,7 @@
 */
 
 #include "gui.hpp"
+#include "logging.hpp"
 
 #include "lang/lang.hpp"
 
@@ -44,9 +45,6 @@ bool dspFound = false;
 touchPosition touch;
 sound *bgm = NULL;
 bool songIsFound = false;
-
-int fadealpha = 255;
-bool fadein = true;
 
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -97,7 +95,12 @@ int main()
 	}
 	Config::load();
 	Lang::load(Config::lang);
-	Gui::setScreen(std::make_unique<MainMenu>());
+
+	if (Config::Logging == true) {
+		Logging::createLogFile();
+	}
+
+	Screen::set(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
@@ -106,7 +109,6 @@ int main()
 		loadSoundEffects();
 		playMusic();
 	 }
-
 
 	// Loop as long as the status is not exit
 	while (aptMainLoop() && !exiting)
@@ -119,17 +121,9 @@ int main()
 		C2D_TargetClear(top, BLACK);
 		C2D_TargetClear(bottom, BLACK);
 		Gui::clearTextBufs();
-		Gui::mainLoop(hDown, hHeld, touch);
+		Screen::loop(hDown, hHeld, touch);
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
-
-		if (fadein == true) {
-			fadealpha -= 3;
-			if (fadealpha < 0) {
-				fadealpha = 0;
-				fadein = false;
-			}
-		}
 	}
 
 	if (songIsFound == true) {

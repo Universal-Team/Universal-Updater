@@ -34,7 +34,7 @@
 
 #include <vector>
 
-class Settings : public Screen
+class Settings : public screen
 {
 public:
 	void Draw(void) const override;

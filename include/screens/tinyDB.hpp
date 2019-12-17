@@ -30,7 +30,7 @@
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
-class TinyDB : public Screen
+class TinyDB : public screen
 {
 public:
 	void Draw(void) const override;

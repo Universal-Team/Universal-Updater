@@ -86,7 +86,7 @@ void FTPScreen::Draw(void) const
 	memset(ftp_file_transfer, 0, 50); // Empty transfer status.
 	ftp_exit();
 
-	Gui::screenBack();
+	Screen::back();
 	return;
 }
 

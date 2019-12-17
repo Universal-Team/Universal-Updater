@@ -32,7 +32,7 @@
 
 #include "utils/fileBrowse.h"
 
-class ScriptList : public Screen
+class ScriptList : public screen
 {
 public:
 	void Draw(void) const override;
