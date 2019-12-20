@@ -28,41 +28,39 @@
 
 #include <archive.h>
 #include <archive_entry.h>
-
+#include <regex>
 
 int filesExtracted = 0;
 std::string extractingFile = "";
 
-Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath)
-{
-	int r;
-	struct archive_entry *entry;
+Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath) {
+	archive_entry *entry;
 
-	struct archive *a = archive_read_new();
+	archive *a = archive_read_new();
 	archive_read_support_format_all(a);
 	archive_read_support_format_raw(a);
 
-	r = archive_read_open_filename(a, archivePath.c_str(), 0x4000);
-	if (r != ARCHIVE_OK) {
+	if(archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
 		return EXTRACT_ERROR_ARCHIVE;
 	}
 
 	Result ret = EXTRACT_ERROR_FIND;
-	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		std::string entryName(archive_entry_pathname(entry));
-		if (wantedFile == "/")	wantedFile = "";
-		if (matchPattern(wantedFile, entryName) || matchPattern(wantedFile, entryName.substr(0, wantedFile.size())) || wantedFile == "") {
-			extractingFile = (entryName.length() > wantedFile.length() ? entryName.substr(wantedFile.length()) : wantedFile);
+		std::smatch match;
+		if(std::regex_search(entryName, match, std::regex(wantedFile))) {
 			ret = EXTRACT_ERROR_NONE;
 
-			Handle fileHandle;
-			std::string outputPathFinal = outputPath;
-			if(wantedFile[wantedFile.length()-1] == '/') { // Folder
-				if (entryName.length() > wantedFile.length())
-					outputPathFinal += entryName.substr(wantedFile.length());
-				if (outputPathFinal.substr(outputPathFinal.length()-1) == "/")	continue;
+			// make directories
+			std::string out = (outputPath + match.suffix().str());
+			int substrPos = 1;
+			while(out.find("/", substrPos)) {
+				mkdir(out.substr(0, substrPos).c_str(), 0777);
+				substrPos = out.find("/", substrPos)+1;
 			}
-			Result res = openFile(&fileHandle, outputPathFinal.c_str(), true);
+
+			Handle fileHandle;
+			Result res = openFile(&fileHandle, (outputPath + match.suffix().str()).c_str(), true);
 			if (R_FAILED(res)) {
 				ret = EXTRACT_ERROR_OPENFILE;
 				break;
