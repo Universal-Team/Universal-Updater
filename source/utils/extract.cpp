@@ -49,6 +49,7 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 		std::string entryName(archive_entry_pathname(entry));
 		std::smatch match;
 		if(std::regex_search(entryName, match, std::regex(wantedFile))) {
+			extractingFile = (entryName.length() > wantedFile.length() ? entryName.substr(wantedFile.length()) : wantedFile);
 			ret = EXTRACT_ERROR_NONE;
 
 			// make directories
