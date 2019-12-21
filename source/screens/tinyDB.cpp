@@ -123,9 +123,9 @@ void TinyDB::Draw(void) const {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)tinyDBList.size();i++) {
 			info = tinyDBList[screenPosList + i];
 			if(screenPosList + i == selection) {
-				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
 			}
-			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, Config::TxtColor, info, 320);
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, info, 320);
 		}
 	}
 }

@@ -149,17 +149,17 @@ void ScriptBrowse::Draw(void) const {
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
 			if(screenPosList + i == selection) {
-				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::SelectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
 			} else { 
-				Gui::Draw_Rect(0, 30+(i*25), 320, 30, Config::UnselectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			}
 
 			if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(300, 35+(i*25), 10, 10, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
 			} else {
-				Gui::Draw_Rect(300, 35+(i*25), 10, 10, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xa5, 0xdd, 0x81, 255));
 			}
-			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 320);
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 320);
 		}
 	}
 }
