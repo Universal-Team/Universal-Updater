@@ -34,6 +34,7 @@
 #include "utils/formatting.hpp"
 #include "utils/scriptHelper.hpp"
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
 
@@ -105,6 +106,8 @@ void TinyDB::Draw(void) const {
 	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
 	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 
+	Gui::DrawArrow(295, 0);
+	Gui::DrawArrow(315, 240, 180.0);
     // Search Icon.
 	Gui::sprite(sprites_search_idx, -3, 0);
 	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
@@ -143,6 +146,26 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_L) {
 		fastMode = false;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+		if (selection > 0) {
+			selection--;
+			selectedOption = tinyDBList[selection];
+		} else {
+			selection = (int)tinyDBList.size()-1;
+			selectedOption = tinyDBList[selection];
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+		if (selection < (int)tinyDBList.size()-1) {
+			selection++;
+			selectedOption = tinyDBList[selection];
+		} else {
+			selection = 0;
+			selectedOption = tinyDBList[selection];
+		}
 	}
 
 	if (hHeld & KEY_UP && !keyRepeatDelay) {

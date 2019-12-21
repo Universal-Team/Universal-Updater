@@ -33,6 +33,7 @@
 
 #include <unistd.h>
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
 
@@ -126,9 +127,11 @@ void ScriptBrowse::Draw(void) const {
 		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
+	Gui::DrawArrow(295, 0);
+	Gui::DrawArrow(315, 240, 180.0);
 	Gui::sprite(sprites_search_idx, -3, 0);
 	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
-	Gui::DrawString(317-Gui::GetStringWidth(0.6f, std::to_string(selection + 1) + " / " + maxScripts), 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
+	Gui::DrawStringCentered(-23, 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
@@ -171,6 +174,22 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		infoJson.clear();
 		Screen::back();
 		return;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+		if (selection > 0) {
+			selection--;
+		} else {
+			selection = (int)infoJson.size()-1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+		if (selection < (int)infoJson.size()-1) {
+			selection++;
+		} else {
+			selection = 0;
+		}
 	}
 
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {

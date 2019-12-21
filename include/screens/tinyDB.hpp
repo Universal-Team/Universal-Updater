@@ -30,6 +30,8 @@
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/structs.hpp"
+
 class TinyDB : public screen
 {
 public:
@@ -44,6 +46,10 @@ private:
 	mutable int screenPosList = 0;
 	int keyRepeatDelay = 0;
 	int fastMode = false;
+	std::vector<Structs::ButtonPos> arrowPos = {		
+		{295, 0, 25, 25, -1}, // Arrow Up.
+		{295, 215, 25, 25, -1}, // Arrow Down.
+	};
 };
 
 #endif

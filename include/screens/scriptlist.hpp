@@ -31,6 +31,7 @@
 #include "screens/screenCommon.hpp"
 
 #include "utils/fileBrowse.h"
+#include "utils/structs.hpp"
 
 class ScriptList : public screen
 {
@@ -43,8 +44,8 @@ private:
 	void DrawList(void) const;
 	void DrawSingleObject(void) const;
 
-	void ListSelection(u32 hDown, u32 hHeld);
-	void SelectFunction(u32 hDown, u32 hHeld);
+	void ListSelection(u32 hDown, u32 hHeld, touchPosition touch);
+	void SelectFunction(u32 hDown, u32 hHeld, touchPosition touch);
 
 	int mode = 0;
 	std::vector<DirEntry> dirContents;
@@ -57,6 +58,11 @@ private:
 
 	int keyRepeatDelay = 0;
 	int fastMode = false;
+
+	std::vector<Structs::ButtonPos> arrowPos = {		
+		{295, 0, 25, 25, -1}, // Arrow Up.
+		{295, 215, 25, 25, -1}, // Arrow Down.
+	};
 };
 
 #endif

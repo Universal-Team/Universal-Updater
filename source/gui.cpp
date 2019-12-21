@@ -91,6 +91,15 @@ void Gui::sprite(int key, int x, int y, float ScaleX, float ScaleY)
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, key), x, y, 0.5f, NULL, ScaleX, ScaleY);
 }
 
+void Gui::DrawArrow(int x, int y, float rotation) {
+	C2D_Sprite sprite;
+	C2D_SpriteFromSheet(&sprite, sprites, sprites_arrow_idx);
+	C2D_SpriteRotateDegrees(&sprite, rotation);
+	C2D_SpriteSetPos(&sprite, x, y);
+	C2D_SpriteSetDepth(&sprite, 0.5);
+	C2D_DrawSprite(&sprite);
+}
+
 void Gui::DisplayWarnMsg(std::string Text)
 {
 	Gui::clearTextBufs();

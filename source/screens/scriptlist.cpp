@@ -36,6 +36,7 @@
 #include <regex>
 #include <unistd.h>
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
 
@@ -285,6 +286,9 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
 
 	Gui::DrawBottom();
+	Gui::DrawArrow(295, 0);
+	Gui::DrawArrow(315, 240, 180.0);
+
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 			line1 = fileInfo[screenPos + i].title;
@@ -337,6 +341,9 @@ void ScriptList::DrawSingleObject(void) const {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
 	Gui::DrawBottom();
+	Gui::DrawArrow(295, 0);
+	Gui::DrawArrow(315, 240, 180.0);
+
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 			info = fileInfo2[screenPos2 + i];
@@ -347,20 +354,21 @@ void ScriptList::DrawSingleObject(void) const {
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
+
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size();i++) {
 			info = fileInfo2[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
-				Gui::Draw_Rect(0, 30+(i*25), 320, 30, selected);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
 			} else { 
-				Gui::Draw_Rect(0, 30+(i*25), 320, 30, unselected);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			}
-			Gui::DrawStringCentered(0, 35+(i*25), 0.7f, TextColor, info, 320);
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}
 	}
 }
 
-void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
+void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if (hDown & KEY_B) {
@@ -369,6 +377,22 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 		return;
 	}
 
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+		if (selection > 0) {
+			selection--;
+		} else {
+			selection = (int)fileInfo.size()-1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+		if (selection < (int)fileInfo.size()-1) {
+			selection++;
+		} else {
+			selection = 0;
+		}
+	}
+	
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
 		if (selection < (int)fileInfo.size()-1) {
 			selection++;
@@ -434,8 +458,24 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld) {
 	}
 }
 
-void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
+void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+		if (selection2 > 0) {
+			selection2--;
+		} else {
+			selection2 = (int)fileInfo2.size()-1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+		if (selection2 < (int)fileInfo2.size()-1) {
+			selection2++;
+		} else {
+			selection2 = 0;
+		}
+	}
+
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
 		if (selection2 < (int)fileInfo2.size()-1) {
 			selection2++;
@@ -448,6 +488,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 			keyRepeatDelay = 6;
 		}
 	}
+
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
 		if (selection2 > 0) {
 			selection2--;
@@ -460,6 +501,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 			keyRepeatDelay = 6;
 		}
 	}
+
 	if (hDown & KEY_A) {
 		if (fileInfo2.size() != 0) {
 			choice = fileInfo2[selection2];
@@ -510,9 +552,9 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld) {
 
 void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
-		ListSelection(hDown, hHeld);
+		ListSelection(hDown, hHeld, touch);
 	} else if (mode == 1) {
-		SelectFunction(hDown, hHeld);
+		SelectFunction(hDown, hHeld, touch);
 	}
 
 	if (hDown & KEY_X) {

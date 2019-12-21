@@ -32,6 +32,7 @@
 
 #include "utils/config.hpp"
 #include "utils/fileBrowse.h"
+#include "utils/structs.hpp"
 
 class ScriptBrowse : public screen
 {
@@ -47,6 +48,10 @@ private:
 	mutable int selection = 0;
 	int keyRepeatDelay = 0;
 	int fastMode = false;
+	std::vector<Structs::ButtonPos> arrowPos = {		
+		{295, 0, 25, 25, -1}, // Arrow Up.
+		{295, 215, 25, 25, -1}, // Arrow Down.
+	};
 };
 
 #endif
