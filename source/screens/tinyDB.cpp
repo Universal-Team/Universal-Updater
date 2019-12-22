@@ -219,6 +219,26 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	if (hDown & KEY_TOUCH) {
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+					selection = i;
+					selectedOption = tinyDBList[screenPos + i];
+					execute();
+	 			}
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST;i++) {
+	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					selection = i;
+					selectedOption = tinyDBList[screenPosList + i];
+					execute();
+	 			}
+			}
+		}
+	}
+
     if (hDown & KEY_A) {
         execute();
     }

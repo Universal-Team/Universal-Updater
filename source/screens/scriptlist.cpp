@@ -394,6 +394,52 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			selection = 0;
 		}
 	}
+
+	if (hDown & KEY_TOUCH) {
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+					if (dirContents[screenPos + i].isDirectory) {
+					} else if (fileInfo.size() != 0) {
+						if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name) == true) {
+							currentFile = dirContents[screenPos + i].name;
+							selectedTitle = fileInfo[screenPos + i].title;
+							jsonFile = openScriptFile();
+							Desc = Description(jsonFile);
+							checkForValidate();
+							fileInfo2 = parseObjects(currentFile);
+							loadColors(jsonFile);
+							loadDesc();
+							isScriptSelected = true;
+							selection = 0;
+							mode = 1;
+						}
+					}
+	 			}
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST;i++) {
+	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					if (dirContents[screenPosList + i].isDirectory) {
+					} else if (fileInfo.size() != 0) {
+						if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name) == true) {
+							currentFile = dirContents[screenPosList + i].name;
+							selectedTitle = fileInfo[screenPosList + i].title;
+							jsonFile = openScriptFile();
+							Desc = Description(jsonFile);
+							checkForValidate();
+							fileInfo2 = parseObjects(currentFile);
+							loadColors(jsonFile);
+							loadDesc();
+							isScriptSelected = true;
+							selection = 0;
+							mode = 1;
+						}
+					}
+	 			}
+			}
+		}
+	}
 	
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
 		if (selection < (int)fileInfo.size()-1) {
@@ -477,6 +523,28 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 			selection2++;
 		} else {
 			selection2 = 0;
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+					if (fileInfo2.size() != 0) {
+						choice = fileInfo2[screenPos2 + i];
+						runFunctions(jsonFile);
+					}
+	 			}
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST;i++) {
+	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					if (fileInfo2.size() != 0) {
+						choice = fileInfo2[screenPosList2 + i];
+						runFunctions(jsonFile);
+					}
+	 			}
+			}
 		}
 	}
 

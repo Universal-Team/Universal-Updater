@@ -217,6 +217,44 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	if (hDown & KEY_TOUCH) {
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+					if (infoJson.size() != 0) {
+						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
+						std::string titleFix = infoJson[screenPos + i]["title"]; 
+						for (int l = 0; i < (int)titleFix.size(); l++) {
+							if (titleFix[l] == '/') {
+								titleFix[l] = '-';
+							}
+						}
+						DisplayMsg(fileName);
+						downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json", true);
+						infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
+					}
+	 			}
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST;i++) {
+	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					if (infoJson.size() != 0) {
+						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
+						std::string titleFix = infoJson[screenPosList + i]["title"]; 
+						for (int l = 0; l < (int)titleFix.size(); l++) {
+							if (titleFix[l] == '/') {
+								titleFix[l] = '-';
+							}
+						}
+						DisplayMsg(fileName);
+						downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json", true);
+						infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
+					}
+	 			}
+			}
+		}
+	}
+
 	if (hDown & KEY_A) {
 		if (infoJson.size() != 0) {
 			std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[selection]["title"]);
