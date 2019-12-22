@@ -679,12 +679,21 @@ void displayProgressBar() {
 		Gui::DrawTop();
 		Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
 
-		Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
-		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
-		if (isScriptSelected == true) {
-			Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
-		} else {
-			Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
+		// Display 'Currently Extracting: <Filename>'.
+		if (progressBarType == 1) {
+			Gui::DrawStringCentered(0, 140, 0.6f, Config::TxtColor, str, 400);
+			Gui::DrawStringCentered(0, 60, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + extractingFile, 400);
+		}
+
+		// Only display this by downloading.
+		if (progressBarType == 0) {
+			Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
+			if (isScriptSelected == true) {
+				Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
+			} else {
+				Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
+			}
 		}
 		Gui::DrawBottom();
 		C3D_FrameEnd(0);
