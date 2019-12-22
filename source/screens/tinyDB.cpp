@@ -256,14 +256,18 @@ void TinyDB::execute() {
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
-			bool missing = false;
+			bool missing = false, downloadToRAM = false;
 			std::string file, output, message;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at("script").at(i).at("output");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-			if(!missing)	ScriptHelper::downloadFile(file, output, false, message);
+
+			if (int64_t(tinyDBJson[selectedOption]["info"]["fileSize"]) < 30000000) {
+				downloadToRAM = true;
+			}
+			if(!missing)	ScriptHelper::downloadFile(file, output, downloadToRAM, message);
 
 		} else if(type == "installCia") {
 			bool missing = false;

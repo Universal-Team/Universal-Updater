@@ -301,4 +301,23 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList = selection - ENTRIES_PER_LIST + 1;
 		}
 	}
+
+	if (hDown & KEY_Y) {
+		if (infoJson.size() != 0) {
+			for (int i = 0; i < (int)infoJson.size(); i++) {
+				int current = i+1;
+				int total = infoJson.size();
+				std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[i]["title"]);
+				std::string titleFix = infoJson[i]["title"]; 
+				for (int l = 0; l < (int)titleFix.size(); l++) {
+					if (titleFix[l] == '/') {
+						titleFix[l] = '-';
+					}
+				}
+				DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
+				downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json", true);
+				infoJson[i]["curRevision"] = infoJson[i]["revision"];
+			}
+		}
+	}
 }
