@@ -282,11 +282,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 
 	CURL *hnd = curl_easy_init();
 
-	if (downloadToRAM == true) {
-		ret = setupContext(hnd, apiurl.c_str());
-	} else {
-		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
-	}
+	ret = setupContext(hnd, apiurl.c_str());
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
