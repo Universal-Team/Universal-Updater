@@ -73,7 +73,7 @@ std::vector<std::string> tinyDBList;
 
 TinyDB::TinyDB() {
 	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
-	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile);
+	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile, true);
     tinyDBList = parseObjects();
 	selectedOption = tinyDBList[0];
 }
@@ -244,7 +244,7 @@ void TinyDB::execute() {
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at("script").at(i).at("output");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-			if(!missing)	ScriptHelper::downloadFile(file, output, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, false, message);
 
 		} else if(type == "installCia") {
 			bool missing = false;

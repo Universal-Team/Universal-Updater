@@ -161,9 +161,11 @@ static Result setupContextForDirectToFileDownload(CURL *hnd, const char * url)
 	return 0;
 }
 
-Result downloadToFile(std::string url, std::string path)
+Result downloadToFile(std::string url, std::string path, bool downloadToRAM)
 {
 	Result ret = 0;
+	u64 offset = 0;
+	u32 bytesWritten = 0;
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
 
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -196,7 +198,11 @@ Result downloadToFile(std::string url, std::string path)
 	result_fileHandle = &fileHandle;
 
 	CURL *hnd = curl_easy_init();
-	ret = setupContextForDirectToFileDownload(hnd, url.c_str());
+	if (downloadToRAM == true) {
+		ret = setupContext(hnd, url.c_str());
+	} else {
+		ret = setupContextForDirectToFileDownload(hnd, url.c_str());
+	}
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -226,6 +232,9 @@ Result downloadToFile(std::string url, std::string path)
 		FSFILE_Close(fileHandle);
 		return -1;
 	}
+	if (downloadToRAM == true) {
+		FSFILE_Write(fileHandle, &bytesWritten, offset, result_buf, result_written, 0);
+	}
 
 	u64 endTime = osGetTime();
 	u64 totalTime = endTime - startTime;
@@ -242,7 +251,7 @@ Result downloadToFile(std::string url, std::string path)
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases)
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool downloadToRAM)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -272,7 +281,12 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	printf("Crafted API url:\n%s\n", apiurl.c_str());
 
 	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, apiurl.c_str());
+
+	if (downloadToRAM == true) {
+		ret = setupContext(hnd, apiurl.c_str());
+	} else {
+		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
+	}
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -325,7 +339,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	if (assetUrl.empty())
 		ret = DL_ERROR_GIT;
 	else
-		ret = downloadToFile(assetUrl, path);
+		ret = downloadToFile(assetUrl, path, downloadToRAM);
 
 	return ret;
 }
@@ -373,7 +387,7 @@ void notConnectedMsg(void) {
 	}
 }
 
-std::string getLatestRelease(std::string repo, std::string item)
+std::string getLatestRelease(std::string repo, std::string item, bool downloadToRAM)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -394,7 +408,13 @@ std::string getLatestRelease(std::string repo, std::string item)
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, apiurl.c_str());
+
+	if (downloadToRAM == true) {
+		ret = setupContext(hnd, apiurl.c_str());
+	} else {
+		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
+	}
+
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -437,7 +457,7 @@ std::string getLatestRelease(std::string repo, std::string item)
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string item)
+std::string getLatestCommit(std::string repo, std::string item, bool downloadToRAM)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -458,7 +478,11 @@ std::string getLatestCommit(std::string repo, std::string item)
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, apiurl.c_str());
+	if (downloadToRAM == true) {
+		ret = setupContext(hnd, apiurl.c_str());
+	} else {
+		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
+	}
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -501,7 +525,7 @@ std::string getLatestCommit(std::string repo, std::string item)
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string array, std::string item)
+std::string getLatestCommit(std::string repo, std::string array, std::string item, bool downloadToRAM)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -522,7 +546,11 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, apiurl.c_str());
+	if (downloadToRAM == true) {
+		ret = setupContext(hnd, apiurl.c_str());
+	} else {
+		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
+	}
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -563,90 +591,6 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 	result_written = 0;
 
 	return jsonItem;
-}
-
-std::vector<ListEntry> getList(std::string repo, std::string path)
-{
-	Result ret = 0;
-	void *socubuf = memalign(0x1000, 0x100000);
-	std::vector<ListEntry> emptyVector;
-	if (!socubuf)
-	{
-		return emptyVector;
-	}
-
-	ret = socInit((u32*)socubuf, 0x100000);
-	if (R_FAILED(ret))
-	{
-		free(socubuf);
-		return emptyVector;
-	}
-
-	std::stringstream apiurlStream;
-	apiurlStream << "https://api.github.com/repos/" << repo << "/contents/" << path;
-	std::string apiurl = apiurlStream.str();
-
-	CURL *hnd = curl_easy_init();
-	ret = setupContext(hnd, apiurl.c_str());
-	if (ret != 0) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = NULL;
-		result_sz = 0;
-		result_written = 0;
-		return emptyVector;
-	}
-
-	CURLcode cres = curl_easy_perform(hnd);
-	curl_easy_cleanup(hnd);
-	char* newbuf = (char*)realloc(result_buf, result_written + 1);
-	result_buf = newbuf;
-	result_buf[result_written] = 0; //nullbyte to end it as a proper C style string
-
-	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = NULL;
-		result_sz = 0;
-		result_written = 0;
-
-		return emptyVector;
-	}
-
-	std::vector<ListEntry> jsonItems;
-	json parsedAPI = json::parse(result_buf);
-	for(uint i=0;i<parsedAPI.size();i++) {
-		ListEntry listEntry;
-		if (parsedAPI[i]["name"].is_string()) {
-			listEntry.name = parsedAPI[i]["name"];
-		}
-		if (parsedAPI[i]["download_url"].is_string()) {
-			listEntry.downloadUrl = parsedAPI[i]["download_url"];
-		}
-		if (parsedAPI[i]["path"].is_string()) {
-			listEntry.sdPath = "sdmc:/";
-			listEntry.sdPath += parsedAPI[i]["path"];
-			listEntry.path = parsedAPI[i]["path"];
-
-			size_t pos;
-			while ((pos = listEntry.path.find(" ")) != std::string::npos) {
-				listEntry.path.replace(pos, 1, "%20");
-			}
-		}
-		jsonItems.push_back(listEntry);
-	}
-
-	socExit();
-	free(result_buf);
-	free(socubuf);
-	result_buf = NULL;
-	result_sz = 0;
-	result_written = 0;
-
-	return jsonItems;
 }
 
 void displayProgressBar() {

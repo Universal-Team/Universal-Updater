@@ -100,7 +100,7 @@ ScriptBrowse::ScriptBrowse() {
 	DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
-	downloadToFile("https://github.com/Universal-Team/extras/raw/scripts/info/scriptInfo.json", metaFile);
+	downloadToFile("https://github.com/Universal-Team/extras/raw/scripts/info/scriptInfo.json", metaFile, true);
 	FILE* file = fopen(metaFile, "r");
 	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
@@ -230,7 +230,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 			DisplayMsg(fileName);
 
-			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json");
+			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json", true);
 			infoJson[selection]["curRevision"] = infoJson[selection]["revision"];
 		}
 	}

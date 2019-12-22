@@ -39,15 +39,8 @@ enum DownloadError {
 	DL_ERROR_GIT,
 };
 
-struct ListEntry {
-	std::string downloadUrl;
-	std::string name;
-	std::string path;
-	std::string sdPath;
-};
-
-Result downloadToFile(std::string url, std::string path);
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases);
+Result downloadToFile(std::string url, std::string path, bool downloadToRAM);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool downloadToRAM);
 
 void displayProgressBar();
 
@@ -76,7 +69,7 @@ void doneMsg(void);
  * item is that to get from the API. (Ex. "tag_name")
  * @return the string from the API.
  */
-std::string getLatestRelease(std::string repo, std::string item);
+std::string getLatestRelease(std::string repo, std::string item, bool downloadToRAM);
 
 /**
  * Get info from the GitHub API about a Commit.
@@ -84,7 +77,7 @@ std::string getLatestRelease(std::string repo, std::string item);
  * item is that to get from the API. (Ex. "sha")
  * @return the string from the API.
  */
-std::string getLatestCommit(std::string repo, std::string item);
+std::string getLatestCommit(std::string repo, std::string item, bool downloadToRAM);
 
 /**
  * Get info from the GitHub API about a Commit.
@@ -93,12 +86,4 @@ std::string getLatestCommit(std::string repo, std::string item);
  * item is that to get from the API. (Ex. "message")
  * @return the string from the API.
  */
-std::string getLatestCommit(std::string repo, std::string array, std::string item);
-
-/**
- * Get a GitHub directory's contents with the GitHub API.
- * repo is where to get from. (Ex. "DS-Homebrew/twlmenu-extras")
- * path is the path within the repo (Ex. "contents/_nds/TWiLightMenu/dsimenu/themes")
- * @return the string from the API.
- */
-std::vector<ListEntry> getList(std::string repo, std::string path);
+std::string getLatestCommit(std::string repo, std::string array, std::string item, bool downloadToRAM);

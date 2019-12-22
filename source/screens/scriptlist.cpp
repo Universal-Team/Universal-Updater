@@ -130,17 +130,19 @@ void runFunctions(nlohmann::json &json) {
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
-			bool missing = false;
+			bool missing = false, downloadToRAM = false;
 			std::string file, output, message;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else	missing = true;
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
+			if(json.at(choice).at(i).contains("downloadToRAM") && json.at(choice).at(i).at("downloadToRAM").is_boolean())
+				downloadToRAM = json.at(choice).at(i).at("downloadToRAM");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadFile(file, output, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, downloadToRAM, message);
 		
 		} else if(type == "downloadRelease") {
-			bool missing = false, includePrereleases = false;
+			bool missing = false, includePrereleases = false, downloadToRAM = false;
 			std::string repo, file, output, message;
 			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
 			else	missing = true;
@@ -150,8 +152,10 @@ void runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
 				includePrereleases = json.at(choice).at(i).at("includePrereleases");
+			if(json.at(choice).at(i).contains("downloadToRAM") && json.at(choice).at(i).at("downloadToRAM").is_boolean())
+				downloadToRAM = json.at(choice).at(i).at("downloadToRAM");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, downloadToRAM, message);
 			
 		} else if(type == "extractFile") {
 			bool missing = false;
