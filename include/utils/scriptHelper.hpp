@@ -43,6 +43,8 @@ namespace ScriptHelper {
 	void extractFile(std::string file, std::string input, std::string output, std::string message);
 	Result createFile(const char * path);
 	void displayTimeMsg(std::string message, int seconds);
+
+	bool checkIfValid(std::string scriptFile);
 }
 
 #endif

@@ -59,7 +59,6 @@ Info parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
 	if(!file) {
 		printf("File not found\n");
-		fclose(file);
 		return {"", ""};
 	}
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
@@ -95,7 +94,6 @@ std::vector<std::string> parseObjects(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
 	if(!file) {
 		printf("File not found\n");
-		fclose(file);
 		return {{""}};
 	}
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
@@ -425,17 +423,19 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		if (dirContents[selection].isDirectory) {
 		} else if (fileInfo.size() != 0) {
-			currentFile = dirContents[selection].name;
-			selectedTitle = fileInfo[selection].title;
-			jsonFile = openScriptFile();
-			Desc = Description(jsonFile);
-			checkForValidate();
-			fileInfo2 = parseObjects(currentFile);
-			loadColors(jsonFile);
-			loadDesc();
-			isScriptSelected = true;
-			selection = 0;
-			mode = 1;
+			if (ScriptHelper::checkIfValid(dirContents[selection].name) == true) {
+				currentFile = dirContents[selection].name;
+				selectedTitle = fileInfo[selection].title;
+				jsonFile = openScriptFile();
+				Desc = Description(jsonFile);
+				checkForValidate();
+				fileInfo2 = parseObjects(currentFile);
+				loadColors(jsonFile);
+				loadDesc();
+				isScriptSelected = true;
+				selection = 0;
+				mode = 1;
+			}
 		}
 	}
 

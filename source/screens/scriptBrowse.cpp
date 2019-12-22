@@ -59,7 +59,6 @@ nlohmann::json infoFromScript(const std::string &path) {
 
 	FILE* file = fopen(path.c_str(), "r");
 	if(!file) {
-		fclose(file);
 		return out;
 	}
 	in = nlohmann::json::parse(file, nullptr, false);

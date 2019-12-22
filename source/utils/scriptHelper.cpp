@@ -132,3 +132,17 @@ void ScriptHelper::displayTimeMsg(std::string message, int seconds) {
 		gspWaitForVBlank();
 	}
 }
+
+bool ScriptHelper::checkIfValid(std::string scriptFile) {
+	FILE* file = fopen(scriptFile.c_str(), "rt");
+	if(!file) {
+		printf("File not found\n");
+		return false;
+	}
+	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
+
+	if (!json.contains("info"))	return false;
+	
+	return true;
+}

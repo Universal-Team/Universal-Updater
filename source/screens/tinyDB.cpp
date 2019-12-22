@@ -54,7 +54,6 @@ std::vector<std::string> parseObjects() {
 	FILE* file = fopen(tinyDBFile, "rt");
 	if(!file) {
 		printf("File not found\n");
-		fclose(file);
 		return {{""}};
 	}
 	tinyDBJson = nlohmann::json::parse(file, nullptr, false);
