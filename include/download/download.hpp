@@ -39,8 +39,8 @@ enum DownloadError {
 	DL_ERROR_GIT,
 };
 
-Result downloadToFile(std::string url, std::string path, bool downloadToRAM);
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool downloadToRAM);
+Result downloadToFile(std::string url, std::string path);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases);
 
 void displayProgressBar();
 
@@ -69,7 +69,7 @@ void doneMsg(void);
  * item is that to get from the API. (Ex. "tag_name")
  * @return the string from the API.
  */
-std::string getLatestRelease(std::string repo, std::string item, bool downloadToRAM);
+std::string getLatestRelease(std::string repo, std::string item);
 
 /**
  * Get info from the GitHub API about a Commit.
@@ -77,7 +77,7 @@ std::string getLatestRelease(std::string repo, std::string item, bool downloadTo
  * item is that to get from the API. (Ex. "sha")
  * @return the string from the API.
  */
-std::string getLatestCommit(std::string repo, std::string item, bool downloadToRAM);
+std::string getLatestCommit(std::string repo, std::string item);
 
 /**
  * Get info from the GitHub API about a Commit.
@@ -86,4 +86,4 @@ std::string getLatestCommit(std::string repo, std::string item, bool downloadToR
  * item is that to get from the API. (Ex. "message")
  * @return the string from the API.
  */
-std::string getLatestCommit(std::string repo, std::string array, std::string item, bool downloadToRAM);
+std::string getLatestCommit(std::string repo, std::string array, std::string item);

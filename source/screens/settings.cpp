@@ -49,6 +49,7 @@ void Settings::DrawSubMenu(void) const {
 	Gui::DrawTop();
 	Gui::DrawString((400-Gui::GetStringWidth(0.8f, "Universal-Updater"))/2, 2, 0.8f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
+	Gui::DrawArrow(0, 242, 270.0);
 
 	for (int i = 0; i < 3; i++) {
 		if (Selection == i) {
@@ -67,6 +68,7 @@ void Settings::DrawLanguageSelection(void) const {
 	Gui::DrawTop();
 	Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("SELECT_LANG")))/2, 2, 0.8f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	Gui::DrawBottom();
+	Gui::DrawArrow(0, 242, 270.0);
 
 	for (int language = 0; language < 10; language++) {
 		if (Config::lang == language) {
@@ -109,20 +111,24 @@ void Settings::DrawColorChanging(void) const {
 
 
 	Gui::DrawBottom();
+	Gui::DrawArrow(0, 242, 270.0);
+
+	Gui::DrawArrow(0, 21, 270.0);
+	Gui::DrawArrow(320, -5, 90.0);
 
 	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
-			Gui::Draw_Rect(25 + i * 25, 5, 16, 16, C2D_Color32(140, 140, 140, 255));
+			Gui::Draw_Rect(54 + i * 25, 5, 16, 16, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
-	Gui::DrawString(29 + 0 * 25, 5, 0.5f, WHITE, "1", 400);
-	Gui::DrawString(29 + 1 * 25, 5, 0.5f, WHITE, "2", 400);
-	Gui::DrawString(29 + 2 * 25, 5, 0.5f, WHITE, "3", 400);
-	Gui::DrawString(29 + 3 * 25, 5, 0.5f, WHITE, "4", 400);
-	Gui::DrawString(29 + 4 * 25, 5, 0.5f, WHITE, "5", 400);
-	Gui::DrawString(29 + 5 * 25, 5, 0.5f, WHITE, "6", 400);
-	Gui::DrawString(29 + 6 * 25, 5, 0.5f, WHITE, "7", 400);
+	Gui::DrawString(58 + 0 * 25, 5, 0.5f, WHITE, "1", 400);
+	Gui::DrawString(58 + 1 * 25, 5, 0.5f, WHITE, "2", 400);
+	Gui::DrawString(58 + 2 * 25, 5, 0.5f, WHITE, "3", 400);
+	Gui::DrawString(58 + 3 * 25, 5, 0.5f, WHITE, "4", 400);
+	Gui::DrawString(58 + 4 * 25, 5, 0.5f, WHITE, "5", 400);
+	Gui::DrawString(58 + 5 * 25, 5, 0.5f, WHITE, "6", 400);
+	Gui::DrawString(58 + 6 * 25, 5, 0.5f, WHITE, "7", 400);
 
 	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
 	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
@@ -180,6 +186,7 @@ void Settings::DrawCreditsScreen(void) const {
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
 		Gui::DrawBottom();
+		Gui::DrawArrow(0, 242, 270.0);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 1, 0.8f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("TRANSLATORS")))/2, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_TRANSLATE")))/2, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
@@ -194,6 +201,7 @@ void Settings::DrawCreditsScreen(void) const {
 		Gui::sprite(sprites_discord_idx, 115, 35);
 		Gui::DrawBottom();
 		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+		Gui::DrawArrow(0, 242, 270.0);
 	}
 }
 
@@ -235,6 +243,11 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		Screen::back();
 		return;
 	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		Screen::back();
+		return;
+	}
 }
 
 void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
@@ -250,6 +263,10 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 	if (hDown & KEY_B) {
 		mode = 0;
 	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		mode = 0;
+	}
 }
 
 
@@ -262,8 +279,20 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 		mode = 0;
 	}
 
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		mode = 0;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+		if(colorMode > 0)	colorMode--;
+	}
+
 	if (hDown & KEY_L || hDown & KEY_LEFT) {
 		if(colorMode > 0)	colorMode--;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+		if(colorMode < 6)	colorMode++;
 	}
 
 	if (hDown & KEY_R || hDown & KEY_RIGHT) {
@@ -349,6 +378,8 @@ void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, barPos[0])) {
 				DisplayMode = 2;
+			} else if (touching(touch, arrowPos[2])) {
+				mode = 0;
 			}
 		}
 		if (hDown & KEY_B) {
@@ -356,6 +387,8 @@ void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
 		}
 	} else if (DisplayMode == 2) {
 		if (hDown & KEY_B) {
+			DisplayMode = 1;
+		} else if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
 			DisplayMode = 1;
 		}
 	}

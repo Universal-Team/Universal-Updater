@@ -62,6 +62,7 @@ private:
 	std::vector<Structs::ButtonPos> arrowPos = {		
 		{295, 0, 25, 25, -1}, // Arrow Up.
 		{295, 215, 25, 25, -1}, // Arrow Down.
+		{0, 215, 25, 25, -1}, // Back Arrow.
 	};
 };
 

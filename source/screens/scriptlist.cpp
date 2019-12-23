@@ -128,19 +128,17 @@ void runFunctions(nlohmann::json &json) {
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
-			bool missing = false, downloadToRAM = false;
+			bool missing = false;
 			std::string file, output, message;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 			else	missing = true;
 			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 			else	missing = true;
-			if(json.at(choice).at(i).contains("downloadToRAM") && json.at(choice).at(i).at("downloadToRAM").is_boolean())
-				downloadToRAM = json.at(choice).at(i).at("downloadToRAM");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadFile(file, output, downloadToRAM, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 		
 		} else if(type == "downloadRelease") {
-			bool missing = false, includePrereleases = false, downloadToRAM = false;
+			bool missing = false, includePrereleases = false;
 			std::string repo, file, output, message;
 			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
 			else	missing = true;
@@ -150,10 +148,8 @@ void runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
 				includePrereleases = json.at(choice).at(i).at("includePrereleases");
-			if(json.at(choice).at(i).contains("downloadToRAM") && json.at(choice).at(i).at("downloadToRAM").is_boolean())
-				downloadToRAM = json.at(choice).at(i).at("downloadToRAM");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, downloadToRAM, message);
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
 			
 		} else if(type == "extractFile") {
 			bool missing = false;
@@ -290,7 +286,7 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, 0);
 	Gui::DrawArrow(315, 240, 180.0);
-
+	Gui::DrawArrow(0, 242, 270.0);
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 			line1 = fileInfo[screenPos + i].title;
@@ -345,6 +341,7 @@ void ScriptList::DrawSingleObject(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, 0);
 	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(0, 242, 270.0);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
@@ -393,6 +390,12 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			selection = 0;
 		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		fileInfo.clear();
+		Screen::back();
+		return;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -524,6 +527,13 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			selection2 = 0;
 		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		selection2 = 0;
+		fileInfo2.clear();
+		isScriptSelected = false;
+		mode = 0;
 	}
 
 	if (hDown & KEY_TOUCH) {

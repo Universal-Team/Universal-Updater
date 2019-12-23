@@ -72,7 +72,7 @@ std::vector<std::string> tinyDBList;
 
 TinyDB::TinyDB() {
 	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
-	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile, true);
+	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile);
     tinyDBList = parseObjects();
 	selectedOption = tinyDBList[0];
 }
@@ -107,9 +107,10 @@ void TinyDB::Draw(void) const {
 
 	Gui::DrawArrow(295, 0);
 	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(0, 242, 270.0);
     // Search Icon.
-	Gui::sprite(sprites_search_idx, -3, 0);
-	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
+//	Gui::sprite(sprites_search_idx, -3, 0);
+//	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
 
     if (Config::viewMode == 0) {
     	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
@@ -165,6 +166,11 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			selection = 0;
 			selectedOption = tinyDBList[selection];
 		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+        Screen::back();
+        return;
 	}
 
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
@@ -256,18 +262,14 @@ void TinyDB::execute() {
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
 		} else if(type == "downloadFile") {
-			bool missing = false, downloadToRAM = false;
+			bool missing = false;
 			std::string file, output, message;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("output"))	output = tinyDBJson.at(selectedOption).at("script").at(i).at("output");
 			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
-
-			if (int64_t(tinyDBJson[selectedOption]["info"]["fileSize"]) < 30000000) {
-				downloadToRAM = true;
-			}
-			if(!missing)	ScriptHelper::downloadFile(file, output, downloadToRAM, message);
+			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 
 		} else if(type == "installCia") {
 			bool missing = false;

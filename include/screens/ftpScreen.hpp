@@ -26,6 +26,8 @@
 
 #include "screens/screen.hpp"
 
+#include "utils/structs.hpp"
+
 class FTPScreen : public screen
 {
 public:
@@ -34,4 +36,7 @@ public:
 
 private:
 	int ftpEnabled = 1;
+	std::vector<Structs::ButtonPos> arrowPos = {
+		{0, 215, 25, 25, -1}, // Back Arrow.
+	};
 };

@@ -39,6 +39,9 @@ extern "C" {
 	#include "ftp.h"
 }
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern touchPosition touch;
+
 void FTPScreen::Draw(void) const
 {
 	ftp_init();
@@ -54,6 +57,7 @@ void FTPScreen::Draw(void) const
 		Gui::DrawTop();
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("FTP_MODE")))/2, 0, 0.8f, Config::TxtColor, Lang::get("FTP_MODE"), 400);
 		Gui::DrawBottom();
+		Gui::DrawArrow(0, 242, 270.0);
 		ret = ACU_GetWifiStatus(&wifiStatus);
 
 		if ((wifiStatus != 0) && R_SUCCEEDED(ret)) {
@@ -77,9 +81,12 @@ void FTPScreen::Draw(void) const
 		Gui::clearTextBufs();
 		C3D_FrameEnd(0);
 		hidScanInput();
+		hidTouchRead(&touch);
 		u32 hDown = hidKeysDown();
 
 		if (hDown & KEY_B)
+			break;
+		if (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))
 			break;
 	}
 	memset(ftp_accepted_connection, 0, 20); // Empty accepted connection address.

@@ -161,11 +161,12 @@ static Result setupContextForDirectToFileDownload(CURL *hnd, const char * url)
 	return 0;
 }
 
-Result downloadToFile(std::string url, std::string path, bool downloadToRAM)
+Result downloadToFile(std::string url, std::string path)
 {
 	Result ret = 0;
 	u64 offset = 0;
 	u32 bytesWritten = 0;
+	bool isDownloadToRAM = true;
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
 
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -198,11 +199,12 @@ Result downloadToFile(std::string url, std::string path, bool downloadToRAM)
 	result_fileHandle = &fileHandle;
 
 	CURL *hnd = curl_easy_init();
-	if (downloadToRAM == true) {
-		ret = setupContext(hnd, url.c_str());
-	} else {
+	ret = setupContext(hnd, url.c_str());
+	if (downloadTotal > 30000000) {
 		ret = setupContextForDirectToFileDownload(hnd, url.c_str());
+		isDownloadToRAM = false;
 	}
+
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -232,7 +234,7 @@ Result downloadToFile(std::string url, std::string path, bool downloadToRAM)
 		FSFILE_Close(fileHandle);
 		return -1;
 	}
-	if (downloadToRAM == true) {
+	if (isDownloadToRAM == true) {
 		FSFILE_Write(fileHandle, &bytesWritten, offset, result_buf, result_written, 0);
 	}
 
@@ -251,7 +253,7 @@ Result downloadToFile(std::string url, std::string path, bool downloadToRAM)
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool downloadToRAM)
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -335,7 +337,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	if (assetUrl.empty())
 		ret = DL_ERROR_GIT;
 	else
-		ret = downloadToFile(assetUrl, path, downloadToRAM);
+		ret = downloadToFile(assetUrl, path);
 
 	return ret;
 }
@@ -383,7 +385,7 @@ void notConnectedMsg(void) {
 	}
 }
 
-std::string getLatestRelease(std::string repo, std::string item, bool downloadToRAM)
+std::string getLatestRelease(std::string repo, std::string item)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -404,13 +406,7 @@ std::string getLatestRelease(std::string repo, std::string item, bool downloadTo
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-
-	if (downloadToRAM == true) {
-		ret = setupContext(hnd, apiurl.c_str());
-	} else {
-		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
-	}
-
+	ret = setupContext(hnd, apiurl.c_str());
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -453,7 +449,7 @@ std::string getLatestRelease(std::string repo, std::string item, bool downloadTo
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string item, bool downloadToRAM)
+std::string getLatestCommit(std::string repo, std::string item)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -474,11 +470,7 @@ std::string getLatestCommit(std::string repo, std::string item, bool downloadToR
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-	if (downloadToRAM == true) {
-		ret = setupContext(hnd, apiurl.c_str());
-	} else {
-		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
-	}
+	ret = setupContext(hnd, apiurl.c_str());
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -521,7 +513,7 @@ std::string getLatestCommit(std::string repo, std::string item, bool downloadToR
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string array, std::string item, bool downloadToRAM)
+std::string getLatestCommit(std::string repo, std::string array, std::string item)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -542,11 +534,7 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 	std::string apiurl = apiurlStream.str();
 
 	CURL *hnd = curl_easy_init();
-	if (downloadToRAM == true) {
-		ret = setupContext(hnd, apiurl.c_str());
-	} else {
-		ret = setupContextForDirectToFileDownload(hnd, apiurl.c_str());
-	}
+	ret = setupContext(hnd, apiurl.c_str());
 	if (ret != 0) {
 		socExit();
 		free(result_buf);

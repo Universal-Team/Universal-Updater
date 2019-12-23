@@ -67,12 +67,12 @@ int ScriptHelper::getNum(nlohmann::json json, const std::string &key, const std:
 }
 
 // Download from a Github Release.
-void ScriptHelper::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool downloadToRAM, std::string message) {
+void ScriptHelper::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressBarType = 0;
 	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadFromRelease("https://github.com/" + repo, file, output, includePrereleases, downloadToRAM) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, output, includePrereleases) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		return;
@@ -81,12 +81,12 @@ void ScriptHelper::downloadRelease(std::string repo, std::string file, std::stri
 }
 
 // Download a File from everywhere.
-void ScriptHelper::downloadFile(std::string file, std::string output, bool downloadToRAM, std::string message) {
+void ScriptHelper::downloadFile(std::string file, std::string output, std::string message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressBarType = 0;
 	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadToFile(file, output, downloadToRAM) != 0) {
+	if (downloadToFile(file, output) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		return;
