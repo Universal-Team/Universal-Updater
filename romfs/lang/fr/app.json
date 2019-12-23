@@ -59,7 +59,7 @@
 	"SHOW_QR": "Cliquez ici pour afficher le QR code.",
 	"LINK": "Rejoignez notre Discord : https://discord.gg/KDJCfGF",
 	"TINYDB_DOWNLOADING": "Téléchargement de la base de données des titres disponibles sur TinyDB...",
-	"RELEASE_TAG": "Release Tag: ",
+	"RELEASE_TAG": "Version: ",
 	"DESC": "Desc: ",
 	"RELEASE_ID": "Release ID: ",
 	"TITLE_ID": "Title ID: ",
