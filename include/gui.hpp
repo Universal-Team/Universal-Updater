@@ -46,7 +46,7 @@ namespace Gui
 
 	// Draw a Sprite from the sheet.
 	void sprite(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
-
+	void spriteBlend(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
 	void DrawArrow(int x, int y, float rotation = 0);
 	
 	// Misc.

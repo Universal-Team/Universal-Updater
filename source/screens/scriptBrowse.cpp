@@ -126,11 +126,11 @@ void ScriptBrowse::Draw(void) const {
 		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
-	Gui::DrawArrow(295, 0);
-	Gui::DrawArrow(315, 240, 180.0);
-//	Gui::sprite(sprites_search_idx, -3, 0);
-//	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
-
+	Gui::DrawArrow(295, -3);
+	Gui::DrawArrow(315, 242, 180.0);
+//	Gui::spriteBlend(sprites_search_idx, -3, 0, Config::TxtColor);
+//	Gui::DrawString(7.5, 1.5, 0.72f, Config::TxtColor, "\uE003");
+	Gui::spriteBlend(sprites_download_all_idx, 0, 0);
 	Gui::DrawArrow(0, 242, 270.0);
 	Gui::DrawStringCentered(-23, 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
@@ -228,11 +228,11 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
-	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (infoJson.size() != 0) {
 						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
 						std::string titleFix = infoJson[screenPos + i]["title"]; 
-						for (int l = 0; i < (int)titleFix.size(); l++) {
+						for (int l = 0; l < (int)titleFix.size(); l++) {
 							if (titleFix[l] == '/') {
 								titleFix[l] = '-';
 							}
@@ -311,6 +311,25 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_Y) {
+		if (infoJson.size() != 0) {
+			for (int i = 0; i < (int)infoJson.size(); i++) {
+				int current = i+1;
+				int total = infoJson.size();
+				std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[i]["title"]);
+				std::string titleFix = infoJson[i]["title"]; 
+				for (int l = 0; l < (int)titleFix.size(); l++) {
+					if (titleFix[l] == '/') {
+						titleFix[l] = '-';
+					}
+				}
+				DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
+				downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json");
+				infoJson[i]["curRevision"] = infoJson[i]["revision"];
+			}
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
 		if (infoJson.size() != 0) {
 			for (int i = 0; i < (int)infoJson.size(); i++) {
 				int current = i+1;

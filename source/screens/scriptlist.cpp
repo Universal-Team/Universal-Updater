@@ -284,8 +284,8 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
 
 	Gui::DrawBottom();
-	Gui::DrawArrow(295, 0);
-	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(295, -3);
+	Gui::DrawArrow(315, 242, 180.0);
 	Gui::DrawArrow(0, 242, 270.0);
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
@@ -339,8 +339,8 @@ void ScriptList::DrawSingleObject(void) const {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
 	Gui::DrawBottom();
-	Gui::DrawArrow(295, 0);
-	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(295, -3);
+	Gui::DrawArrow(315, 242, 180.0);
 	Gui::DrawArrow(0, 242, 270.0);
 
 	if (Config::viewMode == 0) {
@@ -400,8 +400,8 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
-	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+			for(int i=0;i<ENTRIES_PER_SCREEN; i++) {
+				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (dirContents[screenPos + i].isDirectory) {
 					} else if (fileInfo.size() != 0) {
 						if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name) == true) {
@@ -418,11 +418,11 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 							mode = 1;
 						}
 					}
-	 			}
+				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST;i++) {
-	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+			for(int i=0;i<ENTRIES_PER_LIST; i++) {
+				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (dirContents[screenPosList + i].isDirectory) {
 					} else if (fileInfo.size() != 0) {
 						if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name) == true) {
@@ -439,7 +439,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 							mode = 1;
 						}
 					}
-	 			}
+				}
 			}
 		}
 	}
@@ -538,22 +538,22 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
-	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+			for(int i=0;i<ENTRIES_PER_SCREEN; i++) {
+				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (fileInfo2.size() != 0) {
 						choice = fileInfo2[screenPos2 + i];
 						runFunctions(jsonFile);
 					}
-	 			}
+				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST;i++) {
-	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+			for(int i=0;i<ENTRIES_PER_LIST; i++) {
+				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (fileInfo2.size() != 0) {
 						choice = fileInfo2[screenPosList2 + i];
 						runFunctions(jsonFile);
 					}
-	 			}
+				}
 			}
 		}
 	}

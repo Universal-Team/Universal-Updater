@@ -73,14 +73,14 @@ std::vector<std::string> tinyDBList;
 TinyDB::TinyDB() {
 	DisplayMsg(Lang::get("TINYDB_DOWNLOADING"));
 	downloadToFile("https://tinydb.eiphax.tech/api/universal-updater.json?raw=true", tinyDBFile);
-    tinyDBList = parseObjects();
+	tinyDBList = parseObjects();
 	selectedOption = tinyDBList[0];
 }
 
 // To-Do.
 void TinyDB::Draw(void) const {
-    std::string info;
-    Gui::setDraw(top);
+	std::string info;
+	Gui::setDraw(top);
 	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 400, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(63, 81, 181, 255));
@@ -93,40 +93,42 @@ void TinyDB::Draw(void) const {
 	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
 	Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
 	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
-    Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
-    std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
-    Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
+	std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
 
 
-    Gui::setDraw(bottom);
+	Gui::setDraw(bottom);
 	Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 320, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
 	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 
-	Gui::DrawArrow(295, 0);
-	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(295, -3);
+	Gui::DrawArrow(315, 242, 180.0);
 	Gui::DrawArrow(0, 242, 270.0);
-    // Search Icon.
+	// Search Icon.
 //	Gui::sprite(sprites_search_idx, -3, 0);
 //	Gui::DrawString(7.5, 1.5, 0.72f, BLACK, "\uE003");
 
-    if (Config::viewMode == 0) {
-    	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
-	    	info = tinyDBList[screenPos + i];
-		    if(screenPos + i == selection) {
-			    Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
-	    	} else { 
-		    	Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
-		    }
-    		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, info, 320);
-    	}
+	if (Config::viewMode == 0) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
+			info = tinyDBList[screenPos + i];
+			if(screenPos + i == selection) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
+			} else { 
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
+			}
+			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, info, 320);
+		}
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)tinyDBList.size();i++) {
 			info = tinyDBList[screenPosList + i];
 			if(screenPosList + i == selection) {
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
+			} else {
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, info, 320);
 		}
@@ -134,11 +136,11 @@ void TinyDB::Draw(void) const {
 }
 
 void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-    if (keyRepeatDelay)	keyRepeatDelay--;
-    if (hDown & KEY_B) {
-        Screen::back();
-        return;
-    }
+	if (keyRepeatDelay)	keyRepeatDelay--;
+	if (hDown & KEY_B) {
+		Screen::back();
+		return;
+	}
 
 	if (hDown & KEY_R) {
 		fastMode = true;
@@ -169,8 +171,8 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-        Screen::back();
-        return;
+		Screen::back();
+		return;
 	}
 
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
@@ -228,26 +230,26 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
-	 	 		if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					selection = screenPos + i;
 					selectedOption = tinyDBList[screenPos + i];
 					execute();
-	 			}
+				}
 			}
 		} else if (Config::viewMode == 1) {
 			for(int i=0;i<ENTRIES_PER_LIST;i++) {
-	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					selection = screenPosList + i;
 					selectedOption = tinyDBList[screenPosList + i];
 					execute();
-	 			}
+				}
 			}
 		}
 	}
 
-    if (hDown & KEY_A) {
-        execute();
-    }
+	if (hDown & KEY_A) {
+		execute();
+	}
 }
 
 void TinyDB::execute() {
