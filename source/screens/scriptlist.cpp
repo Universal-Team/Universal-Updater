@@ -287,6 +287,8 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawArrow(295, -3);
 	Gui::DrawArrow(315, 242, 180.0);
 	Gui::DrawArrow(0, 242, 270.0);
+	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
 			line1 = fileInfo[screenPos + i].title;
@@ -342,6 +344,7 @@ void ScriptList::DrawSingleObject(void) const {
 	Gui::DrawArrow(295, -3);
 	Gui::DrawArrow(315, 242, 180.0);
 	Gui::DrawArrow(0, 242, 270.0);
+	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
@@ -639,7 +642,7 @@ void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		SelectFunction(hDown, hHeld, touch);
 	}
 
-	if (hDown & KEY_X) {
+	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {

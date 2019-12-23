@@ -128,8 +128,8 @@ void ScriptBrowse::Draw(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, -3);
 	Gui::DrawArrow(315, 242, 180.0);
-//	Gui::spriteBlend(sprites_search_idx, -3, 0, Config::TxtColor);
-//	Gui::DrawString(7.5, 1.5, 0.72f, Config::TxtColor, "\uE003");
+	Gui::spriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
+	//Gui::spriteBlend(sprites_search_idx, arrowPos[5].x, arrowPos[5].y);
 	Gui::spriteBlend(sprites_download_all_idx, 0, 0);
 	Gui::DrawArrow(0, 242, 270.0);
 	Gui::DrawStringCentered(-23, 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
@@ -288,7 +288,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		fastMode = false;
 	}
 
-	if (hDown & KEY_X) {
+	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {

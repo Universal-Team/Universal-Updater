@@ -59,10 +59,11 @@ private:
 	int keyRepeatDelay = 0;
 	int fastMode = false;
 
-	std::vector<Structs::ButtonPos> arrowPos = {		
+	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25, -1}, // Arrow Up.
 		{295, 215, 25, 25, -1}, // Arrow Down.
 		{0, 215, 25, 25, -1}, // Back Arrow.
+		{0, 0, 25, 25, -1}, // viewMode Change
 	};
 };
 
