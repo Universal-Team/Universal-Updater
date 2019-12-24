@@ -192,7 +192,7 @@ void Settings::DrawCreditsScreen(void) const {
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
 		Gui::DrawBottom();
-		Gui::DrawArrow(0, 218, 0, 1);
+		Gui::DrawArrow(0, 0, 0, 1);
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
 		Gui::DrawStringCentered(0, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
 		Gui::DrawStringCentered(0, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
@@ -428,7 +428,7 @@ void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, barPos[0])) {
 				DisplayMode = 2;
-			} else if (touching(touch, arrowPos[2])) {
+			} else if (touching(touch, arrowPos[3])) {
 				mode = 0;
 			}
 		}

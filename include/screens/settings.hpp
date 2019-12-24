@@ -85,13 +85,14 @@ private:
 	};
 
 	std::vector<Structs::ButtonPos> barPos = {
-		{100, 215, 100, 25, -1},
+		{0, 215, 320, 25, -1},
 	};
 
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 0, 25, 25, -1}, // Previous Arrow.
 		{295, 0, 25, 25, -1}, // Next Arrow.
 		{0, 215, 25, 25, -1}, // Back Arrow.
+		{0, 0, 25, 25, -1}, // Back Arrow top left.
 	};
 };
 
