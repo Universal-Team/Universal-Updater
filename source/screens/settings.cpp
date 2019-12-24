@@ -316,6 +316,15 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	int green;
 	int blue;
 
+	if (hDown & KEY_TOUCH) {
+		for (int i = 0; i < 7; i++) {
+			if(touch.px > 54 + i * 25 && touch.px < 54 + i * 25+16 && touch.py > 5 && touch.py < 5+16) {
+				colorMode = i;
+			}
+		}
+	}
+
+
 	if (hDown & KEY_B) {
 		mode = 0;
 	}
