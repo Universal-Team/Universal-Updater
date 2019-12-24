@@ -54,7 +54,7 @@ void MainMenu::Draw(void) const {
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 	Gui::DrawBottom();
-	Gui::DrawArrow(0, 242, 270.0);
+	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 6; i++) {
 		if (Selection == i) {

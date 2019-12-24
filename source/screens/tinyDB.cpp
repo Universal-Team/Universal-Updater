@@ -104,9 +104,9 @@ void TinyDB::Draw(void) const {
 	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
 	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 
-	Gui::DrawArrow(295, -3);
-	Gui::DrawArrow(315, 242, 180.0);
-	Gui::DrawArrow(0, 242, 270.0);
+	Gui::DrawArrow(295, -1);
+	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(0, 218, 0, 1);
 	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
 //	Gui::spriteBlend(sprites_search_idx, arrowPos[4].x, arrowPos[4].y);
 
@@ -228,7 +228,7 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
-				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 					selection = screenPos + i;
 					selectedOption = tinyDBList[screenPos + i];
 					execute();

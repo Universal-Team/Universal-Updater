@@ -57,7 +57,7 @@ void FTPScreen::Draw(void) const
 		Gui::DrawTop();
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("FTP_MODE")))/2, 0, 0.8f, Config::TxtColor, Lang::get("FTP_MODE"), 400);
 		Gui::DrawBottom();
-		Gui::DrawArrow(0, 242, 270.0);
+		Gui::DrawArrow(0, 218, 0, 1);
 		ret = ACU_GetWifiStatus(&wifiStatus);
 
 		if ((wifiStatus != 0) && R_SUCCEEDED(ret)) {

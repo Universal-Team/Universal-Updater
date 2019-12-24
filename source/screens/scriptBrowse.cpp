@@ -126,12 +126,14 @@ void ScriptBrowse::Draw(void) const {
 		Gui::DrawStringCentered(0, 217, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
 	}
 	Gui::DrawBottom();
-	Gui::DrawArrow(295, -3);
-	Gui::DrawArrow(315, 242, 180.0);
+	Gui::DrawArrow(295, -1);
+	Gui::DrawArrow(315, 240, 180.0);
+	Gui::DrawArrow(0, 218, 0, 1);
+
+	Gui::spriteBlend(sprites_download_all_idx, arrowPos[3].x, arrowPos[3].y);
 	Gui::spriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
 	//Gui::spriteBlend(sprites_search_idx, arrowPos[5].x, arrowPos[5].y);
-	Gui::spriteBlend(sprites_download_all_idx, 0, 0);
-	Gui::DrawArrow(0, 242, 270.0);
+
 	Gui::DrawStringCentered(-23, 3, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
 
 	if (Config::viewMode == 0) {
@@ -228,7 +230,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
-				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
+				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 					if (infoJson.size() != 0) {
 						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
 						std::string titleFix = infoJson[screenPos + i]["title"]; 

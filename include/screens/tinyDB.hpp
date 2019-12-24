@@ -50,8 +50,8 @@ private:
 		{295, 0, 25, 25, -1}, // Arrow Up.
 		{295, 215, 25, 25, -1}, // Arrow Down.
 		{0, 215, 25, 25, -1}, // Back Arrow.
-		{0, 0, 25, 25, -1}, // ViewMode Change.
-		{40, 0, 25, 25, -1}, // Search.
+		{5, 0, 25, 25, -1}, // ViewMode Change.
+		{45, 0, 25, 25, -1}, // Search.
 	};
 };
 
