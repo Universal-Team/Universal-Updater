@@ -45,12 +45,12 @@ std::string maxScripts;
 
 void fixInfo(nlohmann::json &json) {
 	for(uint i=0;i<json.size();i++) {
-		if(!json[i].contains("title"))    json[i]["title"] = "TITLE";
-		if(!json[i].contains("author"))    json[i]["author"] = "AUTHOR";
+		if(!json[i].contains("title"))	json[i]["title"] = "TITLE";
+		if(!json[i].contains("author"))	json[i]["author"] = "AUTHOR";
 		if(!json[i].contains("shortDesc"))	json[i]["shortDesc"] = "SHORTDESC";
-		if(!json[i].contains("revision"))    json[i]["revision"] = 0;
-		if(!json[i].contains("curRevision"))    json[i]["curRevision"] = 0;
-		if(!json[i].contains("version"))    json[i]["revision"] = 0;
+		if(!json[i].contains("revision"))	json[i]["revision"] = 0;
+		if(!json[i].contains("curRevision"))	json[i]["curRevision"] = 0;
+		if(!json[i].contains("version"))	json[i]["revision"] = 0;
 	}
 }
 
@@ -227,7 +227,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (infoJson.size() != 0) {
 						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
@@ -241,11 +241,11 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
 						infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
 					}
-	 			}
+				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST;i++) {
-	 	 		if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
+				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (infoJson.size() != 0) {
 						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
 						std::string titleFix = infoJson[screenPosList + i]["title"]; 
@@ -258,7 +258,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
 						infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
 					}
-	 			}
+				}
 			}
 		}
 	}

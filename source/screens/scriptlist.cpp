@@ -84,7 +84,7 @@ void checkForValidate(void) {
 nlohmann::json openScriptFile() {
 	FILE* file = fopen(currentFile.c_str(), "rt");
 	nlohmann::json jsonFile;
-	if(file)    jsonFile = nlohmann::json::parse(file, nullptr, false);
+	if(file)	jsonFile = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	return jsonFile;
 }
@@ -123,7 +123,7 @@ void runFunctions(nlohmann::json &json) {
 			bool missing = false;
 			std::string file, message;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else    missing = true;
+			else	missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
@@ -167,7 +167,7 @@ void runFunctions(nlohmann::json &json) {
 			bool missing = false;
 			std::string file, message;
 			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else    missing = true;
+			else	missing = true;
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 			if(!missing)	ScriptHelper::installFile(file, message);
 
@@ -351,7 +351,7 @@ void ScriptList::DrawSingleObject(void) const {
 			info = fileInfo2[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
-			} else { 
+			} else {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
@@ -362,7 +362,7 @@ void ScriptList::DrawSingleObject(void) const {
 			info = fileInfo2[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
-			} else { 
+			} else {
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
@@ -403,7 +403,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN; i++) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size(); i++) {
 				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (dirContents[screenPos + i].isDirectory) {
 					} else if (fileInfo.size() != 0) {
@@ -424,7 +424,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST; i++) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size(); i++) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (dirContents[screenPosList + i].isDirectory) {
 					} else if (fileInfo.size() != 0) {
@@ -541,7 +541,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN; i++) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size(); i++) {
 				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					if (fileInfo2.size() != 0) {
 						choice = fileInfo2[screenPos2 + i];
@@ -550,7 +550,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST; i++) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size(); i++) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (fileInfo2.size() != 0) {
 						choice = fileInfo2[screenPosList2 + i];

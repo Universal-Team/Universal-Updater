@@ -77,7 +77,6 @@ TinyDB::TinyDB() {
 	selectedOption = tinyDBList[0];
 }
 
-// To-Do.
 void TinyDB::Draw(void) const {
 	std::string info;
 	Gui::setDraw(top);
@@ -228,7 +227,7 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)tinyDBList.size();i++) {
 				if(touch.py > (i+1)*57 && touch.py < (i+2)*57) {
 					selection = screenPos + i;
 					selectedOption = tinyDBList[screenPos + i];
@@ -236,7 +235,7 @@ void TinyDB::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST;i++) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)tinyDBList.size();i++) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					selection = screenPosList + i;
 					selectedOption = tinyDBList[screenPosList + i];
@@ -258,7 +257,7 @@ void TinyDB::execute() {
 			bool missing = false;
 			std::string file, message;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
-			else    missing = true;
+			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
 			if(!missing)	ScriptHelper::removeFile(file, message);
 
@@ -276,7 +275,7 @@ void TinyDB::execute() {
 			bool missing = false;
 			std::string file, message;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("file"))	file = tinyDBJson.at(selectedOption).at("script").at(i).at("file");
-			else    missing = true;
+			else	missing = true;
 			if(tinyDBJson.at(selectedOption).at("script").at(i).contains("message"))	message = tinyDBJson.at(selectedOption).at("script").at(i).at("message");
 			if(!missing)	ScriptHelper::installFile(file, message);
 		}
