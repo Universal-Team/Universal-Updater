@@ -193,7 +193,7 @@ void Settings::DrawCreditsScreen(void) const {
 		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
 		Gui::DrawBottom();
 		Gui::DrawArrow(0, 0, 0, 1);
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
+		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
 		Gui::DrawStringCentered(0, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
 		Gui::DrawStringCentered(0, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
 		Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, "Pk11", 320);
