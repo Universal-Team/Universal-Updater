@@ -53,7 +53,7 @@ void Settings::Draw(void) const {
 
 void Settings::DrawSubMenu(void) const {
 	Gui::DrawTop();
-	Gui::DrawString((400-Gui::GetStringWidth(0.8f, "Universal-Updater"))/2, 2, 0.8f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
@@ -72,7 +72,7 @@ void Settings::DrawSubMenu(void) const {
 
 void Settings::DrawLanguageSelection(void) const {
 	Gui::DrawTop();
-	Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("SELECT_LANG")))/2, 2, 0.8f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
+	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
@@ -99,7 +99,7 @@ void Settings::DrawLanguageSelection(void) const {
 
 void Settings::DrawColorChanging(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 
 	if (colorMode == 3) {
 		Gui::Draw_Rect(0, 40, 400, 45, Config::SelectedColor);
@@ -124,17 +124,17 @@ void Settings::DrawColorChanging(void) const {
 
 	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
-			Gui::Draw_Rect(54 + i * 25, 5, 16, 16, C2D_Color32(140, 140, 140, 255));
+			Gui::Draw_Rect(54 + i * 25, 2, 16, 16, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
-	Gui::DrawString(58 + 0 * 25, 5, 0.5f, WHITE, "1", 400);
-	Gui::DrawString(58 + 1 * 25, 5, 0.5f, WHITE, "2", 400);
-	Gui::DrawString(58 + 2 * 25, 5, 0.5f, WHITE, "3", 400);
-	Gui::DrawString(58 + 3 * 25, 5, 0.5f, WHITE, "4", 400);
-	Gui::DrawString(58 + 4 * 25, 5, 0.5f, WHITE, "5", 400);
-	Gui::DrawString(58 + 5 * 25, 5, 0.5f, WHITE, "6", 400);
-	Gui::DrawString(58 + 6 * 25, 5, 0.5f, WHITE, "7", 400);
+	Gui::DrawString(58 + 0 * 25, 2, 0.5f, WHITE, "1", 400);
+	Gui::DrawString(58 + 1 * 25, 2, 0.5f, WHITE, "2", 400);
+	Gui::DrawString(58 + 2 * 25, 2, 0.5f, WHITE, "3", 400);
+	Gui::DrawString(58 + 3 * 25, 2, 0.5f, WHITE, "4", 400);
+	Gui::DrawString(58 + 4 * 25, 2, 0.5f, WHITE, "5", 400);
+	Gui::DrawString(58 + 5 * 25, 2, 0.5f, WHITE, "6", 400);
+	Gui::DrawString(58 + 6 * 25, 2, 0.5f, WHITE, "7", 400);
 
 	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
 	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
@@ -184,22 +184,22 @@ void Settings::DrawCreditsScreen(void) const {
 		std::string title = "Universal-Updater - ";
 		title += Lang::get("CREDITS");
 
-		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 0, 0.8f, Config::TxtColor, title.c_str(), 400);
-		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("DEVELOPED_BY")))/2, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
-		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("MAIN_DEV")))/2, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
+		Gui::DrawStringCentered(0, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
+		Gui::DrawStringCentered(0, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
 		Gui::sprite(sprites_voltZ_idx, 150, 115);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
-		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
+		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
 		Gui::DrawBottom();
 		Gui::DrawArrow(0, 218, 0, 1);
-		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 1, 0.8f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("TRANSLATORS")))/2, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_TRANSLATE")))/2, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.7f, "Pk11"))/2, 100, 0.7f, Config::TxtColor, "Pk11", 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_OUT")))/2, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("SCRIPTCREATORS")))/2, 160, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("CREATING_SCRIPTS")))/2, 190, 0.5f, Config::TxtColor, Lang::get("CREATING_SCRIPTS"), 320);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
+		Gui::DrawStringCentered(0, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
+		Gui::DrawStringCentered(0, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
+		Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, "Pk11", 320);
+		Gui::DrawStringCentered(0, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
+		Gui::DrawStringCentered(0, 160, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
+		Gui::DrawStringCentered(0, 190, 0.5f, Config::TxtColor, Lang::get("CREATING_SCRIPTS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 220, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
 	} else if (DisplayMode == 2) {
 		Gui::DrawTop();
@@ -318,7 +318,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		for (int i = 0; i < 7; i++) {
-			if(touch.px > 54 + i * 25 && touch.px < 54 + i * 25+16 && touch.py > 5 && touch.py < 5+16) {
+			if(touch.px > 54 + i * 25 && touch.px < 54 + i * 25+16 && touch.py > 2 && touch.py < 2+16) {
 				colorMode = i;
 			}
 		}

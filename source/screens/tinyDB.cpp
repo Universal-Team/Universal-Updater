@@ -92,9 +92,9 @@ void TinyDB::Draw(void) const {
 	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
 	Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
 	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
+	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "TinyDB", 400);
 	std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
-	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
 
 
 	Gui::setDraw(bottom);
