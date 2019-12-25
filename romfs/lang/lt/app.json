@@ -64,5 +64,11 @@
 	"RELEASE_ID": "Išleidimo ID: ",
 	"TITLE_ID": "Pavadinimo ID: ",
 	"FILE_SIZE": "Failo dydis: ",
-	"GET_SCRIPTS_FIRST": "Pirma gauk skriptų!"
+	"GET_SCRIPTS_FIRST": "Pirma gauk skriptų!",
+	"OPEN": "Open",
+	"SELECT": "Select",
+	"REFRESH": "Refresh",
+	"BACK": "Back",
+	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
+	"SELECT_SCRIPT_PATH": "Select the Script Path."
 }
