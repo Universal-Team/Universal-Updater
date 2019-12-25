@@ -64,5 +64,11 @@
 	"RELEASE_ID": "Bruh ID: ",
 	"TITLE_ID": "Bruhtl ID: ",
 	"FILE_SIZE": "Bruh size: ",
-	"GET_SCRIPTS_FIRST": "Bruh some Scripts bruh!"
+	"GET_SCRIPTS_FIRST": "Bruh some Scripts bruh!",
+	"OPEN": "Open",
+	"SELECT": "Select",
+	"REFRESH": "Refresh",
+	"BACK": "Back",
+	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
+	"SELECT_SCRIPT_PATH": "Select the Script Path."
 }
