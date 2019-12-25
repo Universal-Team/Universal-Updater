@@ -64,5 +64,11 @@
 	"RELEASE_ID": "リリースID：",
 	"TITLE_ID": "タイトルID：",
 	"FILE_SIZE": "ファイルサイズ：",
-	"GET_SCRIPTS_FIRST": "使用前にスクリプトを入手します！"
+	"GET_SCRIPTS_FIRST": "使用前にスクリプトを入手します！",
+	"OPEN": "Open",
+	"SELECT": "Select",
+	"REFRESH": "Refresh",
+	"BACK": "Back",
+	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
+	"SELECT_SCRIPT_PATH": "Select the Script Path."
 }
