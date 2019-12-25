@@ -64,5 +64,11 @@
 	"RELEASE_ID": "ID выпуску: ",
 	"TITLE_ID": "ID заголовку: ",
 	"FILE_SIZE": "Размер файла: ",
-	"GET_SCRIPTS_FIRST": "Сначала скачайте несколько скриптов!"
+	"GET_SCRIPTS_FIRST": "Сначала скачайте несколько скриптов!",
+	"OPEN": "Open",
+	"SELECT": "Select",
+	"REFRESH": "Refresh",
+	"BACK": "Back",
+	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
+	"SELECT_SCRIPT_PATH": "Select the Script Path."
 }
