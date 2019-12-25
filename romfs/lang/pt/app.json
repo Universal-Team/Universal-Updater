@@ -64,5 +64,11 @@
 	"RELEASE_ID": "ID de lançamento: ",
 	"TITLE_ID": "ID do título: ",
 	"FILE_SIZE": "Tamanho do arquivo: ",
-	"GET_SCRIPTS_FIRST": "Obtém alguns scripts primeiro!"
+	"GET_SCRIPTS_FIRST": "Obtém alguns scripts primeiro!",
+	"OPEN": "Open",
+	"SELECT": "Select",
+	"REFRESH": "Refresh",
+	"BACK": "Back",
+	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
+	"SELECT_SCRIPT_PATH": "Select the Script Path."
 }
