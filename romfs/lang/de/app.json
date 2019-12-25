@@ -65,10 +65,10 @@
 	"TITLE_ID": "Titel ID: ",
 	"FILE_SIZE": "Dateigröße: ",
 	"GET_SCRIPTS_FIRST": "Hol dir zuerst ein paar Skripte!",
-	"OPEN": "Open",
-	"SELECT": "Select",
-	"REFRESH": "Refresh",
-	"BACK": "Back",
-	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
-	"SELECT_SCRIPT_PATH": "Select the Script Path."
+	"OPEN": "Öffnen",
+	"SELECT": "Ausw.",
+	"REFRESH": "Aktual.",
+	"BACK": "Zurück",
+	"FILEBROWSE_MSG": "Drück X zum Ausw., Select zum Aktual.",
+	"SELECT_SCRIPT_PATH": "Wähle den Skriptpfad."
 }
