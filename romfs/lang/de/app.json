@@ -71,8 +71,8 @@
 	"BACK": "Zurück",
 	"FILEBROWSE_MSG": "Drück X zum Ausw., Select zum Aktual.",
 	"SELECT_SCRIPT_PATH": "Wähle den Skriptpfad.",
-	"CHANGE_BARS": "Change Bars",
-	"CHANGE_SCRIPTPATH": "Change Scriptpath",
-	"CHANGE_MUSICFILE": "Change Musicfile",
-	"SELECT_MUSIC_FILE": "Select the Musicfile."
+	"CHANGE_BARS": "Wechsel Balken",
+	"CHANGE_SCRIPTPATH": "Skriptpfad ändern",
+	"CHANGE_MUSICFILE": "Musikdatei ändern",
+	"SELECT_MUSIC_FILE": "Wähle die Musikdatei."
 }
