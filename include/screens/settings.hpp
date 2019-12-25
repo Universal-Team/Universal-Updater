@@ -30,6 +30,7 @@
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
 
 #include <vector>

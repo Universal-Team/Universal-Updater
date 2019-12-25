@@ -167,7 +167,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else {
 				notConnectedMsg();
 			}
-	 		} else if (touching(touch, mainButtons[2])) {
+		} else if (touching(touch, mainButtons[2])) {
 			if (checkWifiStatus() == true) {
 				Screen::set(std::make_unique<TinyDB>());
 			} else {

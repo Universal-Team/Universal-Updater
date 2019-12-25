@@ -217,6 +217,10 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if(Selection > 0)	Selection--;
 	}
 
+	if (hDown & KEY_Y) {
+		Config::ScriptPath = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"));
+	}
+
 	if (hDown & KEY_DOWN) {
 		if(Selection < 2)	Selection++;
 	}

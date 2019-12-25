@@ -1,6 +1,11 @@
-#include "utils/fileBrowse.h"
-
 #include "gui.hpp"
+
+#include "screens/screenCommon.hpp"
+
+#include "utils/config.hpp"
+#include "utils/fileBrowse.h"
+#include "utils/structs.hpp"
+
 #include <3ds.h>
 #include <cstring>
 #include <dirent.h>
@@ -21,6 +26,17 @@ extern int keyRepeatDelay;
 extern bool dirChanged;
 extern std::vector<DirEntry> dirContents;
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern touchPosition touch;
+
+std::vector<Structs::ButtonPos> buttonPositions = {
+	{295, 0, 25, 25, -1}, // Arrow Up.
+	{295, 215, 25, 25, -1}, // Arrow Down.
+	{15, 220, 50, 15, -1}, // Open.
+	{80, 220, 50, 15, -1}, // Select.
+	{145, 220, 50, 15, -1}, // Refresh.
+	{210, 220, 50, 15, -1}, // Back.
+};
 
 /**
  * Get the title ID.
@@ -171,4 +187,146 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	}
 	closedir(pdir);
 	return dirContents;
+}
+
+// returns a Path or file to 'std::string'.
+// selectText is the Text which is displayed on the bottom bar of the top screen.
+// selectionMode is how you select it. 1 -> Path, 2 -> File.
+std::string selectFilePath(std::string selectText, int selectionMode) {
+	static uint selectedFile = 0;
+	std::string selectedPath = "";
+	static int keyRepeatDelay = 4;
+	static bool dirChanged = true;
+	static bool fastMode = false;
+	std::vector<DirEntry> dirContents;
+
+	while (1) {
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(top, BLACK);
+		C2D_TargetClear(bottom, BLACK);
+		Gui::DrawTop();
+		char path[PATH_MAX];
+		getcwd(path, PATH_MAX);
+		Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
+		Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 400);
+		std::string dirs;
+		for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
+			if (i == selectedFile) {
+				dirs +=  "> " + dirContents[i].name + "\n\n";
+			} else {
+				dirs +=  dirContents[i].name + "\n\n";
+			}
+		}
+		for (uint i=0;i<((dirContents.size()<6) ? 6-dirContents.size() : 0);i++) {
+			dirs += "\n\n";
+		}
+
+		Gui::DrawString(26, 32, 0.53f, Config::TxtColor, dirs.c_str());
+		Gui::DrawBottom();
+
+		Gui::DrawStringCentered(0, 0, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+		Gui::DrawArrow(295, -1);
+		Gui::DrawArrow(315, 240, 180.0);
+		
+		Gui::Draw_Rect(buttonPositions[2].x, buttonPositions[2].y, buttonPositions[2].w, buttonPositions[2].h, C2D_Color32(0, 0, 0, 190));
+		Gui::Draw_Rect(buttonPositions[3].x, buttonPositions[3].y, buttonPositions[3].w, buttonPositions[3].h, C2D_Color32(0, 0, 0, 190));
+		Gui::Draw_Rect(buttonPositions[4].x, buttonPositions[4].y, buttonPositions[4].w, buttonPositions[4].h, C2D_Color32(0, 0, 0, 190));
+		Gui::Draw_Rect(buttonPositions[5].x, buttonPositions[5].y, buttonPositions[5].w, buttonPositions[5].h, C2D_Color32(0, 0, 0, 190));
+
+		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("OPEN")))/2-95-25, 222, 0.4f, Config::TxtColor, Lang::get("OPEN"), 50);
+		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("SELECT")))/2-30-25, 222, 0.4f, Config::TxtColor, Lang::get("SELECT"), 50);
+		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("REFRESH")))/2+35-25, 222, 0.4f, Config::TxtColor, Lang::get("REFRESH"), 50);
+		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("BACK")))/2+100-25, 222, 0.4f, Config::TxtColor, Lang::get("BACK"), 50);
+		C3D_FrameEnd(0);
+
+		// The input part.
+		gspWaitForVBlank();
+		hidScanInput();
+		hidTouchRead(&touch);
+
+		if (keyRepeatDelay)	keyRepeatDelay--;
+
+		if (dirChanged) {
+			dirContents.clear();
+			std::vector<DirEntry> dirContentsTemp;
+			getDirectoryContents(dirContentsTemp);
+			for(uint i=0;i<dirContentsTemp.size();i++) {
+				dirContents.push_back(dirContentsTemp[i]);
+			}
+			dirChanged = false;
+		}
+
+		if (hidKeysDown() & KEY_SELECT || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[4])) {
+			dirChanged = true;
+		}
+
+		if (hidKeysDown() & KEY_A || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[2])) {
+			if (dirContents.size() != 0) {
+				if (dirContents[selectedFile].isDirectory) {
+					chdir(dirContents[selectedFile].name.c_str());
+					selectedFile = 0;
+					dirChanged = true;
+				}
+			}
+		}
+
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[0])) {
+			if (selectedFile > 0)	selectedFile--;
+		}
+
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[1])) {
+			if (selectedFile < dirContents.size()-1)	selectedFile++;
+		}
+
+		if (hidKeysHeld() & KEY_UP) {
+			if (selectedFile > 0 && !keyRepeatDelay) {
+				selectedFile--;
+				if (fastMode == true) {
+					keyRepeatDelay = 3;
+				} else if (fastMode == false){
+					keyRepeatDelay = 6;
+				}
+			}
+		}
+		if (hidKeysHeld() & KEY_DOWN && !keyRepeatDelay) {
+			if (selectedFile < dirContents.size()-1) {
+				selectedFile++;
+				if (fastMode == true) {
+					keyRepeatDelay = 3;
+				} else if (fastMode == false){
+					keyRepeatDelay = 6;
+				}
+			}
+		}
+
+		if (hidKeysDown() & KEY_B || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[5])) {
+			char path[PATH_MAX];
+			getcwd(path, PATH_MAX);
+			if(strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
+			} else {
+				chdir("..");
+				selectedFile = 0;
+				dirChanged = true;
+			}
+		}
+
+		if (hidKeysDown() & KEY_X || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[3])) {
+			char path[PATH_MAX];
+			getcwd(path, PATH_MAX);
+			selectedPath = path;
+			if (selectionMode == 2) {
+				selectedPath += dirContents[selectedFile].name;
+			}
+			return selectedPath;
+		}
+
+		if (hidKeysDown() & KEY_R) {
+			fastMode = true;
+		}
+
+		if (hidKeysDown() & KEY_L) {
+			fastMode = false;
+		}
+	}
 }
