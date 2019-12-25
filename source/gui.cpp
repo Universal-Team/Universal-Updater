@@ -211,14 +211,18 @@ void Gui::DrawTop(void) {
 		Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
 		Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
 		Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
-		Gui::sprite(sprites_top_screen_top_idx, 0, 0);
-		Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+		if (Config::UseBars == true) {
+			Gui::sprite(sprites_top_screen_top_idx, 0, 0);
+			Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+		}
 	} else if (isScriptSelected == true) {
 		Gui::Draw_Rect(0, 0, 400, 30, barColor);
 		Gui::Draw_Rect(0, 25, 400, 190, bgBottomColor);
 		Gui::Draw_Rect(0, 215, 400, 25, barColor);
-		Gui::sprite(sprites_top_screen_top_idx, 0, 0);
-		Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+		if (Config::UseBars == true) {
+			Gui::sprite(sprites_top_screen_top_idx, 0, 0);
+			Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+		}
 	}
 }
 
@@ -228,14 +232,18 @@ void Gui::DrawBottom(void) {
 		Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
 		Gui::Draw_Rect(0, 25, 320, 190, Config::Color3);
 		Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
-		Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
-		Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+		if (Config::UseBars == true) {
+			Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
+			Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+		}
 	} else if (isScriptSelected == true) {
 		Gui::Draw_Rect(0, 0, 320, 30, barColor);
 		Gui::Draw_Rect(0, 25, 320, 190, bgBottomColor);
 		Gui::Draw_Rect(0, 215, 320, 25, barColor);
-		Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
-		Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+		if (Config::UseBars == true) {
+			Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
+			Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+		}
 	}
 }
 

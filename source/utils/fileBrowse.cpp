@@ -192,7 +192,7 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 // returns a Path or file to 'std::string'.
 // selectText is the Text which is displayed on the bottom bar of the top screen.
 // selectionMode is how you select it. 1 -> Path, 2 -> File.
-std::string selectFilePath(std::string selectText, int selectionMode) {
+std::string selectFilePath(std::string selectText, const std::vector<std::string> &extensionList, int selectionMode) {
 	static uint selectedFile = 0;
 	std::string selectedPath = "";
 	static int keyRepeatDelay = 4;
@@ -208,8 +208,14 @@ std::string selectFilePath(std::string selectText, int selectionMode) {
 		Gui::DrawTop();
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
-		Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
-		Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 400);
+		if (Config::UseBars == true) {
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, Config::TxtColor, path);
+			Gui::DrawStringCentered(0, 220, 0.60f, Config::TxtColor, selectText, 400);
+		} else {
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
+			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 400);
+		}
+
 		std::string dirs;
 		for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
 			if (i == selectedFile) {
@@ -225,7 +231,11 @@ std::string selectFilePath(std::string selectText, int selectionMode) {
 		Gui::DrawString(26, 32, 0.53f, Config::TxtColor, dirs.c_str());
 		Gui::DrawBottom();
 
-		Gui::DrawStringCentered(0, 0, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+		if (Config::UseBars == true) {
+			Gui::DrawStringCentered(0, 0, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+		}
 		Gui::DrawArrow(295, -1);
 		Gui::DrawArrow(315, 240, 180.0);
 		
@@ -250,7 +260,7 @@ std::string selectFilePath(std::string selectText, int selectionMode) {
 		if (dirChanged) {
 			dirContents.clear();
 			std::vector<DirEntry> dirContentsTemp;
-			getDirectoryContents(dirContentsTemp);
+			getDirectoryContents(dirContentsTemp, extensionList);
 			for(uint i=0;i<dirContentsTemp.size();i++) {
 				dirContents.push_back(dirContentsTemp[i]);
 			}
@@ -304,6 +314,7 @@ std::string selectFilePath(std::string selectText, int selectionMode) {
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
 			if(strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
+				return "";
 			} else {
 				chdir("..");
 				selectedFile = 0;

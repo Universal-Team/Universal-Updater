@@ -28,6 +28,6 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 void getDirectoryContents(std::vector<DirEntry>& dirContents);
 std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList);
 
-std::string selectFilePath(std::string selectText, int selectionMode = 1);
+std::string selectFilePath(std::string selectText, const std::vector<std::string> &extensionList, int selectionMode = 1);
 
 #endif //FILE_BROWSE_H

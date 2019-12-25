@@ -55,10 +55,12 @@ private:
 	void DrawLanguageSelection(void) const;
 	void DrawColorChanging(void) const;
 	void DrawCreditsScreen(void) const;
+	void DrawMiscSettings(void) const;
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void LanguageSelection(u32 hDown, touchPosition touch);
 	void colorChanging(u32 hDown, touchPosition touch);
 	void CreditsLogic(u32 hDown, touchPosition touch);
+	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35, -1}, // Language.
@@ -94,6 +96,7 @@ private:
 		{295, 0, 25, 25, -1}, // Next Arrow.
 		{0, 215, 25, 25, -1}, // Back Arrow.
 		{0, 0, 25, 25, -1}, // Back Arrow top left.
+		{295, 215, 25, 25, -1}, // Next Page / Misc Arrow.
 	};
 };
 

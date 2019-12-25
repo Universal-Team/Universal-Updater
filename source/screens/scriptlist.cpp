@@ -278,9 +278,13 @@ void ScriptList::DrawList(void) const {
 	std::string line2;
 	std::string scriptAmount = std::to_string(selection +1) + " / " + std::to_string(fileInfo.size());
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-	Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
-
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 237-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
+	}
 	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(fileInfo[selection].title), 400);
 	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[selection].author), 400);
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
@@ -337,8 +341,13 @@ void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(fileInfo2.size());
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, TextColor, selectedTitle, 400);
-	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, selectedTitle, 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, selectedTitle, 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	}
 	for(uint i=0;i<lines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}

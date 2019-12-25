@@ -114,8 +114,13 @@ void ScriptBrowse::Draw(void) const {
 	revision += " / ";
 	revision += std::to_string(int64_t(infoJson[selection]["revision"]));
 
-	Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+	if (Config::UseBars == true) {
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+	} else {
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+	}
 
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
 	if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {

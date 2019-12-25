@@ -47,15 +47,22 @@ void Settings::Draw(void) const {
 		DrawColorChanging();
 	} else if (mode == 3) {
 		DrawCreditsScreen();
+	} else if (mode == 4) {
+		DrawMiscSettings();
 	}
 }
 
 
 void Settings::DrawSubMenu(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	}
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
+	Gui::DrawArrow(318, 240, 180.0, 1);
 
 	for (int i = 0; i < 3; i++) {
 		if (Selection == i) {
@@ -72,7 +79,11 @@ void Settings::DrawSubMenu(void) const {
 
 void Settings::DrawLanguageSelection(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
+	}
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
@@ -99,7 +110,11 @@ void Settings::DrawLanguageSelection(void) const {
 
 void Settings::DrawColorChanging(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	}
 
 	if (colorMode == 3) {
 		Gui::Draw_Rect(0, 40, 400, 45, Config::SelectedColor);
@@ -184,7 +199,11 @@ void Settings::DrawCreditsScreen(void) const {
 		std::string title = "Universal-Updater - ";
 		title += Lang::get("CREDITS");
 
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
+		if (Config::UseBars == true) {
+			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, title, 400);
+		}
 		Gui::DrawStringCentered(0, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
 		Gui::DrawStringCentered(0, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
 		Gui::sprite(sprites_voltZ_idx, 150, 115);
@@ -211,14 +230,92 @@ void Settings::DrawCreditsScreen(void) const {
 	}
 }
 
+void Settings::DrawMiscSettings(void) const {
+	Gui::DrawTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+	}
 
-void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	Gui::DrawBottom();
+	Gui::DrawArrow(0, 218, 0, 1);
+
+	for (int i = 0; i < 3; i++) {
+		if (Selection == i) {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+		}
+	}
+
+	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_BARS"), 140);
+	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 140);
+	Gui::DrawStringCentered(0, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 140);
+}
+
+void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_UP) {
 		if(Selection > 0)	Selection--;
 	}
 
-	if (hDown & KEY_Y) {
-		Config::ScriptPath = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"));
+	if (hDown & KEY_DOWN) {
+		if(Selection < 2)	Selection++;
+	}
+
+	if (hDown & KEY_A) {
+		if (Selection == 0) {
+			if (Config::UseBars == true) {
+				Config::UseBars = false;
+			} else if (Config::UseBars == false) {
+				Config::UseBars = true;
+			}
+		} else if (Selection == 1) {
+			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+			if (tempScript != "") {
+				Config::ScriptPath = tempScript;
+			}
+		} else if (Selection == 2) {
+			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
+			if (tempMusic != "") {
+				Config::MusicPath = tempMusic;
+			}
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			if (Config::UseBars == true) {
+				Config::UseBars = false;
+			} else if (Config::UseBars == false) {
+				Config::UseBars = true;
+			}
+		} else if (touching(touch, mainButtons[1])) {
+			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+			if (tempScript != "") {
+				Config::ScriptPath = tempScript;
+			}
+		} else if (touching(touch, mainButtons[2])) {
+			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
+			if (tempMusic != "") {
+				Config::MusicPath = tempMusic;
+			}
+		}
+	}
+
+	if (hDown & KEY_B || hDown & KEY_L) {
+		mode = 0;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+		mode = 0;
+	}
+}
+
+
+void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (hDown & KEY_UP) {
+		if(Selection > 0)	Selection--;
 	}
 
 	if (hDown & KEY_DOWN) {
@@ -257,6 +354,14 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
 		Screen::back();
 		return;
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
+		mode = 4;
+	}
+
+	if (hDown & KEY_R) {
+		mode = 4;
 	}
 }
 
@@ -457,5 +562,7 @@ void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		colorChanging(hDown, touch);
 	} else if (mode == 3) {
 		CreditsLogic(hDown, touch);
+	} else if (mode == 4) {
+		MiscSettingsLogic(hDown, hHeld, touch);
 	}
 }

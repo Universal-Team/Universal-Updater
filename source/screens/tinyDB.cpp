@@ -78,13 +78,22 @@ TinyDB::TinyDB() {
 }
 
 void TinyDB::Draw(void) const {
+	std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
 	std::string info;
 	Gui::setDraw(top);
 	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 400, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(63, 81, 181, 255));
-	Gui::sprite(sprites_top_screen_top_idx, 0, 0);
-	Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+
+	if (Config::UseBars == true) {
+		Gui::sprite(sprites_top_screen_top_idx, 0, 0);
+		Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "TinyDB", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "TinyDB", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+	}
 
 	Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(tinyDBJson[selectedOption]["info"]["author"]), 400);
 	Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(tinyDBJson[selectedOption]["info"]["description"]), 400);
@@ -92,17 +101,16 @@ void TinyDB::Draw(void) const {
 	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("RELEASE_ID") + std::string(tinyDBJson[selectedOption]["info"]["releaseId"]), 400);
 	Gui::DrawStringCentered(0, 155, 0.6f, Config::TxtColor, Lang::get("TITLE_ID") + std::string(tinyDBJson[selectedOption]["info"]["titleid"]), 400);
 	Gui::DrawStringCentered(0, 185, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(tinyDBJson[selectedOption]["info"]["fileSize"])), 400);
-	Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "TinyDB", 400);
-	std::string entryAmount = std::to_string(selection+1) + " / " + std::to_string(tinyDBList.size());
-	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
 
 
 	Gui::setDraw(bottom);
 	Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(63, 81, 181, 255));
 	Gui::Draw_Rect(0, 25, 320, 190, C2D_Color32(140, 140, 140, 255));
 	Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(63, 81, 181, 255));
-	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
-	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+	if (Config::UseBars == true) {
+		Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
+		Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
+	}
 
 	Gui::DrawArrow(295, -1);
 	Gui::DrawArrow(315, 240, 180.0);
