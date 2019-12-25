@@ -68,7 +68,11 @@
 	"OPEN": "Bropen",
 	"SELECT": "Bruhlet",
 	"REFRESH": "Bruhfrs",
-	"BACK": "Back",
-	"FILEBROWSE_MSG": "Press X to select, Select to refresh.",
-	"SELECT_SCRIPT_PATH": "Select the Script Path."
+	"BACK": "Bruck",
+	"FILEBROWSE_MSG": "Bruh X to bruh, Select to Bruh.",
+	"SELECT_SCRIPT_PATH": "Bruh the bruhpt path.",
+	"CHANGE_BARS": "Change Bars",
+	"CHANGE_SCRIPTPATH": "Change Scriptpath",
+	"CHANGE_MUSICFILE": "Change Musicfile",
+	"SELECT_MUSIC_FILE": "Select the Musicfile."
 }
