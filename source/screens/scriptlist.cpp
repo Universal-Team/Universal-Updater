@@ -37,8 +37,6 @@
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-#define ENTRIES_PER_SCREEN 3
-#define ENTRIES_PER_LIST 7
 
 bool isScriptSelected = false;
 

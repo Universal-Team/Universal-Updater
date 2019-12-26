@@ -63,3 +63,5 @@ extern char * arg0;
 #define MUSIC_PATH	"sdmc:/3ds/Universal-Updater/Music.wav" // Default Music File / Path.
 #define SCRIPT_VERSION	3
 #define APPSTORE_DEFAULT "https://tinydb.eiphax.tech/api/universal-updater.json?raw=true"
+#define ENTRIES_PER_SCREEN 3
+#define ENTRIES_PER_LIST 7

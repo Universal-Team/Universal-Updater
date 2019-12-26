@@ -44,7 +44,7 @@ namespace ScriptHelper {
 	Result createFile(const char * path);
 	void displayTimeMsg(std::string message, int seconds);
 
-	bool checkIfValid(std::string scriptFile);
+	bool checkIfValid(std::string scriptFile, int mode = 0);
 }
 
 #endif

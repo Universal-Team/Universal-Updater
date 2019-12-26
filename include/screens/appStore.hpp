@@ -30,6 +30,7 @@
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
 
 class AppStore : public screen
@@ -40,13 +41,27 @@ public:
 	AppStore();
 
 private:
+	void DrawStoreList(void) const;
+	void DrawStore(void) const;
+
+	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void execute();
+
+	int mode = 0;
 	std::string selectedOptionAppStore;
+
 	mutable int selection = 0;
+	mutable int selection2 = 0;
 	int screenPos = 0;
+	int screenPos2 = 0;
 	mutable int screenPosList = 0;
+	mutable int screenPosList2 = 0;
+
 	int keyRepeatDelay = 0;
 	int fastMode = false;
+	std::vector<DirEntry> dirContents;
+
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25, -1}, // Arrow Up.
 		{295, 215, 25, 25, -1}, // Arrow Down.

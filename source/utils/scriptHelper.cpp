@@ -133,7 +133,7 @@ void ScriptHelper::displayTimeMsg(std::string message, int seconds) {
 	}
 }
 
-bool ScriptHelper::checkIfValid(std::string scriptFile) {
+bool ScriptHelper::checkIfValid(std::string scriptFile, int mode) {
 	FILE* file = fopen(scriptFile.c_str(), "rt");
 	if(!file) {
 		printf("File not found\n");
@@ -142,7 +142,11 @@ bool ScriptHelper::checkIfValid(std::string scriptFile) {
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
-	if (!json.contains("info"))	return false;
+	if (mode == 0) {
+		if (!json.contains("info"))	return false;
+	} else if (mode == 1) {
+		if (!json.contains("storeInfo"))	return false;
+	}
 	
 	return true;
 }

@@ -129,11 +129,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 2:
-				if (checkWifiStatus() == true) {
+//				if (checkWifiStatus() == true) {
 					Screen::set(std::make_unique<AppStore>());
-				} else {
-					notConnectedMsg();
-				}
+//				} else {
+//					notConnectedMsg();
+//				}
 				break;
 			case 3:
 				if (isTesting == true) {

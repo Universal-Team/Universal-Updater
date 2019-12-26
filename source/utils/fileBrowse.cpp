@@ -2,6 +2,7 @@
 
 #include "screens/screenCommon.hpp"
 
+#include "utils/common.hpp"
 #include "utils/config.hpp"
 #include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
@@ -190,8 +191,6 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	return dirContents;
 }
 
-#define ENTRIES_PER_SCREEN 3
-#define ENTRIES_PER_LIST 7
 // returns a Path or file to 'std::string'.
 // selectText is the Text which is displayed on the bottom bar of the top screen.
 // selectionMode is how you select it. 1 -> Path, 2 -> File.
