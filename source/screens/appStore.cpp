@@ -36,18 +36,30 @@
 #include "utils/json.hpp"
 #include "utils/scriptHelper.hpp"
 
+#include <algorithm>
+#include <regex>
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern u32 getColor(std::string colorString);
 nlohmann::json appStoreJson;
 std::string currentStoreFile;
 extern bool isScriptSelected;
+
+extern u32 barColor;
+extern u32 bgTopColor;
+extern u32 bgBottomColor;
+extern u32 TextColor;
+extern u32 progressBar;
+extern u32 selected;
+extern u32 unselected;
 
 struct storeInfo2 {
 	std::string title;
 	std::string author;
 	std::string description;
 	std::string url;
+	std::string file;
 };
 
 // Parse informations like URL, Title, Author, Description.
@@ -65,6 +77,7 @@ storeInfo2 parseStoreInfo(std::string fileName) {
 	info.author = ScriptHelper::getString(json, "storeInfo", "author");
 	info.description = ScriptHelper::getString(json, "storeInfo", "description");
 	info.url = ScriptHelper::getString(json, "storeInfo", "url");
+	info.file = ScriptHelper::getString(json, "storeInfo", "file");
 	return info;
 }
 
@@ -100,6 +113,12 @@ std::vector<std::string> appStoreList; // Actual store. ;P
 std::vector<std::string> descLines;
 std::string storeDesc = "";
 
+void AppStore::descript() {
+	if (storeInfo[selection].description != "" || storeInfo[selection].description != "MISSING: storeInfo.description") {
+		storeDesc = storeInfo[selection].description;
+	} else storeDesc = "";
+}
+
 void loadStoreDesc(void) {
 	descLines.clear();
 	while(storeDesc.find('\n') != storeDesc.npos) {
@@ -116,6 +135,33 @@ AppStore::AppStore() {
 	for(uint i=0;i<dirContents.size();i++) {
 		storeInfo.push_back(parseStoreInfo(dirContents[i].name));
 	}
+	descript();
+	loadStoreDesc();
+}
+
+// Store colors.
+void loadStoreColors(nlohmann::json &json) {
+	u32 colorTemp;
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "barColor"));
+	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "bgTopColor"));
+	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "bgBottomColor"));
+	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "textColor"));
+	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "selectedColor"));
+	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "unselectedColor"));
+	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
+
+	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "progressbarColor"));
+	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
 }
 
 // First Screen -> Storelist.
@@ -125,15 +171,15 @@ void AppStore::DrawStoreList(void) const {
 	std::string storeAmount = std::to_string(selection +1) + " / " + std::to_string(storeInfo.size());
 	Gui::DrawTop();
 	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, storeInfo[selection].title, 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 239-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, storeInfo[selection].title, 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 237-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
 	}
-	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(storeInfo[selection].title), 400);
-	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(storeInfo[selection].author), 400);
-	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(storeInfo[selection].description), 400);
+	for(uint i=0;i<descLines.size();i++) {
+		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, Config::TxtColor, descLines[i], 400);
+	}
 
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, -1);
@@ -173,17 +219,17 @@ void AppStore::DrawStore(void) const {
 	if (Config::UseBars == true) {
 		Gui::sprite(sprites_top_screen_top_idx, 0, 0);
 		Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	}
 
-	Gui::DrawStringCentered(0, 35, 0.6f, Config::TxtColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
-	Gui::DrawStringCentered(0, 65, 0.6f, Config::TxtColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
-	Gui::DrawStringCentered(0, 95, 0.6f, Config::TxtColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
-	Gui::DrawStringCentered(0, 125, 0.6f, Config::TxtColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+	Gui::DrawStringCentered(0, 35, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
+	Gui::DrawStringCentered(0, 65, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
+	Gui::DrawStringCentered(0, 95, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
+	Gui::DrawStringCentered(0, 125, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
 
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, -1);
@@ -195,21 +241,21 @@ void AppStore::DrawStore(void) const {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreList.size();i++) {
 			info = appStoreList[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
 			} else { 
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			}
-			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, info, 320);
+			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreList.size();i++) {
 			info = appStoreList[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
 			} else {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			}
-			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, info, 320);
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}
 	}
 }
@@ -242,8 +288,12 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
 		if (selection < (int)storeInfo.size()-1) {
 			selection++;
+			descript();
+			loadStoreDesc();
 		} else {
 			selection = 0;
+			descript();
+			loadStoreDesc();
 		}
 	}
 
@@ -256,8 +306,12 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
 		if (selection < (int)storeInfo.size()-1) {
 			selection++;
+			descript();
+			loadStoreDesc();
 		} else {
 			selection = 0;
+			descript();
+			loadStoreDesc();
 		}
 		if (fastMode == true) {
 			keyRepeatDelay = 3;
@@ -268,13 +322,33 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hHeld & KEY_UP && !keyRepeatDelay) {
 		if (selection > 0) {
 			selection--;
+			descript();
+			loadStoreDesc();
 		} else {
 			selection = (int)storeInfo.size()-1;
+			descript();
+			loadStoreDesc();
 		}
 		if (fastMode == true) {
 			keyRepeatDelay = 3;
 		} else if (fastMode == false){
 			keyRepeatDelay = 6;
+		}
+	}
+
+	if (hDown & KEY_Y) {
+		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+			ScriptHelper::downloadFile(storeInfo[selection].url, (std::string("/3ds/Universal-Updater/stores/" + storeInfo[selection].file)), Lang::get("UPDATING"));
+			// Refresh the list.
+			dirContents.clear();
+			storeInfo.clear();
+			chdir("sdmc:/3ds/Universal-Updater/stores/");
+			getDirectoryContents(dirContents, {"unistore"});
+			for(uint i=0;i<dirContents.size();i++) {
+				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+				descript();
+				loadStoreDesc();
+			}
 		}
 	}
 
@@ -285,10 +359,10 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				currentStoreFile = dirContents[selection].name;
 				appStoreJson = openStoreFile();
 				appStoreList = parseStoreObjects(currentStoreFile);
+				loadStoreColors(appStoreJson);
 				selectedOptionAppStore = appStoreList[0];
-				selection = 0;
+				isScriptSelected = true;
 				mode = 1;
-				storeInfo.clear();
 			}
 		}
 	}
@@ -312,6 +386,36 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
 			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
+				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+					if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
+						currentStoreFile = dirContents[screenPos + i].name;
+						appStoreJson = openStoreFile();
+						appStoreList = parseStoreObjects(currentStoreFile);
+						selectedOptionAppStore = appStoreList[0];
+						selection = 0;
+						mode = 1;
+					}
+				}
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
+				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
+						currentStoreFile = dirContents[screenPosList + i].name;
+						appStoreJson = openStoreFile();
+						appStoreList = parseStoreObjects(currentStoreFile);
+						selectedOptionAppStore = appStoreList[0];
+						selection = 0;
+						mode = 1;
+					}
+				}
+			}
 		}
 	}
 }
@@ -396,16 +500,16 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreList.size();i++) {
 				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-					selection2 = screenPos + i;
-					selectedOptionAppStore = appStoreList[screenPos + i];
+					selection2 = screenPos2 + i;
+					selectedOptionAppStore = appStoreList[screenPos2 + i];
 					execute();
 				}
 			}
 		} else if (Config::viewMode == 1) {
 			for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreList.size();i++) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-					selection2 = screenPosList + i;
-					selectedOptionAppStore = appStoreList[screenPosList + i];
+					selection2 = screenPosList2 + i;
+					selectedOptionAppStore = appStoreList[screenPosList2 + i];
 					execute();
 				}
 			}
@@ -429,6 +533,14 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList2 = selection2 - ENTRIES_PER_LIST + 1;
 		}
 	}
+}
+
+void AppStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (mode == 0) {
+		StoreSelectionLogic(hDown, hHeld, touch);
+	} else if (mode == 1) {
+		StoreLogic(hDown, hHeld, touch);
+	}
 
 	// Switch ViewMode.
 	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
@@ -437,14 +549,6 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			Config::viewMode = 0;
 		}
-	}
-}
-
-void AppStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (mode == 0) {
-		StoreSelectionLogic(hDown, hHeld, touch);
-	} else if (mode == 1) {
-		StoreLogic(hDown, hHeld, touch);
 	}
 }
 

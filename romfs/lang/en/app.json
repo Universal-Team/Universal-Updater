@@ -92,5 +92,8 @@
 	"SELECT_MUSIC_FILE":				"Select the Musicfile.",
 
 	"PULLING_APPSTORE":					"Pulling App Store data...",
-	"VERSION":							"Version: "
+	"VERSION":							"Version: ",
+	"UPDATING":							"Updating...",
+	"WOULD_YOU_LIKE_UPDATE":			"Would you like to update this store?",
+	"GET_STORES_FIRST":					"Get some Stores first!"
 }

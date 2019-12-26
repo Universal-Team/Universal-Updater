@@ -47,7 +47,7 @@ private:
 	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void execute();
-
+	void descript();
 	int mode = 0;
 	std::string selectedOptionAppStore;
 

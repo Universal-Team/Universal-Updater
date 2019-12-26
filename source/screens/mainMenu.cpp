@@ -95,6 +95,21 @@ bool MainMenu::returnScriptState() {
 	return true;
 }
 
+bool MainMenu::returnStoreState() {
+	dirContents.clear();
+	chdir("sdmc:/3ds/Universal-Updater/stores/");
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, {"unistore"});
+	for(uint i=0;i<dirContentsTemp.size();i++) {
+		dirContents.push_back(dirContentsTemp[i]);
+	}
+
+	if (dirContents.size() == 0) {
+		return false;
+	}
+	return true;
+}
+
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_START) {
 		exiting = true;
@@ -129,11 +144,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 2:
-//				if (checkWifiStatus() == true) {
+				if (returnStoreState() == true) {
 					Screen::set(std::make_unique<AppStore>());
-//				} else {
-//					notConnectedMsg();
-//				}
+				} else {
+					Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
+				}
 				break;
 			case 3:
 				if (isTesting == true) {
@@ -175,10 +190,10 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, mainButtons[2])) {
-			if (checkWifiStatus() == true) {
+			if (returnStoreState() == true) {
 				Screen::set(std::make_unique<AppStore>());
 			} else {
-				notConnectedMsg();
+				Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 			}
 		} else if (touching(touch, mainButtons[3])) {
 			if (isTesting == true) {
