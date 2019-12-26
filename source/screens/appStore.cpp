@@ -54,12 +54,15 @@ extern u32 progressBar;
 extern u32 selected;
 extern u32 unselected;
 
+C2D_SpriteSheet appStoreSheet;
+
 struct storeInfo2 {
 	std::string title;
 	std::string author;
 	std::string description;
 	std::string url;
 	std::string file;
+	std::string storeSheet;
 };
 
 // Parse informations like URL, Title, Author, Description.
@@ -78,6 +81,7 @@ storeInfo2 parseStoreInfo(std::string fileName) {
 	info.description = ScriptHelper::getString(json, "storeInfo", "description");
 	info.url = ScriptHelper::getString(json, "storeInfo", "url");
 	info.file = ScriptHelper::getString(json, "storeInfo", "file");
+	info.storeSheet = ScriptHelper::getString(json, "storeInfo", "sheet");
 	return info;
 }
 
@@ -112,6 +116,17 @@ std::vector<storeInfo2> storeInfo; // Store selection.
 std::vector<std::string> appStoreList; // Actual store. ;P
 std::vector<std::string> descLines;
 std::string storeDesc = "";
+
+bool sheetHasLoaded = false;
+// Sheet / Icon stuff.
+void loadStoreSheet(int pos) {
+	appStoreSheet = C2D_SpriteSheetLoad(storeInfo[pos].storeSheet.c_str());
+	sheetHasLoaded = true;
+}
+void freeSheet() {
+	C2D_SpriteSheetFree(appStoreSheet);
+	sheetHasLoaded = false;
+}
 
 void AppStore::descript() {
 	if (storeInfo[selection].description != "" || storeInfo[selection].description != "MISSING: storeInfo.description") {
@@ -230,7 +245,10 @@ void AppStore::DrawStore(void) const {
 	Gui::DrawStringCentered(0, 65, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
 	Gui::DrawStringCentered(0, 95, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
 	Gui::DrawStringCentered(0, 125, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
-
+	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
+		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
+	}
+	
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, -1);
 	Gui::DrawArrow(315, 240, 180.0);
@@ -357,6 +375,13 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (storeInfo.size() != 0) {
 			if (ScriptHelper::checkIfValid(dirContents[selection].name, 1) == true) {
 				currentStoreFile = dirContents[selection].name;
+
+				if (storeInfo[selection].storeSheet != "" || storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+					if(access(storeInfo[selection].storeSheet.c_str(), F_OK) != -1 ) {
+						loadStoreSheet(selection);
+					}
+				}
+
 				appStoreJson = openStoreFile();
 				appStoreList = parseStoreObjects(currentStoreFile);
 				loadStoreColors(appStoreJson);
@@ -395,8 +420,16 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
 						currentStoreFile = dirContents[screenPos + i].name;
+
+						if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
+							if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
+								loadStoreSheet(screenPos + i);
+							}
+						}
+
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
+						loadStoreColors(appStoreJson);
 						selectedOptionAppStore = appStoreList[0];
 						isScriptSelected = true;
 						mode = 1;
@@ -408,8 +441,16 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
 						currentStoreFile = dirContents[screenPosList + i].name;
+
+						if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
+							if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
+								loadStoreSheet(screenPosList + i);
+							}
+						}
+
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
+						loadStoreColors(appStoreJson);
 						selectedOptionAppStore = appStoreList[0];
 						isScriptSelected = true;
 						mode = 1;
@@ -427,6 +468,9 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		appStoreList.clear();
 		isScriptSelected = false;
 		selection2 = 0;
+		if (sheetHasLoaded == true) {
+			freeSheet();
+		}
 	}
 
 	if (hDown & KEY_R) {
@@ -465,6 +509,9 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		appStoreList.clear();
 		isScriptSelected = false;
 		selection2 = 0;
+		if (sheetHasLoaded == true) {
+			freeSheet();
+		}
 	}
 
 	// Go one entry up.
