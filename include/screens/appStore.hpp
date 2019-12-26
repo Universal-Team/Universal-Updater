@@ -24,23 +24,24 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef TINYDB_HPP
-#define TINYDB_HPP
+#ifndef APPSTORE_HPP
+#define APPSTORE_HPP
 
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
 #include "utils/structs.hpp"
 
-class TinyDB : public screen
+class AppStore : public screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	TinyDB();
+	AppStore();
 
 private:
 	void execute();
+	std::string selectedOptionAppStore;
 	mutable int selection = 0;
 	int screenPos = 0;
 	mutable int screenPosList = 0;

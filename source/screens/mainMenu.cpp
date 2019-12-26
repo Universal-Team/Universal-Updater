@@ -26,13 +26,13 @@
 
 #include "download/download.hpp"
 
+#include "screens/appStore.hpp"
 #include "screens/ftpScreen.hpp"
 #include "screens/mainMenu.hpp"
 #include "screens/scriptBrowse.hpp"
 #include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 #include "screens/settings.hpp"
-#include "screens/tinyDB.hpp"
 
 #include "utils/config.hpp"
 
@@ -73,7 +73,7 @@ void MainMenu::Draw(void) const {
 
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TinyDB"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "TinyDB", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "UniStore"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "UniStore", 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
@@ -130,7 +130,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 			case 2:
 				if (checkWifiStatus() == true) {
-					Screen::set(std::make_unique<TinyDB>());
+					Screen::set(std::make_unique<AppStore>());
 				} else {
 					notConnectedMsg();
 				}
@@ -176,7 +176,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		} else if (touching(touch, mainButtons[2])) {
 			if (checkWifiStatus() == true) {
-				Screen::set(std::make_unique<TinyDB>());
+				Screen::set(std::make_unique<AppStore>());
 			} else {
 				notConnectedMsg();
 			}
