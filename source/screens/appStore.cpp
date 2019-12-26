@@ -267,6 +267,32 @@ void AppStore::execute() {
 			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("message");
 			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 
+		} else if(type == "downloadRelease") {
+			bool missing = false, includePrereleases = false;
+			std::string repo, file, output, message;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("repo"))	repo = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("repo");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("file"))	file = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("file");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("output"))	output = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("output");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("includePrereleases") && appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("includePrereleases").is_boolean())
+				includePrereleases = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("includePrereleases");
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("message");
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
+
+		} else if(type == "extractFile") {
+			bool missing = false;
+			std::string file, input, output, message;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("file"))	file = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("file");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("input"))	input = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("input");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("output"))	output = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("output");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("message");
+			if(!missing)	ScriptHelper::extractFile(file, input, output, message);
+
 		} else if(type == "installCia") {
 			bool missing = false;
 			std::string file, message;
@@ -274,6 +300,45 @@ void AppStore::execute() {
 			else	missing = true;
 			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("message");
 			if(!missing)	ScriptHelper::installFile(file, message);
+	
+		} else if (type == "mkdir") {
+			bool missing = false;
+			std::string directory, message;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("directory"))	directory = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("directory");
+			else	missing = true;
+			if(!missing)	makeDirs(directory.c_str());
+
+		} else if (type == "rmdir") {
+			bool missing = false;
+			std::string directory, message, promptmsg;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("directory"))	directory = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("directory");
+			else	missing = true;
+			promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
+			if(!missing) {
+				if (Gui::promptMsg(promptmsg)) {
+					removeDirRecursive(directory.c_str());
+				}
+			}
+
+		} else if (type == "mkfile") {
+			bool missing = false;
+			std::string file;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("file"))	file = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("file");
+			else	missing = true;
+			if(!missing)	ScriptHelper::createFile(file.c_str());
+
+		} else if (type == "timeMsg") {
+			bool missing = false;
+			std::string message;
+			int seconds;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("message");
+			else	missing = true;
+			if(appStoreJson.at(selectedOptionAppStore).at("script").at(i).contains("seconds") && appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("seconds").is_number())
+			seconds = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("seconds");
+			else	missing = true;
+			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
+		} else if (type == "saveConfig") {
+			Config::save();
 		}
 	}
 	doneMsg();
