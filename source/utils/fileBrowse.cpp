@@ -36,6 +36,7 @@ std::vector<Structs::ButtonPos> buttonPositions = {
 	{80, 220, 50, 15, -1}, // Select.
 	{145, 220, 50, 15, -1}, // Refresh.
 	{210, 220, 50, 15, -1}, // Back.
+	{0, 0, 25, 25, -1}, // ViewMode Change.
 };
 
 /**
@@ -189,6 +190,8 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	return dirContents;
 }
 
+#define ENTRIES_PER_SCREEN 3
+#define ENTRIES_PER_LIST 7
 // returns a Path or file to 'std::string'.
 // selectText is the Text which is displayed on the bottom bar of the top screen.
 // selectionMode is how you select it. 1 -> Path, 2 -> File.
@@ -198,7 +201,10 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 	static int keyRepeatDelay = 4;
 	static bool dirChanged = true;
 	static bool fastMode = false;
+	uint screenPos = 0;
+	uint screenPosList = 0;
 	std::vector<DirEntry> dirContents;
+	std::string dirs;
 
 	while (1) {
 		Gui::clearTextBufs();
@@ -215,21 +221,28 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
 			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 400);
 		}
-
-		std::string dirs;
-		for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
-			if (i == selectedFile) {
-				dirs +=  "> " + dirContents[i].name + "\n\n";
-			} else {
-				dirs +=  dirContents[i].name + "\n\n";
+		Gui::DrawBottom();
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)dirContents.size();i++) {
+				dirs = dirContents[screenPos + i].name;
+				if(screenPos + i == selectedFile) {
+					Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
+				} else { 
+					Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
+				}
+				Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, dirs, 320);
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)dirContents.size();i++) {
+				dirs = dirContents[screenPosList + i].name;
+				if(screenPosList + i == selectedFile) {
+					Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
+				} else {
+					Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				}
+				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, dirs, 320);
 			}
 		}
-		for (uint i=0;i<((dirContents.size()<6) ? 6-dirContents.size() : 0);i++) {
-			dirs += "\n\n";
-		}
-
-		Gui::DrawString(26, 32, 0.53f, Config::TxtColor, dirs.c_str());
-		Gui::DrawBottom();
 
 		if (Config::UseBars == true) {
 			Gui::DrawStringCentered(0, 0, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
@@ -238,6 +251,7 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		}
 		Gui::DrawArrow(295, -1);
 		Gui::DrawArrow(315, 240, 180.0);
+		Gui::spriteBlend(sprites_view_idx, buttonPositions[6].x, buttonPositions[6].y);
 		
 		Gui::Draw_Rect(buttonPositions[2].x, buttonPositions[2].y, buttonPositions[2].w, buttonPositions[2].h, C2D_Color32(0, 0, 0, 190));
 		Gui::Draw_Rect(buttonPositions[3].x, buttonPositions[3].y, buttonPositions[3].w, buttonPositions[3].h, C2D_Color32(0, 0, 0, 190));
@@ -338,6 +352,28 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 
 		if (hidKeysDown() & KEY_L) {
 			fastMode = false;
+		}
+		// Switch ViewMode.
+		if (hidKeysDown() & KEY_Y || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[6])) {
+			if (Config::viewMode == 0) {
+				Config::viewMode = 1;
+			} else {
+				Config::viewMode = 0;
+			}
+		}
+
+		if (Config::viewMode == 0) {
+			if(selectedFile < screenPos) {
+				screenPos = selectedFile;
+			} else if (selectedFile > screenPos + ENTRIES_PER_SCREEN - 1) {
+				screenPos = selectedFile - ENTRIES_PER_SCREEN + 1;
+			}
+		} else if (Config::viewMode == 1) {
+			if(selectedFile < screenPosList) {
+				screenPosList = selectedFile;
+			} else if (selectedFile > screenPosList + ENTRIES_PER_LIST - 1) {
+				screenPosList = selectedFile - ENTRIES_PER_LIST + 1;
+			}
 		}
 	}
 }
