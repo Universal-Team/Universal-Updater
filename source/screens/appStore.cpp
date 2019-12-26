@@ -398,7 +398,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
 						selectedOptionAppStore = appStoreList[0];
-						selection = 0;
+						isScriptSelected = true;
 						mode = 1;
 					}
 				}
@@ -411,7 +411,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
 						selectedOptionAppStore = appStoreList[0];
-						selection = 0;
+						isScriptSelected = true;
 						mode = 1;
 					}
 				}
@@ -425,6 +425,8 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
 		mode = 0;
 		appStoreList.clear();
+		isScriptSelected = false;
+		selection2 = 0;
 	}
 
 	if (hDown & KEY_R) {
@@ -461,6 +463,8 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
 		mode = 0;
 		appStoreList.clear();
+		isScriptSelected = false;
+		selection2 = 0;
 	}
 
 	// Go one entry up.
