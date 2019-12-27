@@ -71,9 +71,11 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
+	// Draw UniStore Icon. ;P
+	Gui::sprite(sprites_uniStore_idx, 15, 95);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "UniStore"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "UniStore", 140);
+	Gui::DrawString(80, mainButtons[2].y+10, 0.6f, Config::TxtColor, "UniStore", 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
@@ -175,6 +177,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Screen::set(std::make_unique<FTPScreen>());
 		}
 	}
+
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
