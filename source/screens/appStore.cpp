@@ -375,13 +375,12 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (storeInfo.size() != 0) {
 			if (ScriptHelper::checkIfValid(dirContents[selection].name, 1) == true) {
 				currentStoreFile = dirContents[selection].name;
-
+				DisplayMsg(Lang::get("PREPARE_STORE"));
 				if (storeInfo[selection].storeSheet != "" || storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
 					if(access(storeInfo[selection].storeSheet.c_str(), F_OK) != -1 ) {
 						loadStoreSheet(selection);
 					}
 				}
-
 				appStoreJson = openStoreFile();
 				appStoreList = parseStoreObjects(currentStoreFile);
 				loadStoreColors(appStoreJson);
@@ -420,13 +419,12 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
 						currentStoreFile = dirContents[screenPos + i].name;
-
+						DisplayMsg(Lang::get("PREPARE_STORE"));
 						if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
 							if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
 								loadStoreSheet(screenPos + i);
 							}
 						}
-
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
 						loadStoreColors(appStoreJson);
@@ -441,13 +439,12 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
 						currentStoreFile = dirContents[screenPosList + i].name;
-
+						DisplayMsg(Lang::get("PREPARE_STORE"));
 						if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
 							if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
 								loadStoreSheet(screenPosList + i);
 							}
 						}
-
 						appStoreJson = openStoreFile();
 						appStoreList = parseStoreObjects(currentStoreFile);
 						loadStoreColors(appStoreJson);
