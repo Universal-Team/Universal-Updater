@@ -66,6 +66,8 @@ struct storeInfo2 {
 	std::string sheetURL;
 };
 
+extern void notImplemented(void);
+
 // Parse informations like URL, Title, Author, Description.
 storeInfo2 parseStoreInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
@@ -245,10 +247,22 @@ void AppStore::DrawStore(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	}
 
-	Gui::DrawStringCentered(0, 35, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
-	Gui::DrawStringCentered(0, 65, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
-	Gui::DrawStringCentered(0, 95, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
-	Gui::DrawStringCentered(0, 125, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+	Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreList[selection2]), 400);
+	Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
+	Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
+
+	if (appStoreJson[selectedOptionAppStore]["info"]["version"] != "") {
+		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
+	} else {
+		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + Lang::get("UNKNOWN"), 400);
+	}
+
+	if (appStoreJson[selectedOptionAppStore]["info"]["fileSize"] != 0) {
+		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+	} else {
+		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + Lang::get("UNKNOWN"), 400);
+	}
+
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
 		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
 	}
@@ -728,6 +742,8 @@ void AppStore::execute() {
 			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 		} else if (type == "saveConfig") {
 			Config::save();
+		} else if (type == "notImplemented") {
+			notImplemented();
 		}
 	}
 	doneMsg();

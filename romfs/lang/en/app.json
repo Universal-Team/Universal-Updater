@@ -100,5 +100,6 @@
 	"YES":								"Yes",
 	"NO":								"No",
 	"CHANGE_STOREPATH":					"Change Storepath",
-	"SELECT_STORE_PATH":				"Select the Store Path."
+	"SELECT_STORE_PATH":				"Select the Store Path.",
+	"UNKNOWN":							"Unknown"
 }
