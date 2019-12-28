@@ -63,6 +63,7 @@ struct storeInfo2 {
 	std::string url;
 	std::string file;
 	std::string storeSheet;
+	std::string sheetURL;
 };
 
 // Parse informations like URL, Title, Author, Description.
@@ -82,6 +83,7 @@ storeInfo2 parseStoreInfo(std::string fileName) {
 	info.url = ScriptHelper::getString(json, "storeInfo", "url");
 	info.file = ScriptHelper::getString(json, "storeInfo", "file");
 	info.storeSheet = ScriptHelper::getString(json, "storeInfo", "sheet");
+	info.sheetURL = ScriptHelper::getString(json, "storeInfo", "sheetURL");
 	return info;
 }
 
@@ -358,7 +360,8 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_Y) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			ScriptHelper::downloadFile(storeInfo[selection].url, (std::string("/3ds/Universal-Updater/stores/" + storeInfo[selection].file)), Lang::get("UPDATING"));
+			ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
@@ -417,7 +420,8 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[5])) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			ScriptHelper::downloadFile(storeInfo[selection].url, (std::string("/3ds/Universal-Updater/stores/" + storeInfo[selection].file)), Lang::get("UPDATING"));
+			ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
