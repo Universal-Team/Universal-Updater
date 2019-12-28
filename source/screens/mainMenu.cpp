@@ -99,7 +99,7 @@ bool MainMenu::returnScriptState() {
 
 bool MainMenu::returnStoreState() {
 	dirContents.clear();
-	chdir("sdmc:/3ds/Universal-Updater/stores/");
+	chdir(Config::StorePath.c_str());
 	std::vector<DirEntry> dirContentsTemp;
 	getDirectoryContents(dirContentsTemp, {"unistore"});
 	for(uint i=0;i<dirContentsTemp.size();i++) {

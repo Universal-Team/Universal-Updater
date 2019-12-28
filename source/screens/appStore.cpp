@@ -147,7 +147,7 @@ void loadStoreDesc(void) {
 
 AppStore::AppStore() {
 	dirContents.clear();
-	chdir("sdmc:/3ds/Universal-Updater/stores/");
+	chdir(Config::StorePath.c_str());
 	getDirectoryContents(dirContents, {"unistore"});
 	for(uint i=0;i<dirContents.size();i++) {
 		storeInfo.push_back(parseStoreInfo(dirContents[i].name));
@@ -371,7 +371,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
-			chdir("sdmc:/3ds/Universal-Updater/stores/");
+			chdir(Config::StorePath.c_str());
 			getDirectoryContents(dirContents, {"unistore"});
 			for(uint i=0;i<dirContents.size();i++) {
 				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
@@ -437,7 +437,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
-			chdir("sdmc:/3ds/Universal-Updater/stores/");
+			chdir(Config::StorePath.c_str());
 			getDirectoryContents(dirContents, {"unistore"});
 			for(uint i=0;i<dirContents.size();i++) {
 				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
