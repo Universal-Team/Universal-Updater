@@ -360,8 +360,14 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_Y) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
-			ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
+			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
+				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			}
+			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
+			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			}
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
@@ -420,8 +426,14 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[5])) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
-			ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
+			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
+				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			}
+			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
+			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			}
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
