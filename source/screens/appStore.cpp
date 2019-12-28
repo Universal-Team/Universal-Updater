@@ -201,6 +201,8 @@ void AppStore::DrawStoreList(void) const {
 	Gui::DrawArrow(315, 240, 180.0);
 	Gui::DrawArrow(0, 218, 0, 1);
 	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	Gui::spriteBlend(sprites_search_idx, arrowPos[4].x, arrowPos[4].y);
+	Gui::spriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
@@ -410,6 +412,22 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
 			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[5])) {
+		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+			ScriptHelper::downloadFile(storeInfo[selection].url, (std::string("/3ds/Universal-Updater/stores/" + storeInfo[selection].file)), Lang::get("UPDATING"));
+			// Refresh the list.
+			dirContents.clear();
+			storeInfo.clear();
+			chdir("sdmc:/3ds/Universal-Updater/stores/");
+			getDirectoryContents(dirContents, {"unistore"});
+			for(uint i=0;i<dirContents.size();i++) {
+				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+				descript();
+				loadStoreDesc();
+			}
 		}
 	}
 
