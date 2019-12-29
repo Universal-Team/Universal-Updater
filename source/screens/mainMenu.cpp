@@ -26,13 +26,13 @@
 
 #include "download/download.hpp"
 
-#include "screens/appStore.hpp"
 #include "screens/ftpScreen.hpp"
 #include "screens/mainMenu.hpp"
 #include "screens/scriptBrowse.hpp"
 #include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 #include "screens/settings.hpp"
+#include "screens/unistore.hpp"
 
 #include "utils/config.hpp"
 
@@ -147,7 +147,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 			case 2:
 				if (returnStoreState() == true) {
-					Screen::set(std::make_unique<AppStore>());
+					Screen::set(std::make_unique<UniStore>());
 				} else {
 					Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 				}
@@ -194,7 +194,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		} else if (touching(touch, mainButtons[2])) {
 			if (returnStoreState() == true) {
-				Screen::set(std::make_unique<AppStore>());
+				Screen::set(std::make_unique<UniStore>());
 			} else {
 				Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 			}

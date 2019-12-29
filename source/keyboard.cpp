@@ -205,7 +205,7 @@ std::string Input::getString(uint maxLength, std::string Text) {
 			Gui::DrawBottom();
 			drawKeyboard();
 			C2D_DrawRectSolid(0, 81, 0.5f, 320, 20, Config::ColorKeys & C2D_Color32(200, 200, 200, 200));
-			Gui::DrawString(5, 82, 0.6, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str());
+			Gui::DrawString(2, 82, 0.6, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str());
 			if(cursorBlink < -20)	cursorBlink = 20;
 			scanKeys();
 			hDown = keysDown();

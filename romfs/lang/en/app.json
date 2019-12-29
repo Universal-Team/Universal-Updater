@@ -103,5 +103,9 @@
 	"SELECT_STORE_PATH":				"Select the Store Path.",
 	"UNKNOWN":							"Unknown",
 	"ENTER_OWNER_AND_REPO":				"Enter Owner and Repo.",
-	"ENTER_FILENAME":					"Enter filename."
+	"ENTER_FILENAME":					"Enter filename.",
+	"UNISTORE_SEARCH":					"UniStore search",
+	"FULL_URL":							"Full URL",
+	"GITHUB":							"Github",
+	"ENTER_FULL_URL":					"Enter the full URL."
 }

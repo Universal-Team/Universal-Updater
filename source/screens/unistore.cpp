@@ -28,7 +28,7 @@
 
 #include "download/download.hpp"
 
-#include "screens/appStore.hpp"
+#include "screens/unistore.hpp"
 
 #include "utils/config.hpp"
 #include "utils/fileBrowse.h"
@@ -132,7 +132,7 @@ void freeSheet() {
 	sheetHasLoaded = false;
 }
 
-void AppStore::descript() {
+void UniStore::descript() {
 	if (storeInfo[selection].description != "" || storeInfo[selection].description != "MISSING: storeInfo.description") {
 		storeDesc = storeInfo[selection].description;
 	} else storeDesc = "";
@@ -147,7 +147,7 @@ void loadStoreDesc(void) {
 	descLines.push_back(storeDesc.substr(0, storeDesc.find('\n')));
 }
 
-AppStore::AppStore() {
+UniStore::UniStore() {
 	dirContents.clear();
 	chdir(Config::StorePath.c_str());
 	getDirectoryContents(dirContents, {"unistore"});
@@ -184,7 +184,7 @@ void loadStoreColors(nlohmann::json &json) {
 }
 
 // First Screen -> Storelist.
-void AppStore::DrawStoreList(void) const {
+void UniStore::DrawStoreList(void) const {
 	std::string line1;
 	std::string line2;
 	std::string storeAmount = std::to_string(selection +1) + " / " + std::to_string(storeInfo.size());
@@ -233,7 +233,7 @@ void AppStore::DrawStoreList(void) const {
 	}
 }
 
-void AppStore::DrawStore(void) const {
+void UniStore::DrawStore(void) const {
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(appStoreList.size());
 	std::string info;
 	Gui::DrawTop();
@@ -300,15 +300,17 @@ void AppStore::DrawStore(void) const {
 	}
 }
 
-void AppStore::Draw(void) const {
+void UniStore::Draw(void) const {
 	if (mode == 0) {
 		DrawStoreList();
 	} else if (mode == 1) {
 		DrawStore();
+	} else if (mode == 2) {
+		DrawSearch();
 	}
 }
 
-void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
@@ -317,25 +319,9 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		return;
 	}
 
-	// Download.
+	// Download / search screen.
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
-		std::string URL = "https://github.com/";
-		URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
-		gspWaitForVBlank();
-		std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
-		URL += "/raw/master/unistore/";
-		URL += FILENAME;
-		ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
-		// Refresh the list.
-		dirContents.clear();
-		storeInfo.clear();
-		chdir(Config::StorePath.c_str());
-		getDirectoryContents(dirContents, {"unistore"});
-		for(uint i=0;i<dirContents.size();i++) {
-			storeInfo.push_back(parseStoreInfo(dirContents[i].name));
-			descript();
-			loadStoreDesc();
-		}
+		mode = 2;
 	}
 
 	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -482,7 +468,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
-void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
@@ -575,15 +561,17 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
-void AppStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
 		StoreSelectionLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {
 		StoreLogic(hDown, hHeld, touch);
+	} else if (mode == 2) {
+		SearchLogic(hDown, hHeld, touch);
 	}
 
 	// Switch ViewMode.
-	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+	if (((mode != 2) && (hDown & KEY_X)) || ((mode != 2) && (hDown & KEY_TOUCH && touching(touch, arrowPos[3])))) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {
@@ -593,7 +581,7 @@ void AppStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 // Execute Entry.
-void AppStore::execute() {
+void UniStore::execute() {
 	for(int i=0;i<(int)appStoreJson.at(selectedOptionAppStore).at("script").size();i++) {
 		std::string type = appStoreJson.at(selectedOptionAppStore).at("script").at(i).at("type");
 		if(type == "deleteFile") {
@@ -691,4 +679,82 @@ void AppStore::execute() {
 		}
 	}
 	doneMsg();
+}
+
+void UniStore::DrawSearch(void) const {
+	Gui::DrawTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SEARCH"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SEARCH"), 400);
+	}
+
+	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	Gui::DrawBottom();
+	Gui::DrawArrow(0, 218, 0, 1);
+
+	for (int i = 0; i < 2; i++) {
+		if (searchSelection == i) {
+			Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
+		}
+	}
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("FULL_URL")))/2-150+70, 110, 0.6f, Config::TxtColor, Lang::get("FULL_URL"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GITHUB")))/2+150-70, 110, 0.6f, Config::TxtColor, Lang::get("GITHUB"), 140);
+}
+
+void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		// Refresh the list.
+		dirContents.clear();
+		storeInfo.clear();
+		chdir(Config::StorePath.c_str());
+		getDirectoryContents(dirContents, {"unistore"});
+		for(uint i=0;i<dirContents.size();i++) {
+			storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+			descript();
+			loadStoreDesc();
+		}
+		mode = 0;
+	}
+
+	if (hDown & KEY_RIGHT || hDown & KEY_R) {
+		if (searchSelection == 0)	searchSelection = 1;
+	}
+	if (hDown & KEY_LEFT || hDown & KEY_L) {
+		if (searchSelection == 1)	searchSelection = 0;
+	}
+
+	if (hDown & KEY_A) {
+		if (searchSelection == 0) {
+			std::string fullURL = Input::getString(Lang::get("ENTER_FULL_URL"));
+			gspWaitForVBlank();
+			std::string FILE = Input::getString(Lang::get("ENTER_FILENAME"));
+			ScriptHelper::downloadFile(fullURL, Config::StorePath + FILE, Lang::get("DOWNLOADING") + FILE);
+		} else if (searchSelection == 1) {
+			std::string URL = "https://github.com/";
+			URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+			gspWaitForVBlank();
+			std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
+			URL += "/raw/master/unistore/";
+			URL += FILENAME;
+			ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, URLBtn[0])) {
+		std::string fullURL = Input::getString(Lang::get("ENTER_FULL_URL"));
+		gspWaitForVBlank();
+		std::string FILE = Input::getString(Lang::get("ENTER_FILENAME"));
+		ScriptHelper::downloadFile(fullURL, Config::StorePath + FILE, Lang::get("DOWNLOADING") + FILE);
+	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[1])) {
+		std::string URL = "https://github.com/";
+		URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+		gspWaitForVBlank();
+		std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
+		URL += "/raw/master/unistore/";
+		URL += FILENAME;
+		ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+	}
 }
