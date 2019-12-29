@@ -333,6 +333,27 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	// Download.
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
+		std::string URL = "https://github.com/";
+		URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+		gspWaitForVBlank();
+		std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
+		URL += "/raw/master/unistore/";
+		URL += FILENAME;
+		ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+		// Refresh the list.
+		dirContents.clear();
+		storeInfo.clear();
+		chdir(Config::StorePath.c_str());
+		getDirectoryContents(dirContents, {"unistore"});
+		for(uint i=0;i<dirContents.size();i++) {
+			storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+			descript();
+			loadStoreDesc();
+		}
+	}
+
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
 		storeInfo.clear();
 		Screen::back();

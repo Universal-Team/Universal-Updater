@@ -101,5 +101,7 @@
 	"NO":								"No",
 	"CHANGE_STOREPATH":					"Change Storepath",
 	"SELECT_STORE_PATH":				"Select the Store Path.",
-	"UNKNOWN":							"Unknown"
+	"UNKNOWN":							"Unknown",
+	"ENTER_OWNER_AND_REPO":				"Enter Owner and Repo.",
+	"ENTER_FILENAME":					"Enter filename."
 }
