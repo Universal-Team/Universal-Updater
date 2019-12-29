@@ -86,7 +86,7 @@
 	"FILEBROWSE_MSG":					"Press X to select, Select to refresh.",
 	"SELECT_SCRIPT_PATH":				"Select the Script Path.",
 
-	"CHANGE_BARS":						"Change Bars",
+	"USE_BARS":							"Use Bars:",
 	"CHANGE_SCRIPTPATH":				"Change Scriptpath",
 	"CHANGE_MUSICFILE":					"Change Musicfile",
 	"SELECT_MUSIC_FILE":				"Select the Musicfile.",
@@ -96,5 +96,12 @@
 	"UPDATING":							"Updating...",
 	"WOULD_YOU_LIKE_UPDATE":			"Would you like to update this store?",
 	"GET_STORES_FIRST":					"Get some Stores first!",
-	"PREPARE_STORE":					"Prepare store... please wait."
+	"PREPARE_STORE":					"Prepare store... please wait.",
+	"YES":								"Yes",
+	"NO":								"No",
+	"CHANGE_STOREPATH":					"Change Storepath",
+	"SELECT_STORE_PATH":				"Select the Store Path.",
+	"UNKNOWN":							"Unknown",
+	"ENTER_OWNER_AND_REPO":				"Enter Owner and Repo.",
+	"ENTER_FILENAME":					"Enter filename."
 }

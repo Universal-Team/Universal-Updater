@@ -68,6 +68,7 @@ private:
 		{0, 215, 25, 25, -1}, // Back Arrow.
 		{5, 0, 25, 25, -1}, // ViewMode Change.
 		{45, 0, 25, 25, -1}, // Search.
+		{85, 0, 25, 25, -1}, // Update.
 	};
 };
 

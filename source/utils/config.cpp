@@ -47,7 +47,7 @@ std::string Config::ScriptPath;
 std::string Config::MusicPath;
 bool Config::Logging;
 bool Config::UseBars;
-std::string Config::AppStoreURL;
+std::string Config::StorePath;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -139,10 +139,10 @@ void Config::load() {
 			Config::UseBars = getBool("BARS");
 		}
 
-		if(!configJson.contains("APPSTORE_URL")) {
-			Config::AppStoreURL = APPSTORE_DEFAULT;
+		if(!configJson.contains("STOREPATH")) {
+			Config::StorePath = STORE_PATH;
 		} else {
-			Config::AppStoreURL = getString("APPSTORE_URL");
+			Config::StorePath = getString("STOREPATH");
 		}
 
 		fclose(file);
@@ -161,7 +161,7 @@ void Config::load() {
 		Config::MusicPath = MUSIC_PATH;
 		Config::Logging = false;
 		Config::UseBars = true;
-		Config::AppStoreURL = APPSTORE_DEFAULT;
+		Config::StorePath = STORE_PATH;
 	}
 }
 
@@ -180,7 +180,7 @@ void Config::save() {
 	Config::setString("MUSICPATH", Config::MusicPath);
 	Config::setBool("LOGGING", Config::Logging);
 	Config::setBool("BARS", Config::UseBars);
-	Config::setString("APPSTORE_URL", Config::AppStoreURL);
+	Config::setString("STOREPATH", Config::StorePath);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -203,7 +203,7 @@ void Config::initializeNewConfig() {
 	Config::setString("MUSICPATH", MUSIC_PATH);
 	Config::setBool("LOGGING", false);
 	Config::setBool("BARS", true);
-	Config::setString("APPSTORE_URL", APPSTORE_DEFAULT);
+	Config::setString("STOREPATH", STORE_PATH);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);

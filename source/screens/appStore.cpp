@@ -63,7 +63,10 @@ struct storeInfo2 {
 	std::string url;
 	std::string file;
 	std::string storeSheet;
+	std::string sheetURL;
 };
+
+extern void notImplemented(void);
 
 // Parse informations like URL, Title, Author, Description.
 storeInfo2 parseStoreInfo(std::string fileName) {
@@ -82,6 +85,7 @@ storeInfo2 parseStoreInfo(std::string fileName) {
 	info.url = ScriptHelper::getString(json, "storeInfo", "url");
 	info.file = ScriptHelper::getString(json, "storeInfo", "file");
 	info.storeSheet = ScriptHelper::getString(json, "storeInfo", "sheet");
+	info.sheetURL = ScriptHelper::getString(json, "storeInfo", "sheetURL");
 	return info;
 }
 
@@ -145,7 +149,7 @@ void loadStoreDesc(void) {
 
 AppStore::AppStore() {
 	dirContents.clear();
-	chdir("sdmc:/3ds/Universal-Updater/stores/");
+	chdir(Config::StorePath.c_str());
 	getDirectoryContents(dirContents, {"unistore"});
 	for(uint i=0;i<dirContents.size();i++) {
 		storeInfo.push_back(parseStoreInfo(dirContents[i].name));
@@ -201,6 +205,8 @@ void AppStore::DrawStoreList(void) const {
 	Gui::DrawArrow(315, 240, 180.0);
 	Gui::DrawArrow(0, 218, 0, 1);
 	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	Gui::spriteBlend(sprites_search_idx, arrowPos[4].x, arrowPos[4].y);
+	Gui::spriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
@@ -241,10 +247,22 @@ void AppStore::DrawStore(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	}
 
-	Gui::DrawStringCentered(0, 35, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
-	Gui::DrawStringCentered(0, 65, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
-	Gui::DrawStringCentered(0, 95, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
-	Gui::DrawStringCentered(0, 125, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+	Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreList[selection2]), 400);
+	Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
+	Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
+
+	if (appStoreJson[selectedOptionAppStore]["info"]["version"] != "") {
+		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
+	} else {
+		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + Lang::get("UNKNOWN"), 400);
+	}
+
+	if (appStoreJson[selectedOptionAppStore]["info"]["fileSize"] != 0) {
+		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+	} else {
+		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + Lang::get("UNKNOWN"), 400);
+	}
+
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
 		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
 	}
@@ -315,6 +333,27 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	// Download.
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
+		std::string URL = "https://github.com/";
+		URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+		gspWaitForVBlank();
+		std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
+		URL += "/raw/master/unistore/";
+		URL += FILENAME;
+		ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+		// Refresh the list.
+		dirContents.clear();
+		storeInfo.clear();
+		chdir(Config::StorePath.c_str());
+		getDirectoryContents(dirContents, {"unistore"});
+		for(uint i=0;i<dirContents.size();i++) {
+			storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+			descript();
+			loadStoreDesc();
+		}
+	}
+
 	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
 		storeInfo.clear();
 		Screen::back();
@@ -356,11 +395,18 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_Y) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			ScriptHelper::downloadFile(storeInfo[selection].url, (std::string("/3ds/Universal-Updater/stores/" + storeInfo[selection].file)), Lang::get("UPDATING"));
+			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
+			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
+				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			}
+			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
+			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			}
 			// Refresh the list.
 			dirContents.clear();
 			storeInfo.clear();
-			chdir("sdmc:/3ds/Universal-Updater/stores/");
+			chdir(Config::StorePath.c_str());
 			getDirectoryContents(dirContents, {"unistore"});
 			for(uint i=0;i<dirContents.size();i++) {
 				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
@@ -410,6 +456,29 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
 			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, arrowPos[5])) {
+		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
+			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
+				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+			}
+			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
+			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+			}
+			// Refresh the list.
+			dirContents.clear();
+			storeInfo.clear();
+			chdir(Config::StorePath.c_str());
+			getDirectoryContents(dirContents, {"unistore"});
+			for(uint i=0;i<dirContents.size();i++) {
+				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+				descript();
+				loadStoreDesc();
+			}
 		}
 	}
 
@@ -694,6 +763,8 @@ void AppStore::execute() {
 			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 		} else if (type == "saveConfig") {
 			Config::save();
+		} else if (type == "notImplemented") {
+			notImplemented();
 		}
 	}
 	doneMsg();

@@ -1,7 +1,7 @@
 trigger:
   branches:
     include: ['*']
-    exclude: [translation, App-Store]
+    exclude: [translation, App-Store, Camera]
   tags:
     include: ['*']
 
