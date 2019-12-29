@@ -143,14 +143,9 @@ void Settings::DrawColorChanging(void) const {
 		}
 	}
 
-	Gui::DrawString(58 + 0 * 25, 2, 0.5f, WHITE, "1", 400);
-	Gui::DrawString(58 + 1 * 25, 2, 0.5f, WHITE, "2", 400);
-	Gui::DrawString(58 + 2 * 25, 2, 0.5f, WHITE, "3", 400);
-	Gui::DrawString(58 + 3 * 25, 2, 0.5f, WHITE, "4", 400);
-	Gui::DrawString(58 + 4 * 25, 2, 0.5f, WHITE, "5", 400);
-	Gui::DrawString(58 + 5 * 25, 2, 0.5f, WHITE, "6", 400);
-	Gui::DrawString(58 + 6 * 25, 2, 0.5f, WHITE, "7", 400);
-	Gui::DrawString(58 + 7 * 25, 2, 0.5f, WHITE, "8", 400);
+	for (int i = 0; i < 8; i++) {
+		Gui::DrawString(58 + i * 25, 2, 0.5f, WHITE, std::to_string(i+1), 400);
+	}
 
 	if (colorMode != 7) {
 		Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
@@ -265,11 +260,11 @@ void Settings::DrawMiscSettings(void) const {
 
 void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_UP) {
-		if(Selection > 0)	Selection--;
+		if (Selection > 0)	Selection--;
 	}
 
 	if (hDown & KEY_DOWN) {
-		if(Selection < 2)	Selection++;
+		if (Selection < 2)	Selection++;
 	}
 
 	if (hDown & KEY_A) {
@@ -310,11 +305,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_B || hDown & KEY_L) {
-		mode = 0;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+	if ((hDown & KEY_B || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		mode = 0;
 	}
 }
@@ -330,17 +321,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
-		switch(Selection) {
-			case 0:
-				mode = 1;
-				break;
-			case 1:
-				mode = 2;
-				break;
-			case 2:
-				mode = 3;
-				break;
-		}
+		mode = Selection+1;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -353,21 +334,12 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_B) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		Screen::back();
 		return;
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		Screen::back();
-		return;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
-		mode = 4;
-	}
-
-	if (hDown & KEY_R) {
+	if ((hDown & KEY_R) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
 		mode = 4;
 	}
 }
@@ -417,11 +389,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_B) {
-		mode = 0;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		mode = 0;
 	}
 }
@@ -441,27 +409,15 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 
 
-	if (hDown & KEY_B) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		mode = 0;
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		mode = 0;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
+	if ((hDown & KEY_L || hDown & KEY_LEFT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 		if(colorMode > 0)	colorMode--;
 	}
 
-	if (hDown & KEY_L || hDown & KEY_LEFT) {
-		if(colorMode > 0)	colorMode--;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
-		if(colorMode < 7)	colorMode++;
-	}
-
-	if (hDown & KEY_R || hDown & KEY_RIGHT) {
+	if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if(colorMode < 7)	colorMode++;
 	}
 

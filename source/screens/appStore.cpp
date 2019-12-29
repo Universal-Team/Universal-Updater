@@ -264,7 +264,11 @@ void AppStore::DrawStore(void) const {
 	}
 
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
-		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
+		if (appStoreJson.at(selectedOptionAppStore).at("info").contains("posX") && appStoreJson.at(selectedOptionAppStore).at("info").contains("posY")) {
+			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), appStoreJson[selectedOptionAppStore]["info"]["posX"], appStoreJson[selectedOptionAppStore]["info"]["posY"], 0.5f, NULL);
+		} else {
+			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
+		}
 	}
 	
 	Gui::DrawBottom();
@@ -307,30 +311,10 @@ void AppStore::Draw(void) const {
 void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
-	if (hDown & KEY_B) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		storeInfo.clear();
 		Screen::back();
 		return;
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
-		if (selection > 0) {
-			selection--;
-		} else {
-			selection = (int)storeInfo.size()-1;
-		}
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
-		if (selection < (int)storeInfo.size()-1) {
-			selection++;
-			descript();
-			loadStoreDesc();
-		} else {
-			selection = 0;
-			descript();
-			loadStoreDesc();
-		}
 	}
 
 	// Download.
@@ -354,13 +338,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		storeInfo.clear();
-		Screen::back();
-		return;
-	}
-
-	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if (selection < (int)storeInfo.size()-1) {
 			selection++;
 			descript();
@@ -376,7 +354,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			keyRepeatDelay = 6;
 		}
 	}
-	if (hHeld & KEY_UP && !keyRepeatDelay) {
+	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 		if (selection > 0) {
 			selection--;
 			descript();
@@ -393,7 +371,7 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_Y) {
+	if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[5]))) {
 		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
 			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
 			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
@@ -459,29 +437,6 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[5])) {
-		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
-			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
-				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
-			}
-			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
-			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
-				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
-			}
-			// Refresh the list.
-			dirContents.clear();
-			storeInfo.clear();
-			chdir(Config::StorePath.c_str());
-			getDirectoryContents(dirContents, {"unistore"});
-			for(uint i=0;i<dirContents.size();i++) {
-				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
-				descript();
-				loadStoreDesc();
-			}
-		}
-	}
-
 	if (hDown & KEY_TOUCH) {
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
@@ -529,7 +484,8 @@ void AppStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
-	if (hDown & KEY_B) {
+
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		mode = 0;
 		appStoreList.clear();
 		isScriptSelected = false;
@@ -548,40 +504,7 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Go one entry up.
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
-		if (selection2 > 0) {
-			selection2--;
-			selectedOptionAppStore = appStoreList[selection2];
-		} else {
-			selection2 = (int)appStoreList.size()-1;
-			selectedOptionAppStore = appStoreList[selection2];
-		}
-	}
-
-	// Go one entry down.
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
-		if (selection2 < (int)appStoreList.size()-1) {
-			selection2++;
-			selectedOptionAppStore = appStoreList[selection2];
-		} else {
-			selection2 = 0;
-			selectedOptionAppStore = appStoreList[selection2];
-		}
-	}
-
-	// Go back.
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		mode = 0;
-		appStoreList.clear();
-		isScriptSelected = false;
-		selection2 = 0;
-		if (sheetHasLoaded == true) {
-			freeSheet();
-		}
-	}
-
-	// Go one entry up.
-	if (hHeld & KEY_UP && !keyRepeatDelay) {
+	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 		if (selection2 > 0) {
 			selection2--;
 			selectedOptionAppStore = appStoreList[selection2];
@@ -597,7 +520,7 @@ void AppStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Go one entry down.
-	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if (selection2 < (int)appStoreList.size()-1) {
 			selection2++;
 			selectedOptionAppStore = appStoreList[selection2];
@@ -660,7 +583,7 @@ void AppStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Switch ViewMode.
-	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
+	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {

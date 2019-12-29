@@ -280,11 +280,11 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			dirChanged = false;
 		}
 
-		if (hidKeysDown() & KEY_SELECT || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[4])) {
+		if ((hidKeysDown() & KEY_SELECT) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[4]))) {
 			dirChanged = true;
 		}
 
-		if (hidKeysDown() & KEY_A || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[2])) {
+		if ((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[2]))) {
 			if (dirContents.size() != 0) {
 				if (dirContents[selectedFile].isDirectory) {
 					chdir(dirContents[selectedFile].name.c_str());
@@ -323,7 +323,7 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			}
 		}
 
-		if (hidKeysDown() & KEY_B || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[5])) {
+		if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[5]))) {
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
 			if(strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
@@ -335,7 +335,7 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			}
 		}
 
-		if (hidKeysDown() & KEY_X || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[3])) {
+		if ((hidKeysDown() & KEY_X) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[3]))) {
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
 			selectedPath = path;
@@ -353,7 +353,7 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			fastMode = false;
 		}
 		// Switch ViewMode.
-		if (hidKeysDown() & KEY_Y || hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[6])) {
+		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[6]))) {
 			if (Config::viewMode == 0) {
 				Config::viewMode = 1;
 			} else {

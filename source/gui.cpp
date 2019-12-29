@@ -290,9 +290,9 @@ bool Gui::promptMsg(std::string promptMsg)
 		gspWaitForVBlank();
 		hidScanInput();
 		hidTouchRead(&touch);
-		if(hidKeysDown() & KEY_A || hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[0])) {
+		if ((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[0]))) {
 			return true;
-		} else if(hidKeysDown() & KEY_B || hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[1])) {
+		} else if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[1]))) {
 			return false;
 		}
 	}

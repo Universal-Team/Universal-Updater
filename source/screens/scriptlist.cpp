@@ -382,32 +382,36 @@ void ScriptList::DrawSingleObject(void) const {
 void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
-	if (hDown & KEY_B) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		fileInfo.clear();
 		Screen::back();
 		return;
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
-		if (selection > 0) {
-			selection--;
-		} else {
-			selection = (int)fileInfo.size()-1;
-		}
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if (selection < (int)fileInfo.size()-1) {
 			selection++;
 		} else {
 			selection = 0;
 		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		fileInfo.clear();
-		Screen::back();
-		return;
+	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+		if (selection > 0) {
+			selection--;
+		} else {
+			selection = (int)fileInfo.size()-1;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -455,31 +459,6 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		}
 	}
-	
-	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
-		if (selection < (int)fileInfo.size()-1) {
-			selection++;
-		} else {
-			selection = 0;
-		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
-	if (hHeld & KEY_UP && !keyRepeatDelay) {
-		if (selection > 0) {
-			selection--;
-		} else {
-			selection = (int)fileInfo.size()-1;
-		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
 
 	if (hDown & KEY_A) {
 		if (dirContents[selection].isDirectory) {
@@ -525,27 +504,38 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
-		if (selection2 > 0) {
-			selection2--;
-		} else {
-			selection2 = (int)fileInfo2.size()-1;
-		}
+
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		selection2 = 0;
+		fileInfo2.clear();
+		isScriptSelected = false;
+		mode = 0;
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if (selection2 < (int)fileInfo2.size()-1) {
 			selection2++;
 		} else {
 			selection2 = 0;
 		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		selection2 = 0;
-		fileInfo2.clear();
-		isScriptSelected = false;
-		mode = 0;
+	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+		if (selection2 > 0) {
+			selection2--;
+		} else {
+			selection2 = (int)fileInfo2.size()-1;
+		}
+		if (fastMode == true) {
+			keyRepeatDelay = 3;
+		} else if (fastMode == false){
+			keyRepeatDelay = 6;
+		}
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -567,32 +557,6 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 			}
-		}
-	}
-
-	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
-		if (selection2 < (int)fileInfo2.size()-1) {
-			selection2++;
-		} else {
-			selection2 = 0;
-		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
-
-	if (hHeld & KEY_UP && !keyRepeatDelay) {
-		if (selection2 > 0) {
-			selection2--;
-		} else {
-			selection2 = (int)fileInfo2.size()-1;
-		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
 		}
 	}
 
@@ -621,13 +585,6 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		Config::save();
 	}
 
-	if (hDown & KEY_B) {
-		selection2 = 0;
-		fileInfo2.clear();
-		isScriptSelected = false;
-		mode = 0;
-	}
-
 	if (Config::viewMode == 0) {
 		if(selection2 < screenPos2) {
 			screenPos2 = selection2;
@@ -651,7 +608,7 @@ void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		SelectFunction(hDown, hHeld, touch);
 	}
 
-	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
+	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {
