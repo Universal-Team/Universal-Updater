@@ -32,7 +32,7 @@
 #include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 #include "screens/settings.hpp"
-#include "screens/tinyDB.hpp"
+#include "screens/unistore.hpp"
 
 #include "utils/config.hpp"
 
@@ -71,9 +71,11 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
+	// Draw UniStore Icon. ;P
+	Gui::sprite(sprites_uniStore_idx, 15, 95);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TinyDB"))/2-150+70, mainButtons[2].y+10, 0.6f, Config::TxtColor, "TinyDB", 140);
+	Gui::DrawString(80, mainButtons[2].y+10, 0.6f, Config::TxtColor, "UniStore", 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
@@ -85,6 +87,21 @@ bool MainMenu::returnScriptState() {
 	chdir(Config::ScriptPath.c_str());
 	std::vector<DirEntry> dirContentsTemp;
 	getDirectoryContents(dirContentsTemp, {"json"});
+	for(uint i=0;i<dirContentsTemp.size();i++) {
+		dirContents.push_back(dirContentsTemp[i]);
+	}
+
+	if (dirContents.size() == 0) {
+		return false;
+	}
+	return true;
+}
+
+bool MainMenu::returnStoreState() {
+	dirContents.clear();
+	chdir(Config::StorePath.c_str());
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, {"unistore"});
 	for(uint i=0;i<dirContentsTemp.size();i++) {
 		dirContents.push_back(dirContentsTemp[i]);
 	}
@@ -129,10 +146,10 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 2:
-				if (checkWifiStatus() == true) {
-					Screen::set(std::make_unique<TinyDB>());
+				if (returnStoreState() == true) {
+					Screen::set(std::make_unique<UniStore>());
 				} else {
-					notConnectedMsg();
+					Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 				}
 				break;
 			case 3:
@@ -161,6 +178,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
 			if (returnScriptState() == true) {
@@ -175,10 +193,10 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, mainButtons[2])) {
-			if (checkWifiStatus() == true) {
-				Screen::set(std::make_unique<TinyDB>());
+			if (returnStoreState() == true) {
+				Screen::set(std::make_unique<UniStore>());
 			} else {
-				notConnectedMsg();
+				Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 			}
 		} else if (touching(touch, mainButtons[3])) {
 			if (isTesting == true) {

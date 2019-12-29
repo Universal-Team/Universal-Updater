@@ -88,6 +88,7 @@ int main()
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
 
 	// We need to make sure, the file exist.
 	if(access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) == -1 ) {

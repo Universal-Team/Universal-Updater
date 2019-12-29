@@ -31,7 +31,7 @@
 
 namespace Config {
 	extern int lang, Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor, viewMode, ColorKeys, progressbarColor;
-	extern std::string ScriptPath, MusicPath;
+	extern std::string ScriptPath, MusicPath, StorePath;
 	extern bool Logging, UseBars;
 
 	void load();

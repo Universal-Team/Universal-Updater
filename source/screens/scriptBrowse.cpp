@@ -34,8 +34,6 @@
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-#define ENTRIES_PER_SCREEN 3
-#define ENTRIES_PER_LIST 7
 
 nlohmann::json infoJson;
 
@@ -178,35 +176,13 @@ void ScriptBrowse::Draw(void) const {
 
 void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
-	if (hDown & KEY_B) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		infoJson.clear();
 		Screen::back();
 		return;
 	}
 
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[0])) {
-		if (selection > 0) {
-			selection--;
-		} else {
-			selection = (int)infoJson.size()-1;
-		}
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[1])) {
-		if (selection < (int)infoJson.size()-1) {
-			selection++;
-		} else {
-			selection = 0;
-		}
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-		infoJson.clear();
-		Screen::back();
-		return;
-	}
-
-	if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
 		if (selection < (int)infoJson.size()-1) {
 			selection++;
 		} else {
@@ -219,7 +195,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hHeld & KEY_UP && !keyRepeatDelay) {
+	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 		if (selection > 0) {
 			selection--;
 		} else {
@@ -295,7 +271,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		fastMode = false;
 	}
 
-	if (hDown & KEY_X || hDown & KEY_TOUCH && touching(touch, arrowPos[4])) {
+	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
 		if (Config::viewMode == 0) {
 			Config::viewMode = 1;
 		} else {
@@ -317,26 +293,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if (hDown & KEY_Y) {
-		if (infoJson.size() != 0) {
-			for (int i = 0; i < (int)infoJson.size(); i++) {
-				int current = i+1;
-				int total = infoJson.size();
-				std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[i]["title"]);
-				std::string titleFix = infoJson[i]["title"]; 
-				for (int l = 0; l < (int)titleFix.size(); l++) {
-					if (titleFix[l] == '/') {
-						titleFix[l] = '-';
-					}
-				}
-				DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
-				downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json");
-				infoJson[i]["curRevision"] = infoJson[i]["revision"];
-			}
-		}
-	}
-
-	if (hDown & KEY_TOUCH && touching(touch, arrowPos[3])) {
+	if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 		if (infoJson.size() != 0) {
 			for (int i = 0; i < (int)infoJson.size(); i++) {
 				int current = i+1;

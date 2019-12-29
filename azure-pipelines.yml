@@ -1,7 +1,7 @@
 trigger:
   branches:
     include: ['*']
-    exclude: [translation, script-creator-experimental]
+    exclude: [translation, App-Store, Camera]
   tags:
     include: ['*']
 

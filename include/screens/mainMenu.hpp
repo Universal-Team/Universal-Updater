@@ -41,8 +41,9 @@ public:
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
 	bool returnScriptState();
+	bool returnStoreState();
 	int Selection = 0;
-	std::vector<DirEntry> dirContents; // To return Script state.
+	std::vector<DirEntry> dirContents; // To return Script/Store state.
 	std::vector<Structs::ButtonPos> mainButtons = {		
 		{10, 40, 140, 35, -1}, // Scriptlist.
 		{170, 40, 140, 35, -1}, // ScriptBrowse.

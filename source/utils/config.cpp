@@ -47,6 +47,7 @@ std::string Config::ScriptPath;
 std::string Config::MusicPath;
 bool Config::Logging;
 bool Config::UseBars;
+std::string Config::StorePath;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -138,6 +139,12 @@ void Config::load() {
 			Config::UseBars = getBool("BARS");
 		}
 
+		if(!configJson.contains("STOREPATH")) {
+			Config::StorePath = STORE_PATH;
+		} else {
+			Config::StorePath = getString("STOREPATH");
+		}
+
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -154,6 +161,7 @@ void Config::load() {
 		Config::MusicPath = MUSIC_PATH;
 		Config::Logging = false;
 		Config::UseBars = true;
+		Config::StorePath = STORE_PATH;
 	}
 }
 
@@ -172,6 +180,7 @@ void Config::save() {
 	Config::setString("MUSICPATH", Config::MusicPath);
 	Config::setBool("LOGGING", Config::Logging);
 	Config::setBool("BARS", Config::UseBars);
+	Config::setString("STOREPATH", Config::StorePath);
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -194,6 +203,7 @@ void Config::initializeNewConfig() {
 	Config::setString("MUSICPATH", MUSIC_PATH);
 	Config::setBool("LOGGING", false);
 	Config::setBool("BARS", true);
+	Config::setString("STOREPATH", STORE_PATH);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);

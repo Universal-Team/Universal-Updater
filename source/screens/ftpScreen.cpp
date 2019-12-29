@@ -88,9 +88,7 @@ void FTPScreen::Draw(void) const
 		hidTouchRead(&touch);
 		u32 hDown = hidKeysDown();
 
-		if (hDown & KEY_B)
-			break;
-		if (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))
+		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0])))
 			break;
 	}
 	memset(ftp_accepted_connection, 0, 20); // Empty accepted connection address.

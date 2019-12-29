@@ -29,6 +29,7 @@
 #include "screens/screenCommon.hpp"
 
 #include "utils/config.hpp"
+#include "utils/structs.hpp"
 
 C3D_RenderTarget* top;
 C3D_RenderTarget* bottom;
@@ -247,6 +248,14 @@ void Gui::DrawBottom(void) {
 	}
 }
 
+std::vector<Structs::ButtonPos> promptBtn = {
+	{10, 100, 140, 35, -1}, // Yes.
+	{170, 100, 140, 35, -1}, // No.
+};
+
+extern touchPosition touch;
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+
 // Display a Message, which needs to be confirmed with A/B.
 bool Gui::promptMsg(std::string promptMsg)
 {
@@ -263,14 +272,27 @@ bool Gui::promptMsg(std::string promptMsg)
 		Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	}
 	Gui::DrawBottom();
+	if (isScriptSelected == false) {
+		Gui::Draw_Rect(10, 100, 140, 35, Config::Color1);
+		Gui::Draw_Rect(170, 100, 140, 35, Config::Color1);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, Config::TxtColor, Lang::get("YES"), 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, Config::TxtColor, Lang::get("NO"), 140);
+	} else if (isScriptSelected == true) {
+		Gui::Draw_Rect(10, 100, 140, 35, barColor);
+		Gui::Draw_Rect(170, 100, 140, 35, barColor);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, TextColor, Lang::get("YES"), 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, TextColor, Lang::get("NO"), 140);
+	}
+
 	C3D_FrameEnd(0);
 	while(1)
 	{
 		gspWaitForVBlank();
 		hidScanInput();
-		if(hidKeysDown() & KEY_A) {
+		hidTouchRead(&touch);
+		if ((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[0]))) {
 			return true;
-		} else if(hidKeysDown() & KEY_B) {
+		} else if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[1]))) {
 			return false;
 		}
 	}

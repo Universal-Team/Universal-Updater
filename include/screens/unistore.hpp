@@ -24,34 +24,60 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef TINYDB_HPP
-#define TINYDB_HPP
+#ifndef UNISTORE_HPP
+#define UNISTORE_HPP
 
 #include "screens/screen.hpp"
 #include "screens/screenCommon.hpp"
 
+#include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
 
-class TinyDB : public screen
+class UniStore : public screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	TinyDB();
+	UniStore();
 
 private:
+	void DrawStoreList(void) const;
+	void DrawStore(void) const;
+	void DrawSearch(void) const;
+
+	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void SearchLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void execute();
+	void descript();
+	int mode = 0;
+	std::string selectedOptionAppStore;
+
 	mutable int selection = 0;
+	mutable int selection2 = 0;
 	int screenPos = 0;
+	int screenPos2 = 0;
 	mutable int screenPosList = 0;
+	mutable int screenPosList2 = 0;
+
+	int searchSelection = 0;
+
 	int keyRepeatDelay = 0;
 	int fastMode = false;
+	std::vector<DirEntry> dirContents;
+
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25, -1}, // Arrow Up.
 		{295, 215, 25, 25, -1}, // Arrow Down.
 		{0, 215, 25, 25, -1}, // Back Arrow.
 		{5, 0, 25, 25, -1}, // ViewMode Change.
 		{45, 0, 25, 25, -1}, // Search.
+		{85, 0, 25, 25, -1}, // Update.
+	};
+
+	std::vector<Structs::ButtonPos> URLBtn = {
+		{10, 100, 140, 35, -1}, // FULL URL.
+		{170, 100, 140, 35, -1}, // Github.
 	};
 };
 
