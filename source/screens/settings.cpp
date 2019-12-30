@@ -137,23 +137,19 @@ void Settings::DrawColorChanging(void) const {
 	Gui::DrawArrow(0, 0, 0, 1);
 	Gui::DrawArrow(318, 22, 180.0, 1);
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
 			Gui::Draw_Rect(54 + i * 25, 2, 16, 16, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 7; i++) {
 		Gui::DrawString(58 + i * 25, 2, 0.5f, WHITE, std::to_string(i+1), 400);
 	}
 
-	if (colorMode != 7) {
-		Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
-		Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
-		Gui::Draw_Rect(buttons[2].x, buttons[2].y, 95, 41, C2D_Color32(0, 0, 255, 255));
-	} else {
-		Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, Config::Color1);
-	}
+	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
+	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
+	Gui::Draw_Rect(buttons[2].x, buttons[2].y, 95, 41, C2D_Color32(0, 0, 255, 255));
 
 	if (colorMode == 0) {
 		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BAR_COLOR"), 320);
@@ -190,10 +186,6 @@ void Settings::DrawColorChanging(void) const {
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 0).c_str(), 400);
-	} else if (colorMode == 7) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("USE_BARS"), 320);
-		if (Config::UseBars == true)	Gui::DrawString(140, 98, 0.7f, WHITE, Lang::get("YES"), 400);
-		else if (Config::UseBars == false)	Gui::DrawString(140, 98, 0.7f, WHITE, Lang::get("NO"), 400);
 	}
 }
 
@@ -245,7 +237,7 @@ void Settings::DrawMiscSettings(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 2; i++) {
 		if (Selection == i) {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
 		} else {
@@ -253,9 +245,8 @@ void Settings::DrawMiscSettings(void) const {
 		}
 	}
 
-	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_STOREPATH"), 140);
-	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 140);
-	Gui::DrawStringCentered(0, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 140);
+	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 140);
+	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_BAR_STYLE"), 140);
 }
 
 void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -264,44 +255,30 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_DOWN) {
-		if (Selection < 2)	Selection++;
+		if (Selection < 1)	Selection++;
 	}
 
 	if (hDown & KEY_A) {
 		if (Selection == 0) {
-			std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
-			if (tempStore != "") {
-				Config::StorePath = tempStore;
-			}
-		} else if (Selection == 1) {
-			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
-			if (tempScript != "") {
-				Config::ScriptPath = tempScript;
-			}
-		} else if (Selection == 2) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
 			if (tempMusic != "") {
 				Config::MusicPath = tempMusic;
 			}
+		} else if (Selection == 1) {
+			if (Config::UseBars == true)	Config::UseBars = false;
+			else if (Config::UseBars == false)	Config::UseBars = true;
 		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
-			if (tempStore != "") {
-				Config::StorePath = tempStore;
-			}
-		} else if (touching(touch, mainButtons[1])) {
-			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
-			if (tempScript != "") {
-				Config::ScriptPath = tempScript;
-			}
-		} else if (touching(touch, mainButtons[2])) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
 			if (tempMusic != "") {
 				Config::MusicPath = tempMusic;
 			}
+		} else if (touching(touch, mainButtons[1])) {
+			if (Config::UseBars == true)	Config::UseBars = false;
+			else if (Config::UseBars == false)	Config::UseBars = true;
 		}
 	}
 
@@ -401,7 +378,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	int blue;
 
 	if (hDown & KEY_TOUCH) {
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 7; i++) {
 			if(touch.px > 54 + i * 25 && touch.px < 54 + i * 25+16 && touch.py > 2 && touch.py < 2+16) {
 				colorMode = i;
 			}
@@ -418,7 +395,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 
 	if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if(colorMode < 7)	colorMode++;
+		if(colorMode < 6)	colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -484,9 +461,6 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), ColorHelper::getColorValue(Config::progressbarColor, 1), blue, 255);
 				}
 			}
-		} else if (touching(touch, buttons[1]) && colorMode == 7) {
-			if (Config::UseBars == true)	Config::UseBars = false;
-			else if (Config::UseBars == false)	Config::UseBars = true;
 		}
 	}
 }

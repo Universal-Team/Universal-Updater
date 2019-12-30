@@ -25,7 +25,7 @@ extern bool continueNdsScan;
 extern uint selectedFile;
 extern int keyRepeatDelay;
 extern bool dirChanged;
-extern std::vector<DirEntry> dirContents;
+std::vector<DirEntry> dirContents;
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern touchPosition touch;
@@ -189,6 +189,21 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	}
 	closedir(pdir);
 	return dirContents;
+}
+
+// Directory exist?
+bool returnIfExist(const std::string &path, const std::vector<std::string> &extensionList) {
+	dirContents.clear();
+	chdir(path.c_str());
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, extensionList);
+	for(uint i=0;i<dirContentsTemp.size();i++) {
+		dirContents.push_back(dirContentsTemp[i]);
+	}
+	if (dirContents.size() == 0) {
+		return false;
+	}
+	return true;
 }
 
 // returns a Path or file to 'std::string'.

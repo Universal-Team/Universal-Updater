@@ -29,7 +29,6 @@
 
 #include "screens/screen.hpp"
 
-#include "utils/fileBrowse.h"
 #include "utils/structs.hpp"
 
 #include <vector>
@@ -40,17 +39,13 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	bool returnScriptState();
-	bool returnStoreState();
 	int Selection = 0;
-	std::vector<DirEntry> dirContents; // To return Script/Store state.
-	std::vector<Structs::ButtonPos> mainButtons = {		
-		{10, 40, 140, 35, -1}, // Scriptlist.
-		{170, 40, 140, 35, -1}, // ScriptBrowse.
-		{10, 100, 140, 35, -1}, // TinyDB.
-		{170, 100, 140, 35, -1}, // ScriptCreator.
-		{10, 160, 140, 35, -1}, // Language.
-		{170, 160, 140, 35, -1}, // Colors.
+
+	std::vector<Structs::ButtonPos> mainButtons = {
+		{10, 70, 140, 40, -1}, // Scripts.
+		{170, 70, 140, 40, -1}, // UniStore.
+		{10, 145, 140, 40, -1}, // Settings.
+		{170, 145, 140, 40, -1}, // FTP.
 		{0, 215, 25, 25, -1}, // Back Arrow.
 	};
 };

@@ -38,16 +38,17 @@ class ScriptList : public screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	ScriptList();
-
 private:
+	void DrawSubMenu(void) const;
 	void DrawList(void) const;
 	void DrawSingleObject(void) const;
 
+	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void ListSelection(u32 hDown, u32 hHeld, touchPosition touch);
 	void SelectFunction(u32 hDown, u32 hHeld, touchPosition touch);
 
 	int mode = 0;
+	int SubSelection = 0;
 	std::vector<DirEntry> dirContents;
 	mutable int screenPos = 0;
 	mutable int screenPosList = 0;
@@ -64,6 +65,14 @@ private:
 		{295, 215, 25, 25, -1}, // Arrow Down.
 		{0, 215, 25, 25, -1}, // Back Arrow.
 		{5, 0, 25, 25, -1}, // viewMode Change
+		{45, 0, 25, 25, -1}, // Search.
+	};
+
+	std::vector<Structs::ButtonPos> subPos = {
+		{10, 70, 140, 40, -1}, // Script list.
+		{170, 70, 140, 40, -1}, // Get Scripts.
+		{10, 145, 140, 40, -1}, // Script Creator.
+		{170, 145, 140, 40, -1}, // Script path change.
 	};
 };
 
