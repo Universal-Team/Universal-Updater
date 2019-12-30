@@ -28,6 +28,8 @@
 
 #include "utils/structs.hpp"
 
+#include <vector>
+
 class FTPScreen : public screen
 {
 public:

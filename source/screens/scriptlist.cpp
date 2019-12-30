@@ -26,6 +26,8 @@
 
 #include "download/download.hpp"
 
+#include "screens/scriptBrowse.hpp"
+#include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 
 #include "utils/config.hpp"
@@ -37,6 +39,11 @@
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern bool checkWifiStatus(void);
+extern void notImplemented(void);
+
+// This is for the Script Creator, so no one can access it for now, until it is stable or so.
+bool isTesting = false;
 
 bool isScriptSelected = false;
 
@@ -262,14 +269,31 @@ void loadColors(nlohmann::json &json) {
 	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
 }
 
-ScriptList::ScriptList() {
-	dirContents.clear();
-	chdir(Config::ScriptPath.c_str());
-	getDirectoryContents(dirContents, {"json"});
-	for(uint i=0;i<dirContents.size();i++) {
-		fileInfo.push_back(parseInfo(dirContents[i].name));
+void ScriptList::DrawSubMenu(void) const {
+	Gui::DrawTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
 	}
+
+	Gui::DrawBottom();
+	Gui::DrawArrow(0, 218, 0, 1);
+
+	for (int i = 0; i < 4; i++) {
+		if (SubSelection == i) {
+			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::SelectedColor);
+		} else {
+			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
+		}
+	}
+
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, subPos[0].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, subPos[1].y+12, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2-150+70, subPos[2].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("CHANGE_SCRIPTPATH")))/2+150-70, subPos[3].y+12, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 140);
 }
+
 
 void ScriptList::DrawList(void) const {
 	std::string line1;
@@ -319,9 +343,11 @@ void ScriptList::DrawList(void) const {
 }
 
 void ScriptList::Draw(void) const {
-	if (mode == 0){
-		DrawList();
+	if (mode == 0) {
+		DrawSubMenu();
 	} else if (mode == 1) {
+		DrawList();
+	} else if (mode == 2) {
 		DrawSingleObject();
 	}
 }
@@ -379,13 +405,102 @@ void ScriptList::DrawSingleObject(void) const {
 	}
 }
 
+
+void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		Screen::back();
+		return;
+	}
+
+	// Navigation.
+	if(hDown & KEY_UP) {
+		if(SubSelection > 1)	SubSelection -= 2;
+	} else if(hDown & KEY_DOWN) {
+		if(SubSelection < 3 && SubSelection != 2 && SubSelection != 3)	SubSelection += 2;
+	} else if (hDown & KEY_LEFT) {
+		if (SubSelection%2) SubSelection--;
+	} else if (hDown & KEY_RIGHT) {
+		if (!(SubSelection%2)) SubSelection++;
+	}
+
+	if (hDown & KEY_A) {
+		switch(SubSelection) {
+			case 0:
+				if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+					dirContents.clear();
+					chdir(Config::ScriptPath.c_str());
+					getDirectoryContents(dirContents, {"json"});
+					for(uint i=0;i<dirContents.size();i++) {
+						fileInfo.push_back(parseInfo(dirContents[i].name));
+					}
+					mode = 1;
+				} else {
+					Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+				}
+				break;
+			case 1:
+				if (checkWifiStatus() == true) {
+					Screen::set(std::make_unique<ScriptBrowse>());
+				} else {
+					notConnectedMsg();
+				}
+				break;
+			case 2:
+				if (isTesting == true) {
+					Screen::set(std::make_unique<ScriptCreator>());
+				} else {
+					notImplemented();
+				}
+				break;
+			case 3:
+				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+				if (tempScript != "") {
+					Config::ScriptPath = tempScript;
+				}
+				break;
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, subPos[0])) {
+			if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+				dirContents.clear();
+				chdir(Config::ScriptPath.c_str());
+				getDirectoryContents(dirContents, {"json"});
+				for(uint i=0;i<dirContents.size();i++) {
+					fileInfo.push_back(parseInfo(dirContents[i].name));
+				}
+				mode = 1;
+			} else {
+				Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+			}
+		} else if (touching(touch, subPos[1])) {
+			if (checkWifiStatus() == true) {
+				Screen::set(std::make_unique<ScriptBrowse>());
+			} else {
+				notConnectedMsg();
+			}
+		} else if (touching(touch, subPos[2])) {
+			if (isTesting == true) {
+				Screen::set(std::make_unique<ScriptCreator>());
+			} else {
+				notImplemented();
+			}
+		} else if (touching(touch, subPos[3])) {
+			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+			if (tempScript != "") {
+				Config::ScriptPath = tempScript;
+			}
+		}
+	}
+}
+
 void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		fileInfo.clear();
-		Screen::back();
-		return;
+		mode = 0;
 	}
 
 	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -431,7 +546,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 							loadDesc();
 							isScriptSelected = true;
 							selection = 0;
-							mode = 1;
+							mode = 2;
 						}
 					}
 				}
@@ -452,7 +567,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 							loadDesc();
 							isScriptSelected = true;
 							selection = 0;
-							mode = 1;
+							mode = 2;
 						}
 					}
 				}
@@ -474,7 +589,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				loadDesc();
 				isScriptSelected = true;
 				selection = 0;
-				mode = 1;
+				mode = 2;
 			}
 		}
 	}
@@ -509,7 +624,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		selection2 = 0;
 		fileInfo2.clear();
 		isScriptSelected = false;
-		mode = 0;
+		mode = 1;
 	}
 
 	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -603,8 +718,10 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
-		ListSelection(hDown, hHeld, touch);
+		SubMenuLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {
+		ListSelection(hDown, hHeld, touch);
+	} else if (mode == 2) {
 		SelectFunction(hDown, hHeld, touch);
 	}
 

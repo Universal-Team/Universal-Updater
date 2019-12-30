@@ -24,29 +24,18 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "download/download.hpp"
-
 #include "screens/ftpScreen.hpp"
 #include "screens/mainMenu.hpp"
-#include "screens/scriptBrowse.hpp"
-#include "screens/scriptCreator.hpp"
 #include "screens/scriptlist.hpp"
 #include "screens/settings.hpp"
 #include "screens/unistore.hpp"
 
 #include "utils/config.hpp"
 
-#include <unistd.h>
-
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-extern bool checkWifiStatus(void);
 extern int fadealpha;
 extern bool fadein;
-extern void notImplemented(void);
-
-// This is for the Script Creator, so no one can access it for now, until it is stable or so.
-bool isTesting = false;
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();
@@ -63,7 +52,7 @@ void MainMenu::Draw(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (Selection == i) {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
 		} else {
@@ -71,149 +60,58 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "UniStore"))/2-150+70+10, mainButtons[0].y+12, 0.6f, Config::TxtColor, "UniStore", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTS")))/2+150-70, mainButtons[1].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[2].y+12, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[3].y+12, 0.6f, Config::TxtColor, "FTP", 140);
+
 	// Draw UniStore Icon. ;P
-	Gui::sprite(sprites_uniStore_idx, 15, 95);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString(80, mainButtons[2].y+10, 0.6f, Config::TxtColor, "UniStore", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2+150-70, mainButtons[3].y+10, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[4].y+10, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[5].y+10, 0.6f, Config::TxtColor, "FTP", 140);
+	Gui::sprite(sprites_uniStore_idx, 10, 65);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
-bool MainMenu::returnScriptState() {
-	dirContents.clear();
-	chdir(Config::ScriptPath.c_str());
-	std::vector<DirEntry> dirContentsTemp;
-	getDirectoryContents(dirContentsTemp, {"json"});
-	for(uint i=0;i<dirContentsTemp.size();i++) {
-		dirContents.push_back(dirContentsTemp[i]);
-	}
-
-	if (dirContents.size() == 0) {
-		return false;
-	}
-	return true;
-}
-
-bool MainMenu::returnStoreState() {
-	dirContents.clear();
-	chdir(Config::StorePath.c_str());
-	std::vector<DirEntry> dirContentsTemp;
-	getDirectoryContents(dirContentsTemp, {"unistore"});
-	for(uint i=0;i<dirContentsTemp.size();i++) {
-		dirContents.push_back(dirContentsTemp[i]);
-	}
-
-	if (dirContents.size() == 0) {
-		return false;
-	}
-	return true;
-}
-
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_START) {
+	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, mainButtons[4]))) {
 		exiting = true;
 	}
-	if (hDown & KEY_UP) {
+
+	// Navigation.
+	if(hDown & KEY_UP) {
 		if(Selection > 1)	Selection -= 2;
-	}
-	if (hDown & KEY_DOWN) {
-		if(Selection < 4)	Selection += 2;
-	}
-	if (hDown & KEY_LEFT) {
+	} else if(hDown & KEY_DOWN) {
+		if(Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
+	} else if (hDown & KEY_LEFT) {
 		if (Selection%2) Selection--;
-	}
-	if (hDown & KEY_RIGHT) {
+	} else if (hDown & KEY_RIGHT) {
 		if (!(Selection%2)) Selection++;
 	}
 
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				if (returnScriptState() == true) {
-					Screen::set(std::make_unique<ScriptList>());
-				} else {
-					Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
-				}
+				Screen::set(std::make_unique<UniStore>());
 				break;
 			case 1:
-				if (checkWifiStatus() == true) {
-					Screen::set(std::make_unique<ScriptBrowse>());
-				} else {
-					notConnectedMsg();
-				}
+				Screen::set(std::make_unique<ScriptList>());
 				break;
 			case 2:
-				if (returnStoreState() == true) {
-					Screen::set(std::make_unique<UniStore>());
-				} else {
-					Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
-				}
-				break;
-			case 3:
-				if (isTesting == true) {
-					Screen::set(std::make_unique<ScriptCreator>());
-				} else {
-					notImplemented();
-				}
-				break;
-			case 4:
 				Screen::set(std::make_unique<Settings>());
 				break;
-			case 5:
-				if (checkWifiStatus() == true) {
-					Screen::set(std::make_unique<FTPScreen>());
-				} else {
-					notConnectedMsg();
-				}
+			case 3:
+				Screen::set(std::make_unique<FTPScreen>());
 				break;
 		}
 	}
-
-	if (hDown & KEY_X) {
-		if (checkWifiStatus() == true) {
-			Screen::set(std::make_unique<FTPScreen>());
-		}
-	}
-
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			if (returnScriptState() == true) {
-				Screen::set(std::make_unique<ScriptList>());
-			} else {
-				Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
-			}
+			Screen::set(std::make_unique<UniStore>());
 		} else if (touching(touch, mainButtons[1])) {
-			if (checkWifiStatus() == true) {
-				Screen::set(std::make_unique<ScriptBrowse>());
-			} else {
-				notConnectedMsg();
-			}
+			Screen::set(std::make_unique<ScriptList>());
 		} else if (touching(touch, mainButtons[2])) {
-			if (returnStoreState() == true) {
-				Screen::set(std::make_unique<UniStore>());
-			} else {
-				Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
-			}
-		} else if (touching(touch, mainButtons[3])) {
-			if (isTesting == true) {
-				Screen::set(std::make_unique<ScriptCreator>());
-			} else {
-				notImplemented();
-			}
-		} else if (touching(touch, mainButtons[4])) {
 			Screen::set(std::make_unique<Settings>());
-		} else if (touching(touch, mainButtons[5])) {
-			if (checkWifiStatus() == true) {
-				Screen::set(std::make_unique<FTPScreen>());
-			} else {
-				notConnectedMsg();
-			}
-		} else if (touching(touch, mainButtons[6])) {
-			exiting = true;
+		} else if (touching(touch, mainButtons[3])) {
+			Screen::set(std::make_unique<FTPScreen>());
 		}
 	}
 }

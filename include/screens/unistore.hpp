@@ -38,13 +38,13 @@ class UniStore : public screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	UniStore();
-
 private:
+	void DrawSubMenu(void) const;
 	void DrawStoreList(void) const;
 	void DrawStore(void) const;
 	void DrawSearch(void) const;
 
+	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void SearchLogic(u32 hDown, u32 hHeld, touchPosition touch);
@@ -61,6 +61,7 @@ private:
 	mutable int screenPosList2 = 0;
 
 	int searchSelection = 0;
+	int subSelection = 0;
 
 	int keyRepeatDelay = 0;
 	int fastMode = false;
@@ -78,6 +79,12 @@ private:
 	std::vector<Structs::ButtonPos> URLBtn = {
 		{10, 100, 140, 35, -1}, // FULL URL.
 		{170, 100, 140, 35, -1}, // Github.
+	};
+
+	std::vector<Structs::ButtonPos> subPos = {
+		{90, 40, 140, 35, -1}, // StoreList.
+		{90, 100, 140, 35, -1}, // storeSearch.
+		{90, 160, 140, 35, -1}, // storePathChange.
 	};
 };
 
