@@ -8,6 +8,7 @@
 	"FILE_EXTRACTED": "archivo extraído.",
 	"FILES_EXTRACTED": "archivos extraídos.",
 	"SCRIPTLIST": "Script list",
+	"SCRIPTS": "Scripts",
 	"SETTINGS": "Configuraciones",
 	"LANGUAGE": "Idioma",
 	"COLORS": "Colores",
@@ -66,7 +67,7 @@
 	"BACK": "Volver",
 	"FILEBROWSE_MSG": "Pulse X para seleccionar, select para actualizar.",
 	"SELECT_SCRIPT_PATH": "Seleccione la ruta del Script.",
-	"USE_BARS": "Use bar images:",
+	"CHANGE_BAR_STYLE": "Change bar style",
 	"CHANGE_SCRIPTPATH": "Change Script path",
 	"CHANGE_MUSICFILE": "Change Music file",
 	"SELECT_MUSIC_FILE": "Select the Music file.",
@@ -85,5 +86,9 @@
 	"UNISTORE_SEARCH": "Búsqueda en UniStore",
 	"FULL_URL": "URL completa",
 	"GITHUB": "GitHub",
-	"ENTER_FULL_URL": "Introduzca la URL completa."
+	"ENTER_FULL_URL": "Introduzca la URL completa.",
+	"SCRIPTS_SUBMENU": "Scripts Submenu",
+	"STORE_LIST": "Store list",
+	"STORE_SEARCH": "Store search",
+	"UNISTORE_SUBMENU": "UniStore SubMenu"
 }
