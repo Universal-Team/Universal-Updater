@@ -8,6 +8,7 @@
 	"FILE_EXTRACTED": "file Bruhded.",
 	"FILES_EXTRACTED": "files Bruhded.",
 	"SCRIPTLIST": "Script list",
+	"SCRIPTS": "Scripts",
 	"SETTINGS": "Bruhtings",
 	"LANGUAGE": "Bruhdioma",
 	"COLORS": "Bruhlors",
@@ -66,7 +67,7 @@
 	"BACK": "Bruck",
 	"FILEBROWSE_MSG": "Bruh X to bruh, Select to Bruh.",
 	"SELECT_SCRIPT_PATH": "Bruh the bruhpt path.",
-	"USE_BARS": "Use bar images:",
+	"CHANGE_BAR_STYLE": "Change bar style",
 	"CHANGE_SCRIPTPATH": "Change Script path",
 	"CHANGE_MUSICFILE": "Change Music file",
 	"SELECT_MUSIC_FILE": "Select the Music file.",
@@ -85,5 +86,9 @@
 	"UNISTORE_SEARCH": "UniBruh search",
 	"FULL_URL": "Full BRU",
 	"GITHUB": "GitHub",
-	"ENTER_FULL_URL": "Enter the full BRU."
+	"ENTER_FULL_URL": "Enter the full BRU.",
+	"SCRIPTS_SUBMENU": "Scripts Submenu",
+	"STORE_LIST": "Store list",
+	"STORE_SEARCH": "Store search",
+	"UNISTORE_SUBMENU": "UniStore SubMenu"
 }
