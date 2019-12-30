@@ -8,6 +8,7 @@
 	"FILE_EXTRACTED": "抽出されたファイル",
 	"FILES_EXTRACTED": "抽出されたファイル",
 	"SCRIPTLIST": "スクリプトリスト",
+	"SCRIPTS": "Scripts",
 	"SETTINGS": "設定",
 	"LANGUAGE": "言語",
 	"COLORS": "色",
@@ -66,7 +67,7 @@
 	"BACK": "戻る",
 	"FILEBROWSE_MSG": "Xを押して選択し、Selectを押してリフレッシュ",
 	"SELECT_SCRIPT_PATH": "スクリプトのパスを選択します",
-	"USE_BARS": "バーの画像を使用：",
+	"CHANGE_BAR_STYLE": "Change bar style",
 	"CHANGE_SCRIPTPATH": "スクリプトパスを変更する",
 	"CHANGE_MUSICFILE": "ミュージックファイルを変更する",
 	"SELECT_MUSIC_FILE": "ミュージックファイルを選択する",
@@ -85,5 +86,9 @@
 	"UNISTORE_SEARCH": "UniStoreで検索する",
 	"FULL_URL": "完全なURL",
 	"GITHUB": "GitHub",
-	"ENTER_FULL_URL": "完全なURLを入力します"
+	"ENTER_FULL_URL": "完全なURLを入力します",
+	"SCRIPTS_SUBMENU": "Scripts Submenu",
+	"STORE_LIST": "Store list",
+	"STORE_SEARCH": "Store search",
+	"UNISTORE_SUBMENU": "UniStore SubMenu"
 }
