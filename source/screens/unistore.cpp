@@ -253,8 +253,6 @@ void UniStore::DrawStore(void) const {
 	std::string info;
 	Gui::DrawTop();
 	if (Config::UseBars == true) {
-		Gui::sprite(sprites_top_screen_top_idx, 0, 0);
-		Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
 		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	} else {
