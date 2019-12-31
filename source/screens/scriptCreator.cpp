@@ -30,6 +30,7 @@
 #include "screens/scriptCreator.hpp"
 
 #include "utils/config.hpp"
+#include "utils/fileBrowse.h"
 
 #include <fstream>
 #include <unistd.h>
@@ -79,7 +80,12 @@ void ScriptCreator::Draw(void) const {
 
 void ScriptCreator::DrawSubMenu(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	}
+
 	Gui::DrawBottom();
 
 	for (int i = 0; i < 2; i++) {
@@ -90,13 +96,18 @@ void ScriptCreator::DrawSubMenu(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NEW_SCRIPT")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("NEW_SCRIPT"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("EXISTING_SCRIPT")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("EXISTING_SCRIPT"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "New script"))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, "New script", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "Existing script"))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, "Existing script", 140);
 }
 
 void ScriptCreator::DrawScriptScreen(void) const {
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	}
+	
 	Gui::DrawBottom();
 
 	// Draw Page.
@@ -311,12 +322,14 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 1:
-				jsonFileName = Config::ScriptPath;
-				jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
-				if(access(jsonFileName.c_str(), F_OK) != -1 ) {
-					openJson(jsonFileName);
-					Selection = 0;
-					mode = 1;
+				std::string tempScript = selectFilePath("Select the Script file.", {"json"}, 2);
+				if (tempScript != "") {
+					jsonFileName = tempScript;
+					if(access(jsonFileName.c_str(), F_OK) != -1 ) {
+						openJson(jsonFileName);
+						Selection = 0;
+						mode = 1;
+					}
 				}
 				break;
 		}
