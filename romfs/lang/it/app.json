@@ -67,7 +67,7 @@
 	"BACK": "Indietro",
 	"FILEBROWSE_MSG": "Premi X per selezionare, Select per ricaricare.",
 	"SELECT_SCRIPT_PATH": "Seleziona il percorso script.",
-	"CHANGE_BAR_STYLE": "Change bar style",
+	"CHANGE_BAR_STYLE": "Cambia stile della barra",
 	"CHANGE_SCRIPTPATH": "Cambia il percorso script",
 	"CHANGE_MUSICFILE": "Cambia file musicale",
 	"SELECT_MUSIC_FILE": "Seleziona il file musicale.",
@@ -87,8 +87,8 @@
 	"FULL_URL": "Indirizzo (URL) completo",
 	"GITHUB": "Github",
 	"ENTER_FULL_URL": "Inserisci l'indirizzo (URL) completo.",
-	"SCRIPTS_SUBMENU": "Scripts Submenu",
-	"STORE_LIST": "Store list",
-	"STORE_SEARCH": "Store search",
-	"UNISTORE_SUBMENU": "UniStore SubMenu"
+	"SCRIPTS_SUBMENU": "Sottomenu Scripts",
+	"STORE_LIST": "Lista negozio",
+	"STORE_SEARCH": "Cerca nel negozio",
+	"UNISTORE_SUBMENU": "Sottomenu UniStore"
 }
