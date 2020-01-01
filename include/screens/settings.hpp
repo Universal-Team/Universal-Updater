@@ -42,20 +42,18 @@ public:
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 	Settings();
 private:
-	// Credits stuff.
-	int DisplayMode = 1;
-	int delay = 120;
-	bool discordText = false;
-
 	int colorMode = 0;
 	int mode = 0;
 	int Selection = 0;
+	int creditsPage = 1;
 
+	// Draws.
 	void DrawSubMenu(void) const;
 	void DrawLanguageSelection(void) const;
 	void DrawColorChanging(void) const;
 	void DrawCreditsScreen(void) const;
 	void DrawMiscSettings(void) const;
+	// Logic's.
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void LanguageSelection(u32 hDown, touchPosition touch);
 	void colorChanging(u32 hDown, touchPosition touch);
@@ -85,10 +83,6 @@ private:
 		{10, 85, 95, 41, -1},
 		{115, 85, 95, 41, -1},
 		{220, 85, 95, 41, -1},
-	};
-
-	std::vector<Structs::ButtonPos> barPos = {
-		{0, 215, 320, 25, -1},
 	};
 
 	std::vector<Structs::ButtonPos> arrowPos = {

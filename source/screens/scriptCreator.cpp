@@ -37,6 +37,7 @@
 
 // The to editing script.
 nlohmann::json editScript;
+std::string entryName = ""; // So we can set to *that* entry.
 
 void ScriptCreator::openJson(std::string fileName) {
 	std::string scriptFile = Config::ScriptPath + fileName;
@@ -103,9 +104,9 @@ void ScriptCreator::DrawSubMenu(void) const {
 void ScriptCreator::DrawScriptScreen(void) const {
 	Gui::DrawTop();
 	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
 	}
 	
 	Gui::DrawBottom();
@@ -155,8 +156,6 @@ void ScriptCreator::createNewJson(std::string fileName) {
 
 // Test.
 void ScriptCreator::createDownloadRelease() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// Repo.
 	std::string repo = Input::getString(50, "Enter the name of the Owner.");
 	repo += "/";
@@ -170,15 +169,13 @@ void ScriptCreator::createDownloadRelease() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryname] = { {{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}} };
+	editScript[entryName] = { {{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadRelease();'.");
 }
 
 // To-Do.
 
 void ScriptCreator::createDownloadFile() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// URL of the file.
 	std::string file = Input::getString(50, "Enter the URL of the file.");
 	// Output.
@@ -186,27 +183,23 @@ void ScriptCreator::createDownloadFile() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryname] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
+	editScript[entryName] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadFile();'.");
 }
 
 
 void ScriptCreator::createDeleteFile() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// URL of the file.
 	std::string file = Input::getString(50, "Enter the path to the file.");
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryname] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
+	editScript[entryName] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createDeleteFile();'.");
 }
 
 
 void ScriptCreator::createExtractFile() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// File path.
 	std::string file = Input::getString(50, "Enter the path to the file.");
 	// Input of the archive.
@@ -216,63 +209,53 @@ void ScriptCreator::createExtractFile() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryname] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
+	editScript[entryName] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createExtractFile();'.");
 }
 
 
 void ScriptCreator::createInstallCia() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// File path.
 	std::string file = Input::getString(50, "Enter the path to the CIA File.");
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryname] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
+	editScript[entryName] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createInstallCia();'.");
 }
 
 
 void ScriptCreator::createMkDir() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// Directory path.
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
-	editScript[entryname] = { {{"type", "mkdir"}, {"directory", directory}} };
+	editScript[entryName] = { {{"type", "mkdir"}, {"directory", directory}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createMkDir();'.");
 }
 
 void ScriptCreator::createRmDir() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// Directory path.
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
-	editScript[entryname] = { {{"type", "rmdir"}, {"directory", directory}} };
+	editScript[entryName] = { {{"type", "rmdir"}, {"directory", directory}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createRmDir();'.");
 }
 
 void ScriptCreator::createMkFile() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// File path.
 	std::string file = Input::getString(50, "Enter the path to the new File.");
 
-	editScript[entryname] = { {{"type", "mkfile"}, {"file", file}} };
+	editScript[entryName] = { {{"type", "mkfile"}, {"file", file}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createMkFile();'.");
 }
 
 void ScriptCreator::createTimeMsg() {
-	// Entry name.
-	std::string entryname = Input::getString(50, "Enter the name of the Entry.");
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 	// Seconds.
 	int seconds = Input::getUint(999, "Enter the Seconds for the Message to display.");
 
-	editScript[entryname] = { {{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}} };
+	editScript[entryName] = { {{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}} };
 	Logging::writeToLog("Execute 'ScriptCreator::createTimeMsg();'.");
 }
 
@@ -317,6 +300,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					jsonFileName += ".json";
 					createNewJson(jsonFileName);
 					openJson(jsonFileName);
+					entryName = Input::getString(50, "Enter the EntryName.");
 					Selection = 0;
 					mode = 1;
 				}
@@ -327,6 +311,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					jsonFileName = tempScript;
 					if(access(jsonFileName.c_str(), F_OK) != -1 ) {
 						openJson(jsonFileName);
+						entryName = Input::getString(50, "Enter the EntryName.");
 						Selection = 0;
 						mode = 1;
 					}

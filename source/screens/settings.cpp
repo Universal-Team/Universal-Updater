@@ -190,11 +190,10 @@ void Settings::DrawColorChanging(void) const {
 }
 
 void Settings::DrawCreditsScreen(void) const {
-	if (DisplayMode == 1) {
-		Gui::DrawTop();
-		std::string title = "Universal-Updater - ";
-		title += Lang::get("CREDITS");
-
+	std::string title = "Universal-Updater - ";
+	title += Lang::get("CREDITS");
+	Gui::DrawTop();
+	if (creditsPage != 4) {
 		if (Config::UseBars == true) {
 			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
 		} else {
@@ -206,22 +205,37 @@ void Settings::DrawCreditsScreen(void) const {
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
-		Gui::DrawBottom();
-		Gui::DrawArrow(0, 0, 0, 1);
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
-		Gui::DrawStringCentered(0, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
-		Gui::DrawStringCentered(0, 70, 0.5f, Config::TxtColor, Lang::get("HELP_TRANSLATE"), 320);
-		Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, "Pk11", 320);
-		Gui::DrawStringCentered(0, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
-		Gui::DrawStringCentered(0, 160, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
-		Gui::DrawStringCentered(0, 190, 0.5f, Config::TxtColor, Lang::get("CREATING_SCRIPTS"), 320);
-		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 220, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
-	} else if (DisplayMode == 2) {
-		Gui::DrawTop();
+	} else {
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		Gui::sprite(sprites_discord_idx, 115, 35);
-		Gui::DrawBottom();
+	}
+
+	Gui::DrawBottom();
+
+	if (creditsPage != 4) {
+		Gui::DrawArrow(0, 218, 0, 1);
+		Gui::DrawArrow(318, 240, 180.0, 1);
+	}
+
+	if (creditsPage == 1) {
+		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
+		Gui::DrawString(5, 30, 0.6f, Config::TxtColor, "- _mapple²\n- antoine62\n- Chips\n- David Pires\n- Flame\n- lemonnade0\n- Pk11\n- Roby Spia\n- StackZ\n- YoSoy");
+		Gui::DrawString(180, 30, 0.6f, Config::TxtColor, "Русский\nFrançais\nPortuguês\nPortuguês\nBruh\nLietuvių\n日本語\nItaliano\nDeutsch, English\nEspañol");
+	} else if (creditsPage == 2) {
+		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
+		Gui::DrawStringCentered(-65, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
+		Gui::DrawStringCentered(-40, 65, 0.7f, Config::TxtColor, "Flame");
+		Gui::DrawStringCentered(-38, 95, 0.7f, Config::TxtColor, "Pk11");
+		Gui::DrawStringCentered(-60, 125, 0.7f, Config::TxtColor, "RocketRobz");
+		Gui::DrawStringCentered(-42, 155, 0.7f, Config::TxtColor, "StackZ");
+		Gui::DrawStringCentered(-65, 185, 0.7f, Config::TxtColor, "TotallyNotGuy");
+	} else if (creditsPage == 3) {
+		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
+		Gui::DrawString(5, 27, 0.55f, Config::TxtColor, "- DualBladedKirito\n\n- Glazed_Belmont\n\n- Pk11\n\n- StackZ\n\n- The Conceptionist\n\n- YoSoy");
+		Gui::DrawString(180, 27, 0.55f, Config::TxtColor, "1\n\n1\n\n1\n\n5\n\n10\n\n1/2");
+	} else if (creditsPage == 4) {
 		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+		Gui::DrawStringCentered(0, -2, 0.55f, Config::TxtColor, Lang::get("LINK"), 320);
 		Gui::DrawArrow(0, 218, 0, 1);
 	}
 }
@@ -466,30 +480,16 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 }
 
 void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
-	gspWaitForVBlank();
-	if(delay > 0) {
-		delay--;
-	} else {
-		delay = 120;
-		discordText = !discordText;
+	if ((hDown & KEY_LEFT || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		if (creditsPage == 1)	mode = 0;
+		else if (creditsPage > 1)	creditsPage--;
+		
+	} else if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
+		if (creditsPage < 4)	creditsPage++;
 	}
-	if (DisplayMode == 1) {
-		if (hDown & KEY_TOUCH) {
-			if (touching(touch, barPos[0])) {
-				DisplayMode = 2;
-			} else if (touching(touch, arrowPos[3])) {
-				mode = 0;
-			}
-		}
-		if (hDown & KEY_B) {
-			mode = 0;
-		}
-	} else if (DisplayMode == 2) {
-		if (hDown & KEY_B) {
-			DisplayMode = 1;
-		} else if (hDown & KEY_TOUCH && touching(touch, arrowPos[2])) {
-			DisplayMode = 1;
-		}
+
+	if (hDown & KEY_B) {
+		mode = 0;
 	}
 }
 
