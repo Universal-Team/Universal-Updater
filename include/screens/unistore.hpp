@@ -43,12 +43,14 @@ private:
 	void DrawStoreList(void) const;
 	void DrawStore(void) const;
 	void DrawSearch(void) const;
+	void DrawFullURLScreen(void) const;
 	void DrawGitHubScreen(void) const;
 
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void SearchLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 
@@ -57,9 +59,10 @@ private:
 	int mode = 0;
 	std::string selectedOptionAppStore;
 
-	// Stuff for the GitHub Store Search function.
+	// Stuff for the GitHub Store Search function and Full URL.
 	std::string OwnerAndRepo = "";
 	std::string fileName = "";
+	std::string FullURL = "";
 
 	mutable int selection = 0;
 	mutable int selection2 = 0;
