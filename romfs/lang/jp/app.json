@@ -90,5 +90,8 @@
 	"SCRIPTS_SUBMENU": "スクリプトサブメニュー",
 	"STORE_LIST": "ストアリスト",
 	"STORE_SEARCH": "ストアで検索する",
-	"UNISTORE_SUBMENU": "UniStoreサブメニュー"
+	"UNISTORE_SUBMENU": "UniStoreサブメニュー",
+	"OWNER_AND_REPO": "Owner & Repo",
+	"FILENAME": "Filename",
+	"OK": "OK"
 }
