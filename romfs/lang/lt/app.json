@@ -90,5 +90,8 @@
 	"SCRIPTS_SUBMENU": "Scripts Submenu",
 	"STORE_LIST": "Store list",
 	"STORE_SEARCH": "Store search",
-	"UNISTORE_SUBMENU": "UniStore SubMenu"
+	"UNISTORE_SUBMENU": "UniStore SubMenu",
+	"OWNER_AND_REPO": "Owner & Repo",
+	"FILENAME": "Filename",
+	"OK": "OK"
 }
