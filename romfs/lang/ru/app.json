@@ -90,5 +90,8 @@
 	"SCRIPTS_SUBMENU": "Меню скриптов",
 	"STORE_LIST": "Список магазинов",
 	"STORE_SEARCH": "Поиск магазина",
-	"UNISTORE_SUBMENU": "Меню UniStore"
+	"UNISTORE_SUBMENU": "Меню UniStore",
+	"OWNER_AND_REPO": "Owner & Repo",
+	"FILENAME": "Filename",
+	"OK": "OK"
 }
