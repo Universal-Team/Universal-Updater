@@ -252,13 +252,6 @@ void UniStore::DrawStore(void) const {
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(appStoreList.size());
 	std::string info;
 	Gui::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	}
 
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
 		if (appStoreJson.at(selectedOptionAppStore).at("info").contains("posX") && appStoreJson.at(selectedOptionAppStore).at("info").contains("posY")) {
@@ -267,7 +260,16 @@ void UniStore::DrawStore(void) const {
 			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
 		}
 	}
+
 	
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
+	}
+
 	Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreList[selection2]), 400);
 	Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
 	Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
