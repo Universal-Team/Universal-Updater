@@ -855,11 +855,11 @@ void UniStore::DrawGitHubScreen(void) const {
 
 void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[0])) {
-		OwnerAndRepo = Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+		OwnerAndRepo = Input::getStringLong(Lang::get("ENTER_OWNER_AND_REPO"));
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[1])) {
-		fileName = Input::getString(Lang::get("ENTER_FILENAME"));
+		fileName = Input::getStringLong(Lang::get("ENTER_FILENAME"));
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[2])) {
@@ -904,11 +904,11 @@ void UniStore::DrawFullURLScreen(void) const {
 
 void UniStore::FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[0])) {
-		FullURL = Input::getString(Lang::get("ENTER_FULL_URL"));
+		FullURL = Input::getStringLong(Lang::get("ENTER_FULL_URL"));
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[1])) {
-		fileName = Input::getString(Lang::get("ENTER_FILENAME"));
+		fileName = Input::getStringLong(Lang::get("ENTER_FILENAME"));
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[2])) {

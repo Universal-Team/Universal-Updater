@@ -11,7 +11,8 @@ namespace Input {
 	// -1 if invaild text entered
 	int getUint(int max, std::string Text);
 	std::string getString(std::string Text);
-	std::string getString(uint maxLength, std::string Text);
+	std::string getStringLong(std::string Text); // For longer text.
+	std::string getString(uint maxLength, std::string Text, float inputTextSize = 0.6f);
 }
 
 #endif

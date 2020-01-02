@@ -41,7 +41,6 @@ int Config::TxtColor;
 int Config::SelectedColor;
 int Config::UnselectedColor;
 int Config::viewMode;
-int Config::ColorKeys;
 int Config::progressbarColor;
 std::string Config::ScriptPath;
 std::string Config::MusicPath;
@@ -109,12 +108,6 @@ void Config::load() {
 			Config::viewMode = getInt("VIEWMODE");
 		}
 
-		if(!configJson.contains("COLORKEYS")) {
-			Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
-		} else {
-			Config::ColorKeys = getInt("COLORKEYS");
-		}
-
 		if(!configJson.contains("PROGRESSBARCOLOR")) {
 			Config::progressbarColor = WHITE;
 		} else {
@@ -156,7 +149,6 @@ void Config::load() {
 		Config::ScriptPath = SCRIPTS_PATH;
 		Config::lang = 2;
 		Config::viewMode = 0;
-		Config::ColorKeys = C2D_Color32(0, 0, 200, 255);
 		Config::progressbarColor = WHITE;
 		Config::MusicPath = MUSIC_PATH;
 		Config::Logging = false;
@@ -175,7 +167,6 @@ void Config::save() {
 	Config::setString("SCRIPTPATH", Config::ScriptPath);
 	Config::setInt("LANGUAGE", Config::lang);
 	Config::setInt("VIEWMODE", Config::viewMode);
-	Config::setInt("COLORKEYS", Config::ColorKeys);
 	Config::setInt("PROGRESSBARCOLOR", Config::progressbarColor);
 	Config::setString("MUSICPATH", Config::MusicPath);
 	Config::setBool("LOGGING", Config::Logging);
@@ -198,7 +189,6 @@ void Config::initializeNewConfig() {
 	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
 	Config::setInt("LANGUAGE", 2);
 	Config::setInt("VIEWMODE", 0);
-	Config::setInt("COLORKEYS", C2D_Color32(0, 0, 200, 255));
 	Config::setInt("PROGRESSBARCOLOR", WHITE);
 	Config::setString("MUSICPATH", MUSIC_PATH);
 	Config::setBool("LOGGING", false);
