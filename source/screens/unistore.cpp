@@ -450,25 +450,29 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[5]))) {
-		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
-			storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
-				ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+		if (checkWifiStatus() == true) {
+			if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+				if(storeInfo[selection].url != "" && storeInfo[selection].url != "MISSING: storeInfo.url" &&
+				storeInfo[selection].file != "" && storeInfo[selection].file != "MISSING: storeInfo.file") {
+					ScriptHelper::downloadFile(storeInfo[selection].url, storeInfo[selection].file, Lang::get("UPDATING"));
+				}
+				if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
+				storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
+					ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
+				}
+				// Refresh the list.
+				dirContents.clear();
+				storeInfo.clear();
+				chdir(Config::StorePath.c_str());
+				getDirectoryContents(dirContents, {"unistore"});
+				for(uint i=0;i<dirContents.size();i++) {
+					storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+					descript();
+					loadStoreDesc();
+				}
 			}
-			if(storeInfo[selection].sheetURL != "" && storeInfo[selection].sheetURL != "MISSING: storeInfo.sheetURL" &&
-			storeInfo[selection].storeSheet != "" && storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
-				ScriptHelper::downloadFile(storeInfo[selection].sheetURL, storeInfo[selection].storeSheet, Lang::get("UPDATING"));
-			}
-			// Refresh the list.
-			dirContents.clear();
-			storeInfo.clear();
-			chdir(Config::StorePath.c_str());
-			getDirectoryContents(dirContents, {"unistore"});
-			for(uint i=0;i<dirContents.size();i++) {
-				storeInfo.push_back(parseStoreInfo(dirContents[i].name));
-				descript();
-				loadStoreDesc();
-			}
+		} else {
+			notConnectedMsg();
 		}
 	}
 
@@ -863,11 +867,15 @@ void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[2])) {
-		std::string URL = "https://github.com/";
-		URL += OwnerAndRepo;
-		URL += "/raw/master/unistore/";
-		URL += fileName;
-		ScriptHelper::downloadFile(URL, Config::StorePath + fileName, Lang::get("DOWNLOADING") + fileName);
+		if (checkWifiStatus() == true) {
+			std::string URL = "https://github.com/";
+			URL += OwnerAndRepo;
+			URL += "/raw/master/unistore/";
+			URL += fileName;
+			ScriptHelper::downloadFile(URL, Config::StorePath + fileName, Lang::get("DOWNLOADING") + fileName);
+		} else {
+			notConnectedMsg();
+		}
 	}
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
@@ -912,7 +920,11 @@ void UniStore::FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[2])) {
-		ScriptHelper::downloadFile(FullURL, Config::StorePath + fileName, Lang::get("DOWNLOADING") + fileName);
+		if (checkWifiStatus() == true) {
+			ScriptHelper::downloadFile(FullURL, Config::StorePath + fileName, Lang::get("DOWNLOADING") + fileName);
+		} else {
+			notConnectedMsg();
+		}
 	}
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
