@@ -45,19 +45,16 @@ private:
 	int colorMode = 0;
 	int mode = 0;
 	int Selection = 0;
-	int creditsPage = 1;
 
 	// Draws.
 	void DrawSubMenu(void) const;
 	void DrawLanguageSelection(void) const;
 	void DrawColorChanging(void) const;
-	void DrawCreditsScreen(void) const;
 	void DrawMiscSettings(void) const;
 	// Logic's.
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void LanguageSelection(u32 hDown, touchPosition touch);
 	void colorChanging(u32 hDown, touchPosition touch);
-	void CreditsLogic(u32 hDown, touchPosition touch);
 	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	std::vector<Structs::ButtonPos> mainButtons = {

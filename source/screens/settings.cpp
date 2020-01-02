@@ -26,6 +26,7 @@
 
 #include "keyboard.hpp"
 
+#include "screens/credits.hpp"
 #include "screens/settings.hpp"
 
 #include "utils/config.hpp"
@@ -45,8 +46,6 @@ void Settings::Draw(void) const {
 		DrawLanguageSelection();
 	} else if (mode == 2) {
 		DrawColorChanging();
-	} else if (mode == 3) {
-		DrawCreditsScreen();
 	} else if (mode == 4) {
 		DrawMiscSettings();
 	}
@@ -189,57 +188,6 @@ void Settings::DrawColorChanging(void) const {
 	}
 }
 
-void Settings::DrawCreditsScreen(void) const {
-	std::string title = "Universal-Updater - ";
-	title += Lang::get("CREDITS");
-	Gui::DrawTop();
-	if (creditsPage != 4) {
-		if (Config::UseBars == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, title, 400);
-		}
-		Gui::DrawStringCentered(0, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
-		Gui::DrawStringCentered(0, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
-		Gui::sprite(sprites_voltZ_idx, 150, 115);
-		std::string currentVersion = Lang::get("CURRENT_VERSION");
-		currentVersion += V_STRING;
-		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
-	} else {
-		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
-		Gui::sprite(sprites_discord_idx, 115, 35);
-	}
-
-	Gui::DrawBottom();
-
-	if (creditsPage != 4) {
-		Gui::DrawArrow(0, 218, 0, 1);
-		Gui::DrawArrow(318, 240, 180.0, 1);
-	}
-
-	if (creditsPage == 1) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
-		Gui::DrawString(5, 30, 0.6f, Config::TxtColor, "- _mapple²\n- antoine62\n- Chips\n- David Pires\n- Flame\n- lemonnade0\n- Pk11\n- Roby Spia\n- StackZ\n- YoSoy");
-		Gui::DrawString(180, 30, 0.6f, Config::TxtColor, "Русский\nFrançais\nPortuguês\nPortuguês\nBruh\nLietuvių\n日本語\nItaliano\nDeutsch, English\nEspañol");
-	} else if (creditsPage == 2) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
-		Gui::DrawStringCentered(-65, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
-		Gui::DrawStringCentered(-40, 65, 0.7f, Config::TxtColor, "Flame");
-		Gui::DrawStringCentered(-38, 95, 0.7f, Config::TxtColor, "Pk11");
-		Gui::DrawStringCentered(-60, 125, 0.7f, Config::TxtColor, "RocketRobz");
-		Gui::DrawStringCentered(-42, 155, 0.7f, Config::TxtColor, "StackZ");
-		Gui::DrawStringCentered(-65, 185, 0.7f, Config::TxtColor, "TotallyNotGuy");
-	} else if (creditsPage == 3) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
-		Gui::DrawString(5, 27, 0.55f, Config::TxtColor, "- DualBladedKirito\n\n- Glazed_Belmont\n\n- Pk11\n\n- StackZ\n\n- The Conceptionist\n\n- YoSoy");
-		Gui::DrawString(180, 27, 0.55f, Config::TxtColor, "1\n\n1\n\n1\n\n5\n\n10\n\n1/2");
-	} else if (creditsPage == 4) {
-		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
-		Gui::DrawStringCentered(0, -2, 0.55f, Config::TxtColor, Lang::get("LINK"), 320);
-		Gui::DrawArrow(0, 218, 0, 1);
-	}
-}
-
 void Settings::DrawMiscSettings(void) const {
 	Gui::DrawTop();
 	if (Config::UseBars == true) {
@@ -312,7 +260,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
-		mode = Selection+1;
+		if (Selection + 1 == 3)	Screen::set(std::make_unique<Credits>());
+		else	mode = Selection+1;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -321,7 +270,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[1])) {
 			mode = 2;
  		} else if (touching(touch, mainButtons[2])) {
-			mode = 3;
+			Screen::set(std::make_unique<Credits>());
 		}
 	}
 
@@ -479,20 +428,6 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 }
 
-void Settings::CreditsLogic(u32 hDown, touchPosition touch) {
-	if ((hDown & KEY_LEFT || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		if (creditsPage == 1)	mode = 0;
-		else if (creditsPage > 1)	creditsPage--;
-		
-	} else if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
-		if (creditsPage < 4)	creditsPage++;
-	}
-
-	if (hDown & KEY_B) {
-		mode = 0;
-	}
-}
-
 void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
 		SubMenuLogic(hDown, hHeld, touch);
@@ -500,8 +435,6 @@ void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		LanguageSelection(hDown, touch);
 	} else if (mode == 2) {
 		colorChanging(hDown, touch);
-	} else if (mode == 3) {
-		CreditsLogic(hDown, touch);
 	} else if (mode == 4) {
 		MiscSettingsLogic(hDown, hHeld, touch);
 	}
