@@ -322,6 +322,8 @@ void UniStore::Draw(void) const {
 		DrawStore();
 	} else if (mode == 3) {
 		DrawSearch();
+	} else if (mode == 4) {
+		DrawGitHubScreen();
 	}
 }
 
@@ -658,6 +660,8 @@ void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		StoreLogic(hDown, hHeld, touch);
 	} else if (mode == 3) {
 		SearchLogic(hDown, hHeld, touch);
+	} else if (mode == 4) {
+		GitHubLogic(hDown, hHeld, touch);
 	}
 
 	// Switch ViewMode.
@@ -813,13 +817,7 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string FILE = Input::getString(Lang::get("ENTER_FILENAME"));
 			ScriptHelper::downloadFile(fullURL, Config::StorePath + FILE, Lang::get("DOWNLOADING") + FILE);
 		} else if (searchSelection == 1) {
-			std::string URL = "https://github.com/";
-			URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
-			gspWaitForVBlank();
-			std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
-			URL += "/raw/master/unistore/";
-			URL += FILENAME;
-			ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+			mode = 4;
 		}
 	}
 
@@ -829,12 +827,55 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		std::string FILE = Input::getString(Lang::get("ENTER_FILENAME"));
 		ScriptHelper::downloadFile(fullURL, Config::StorePath + FILE, Lang::get("DOWNLOADING") + FILE);
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[1])) {
+		mode = 4;
+	}
+}
+
+void UniStore::DrawGitHubScreen(void) const {
+	Gui::DrawTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GITHUB"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GITHUB"), 400);
+	}
+
+	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	Gui::DrawBottom();
+	Gui::DrawArrow(0, 218, 0, 1);
+
+	Gui::DrawStringCentered(0, 28, 0.7f, Config::TxtColor, Lang::get("OWNER_AND_REPO"), 320);
+	Gui::DrawStringCentered(0, 108, 0.7f, Config::TxtColor, Lang::get("FILENAME"), 320);
+
+	Gui::Draw_Rect(GitHubPos[0].x, GitHubPos[0].y, GitHubPos[0].w, GitHubPos[0].h, Config::Color1);
+	Gui::Draw_Rect(GitHubPos[1].x, GitHubPos[1].y, GitHubPos[1].w, GitHubPos[1].h, Config::Color1);
+	Gui::Draw_Rect(GitHubPos[2].x, GitHubPos[2].y, GitHubPos[2].w, GitHubPos[2].h, Config::Color1);
+
+	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 250);
+	Gui::DrawString(35, 57, 0.50f, Config::TxtColor, OwnerAndRepo, 260);
+	Gui::DrawString(35, 137, 0.50f, Config::TxtColor, fileName, 260);
+}
+
+void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[0])) {
+		OwnerAndRepo = Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[1])) {
+		fileName = Input::getString(Lang::get("ENTER_FILENAME"));
+	}
+
+	if (hDown & KEY_TOUCH && touching(touch, GitHubPos[2])) {
 		std::string URL = "https://github.com/";
-		URL += Input::getString(Lang::get("ENTER_OWNER_AND_REPO"));
-		gspWaitForVBlank();
-		std::string FILENAME = Input::getString(Lang::get("ENTER_FILENAME"));
+		URL += OwnerAndRepo;
 		URL += "/raw/master/unistore/";
-		URL += FILENAME;
-		ScriptHelper::downloadFile(URL, Config::StorePath + FILENAME, Lang::get("DOWNLOADING") + FILENAME);
+		URL += fileName;
+		ScriptHelper::downloadFile(URL, Config::StorePath + fileName, Lang::get("DOWNLOADING") + fileName);
+	}
+
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		// Reset everything.
+		OwnerAndRepo = "";
+		fileName = "";
+		mode = 3;
 	}
 }

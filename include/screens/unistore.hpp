@@ -43,15 +43,23 @@ private:
 	void DrawStoreList(void) const;
 	void DrawStore(void) const;
 	void DrawSearch(void) const;
+	void DrawGitHubScreen(void) const;
 
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void SearchLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch);
+
+
 	void execute();
 	void descript();
 	int mode = 0;
 	std::string selectedOptionAppStore;
+
+	// Stuff for the GitHub Store Search function.
+	std::string OwnerAndRepo = "";
+	std::string fileName = "";
 
 	mutable int selection = 0;
 	mutable int selection2 = 0;
@@ -79,6 +87,12 @@ private:
 	std::vector<Structs::ButtonPos> URLBtn = {
 		{10, 100, 140, 35, -1}, // FULL URL.
 		{170, 100, 140, 35, -1}, // Github.
+	};
+
+	std::vector<Structs::ButtonPos> GitHubPos = {
+		{30, 50, 260, 30, -1}, // Owner & Repo.
+		{30, 130, 260, 30, -1}, // Filename.
+		{135, 180, 50, 30, -1}, // OK.
 	};
 
 	std::vector<Structs::ButtonPos> subPos = {
