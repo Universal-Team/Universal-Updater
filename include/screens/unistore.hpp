@@ -56,8 +56,10 @@ private:
 
 	void execute();
 	void descript();
+	bool handleIfDisplayText();
 	int mode = 0;
 	std::string selectedOptionAppStore;
+	mutable bool displayInformations = true;
 
 	// Stuff for the GitHub Store Search function and Full URL.
 	std::string OwnerAndRepo = "";

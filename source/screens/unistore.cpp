@@ -252,7 +252,11 @@ void UniStore::DrawStore(void) const {
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(appStoreList.size());
 	std::string info;
 	Gui::DrawTop();
-
+	// Top Background.
+	if (appStoreJson.at("storeInfo").contains("iconIndexTop") && sheetHasLoaded == true) {
+		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson["storeInfo"]["iconIndexTop"]), 0, 0, 0.5f, NULL);
+	}
+	// Icon.
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
 		if (appStoreJson.at(selectedOptionAppStore).at("info").contains("posX") && appStoreJson.at(selectedOptionAppStore).at("info").contains("posY")) {
 			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), appStoreJson[selectedOptionAppStore]["info"]["posX"], appStoreJson[selectedOptionAppStore]["info"]["posY"], 0.5f, NULL);
@@ -261,32 +265,38 @@ void UniStore::DrawStore(void) const {
 		}
 	}
 
-	
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	}
+	if (displayInformations != false) {
+		if (Config::UseBars == true) {
+			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
+		}
 
-	Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreList[selection2]), 400);
-	Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
-	Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
+		Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreList[selection2]), 400);
+		Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson[selectedOptionAppStore]["info"]["author"]), 400);
+		Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson[selectedOptionAppStore]["info"]["description"]), 400);
 
-	if (appStoreJson[selectedOptionAppStore]["info"]["version"] != "") {
-		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
-	} else {
-		Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + Lang::get("UNKNOWN"), 400);
-	}
+		if (appStoreJson[selectedOptionAppStore]["info"]["version"] != "") {
+			Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson[selectedOptionAppStore]["info"]["version"]), 400);
+		} else {
+			Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + Lang::get("UNKNOWN"), 400);
+		}
 
-	if (appStoreJson[selectedOptionAppStore]["info"]["fileSize"] != 0) {
-		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
-	} else {
-		Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + Lang::get("UNKNOWN"), 400);
+		if (appStoreJson[selectedOptionAppStore]["info"]["fileSize"] != 0) {
+			Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson[selectedOptionAppStore]["info"]["fileSize"])), 400);
+		} else {
+			Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + Lang::get("UNKNOWN"), 400);
+		}
 	}
 	
 	Gui::DrawBottom();
+	// Bottom Background.
+	if (appStoreJson.at("storeInfo").contains("iconIndexBottom") && sheetHasLoaded == true) {
+		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson["storeInfo"]["iconIndexBottom"]), 0, 0, 0.5f, NULL);
+	}
+
 	Gui::DrawArrow(295, -1);
 	Gui::DrawArrow(315, 240, 180.0);
 	Gui::DrawArrow(0, 218, 0, 1);
@@ -409,6 +419,18 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
+bool UniStore::handleIfDisplayText() {
+	if (appStoreJson.at("storeInfo").contains("displayInformation")) {
+		if (appStoreJson["storeInfo"]["displayInformation"] != true) {
+			return false;
+		} else {
+			return true;
+		}
+	} else {
+		return true;
+	}
+}
+
 
 void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
@@ -493,6 +515,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				appStoreList = parseStoreObjects(currentStoreFile);
 				loadStoreColors(appStoreJson);
 				selectedOptionAppStore = appStoreList[0];
+				displayInformations = handleIfDisplayText();
 				isScriptSelected = true;
 				mode = 2;
 			}
@@ -537,6 +560,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 						appStoreList = parseStoreObjects(currentStoreFile);
 						loadStoreColors(appStoreJson);
 						selectedOptionAppStore = appStoreList[0];
+						displayInformations = handleIfDisplayText();
 						isScriptSelected = true;
 						mode = 2;
 					}
@@ -557,6 +581,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 						appStoreList = parseStoreObjects(currentStoreFile);
 						loadStoreColors(appStoreJson);
 						selectedOptionAppStore = appStoreList[0];
+						displayInformations = handleIfDisplayText();
 						isScriptSelected = true;
 						mode = 2;
 					}
