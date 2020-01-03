@@ -91,7 +91,7 @@
 	"STORE_LIST": "Lista de Tiendas",
 	"STORE_SEARCH": "Buscar tienda",
 	"UNISTORE_SUBMENU": "UniStore SubMenu",
-	"OWNER_AND_REPO": "Owner & Repo",
-	"FILENAME": "Filename",
-	"OK": "OK"
+	"OWNER_AND_REPO": "Propietario y Repo",
+	"FILENAME": "Nombre de archivo",
+	"OK": "Aceptar"
 }
