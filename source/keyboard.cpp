@@ -27,11 +27,11 @@ Structs::Key keysQWERTYShift[] = {
 	{"Z", 35, 67}, {"X", 60, 67}, {"C", 85, 67}, {"V", 110, 67}, {"B", 135, 67}, {"N", 160, 67}, {"M", 185, 67}, {"<,", 210, 67}, {">", 235, 67}, {"?", 260, 67}, {"\\", 210, 90},
 };
 Structs::Key modifierKeys[] = {
-	{"bksp", 300, 0, 20},	// Backspace
-	{"caps",   0, 45, 20},	// Caps Lock
-	{"entr", 300, 45, 20},	// Enter
-	{"lsft",   0, 67, 30},	// Left Shift
-	{"rsft", 285, 67, 35},	// Right Shift
+	{"\uE071", 300, 0, 20},	// Backspace
+	{"\uE01D",   0, 45, 20},	// Caps Lock
+	{"\uE056", 300, 45, 20},	// Enter
+	{"\uE01B",   0, 67, 30},	// Left Shift
+	{"\uE01B", 285, 67, 35},	// Right Shift
 	{"	",    60, 90, 20},	// Tab
 	{" ",     85, 90, 120},	// Space
 };
@@ -100,7 +100,18 @@ void Input::drawKeyboard() {
 		}
 	}
 	for(uint i=0;i<(sizeof(modifierKeys)/sizeof(modifierKeys[0]));i++) {
+		std::string enter = modifierKeys[2].character;
+		std::string arrowUp = modifierKeys[3].character;
+		std::string backSpace = modifierKeys[0].character;
+		std::string caps = modifierKeys[1].character;
+
 		C2D_DrawRectSolid(modifierKeys[i].x, modifierKeys[i].y+103, 0.5f, modifierKeys[i].w, 20, Config::Color1 & C2D_Color32(255, 255, 255, 200));
+		Gui::DrawString(modifierKeys[2].x+5, modifierKeys[2].y+105, 0.50, Config::TxtColor, enter);
+		Gui::DrawString(modifierKeys[3].x+7, modifierKeys[3].y+105, 0.45, Config::TxtColor, arrowUp);
+		Gui::DrawString(modifierKeys[4].x+10, modifierKeys[4].y+105, 0.45, Config::TxtColor, arrowUp);
+
+		Gui::DrawString(modifierKeys[0].x+5, modifierKeys[0].y+105, 0.45, Config::TxtColor, backSpace);
+		Gui::DrawString(modifierKeys[1].x+5, modifierKeys[1].y+105, 0.45, Config::TxtColor, caps);
 	}
 }
 
@@ -236,23 +247,15 @@ std::string Input::getString(uint maxLength, std::string Text, float inputTextSi
 			// Check if a modifier key was pressed
 			for(uint i=0;i<(sizeof(modifierKeys)/sizeof(modifierKeys[0]));i++) {
 				if((touch.px > modifierKeys[i].x-2 && touch.px < modifierKeys[i].x+modifierKeys[i].w+2) && (touch.py > modifierKeys[i].y+(103)-2 && touch.py < modifierKeys[i].y+18+(103))) {
-					if(modifierKeys[i].character == "bksp") {
+					if(modifierKeys[i].character == "\uE071") {
 						string = string.substr(0, string.length()-1);
-					} else if(modifierKeys[i].character == "caps") {
+					} else if(modifierKeys[i].character == "\uE01D") {
 						caps = !caps;
-					} else if(modifierKeys[i].character == "entr") {
+					} else if(modifierKeys[i].character == "\uE056") {
 						enter = true;
-					} else if(modifierKeys[i].character == "lsft") {
+					} else if(modifierKeys[i].character == "\uE01B") {
 						if(shift)	shift = 0;
 						else		shift = 1;
-						if(shift) {
-							keyDownDelay = -1;
-						} else {
-							keyDownDelay = 0;
-						}
-					} else if(modifierKeys[i].character == "rsft") {
-						if(shift)	shift = 0;
-						else		shift = 2;
 						if(shift) {
 							keyDownDelay = -1;
 						} else {
