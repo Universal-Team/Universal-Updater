@@ -132,6 +132,19 @@ void freeSheet() {
 	sheetHasLoaded = false;
 }
 
+void drawBlend(int key, int x, int y) {
+	C2D_ImageTint tint;
+	C2D_SetImageTint(&tint, C2D_TopLeft, C2D_Color32(0, 0, 0, 180), 0.5);
+	C2D_SetImageTint(&tint, C2D_TopRight, C2D_Color32(0, 0, 0, 180), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotLeft, C2D_Color32(0, 0, 0, 180), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotRight, C2D_Color32(0, 0, 0, 180), 0.5);
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, key), x, y, 0.5f, &tint);
+}
+
+void drawNormal(int key, int x, int y) {
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, key), x, y, 0.5f, NULL);
+}
+
 void UniStore::descript() {
 	if (storeInfo[selection].description != "" || storeInfo[selection].description != "MISSING: storeInfo.description") {
 		storeDesc = storeInfo[selection].description;
@@ -254,14 +267,15 @@ void UniStore::DrawStore(void) const {
 	Gui::DrawTop();
 	// Top Background.
 	if (appStoreJson.at("storeInfo").contains("iconIndexTop") && sheetHasLoaded == true) {
-		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson["storeInfo"]["iconIndexTop"]), 0, 0, 0.5f, NULL);
+		drawNormal(appStoreJson["storeInfo"]["iconIndexTop"], 0, 0);
 	}
+
 	// Icon.
 	if (appStoreJson.at(selectedOptionAppStore).at("info").contains("iconIndex") && sheetHasLoaded == true) {
 		if (appStoreJson.at(selectedOptionAppStore).at("info").contains("posX") && appStoreJson.at(selectedOptionAppStore).at("info").contains("posY")) {
-			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), appStoreJson[selectedOptionAppStore]["info"]["posX"], appStoreJson[selectedOptionAppStore]["info"]["posY"], 0.5f, NULL);
+			drawNormal(appStoreJson[selectedOptionAppStore]["info"]["iconIndex"], appStoreJson[selectedOptionAppStore]["info"]["posX"], appStoreJson[selectedOptionAppStore]["info"]["posY"]);
 		} else {
-			C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson[selectedOptionAppStore]["info"]["iconIndex"]), 175, 155, 0.5f, NULL);
+			drawNormal(appStoreJson[selectedOptionAppStore]["info"]["iconIndex"], 175, 155);
 		}
 	}
 
@@ -294,7 +308,7 @@ void UniStore::DrawStore(void) const {
 	Gui::DrawBottom();
 	// Bottom Background.
 	if (appStoreJson.at("storeInfo").contains("iconIndexBottom") && sheetHasLoaded == true) {
-		C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, appStoreJson["storeInfo"]["iconIndexBottom"]), 0, 0, 0.5f, NULL);
+		drawNormal(appStoreJson["storeInfo"]["iconIndexBottom"], 0, 0);
 	}
 
 	Gui::DrawArrow(295, -1);
@@ -306,9 +320,17 @@ void UniStore::DrawStore(void) const {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreList.size();i++) {
 			info = appStoreList[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
+				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
+					drawNormal(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
+				} else {
+					Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
+				}
 			} else {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
+				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
+					drawBlend(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
+				} else {
+					Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
+				}
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
@@ -316,9 +338,17 @@ void UniStore::DrawStore(void) const {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreList.size();i++) {
 			info = appStoreList[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
+				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
+					drawNormal(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
+				} else {
+					Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
+				}
 			} else {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
+				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
+					drawBlend(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
+				} else {
+					Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
+				}
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}
