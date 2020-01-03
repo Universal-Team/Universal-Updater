@@ -882,8 +882,8 @@ void UniStore::DrawGitHubScreen(void) const {
 
 	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 40);
 
-	Gui::DrawStringCentered(-70, 57, 0.5f, Config::TxtColor, OwnerAndRepo, 130);
-	Gui::DrawStringCentered(-70, 137, 0.5f, Config::TxtColor, fileName, 130);
+	Gui::DrawStringCentered(0, 57, 0.5f, Config::TxtColor, OwnerAndRepo, 250);
+	Gui::DrawStringCentered(0, 137, 0.5f, Config::TxtColor, fileName, 250);
 }
 
 void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -936,8 +936,8 @@ void UniStore::DrawFullURLScreen(void) const {
 
 	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 40);
 
-	Gui::DrawStringCentered(-70, 57, 0.45f, Config::TxtColor, FullURL, 130);
-	Gui::DrawStringCentered(-70, 137, 0.45f, Config::TxtColor, fileName, 130);
+	Gui::DrawStringCentered(0, 57, 0.45f, Config::TxtColor, FullURL, 250);
+	Gui::DrawStringCentered(0, 137, 0.45f, Config::TxtColor, fileName, 250);
 }
 
 void UniStore::FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch) {
