@@ -60,10 +60,10 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "UniStore"))/2-150+70+10, mainButtons[0].y+12, 0.6f, Config::TxtColor, "UniStore", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTS")))/2+150-70, mainButtons[1].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SETTINGS")))/2-150+70, mainButtons[2].y+12, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "FTP"))/2+150-70, mainButtons[3].y+12, 0.6f, Config::TxtColor, "FTP", 140);
+	Gui::DrawStringCentered(-80+10, mainButtons[0].y+12, 0.6f, Config::TxtColor, "UniStore", 130);
+	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTS"), 130);
+	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 130);
+	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, Config::TxtColor, "FTP", 130);
 
 	// Draw UniStore Icon. ;P
 	Gui::sprite(sprites_uniStore_idx, 10, 65);

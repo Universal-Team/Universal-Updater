@@ -30,7 +30,7 @@
 #include <string>
 
 namespace Config {
-	extern int lang, Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor, viewMode, progressbarColor;
+	extern int LangPath, lang, Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor, viewMode, progressbarColor;
 	extern std::string ScriptPath, MusicPath, StorePath;
 	extern bool Logging, UseBars;
 
@@ -46,8 +46,6 @@ namespace Config {
 
 	std::string getString(const std::string &key);
 	void setString(const std::string &key, const std::string &v);
-
-	int getLang(const std::string &key);
 }
 
 #endif

@@ -64,12 +64,12 @@ void Credits::Draw(void) const {
 		Gui::DrawString(180, 30, 0.6f, Config::TxtColor, "Русский\nFrançais\nPortuguês\nPortuguês\nBruh\nLietuvių\n日本語\nItaliano\nDeutsch, English\nEspañol");
 	} else if (creditsPage == 2) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
-		Gui::DrawStringCentered(-65, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
-		Gui::DrawStringCentered(-40, 65, 0.7f, Config::TxtColor, "Flame");
-		Gui::DrawStringCentered(-38, 95, 0.7f, Config::TxtColor, "Pk11");
-		Gui::DrawStringCentered(-60, 125, 0.7f, Config::TxtColor, "RocketRobz");
-		Gui::DrawStringCentered(-42, 155, 0.7f, Config::TxtColor, "StackZ");
-		Gui::DrawStringCentered(-65, 185, 0.7f, Config::TxtColor, "TotallyNotGuy");
+		Gui::DrawStringCentered(0, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
+		Gui::DrawStringCentered(0, 65, 0.7f, Config::TxtColor, "Flame");
+		Gui::DrawStringCentered(0, 95, 0.7f, Config::TxtColor, "Pk11");
+		Gui::DrawStringCentered(0, 125, 0.7f, Config::TxtColor, "RocketRobz");
+		Gui::DrawStringCentered(0, 155, 0.7f, Config::TxtColor, "StackZ");
+		Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, "TotallyNotGuy");
 	} else if (creditsPage == 3) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
 		Gui::DrawString(5, 27, 0.55f, Config::TxtColor, "- DualBladedKirito\n\n- Glazed_Belmont\n\n- Pk11\n\n- StackZ\n\n- The Conceptionist\n\n- YoSoy");

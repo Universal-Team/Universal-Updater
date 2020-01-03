@@ -229,11 +229,11 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
 		if (Config::UseBars == true) {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, Config::TxtColor, path);
-			Gui::DrawStringCentered(0, 220, 0.60f, Config::TxtColor, selectText, 400);
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, Config::TxtColor, path, 390);
+			Gui::DrawStringCentered(0, 220, 0.60f, Config::TxtColor, selectText, 390);
 		} else {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
-			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 400);
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path, 390);
+			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 390);
 		}
 		Gui::DrawBottom();
 		if (Config::viewMode == 0) {
@@ -259,9 +259,9 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		}
 
 		if (Config::UseBars == true) {
-			Gui::DrawStringCentered(0, 0, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+			Gui::DrawStringCentered(0, 0, 0.45f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 260);
 		} else {
-			Gui::DrawStringCentered(0, 2, 0.5f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 320);
+			Gui::DrawStringCentered(0, 2, 0.45f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 260);
 		}
 		Gui::DrawArrow(295, -1);
 		Gui::DrawArrow(315, 240, 180.0);
@@ -272,10 +272,10 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		Gui::Draw_Rect(buttonPositions[4].x, buttonPositions[4].y, buttonPositions[4].w, buttonPositions[4].h, C2D_Color32(0, 0, 0, 190));
 		Gui::Draw_Rect(buttonPositions[5].x, buttonPositions[5].y, buttonPositions[5].w, buttonPositions[5].h, C2D_Color32(0, 0, 0, 190));
 
-		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("OPEN")))/2-95-25, 222, 0.4f, Config::TxtColor, Lang::get("OPEN"), 50);
-		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("SELECT")))/2-30-25, 222, 0.4f, Config::TxtColor, Lang::get("SELECT"), 50);
-		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("REFRESH")))/2+35-25, 222, 0.4f, Config::TxtColor, Lang::get("REFRESH"), 50);
-		Gui::DrawString((320-Gui::GetStringWidth(0.4f, Lang::get("BACK")))/2+100-25, 222, 0.4f, Config::TxtColor, Lang::get("BACK"), 50);
+		Gui::DrawStringCentered(-120, 222, 0.4, Config::TxtColor, Lang::get("OPEN"), 40);
+		Gui::DrawStringCentered(-55, 222, 0.4, Config::TxtColor, Lang::get("SELECT"), 40);
+		Gui::DrawStringCentered(10, 222, 0.4, Config::TxtColor, Lang::get("REFRESH"), 40);
+		Gui::DrawStringCentered(75, 222, 0.4, Config::TxtColor, Lang::get("BACK"), 40);
 		C3D_FrameEnd(0);
 
 		// The input part.

@@ -192,9 +192,9 @@ void UniStore::DrawSubMenu(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("STORE_LIST")))/2, subPos[0].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_LIST"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("STORE_SEARCH")))/2, subPos[1].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_SEARCH"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("CHANGE_STOREPATH")))/2, subPos[2].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_STOREPATH"), 140);
+	Gui::DrawStringCentered(0, subPos[0].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_LIST"), 130);
+	Gui::DrawStringCentered(0, subPos[1].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_SEARCH"), 130);
+	Gui::DrawStringCentered(0, subPos[2].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_STOREPATH"), 130);
 }
 
 
@@ -307,7 +307,7 @@ void UniStore::DrawStore(void) const {
 			info = appStoreList[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
-			} else { 
+			} else {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
@@ -829,8 +829,9 @@ void UniStore::DrawSearch(void) const {
 			Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
 		}
 	}
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("FULL_URL")))/2-150+70, 110, 0.6f, Config::TxtColor, Lang::get("FULL_URL"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GITHUB")))/2+150-70, 110, 0.6f, Config::TxtColor, Lang::get("GITHUB"), 140);
+
+	Gui::DrawStringCentered(-80, 110, 0.6f, Config::TxtColor, Lang::get("FULL_URL"), 130);
+	Gui::DrawStringCentered(80, 110, 0.6f, Config::TxtColor, Lang::get("GITHUB"), 130);
 }
 
 void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -872,16 +873,17 @@ void UniStore::DrawGitHubScreen(void) const {
 	Gui::DrawBottom();
 	Gui::DrawArrow(0, 218, 0, 1);
 
-	Gui::DrawStringCentered(0, 28, 0.7f, Config::TxtColor, Lang::get("OWNER_AND_REPO"), 320);
-	Gui::DrawStringCentered(0, 108, 0.7f, Config::TxtColor, Lang::get("FILENAME"), 320);
+	Gui::DrawStringCentered(0, 28, 0.7f, Config::TxtColor, Lang::get("OWNER_AND_REPO"), 300);
+	Gui::DrawStringCentered(0, 108, 0.7f, Config::TxtColor, Lang::get("FILENAME"), 300);
 
 	Gui::Draw_Rect(GitHubPos[0].x, GitHubPos[0].y, GitHubPos[0].w, GitHubPos[0].h, Config::Color1);
 	Gui::Draw_Rect(GitHubPos[1].x, GitHubPos[1].y, GitHubPos[1].w, GitHubPos[1].h, Config::Color1);
 	Gui::Draw_Rect(GitHubPos[2].x, GitHubPos[2].y, GitHubPos[2].w, GitHubPos[2].h, Config::Color1);
 
-	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 250);
-	Gui::DrawString(35, 57, 0.45f, Config::TxtColor, OwnerAndRepo, 250);
-	Gui::DrawString(35, 137, 0.45f, Config::TxtColor, fileName, 250);
+	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 40);
+
+	Gui::DrawStringCentered(-70, 57, 0.5f, Config::TxtColor, OwnerAndRepo, 130);
+	Gui::DrawStringCentered(-70, 137, 0.5f, Config::TxtColor, fileName, 130);
 }
 
 void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -932,9 +934,10 @@ void UniStore::DrawFullURLScreen(void) const {
 	Gui::Draw_Rect(GitHubPos[1].x, GitHubPos[1].y, GitHubPos[1].w, GitHubPos[1].h, Config::Color1);
 	Gui::Draw_Rect(GitHubPos[2].x, GitHubPos[2].y, GitHubPos[2].w, GitHubPos[2].h, Config::Color1);
 
-	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 250);
-	Gui::DrawString(35, 57, 0.45f, Config::TxtColor, FullURL, 250);
-	Gui::DrawString(35, 137, 0.45f, Config::TxtColor, fileName, 250);
+	Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, Lang::get("OK"), 40);
+
+	Gui::DrawStringCentered(-70, 57, 0.45f, Config::TxtColor, FullURL, 130);
+	Gui::DrawStringCentered(-70, 137, 0.45f, Config::TxtColor, fileName, 130);
 }
 
 void UniStore::FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch) {

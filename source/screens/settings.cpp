@@ -71,9 +71,9 @@ void Settings::DrawSubMenu(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("LANGUAGE")))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("COLORS")))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("CREDITS")))/2, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("CREDITS"), 140);
+	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("LANGUAGE"), 130);
+	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("COLORS"), 130);
+	Gui::DrawStringCentered(0, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("CREDITS"), 130);
 }
 
 void Settings::DrawLanguageSelection(void) const {
@@ -207,8 +207,8 @@ void Settings::DrawMiscSettings(void) const {
 		}
 	}
 
-	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 140);
-	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_BAR_STYLE"), 140);
+	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 130);
+	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_BAR_STYLE"), 130);
 }
 
 void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {

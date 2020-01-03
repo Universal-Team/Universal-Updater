@@ -288,10 +288,10 @@ void ScriptList::DrawSubMenu(void) const {
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTLIST")))/2-150+70, subPos[0].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("GET_SCRIPTS")))/2+150-70, subPos[1].y+12, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("SCRIPTCREATOR")))/2-150+70, subPos[2].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("CHANGE_SCRIPTPATH")))/2+150-70, subPos[3].y+12, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 140);
+	Gui::DrawStringCentered(-80, subPos[0].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 130);
+	Gui::DrawStringCentered(80, subPos[1].y+12, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 130);
+	Gui::DrawStringCentered(-80, subPos[2].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 130);
+	Gui::DrawStringCentered(80, subPos[3].y+12, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 130);
 }
 
 

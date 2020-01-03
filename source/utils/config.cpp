@@ -47,6 +47,7 @@ std::string Config::MusicPath;
 bool Config::Logging;
 bool Config::UseBars;
 std::string Config::StorePath;
+int Config::LangPath;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -94,6 +95,12 @@ void Config::load() {
 			Config::ScriptPath = SCRIPTS_PATH;
 		} else {
 			Config::ScriptPath = getString("SCRIPTPATH");
+		}
+
+		if(!configJson.contains("LANGPATH")) {
+			Config::LangPath = 0;
+		} else {
+			Config::LangPath = getInt("LANGPATH");
 		}
 
 		if(!configJson.contains("LANGUAGE")) {
@@ -147,6 +154,7 @@ void Config::load() {
 		Config::SelectedColor = SelectedColordefault;
 		Config::UnselectedColor = UnselectedColordefault;
 		Config::ScriptPath = SCRIPTS_PATH;
+		Config::LangPath = 0;
 		Config::lang = 2;
 		Config::viewMode = 0;
 		Config::progressbarColor = WHITE;
@@ -165,6 +173,7 @@ void Config::save() {
 	Config::setInt("SELECTEDCOLOR", Config::SelectedColor);
 	Config::setInt("UNSELECTEDCOLOR", Config::UnselectedColor);
 	Config::setString("SCRIPTPATH", Config::ScriptPath);
+	Config::setInt("LANGPATH", Config::LangPath);
 	Config::setInt("LANGUAGE", Config::lang);
 	Config::setInt("VIEWMODE", Config::viewMode);
 	Config::setInt("PROGRESSBARCOLOR", Config::progressbarColor);
@@ -187,6 +196,7 @@ void Config::initializeNewConfig() {
 	Config::setInt("SELECTEDCOLOR", SelectedColordefault);
 	Config::setInt("UNSELECTEDCOLOR", UnselectedColordefault);
 	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
+	Config::setInt("LANGPATH", 0);
 	Config::setInt("LANGUAGE", 2);
 	Config::setInt("VIEWMODE", 0);
 	Config::setInt("PROGRESSBARCOLOR", WHITE);
@@ -228,11 +238,4 @@ std::string Config::getString(const std::string &key) {
 }
 void Config::setString(const std::string &key, const std::string &v) {
 	configJson[key] = v;
-}
-
-int Config::getLang(const std::string &key) {
-	if(!configJson.contains(key)) {
-		return 1;
-	}
-	return configJson.at(key).get_ref<const int64_t&>();
 }

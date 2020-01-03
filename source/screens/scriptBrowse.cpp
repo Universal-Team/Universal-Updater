@@ -122,11 +122,11 @@ void ScriptBrowse::Draw(void) const {
 
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
 	if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 370);
 	} else if(infoJson[selection]["curRevision"] == infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 400);
+		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 370);
 	} else if(infoJson[selection]["curRevision"] > infoJson[selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 400);
+		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
 	}
 	Gui::DrawBottom();
 	Gui::DrawArrow(295, -1);
