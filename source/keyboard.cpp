@@ -32,7 +32,6 @@ Structs::Key modifierKeys[] = {
 	{"\uE056", 300, 45, 20},	// Enter
 	{"\uE01B",   0, 67, 30},	// Left Shift
 	{"\uE01B", 285, 67, 35},	// Right Shift
-	{"	",    60, 90, 20},	// Tab
 	{" ",     85, 90, 120},	// Space
 };
 
@@ -261,10 +260,10 @@ std::string Input::getString(uint maxLength, std::string Text, float inputTextSi
 						} else {
 							keyDownDelay = 0;
 						}
-					} else if(modifierKeys[i].character == " " || modifierKeys[i].character == "	") {
+					} else if(modifierKeys[i].character == " ") {
 						if(string.length() < maxLength) {
 							shift = 0;
-							string += modifierKeys[i].character[0];
+							string += modifierKeys[5].character[0];
 						}
 					}
 					break;
