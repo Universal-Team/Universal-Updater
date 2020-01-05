@@ -56,9 +56,10 @@ private:
 
 	void execute();
 	void descript();
+	void updateStore(int selectedStore);
 	bool handleIfDisplayText();
 	int mode = 0;
-	std::string selectedOptionAppStore;
+	int selectedOptionAppStore = 0;
 	mutable bool displayInformations = true;
 
 	// Stuff for the GitHub Store Search function and Full URL.
@@ -90,11 +91,14 @@ private:
 	};
 
 	std::vector<Structs::ButtonPos> URLBtn = {
-		{10, 100, 140, 35, -1}, // FULL URL.
-		{170, 100, 140, 35, -1}, // Github.
+		{10, 70, 140, 40, -1}, // FULL URL.
+		{170, 70, 140, 40, -1}, // Github.
+		{10, 145, 140, 40, -1}, // TinyDB.
+		{170, 145, 140, 40, -1}, // QR Code?
 	};
 
 	std::vector<Structs::ButtonPos> GitHubPos = {
+
 		{30, 50, 260, 30, -1}, // Owner & Repo.
 		{30, 130, 260, 30, -1}, // Filename.
 		{135, 180, 50, 30, -1}, // OK.
