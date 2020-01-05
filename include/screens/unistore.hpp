@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -98,7 +98,6 @@ private:
 	};
 
 	std::vector<Structs::ButtonPos> GitHubPos = {
-
 		{30, 50, 260, 30, -1}, // Owner & Repo.
 		{30, 130, 260, 30, -1}, // Filename.
 		{135, 180, 50, 30, -1}, // OK.

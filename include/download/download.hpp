@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "utils/common.hpp"
 
 #define APP_TITLE "Universal-Updater"
-#define VERSION_STRING "2.0.0"
+#define VERSION_STRING "2.2.0"
 
 enum DownloadError {
 	DL_ERROR_NONE = 0,
