@@ -93,5 +93,6 @@
 	"UNISTORE_SUBMENU": "UniStoreサブメニュー",
 	"OWNER_AND_REPO": "所有者とリポ",
 	"FILENAME": "ファイル名",
-	"OK": "OK"
+	"OK": "OK",
+	"DELETE_STORE": "Would you like to delete this store?"
 }
