@@ -476,6 +476,28 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
+void UniStore::deleteStore(int selectedStore) {
+	std::string path = Config::StorePath;
+	path += dirContents[selectedStore].name;
+	deleteFile(path.c_str());
+	// Refresh the list.
+	dirContents.clear();
+	storeInfo.clear();
+	chdir(Config::StorePath.c_str());
+	getDirectoryContents(dirContents, {"unistore"});
+	for(uint i=0;i<dirContents.size();i++) {
+		storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+		descript();
+		loadStoreDesc();
+	}
+	if (dirContents.size() == 0) {
+		dirContents.clear();
+		storeInfo.clear();
+		mode = 0;
+	}
+}
+
+
 bool UniStore::handleIfDisplayText() {
 	if (appStoreJson.at("storeInfo").contains("displayInformation")) {
 		if (appStoreJson["storeInfo"]["displayInformation"] != true) {
@@ -576,6 +598,12 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPosList = selection;
 		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
 			screenPosList = selection - ENTRIES_PER_LIST + 1;
+		}
+	}
+
+	if (hDown & KEY_SELECT) {
+		if (Gui::promptMsg(Lang::get("DELETE_STORE"))) {
+			deleteStore(selection);
 		}
 	}
 

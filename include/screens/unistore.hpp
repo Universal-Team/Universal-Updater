@@ -57,6 +57,7 @@ private:
 	void execute();
 	void descript();
 	void updateStore(int selectedStore);
+	void deleteStore(int selectedStore);
 	bool handleIfDisplayText();
 	int mode = 0;
 	int selectedOptionAppStore = 0;
