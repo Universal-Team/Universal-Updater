@@ -93,5 +93,6 @@
 	"UNISTORE_SUBMENU": "UniStore SubBruh",
 	"OWNER_AND_REPO": "Bruh & Moment",
 	"FILENAME": "Filebruh",
-	"OK": "Bro"
+	"OK": "Bro",
+	"DELETE_STORE": "Would you like to delete this store?"
 }
