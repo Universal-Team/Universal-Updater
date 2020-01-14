@@ -53,10 +53,9 @@ void MainMenu::Draw(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 4; i++) {
+		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
 		}
 	}
 

@@ -198,10 +198,9 @@ void UniStore::DrawSubMenu(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 3; i++) {
+		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
 		if (subSelection == i) {
-			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, Config::SelectedColor);
 		}
 	}
 
@@ -238,23 +237,21 @@ void UniStore::DrawStoreList(void) const {
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 			line1 = storeInfo[screenPos + i].title;
 			line2 = storeInfo[screenPos + i].author;
 			if(screenPos + i == selection) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
-			} else { 
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 		}
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
+			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = storeInfo[screenPosList + i].title;
 			if(screenPosList + i == selection) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
-			} else { 
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
@@ -323,7 +320,7 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
 				} else {
-					Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, selected);
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
@@ -341,7 +338,7 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
 				} else {
-					Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, selected);
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
@@ -882,10 +879,9 @@ void UniStore::DrawSearch(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 3; i++) {
+		Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
 		if (searchSelection == i) {
-			Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, .060, Config::SelectedColor);
 		}
 	}
 

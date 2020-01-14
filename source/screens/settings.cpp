@@ -64,10 +64,9 @@ void Settings::DrawSubMenu(void) const {
 	Gui::DrawArrow(318, 240, 180.0, 1);
 
 	for (int i = 0; i < 3; i++) {
+		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
 		}
 	}
 
@@ -87,10 +86,9 @@ void Settings::DrawLanguageSelection(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int language = 0; language < 10; language++) {
+		Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, Config::UnselectedColor);
 		if (Config::lang == language) {
-			Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, .060, Config::SelectedColor);
 		}
 	}
 
@@ -138,7 +136,7 @@ void Settings::DrawColorChanging(void) const {
 
 	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
-			Gui::Draw_Rect(54 + i * 25, 2, 16, 16, C2D_Color32(140, 140, 140, 255));
+			Gui::drawAnimatedSelector(54 + i * 25, 2, 16, 16, .060, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
@@ -200,10 +198,9 @@ void Settings::DrawMiscSettings(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 2; i++) {
+		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
 		}
 	}
 

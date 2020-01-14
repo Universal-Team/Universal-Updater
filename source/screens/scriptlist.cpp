@@ -281,10 +281,9 @@ void ScriptList::DrawSubMenu(void) const {
 	Gui::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 4; i++) {
+		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
 		if (SubSelection == i) {
-			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::SelectedColor);
-		} else {
-			Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
+			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, Config::SelectedColor);
 		}
 	}
 
@@ -319,23 +318,21 @@ void ScriptList::DrawList(void) const {
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 			line1 = fileInfo[screenPos + i].title;
 			line2 = fileInfo[screenPos + i].author;
 			if(screenPos + i == selection) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::SelectedColor);
-			} else { 
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 		}
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size();i++) {
+			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = fileInfo[screenPosList + i].title;
 			if(screenPosList + i == selection) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
-			} else { 
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
@@ -383,22 +380,20 @@ void ScriptList::DrawSingleObject(void) const {
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			info = fileInfo2[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, selected);
-			} else {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, selected);
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
 
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size();i++) {
+			Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			info = fileInfo2[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, selected);
-			} else {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, selected);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}

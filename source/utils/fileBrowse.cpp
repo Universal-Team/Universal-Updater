@@ -238,21 +238,19 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		Gui::DrawBottom();
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)dirContents.size();i++) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 				dirs = dirContents[screenPos + i].name;
 				if(screenPos + i == selectedFile) {
-					Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(120, 192, 216, 255));
-				} else { 
-					Gui::Draw_Rect(0, 40+(i*57), 320, 45, C2D_Color32(77, 118, 132, 255));
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
 				}
 				Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, dirs, 320);
 			}
 		} else if (Config::viewMode == 1) {
 			for(int i=0;i<ENTRIES_PER_LIST && i<(int)dirContents.size();i++) {
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 				dirs = dirContents[screenPosList + i].name;
 				if(screenPosList + i == selectedFile) {
-					Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::SelectedColor);
-				} else {
-					Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
 				}
 				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, dirs, 320);
 			}
@@ -279,7 +277,6 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		C3D_FrameEnd(0);
 
 		// The input part.
-		gspWaitForVBlank();
 		hidScanInput();
 		hidTouchRead(&touch);
 

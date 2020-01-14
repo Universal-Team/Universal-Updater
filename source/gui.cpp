@@ -136,6 +136,28 @@ void Gui::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 	C2D_DrawSpriteTinted(&sprite, &tint);
 }
 
+void Gui::drawAnimatedSelector(float xPos, float yPos, float Width, float Height, float speed, u32 colour)
+{
+	static constexpr int w     = 2;
+	static float timer         = 0.0f;
+	float highlight_multiplier = fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
+	u8 r                       = Config::SelectedColor & 0xFF;
+	u8 g                       = (Config::SelectedColor >> 8) & 0xFF;
+	u8 b                       = (Config::SelectedColor >> 16) & 0xFF;
+	u32 color = C2D_Color32(r + (255 - r) * highlight_multiplier, g + (255 - g) * highlight_multiplier, b + (255 - b) * highlight_multiplier, 255);
+
+	// BG Color for the Selector.
+	C2D_DrawRectSolid(xPos, yPos, 0.5, Width, Height, colour); // Black.
+
+	// Animated Selector part.
+	C2D_DrawRectSolid(xPos, yPos, 0.5, Width, w, color);                      // top
+	C2D_DrawRectSolid(xPos, yPos + w, 0.5, w, Height - 2 * w, color);          // left
+	C2D_DrawRectSolid(xPos + Width - w, yPos + w, 0.5, w, Height - 2 * w, color); // right
+	C2D_DrawRectSolid(xPos, yPos + Height - w, 0.5, Width, w, color);             // bottom
+
+	timer += speed; // Speed of the animation. Example : .030 / .060
+}
+
 void Gui::DisplayWarnMsg(std::string Text)
 {
 	Gui::clearTextBufs();

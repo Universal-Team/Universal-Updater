@@ -48,6 +48,7 @@ namespace Gui
 	void sprite(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
 	void spriteBlend(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
 	void DrawArrow(int x, int y, float rotation = 0, int arrowSprite = 0);
+	void drawAnimatedSelector(float xPos, float yPos, float Width, float Height, float speed = .060, u32 colour = C2D_Color32(0, 0, 0, 0));
 	
 	// Misc.
 	bool Draw_Rect(float x, float y, float w, float h, u32 color);
