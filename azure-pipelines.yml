@@ -64,6 +64,7 @@ steps:
     cp ../../../Universal-Updater.3dsx Universal-Updater.3dsx
     cp ../../../Universal-Updater.cia Universal-Updater.cia
     qrencode -o Universal-Updater.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.cia
+    qrencode -o Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$(git describe --abbrev=0 --tags)/Universal-Updater.cia
     git stage .
     git commit -m "Universal-Updater | $(COMMIT_TAG)"
     git push origin master
