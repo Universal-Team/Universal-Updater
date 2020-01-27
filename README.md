@@ -33,3 +33,7 @@ To build Universal-Updater from source, you need devkitPro installed, along with
 ## Screenshots
 
 ![](https://universal-team.github.io/images/universal-updater/script-browse-3.png)![](https://universal-team.github.io/images/universal-updater/script-browse-7.png)![](https://universal-team.github.io/images/universal-updater/scriptlist-selection.png)![](https://universal-team.github.io/images/universal-updater/mainMenu.png)
+
+## Contributions
+
+[PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.
