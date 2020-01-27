@@ -116,8 +116,8 @@ Result installCia(const char * ciaPath)
 		return ret;
 	}
 
-	u32 toRead = 0x1000;
-	u8 * cia_buffer = malloc(toRead);
+	u32 toRead = 0x20000;
+	u8 * cia_buffer = memalign(0x1000, toRead);
 	for (u64 startSize = size; size != 0; size -= toRead) {
 		if (size < toRead) toRead = size;
 		FSFILE_Read(fileHandle, &bytes, startSize-size, cia_buffer, toRead);
