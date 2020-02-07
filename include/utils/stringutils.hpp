@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STRINGUTILS_HPP
+#define STRINGUTILS_HPP
 
 #include "common.hpp"
 
@@ -8,3 +9,5 @@ namespace StringUtils
 {
 	std::string format(const std::string& fmt_str, ...);
 }
+
+#endif

@@ -1,4 +1,4 @@
-#include "utils/sound.h"
+#include "sound.h"
 
 #include <cstdio>
 #include <cstdlib>

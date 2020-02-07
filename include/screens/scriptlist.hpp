@@ -27,13 +27,13 @@
 #ifndef SCRIPTLIST_HPP
 #define SCRIPTLIST_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
+#include "common.hpp"
+#include "fileBrowse.hpp"
+#include "structs.hpp"
 
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+#include <vector>
 
-class ScriptList : public screen
+class ScriptList : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -61,18 +61,18 @@ private:
 	int fastMode = false;
 
 	std::vector<Structs::ButtonPos> arrowPos = {
-		{295, 0, 25, 25, -1}, // Arrow Up.
-		{295, 215, 25, 25, -1}, // Arrow Down.
-		{0, 215, 25, 25, -1}, // Back Arrow.
-		{5, 0, 25, 25, -1}, // viewMode Change
-		{45, 0, 25, 25, -1}, // Search.
+		{295, 0, 25, 25}, // Arrow Up.
+		{295, 215, 25, 25}, // Arrow Down.
+		{0, 215, 25, 25}, // Back Arrow.
+		{5, 0, 25, 25}, // viewMode Change
+		{45, 0, 25, 25}, // Search.
 	};
 
 	std::vector<Structs::ButtonPos> subPos = {
-		{10, 70, 140, 40, -1}, // Script list.
-		{170, 70, 140, 40, -1}, // Get Scripts.
-		{10, 145, 140, 40, -1}, // Script Creator.
-		{170, 145, 140, 40, -1}, // Script path change.
+		{10, 70, 140, 40}, // Script list.
+		{170, 70, 140, 40}, // Get Scripts.
+		{10, 145, 140, 40}, // Script Creator.
+		{170, 145, 140, 40}, // Script path change.
 	};
 };
 

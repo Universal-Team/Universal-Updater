@@ -1,4 +1,4 @@
-#include "utils/stringutils.hpp"
+#include "stringutils.hpp"
 
 bool matchPattern(std::string pattern, std::string tested)
 {

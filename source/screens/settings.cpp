@@ -24,12 +24,9 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "credits.hpp"
 #include "keyboard.hpp"
-
-#include "screens/credits.hpp"
-#include "screens/settings.hpp"
-
-#include "utils/config.hpp"
+#include "settings.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
@@ -53,20 +50,20 @@ void Settings::Draw(void) const {
 
 
 void Settings::DrawSubMenu(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	}
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
-	Gui::DrawArrow(318, 240, 180.0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
+	GFX::DrawArrow(318, 240, 180.0, 1);
 
 	for (int i = 0; i < 3; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -76,19 +73,19 @@ void Settings::DrawSubMenu(void) const {
 }
 
 void Settings::DrawLanguageSelection(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	}
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int language = 0; language < 10; language++) {
 		Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, Config::UnselectedColor);
 		if (Config::lang == language) {
-			Gui::drawAnimatedSelector(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -106,7 +103,7 @@ void Settings::DrawLanguageSelection(void) const {
 }
 
 void Settings::DrawColorChanging(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	} else {
@@ -128,15 +125,15 @@ void Settings::DrawColorChanging(void) const {
 
 
 
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
-	Gui::DrawArrow(0, 0, 0, 1);
-	Gui::DrawArrow(318, 22, 180.0, 1);
+	GFX::DrawArrow(0, 0, 0, 1);
+	GFX::DrawArrow(318, 22, 180.0, 1);
 
 	for (int i = 0; i < 7; i++) {
 		if (colorMode == i) {
-			Gui::drawAnimatedSelector(54 + i * 25, 2, 16, 16, .060, C2D_Color32(140, 140, 140, 255));
+			Gui::drawAnimatedSelector(54 + i * 25, 2, 16, 16, .060, TRANSPARENT, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
@@ -187,20 +184,20 @@ void Settings::DrawColorChanging(void) const {
 }
 
 void Settings::DrawMiscSettings(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	}
 
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 2; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -258,7 +255,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
-		if (Selection + 1 == 3)	Screen::set(std::make_unique<Credits>());
+		if (Selection + 1 == 3)	Gui::setScreen(std::make_unique<Credits>());
 		else	mode = Selection+1;
 	}
 
@@ -268,12 +265,12 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[1])) {
 			mode = 2;
  		} else if (touching(touch, mainButtons[2])) {
-			Screen::set(std::make_unique<Credits>());
+			Gui::setScreen(std::make_unique<Credits>());
 		}
 	}
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 

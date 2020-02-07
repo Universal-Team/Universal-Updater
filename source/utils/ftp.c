@@ -4,8 +4,8 @@
  * from https://cr.yp.to/ftp/filesystem.html
  */
 
-#include "utils/console.h"
-#include "utils/ftp.h"
+#include "console.h"
+#include "ftp.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>

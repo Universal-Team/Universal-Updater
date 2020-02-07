@@ -27,13 +27,12 @@
 #ifndef MAINMENU_HPP
 #define MAINMENU_HPP
 
-#include "screens/screen.hpp"
-
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
-class MainMenu : public screen
+class MainMenu : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -42,11 +41,11 @@ private:
 	int Selection = 0;
 
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{10, 70, 140, 40, -1}, // Scripts.
-		{170, 70, 140, 40, -1}, // UniStore.
-		{10, 145, 140, 40, -1}, // Settings.
-		{170, 145, 140, 40, -1}, // FTP.
-		{0, 215, 25, 25, -1}, // Back Arrow.
+		{10, 70, 140, 40}, // Scripts.
+		{170, 70, 140, 40}, // UniStore.
+		{10, 145, 140, 40}, // Settings.
+		{170, 145, 140, 40}, // FTP.
+		{0, 215, 25, 25}, // Back Arrow.
 	};
 };
 

@@ -24,20 +24,37 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "common.hpp"
-#include "structs.hpp"
+#ifndef COLORHELPER_HPP
+#define COLORHELPER_HPP
 
-#include <vector>
+#include <citro2d.h>
+#include <citro3d.h>
+#include <sstream>
+#include <string>
 
-class FTPScreen : public Screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+/**
+ * @brief Creates a 8 byte RGBA color
+ * @param r red component of the color
+ * @param g green component of the color
+ * @param b blue component of the color
+ * @param a alpha component of the color
+ */
+#define RGBA8(r, g, b, a) ((((r)&0xFF)<<0) | (((g)&0xFF)<<8) | (((b)&0xFF)<<16) | (((a)&0xFF)<<24))
 
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
-};
+#define BarColor 				C2D_Color32(57, 84, 114, 255)
+#define TopBGColor 				C2D_Color32(96, 168, 192, 255)
+#define BottomBGColor 			C2D_Color32(38, 44, 77, 255)
+#define SelectedColordefault	C2D_Color32(120, 192, 216, 255)
+#define UnselectedColordefault	C2D_Color32(77, 118, 132, 255)
+#define BLACK 					C2D_Color32(0, 0, 0, 255)
+#define WHITE 					C2D_Color32(255, 255, 255, 255)
+#define TRANSPARENT				C2D_Color32(0, 0, 0, 0)
+
+typedef u32 Color;
+
+namespace ColorHelper {
+	int getColorValue(int color, int bgr);
+	std::string getColorName(int color, int bgr);
+}
+
+#endif

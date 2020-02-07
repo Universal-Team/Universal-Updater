@@ -24,12 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#pragma once
+#ifndef DOWNLOAD_HPP
+#define DOWNLOAD_HPP
 
-#include "utils/common.hpp"
+#include "common.hpp"
 
 #define APP_TITLE "Universal-Updater"
-#define VERSION_STRING "2.2.0"
+#define VERSION_STRING "2.2.1"
 
 enum DownloadError {
 	DL_ERROR_NONE = 0,
@@ -87,3 +88,5 @@ std::string getLatestCommit(std::string repo, std::string item);
  * @return the string from the API.
  */
 std::string getLatestCommit(std::string repo, std::string array, std::string item);
+
+#endif

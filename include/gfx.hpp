@@ -24,20 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "common.hpp"
-#include "structs.hpp"
+#ifndef GFX_HPP
+#define GFX_HPP
 
-#include <vector>
+#include "colorHelper.hpp"
+#include "gui.hpp"
+#include "sprites.h"
 
-class FTPScreen : public Screen
+namespace GFX
 {
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	// Basic GUI.
+	void DrawTop(void);
+	void DrawBottom(void);
+	// Draw arrow.
+	void DrawArrow(int x, int y, float rotation = 0, int arrowSprite = 0);
+	// Draw Sprites.
+	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
+	void DrawSpriteBlend(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
+}
 
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
-};
+#endif

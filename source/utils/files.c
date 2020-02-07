@@ -1,4 +1,4 @@
-#include "utils/files.h"
+#include "files.h"
 
 // Blacklist!
 #define BLACKLIST_CTRNAND	"ctrnand:/"

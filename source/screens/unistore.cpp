@@ -24,17 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "download.hpp"
+#include "fileBrowse.hpp"
+#include "formatting.hpp"
+#include "json.hpp"
 #include "keyboard.hpp"
-
-#include "download/download.hpp"
-
-#include "screens/unistore.hpp"
-
-#include "utils/config.hpp"
-#include "utils/fileBrowse.h"
-#include "utils/formatting.hpp"
-#include "utils/json.hpp"
-#include "utils/scriptHelper.hpp"
+#include "scriptHelper.hpp"
+#include "unistore.hpp"
 
 #include <algorithm>
 #include <regex>
@@ -186,21 +182,21 @@ void loadStoreColors(nlohmann::json &json) {
 }
 
 void UniStore::DrawSubMenu(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SUBMENU"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SUBMENU"), 400);
 	}
 
-	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 3; i++) {
 		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
 		if (subSelection == i) {
-			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -215,7 +211,7 @@ void UniStore::DrawStoreList(void) const {
 	std::string line1;
 	std::string line2;
 	std::string storeAmount = std::to_string(selection +1) + " / " + std::to_string(storeInfo.size());
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, storeInfo[selection].title, 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 239-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
@@ -227,13 +223,13 @@ void UniStore::DrawStoreList(void) const {
 		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, Config::TxtColor, descLines[i], 400);
 	}
 
-	Gui::DrawBottom();
-	Gui::DrawArrow(295, -1);
-	Gui::DrawArrow(315, 240, 180.0);
-	Gui::DrawArrow(0, 218, 0, 1);
-	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
-	Gui::spriteBlend(sprites_search_idx, arrowPos[4].x, arrowPos[4].y);
-	Gui::spriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
+	GFX::DrawBottom();
+	GFX::DrawArrow(295, -1);
+	GFX::DrawArrow(315, 240, 180.0);
+	GFX::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawSpriteBlend(sprites_search_idx, arrowPos[4].x, arrowPos[4].y);
+	GFX::DrawSpriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
@@ -241,7 +237,7 @@ void UniStore::DrawStoreList(void) const {
 			line1 = storeInfo[screenPos + i].title;
 			line2 = storeInfo[screenPos + i].author;
 			if(screenPos + i == selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
@@ -251,7 +247,7 @@ void UniStore::DrawStoreList(void) const {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = storeInfo[screenPosList + i].title;
 			if(screenPosList + i == selection) {
-				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
@@ -261,7 +257,7 @@ void UniStore::DrawStoreList(void) const {
 void UniStore::DrawStore(void) const {
 	std::string entryAmount = std::to_string(selectedOptionAppStore+1) + " / " + std::to_string((int)appStoreJson.at("storeContent").size());
 	std::string info;
-	Gui::DrawTop();
+	GFX::DrawTop();
 	// Top Background.
 	if (appStoreJson.at("storeInfo").contains("iconIndexTop") && sheetHasLoaded == true) {
 		drawNormal(appStoreJson["storeInfo"]["iconIndexTop"], 0, 0);
@@ -302,16 +298,16 @@ void UniStore::DrawStore(void) const {
 		}
 	}
 	
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 	// Bottom Background.
 	if (appStoreJson.at("storeInfo").contains("iconIndexBottom") && sheetHasLoaded == true) {
 		drawNormal(appStoreJson["storeInfo"]["iconIndexBottom"], 0, 0);
 	}
 
-	Gui::DrawArrow(295, -1);
-	Gui::DrawArrow(315, 240, 180.0);
-	Gui::DrawArrow(0, 218, 0, 1);
-	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawArrow(295, -1);
+	GFX::DrawArrow(315, 240, 180.0);
+	GFX::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
@@ -320,7 +316,7 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
 				} else {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, selected);
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
@@ -338,7 +334,7 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
 				} else {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, selected);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
@@ -370,7 +366,7 @@ void UniStore::Draw(void) const {
 
 void UniStore::updateStore(int selectedStore) {
 	if (checkWifiStatus()) {
-		if (Gui::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+		if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
 			if(storeInfo[selectedStore].url != "" && storeInfo[selectedStore].url != "MISSING: storeInfo.url" &&
 			storeInfo[selectedStore].file != "" && storeInfo[selectedStore].file != "MISSING: storeInfo.file") {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].url, storeInfo[selectedStore].file, Lang::get("UPDATING"));
@@ -397,7 +393,7 @@ void UniStore::updateStore(int selectedStore) {
 
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 
@@ -423,7 +419,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 					mode = 1;
 				} else {
-					Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
+					Msg::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 				}
 				break;
 			case 1:
@@ -456,7 +452,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				mode = 1;
 			} else {
-				Gui::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
+				Msg::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
 			}
 		} else if (touching(touch, subPos[1])) {
 			if (checkWifiStatus() == true) {
@@ -559,7 +555,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (ScriptHelper::checkIfValid(dirContents[selection].name, 1) == true) {
 				updateStore(selection);
 				currentStoreFile = dirContents[selection].name;
-				DisplayMsg(Lang::get("PREPARE_STORE"));
+				Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
 				if (storeInfo[selection].storeSheet != "" || storeInfo[selection].storeSheet != "MISSING: storeInfo.sheet") {
 					if(access(storeInfo[selection].storeSheet.c_str(), F_OK) != -1 ) {
 						loadStoreSheet(selection);
@@ -599,7 +595,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_SELECT) {
-		if (Gui::promptMsg(Lang::get("DELETE_STORE"))) {
+		if (Msg::promptMsg(Lang::get("DELETE_STORE"))) {
 			deleteStore(selection);
 		}
 	}
@@ -611,7 +607,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
 						updateStore(screenPos + i);
 						currentStoreFile = dirContents[screenPos + i].name;
-						DisplayMsg(Lang::get("PREPARE_STORE"));
+						Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
 						if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
 							if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
 								loadStoreSheet(screenPos + i);
@@ -633,7 +629,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
 						updateStore(screenPosList + i);
 						currentStoreFile = dirContents[screenPosList + i].name;
-						DisplayMsg(Lang::get("PREPARE_STORE"));
+						Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
 						if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
 							if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
 								loadStoreSheet(screenPosList + i);
@@ -835,7 +831,7 @@ void UniStore::execute() {
 			else	missing = true;
 			promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
 			if(!missing) {
-				if (Gui::promptMsg(promptmsg)) {
+				if (Msg::promptMsg(promptmsg)) {
 					removeDirRecursive(directory.c_str());
 				}
 			}
@@ -867,21 +863,21 @@ void UniStore::execute() {
 }
 
 void UniStore::DrawSearch(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SEARCH"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("UNISTORE_SEARCH"), 400);
 	}
 
-	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 3; i++) {
 		Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
 		if (searchSelection == i) {
-			Gui::drawAnimatedSelector(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -930,16 +926,16 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void UniStore::DrawGitHubScreen(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GITHUB"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GITHUB"), 400);
 	}
 
-	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	Gui::DrawStringCentered(0, 28, 0.7f, Config::TxtColor, Lang::get("OWNER_AND_REPO"), 300);
 	Gui::DrawStringCentered(0, 108, 0.7f, Config::TxtColor, Lang::get("FILENAME"), 300);
@@ -984,16 +980,16 @@ void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void UniStore::DrawFullURLScreen(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("FULL_URL"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("FULL_URL"), 400);
 	}
 
-	Gui::sprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	Gui::DrawStringCentered(0, 28, 0.7f, Config::TxtColor, Lang::get("FULL_URL"), 320);
 	Gui::DrawStringCentered(0, 108, 0.7f, Config::TxtColor, Lang::get("FILENAME"), 320);

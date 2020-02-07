@@ -24,13 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "screens/ftpScreen.hpp"
-#include "screens/mainMenu.hpp"
-#include "screens/scriptlist.hpp"
-#include "screens/settings.hpp"
-#include "screens/unistore.hpp"
-
-#include "utils/config.hpp"
+#include "config.hpp"
+#include "ftpScreen.hpp"
+#include "mainMenu.hpp"
+#include "scriptlist.hpp"
+#include "settings.hpp"
+#include "unistore.hpp"
 
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -38,7 +37,7 @@ extern int fadealpha;
 extern bool fadein;
 
 void MainMenu::Draw(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
@@ -49,13 +48,13 @@ void MainMenu::Draw(void) const {
 	}
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
-			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -65,7 +64,7 @@ void MainMenu::Draw(void) const {
 	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, Config::TxtColor, "FTP", 130);
 
 	// Draw UniStore Icon. ;P
-	Gui::sprite(sprites_uniStore_idx, 10, 65);
+	GFX::DrawSprite(sprites_uniStore_idx, 10, 65);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
@@ -88,29 +87,29 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				Screen::set(std::make_unique<UniStore>());
+				Gui::setScreen(std::make_unique<UniStore>());
 				break;
 			case 1:
-				Screen::set(std::make_unique<ScriptList>());
+				Gui::setScreen(std::make_unique<ScriptList>());
 				break;
 			case 2:
-				Screen::set(std::make_unique<Settings>());
+				Gui::setScreen(std::make_unique<Settings>());
 				break;
 			case 3:
-				Screen::set(std::make_unique<FTPScreen>());
+				Gui::setScreen(std::make_unique<FTPScreen>());
 				break;
 		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Screen::set(std::make_unique<UniStore>());
+			Gui::setScreen(std::make_unique<UniStore>());
 		} else if (touching(touch, mainButtons[1])) {
-			Screen::set(std::make_unique<ScriptList>());
+			Gui::setScreen(std::make_unique<ScriptList>());
 		} else if (touching(touch, mainButtons[2])) {
-			Screen::set(std::make_unique<Settings>());
+			Gui::setScreen(std::make_unique<Settings>());
 		} else if (touching(touch, mainButtons[3])) {
-			Screen::set(std::make_unique<FTPScreen>());
+			Gui::setScreen(std::make_unique<FTPScreen>());
 		}
 	}
 }

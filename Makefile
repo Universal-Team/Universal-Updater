@@ -75,9 +75,10 @@ endif
 #---------------------------------------------------------------------------------
 TARGET		:=	Universal-Updater
 BUILD		:=	build
-SOURCES		:=	source source/download source/lang source/screens source/utils
+UNIVCORE	:= 	Universal-Core
+SOURCES		:=	$(UNIVCORE) source source/download source/lang source/screens source/utils
 DATA		:=	data
-INCLUDES	:=	include include/download include/lang include/screens include/utils 
+INCLUDES	:=	$(UNIVCORE) include include/download include/lang include/screens include/utils 
 GRAPHICS	:=	assets/gfx
 #GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs

@@ -24,11 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "common.hpp"
+#include "config.hpp"
 #include "gui.hpp"
-
-#include "utils/common.hpp"
-#include "utils/config.hpp"
-#include "utils/json.hpp"
+#include "json.hpp"
 
 #include <string>
 #include <unistd.h>

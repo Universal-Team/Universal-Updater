@@ -27,15 +27,12 @@
 #ifndef SCRIPTCREATOR_HPP
 #define SCRIPTCREATOR_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/json.hpp"
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
-class ScriptCreator : public screen
+class ScriptCreator : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -88,18 +85,18 @@ private:
 	std::string jsonFileName;
 	// Main Pos.
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // New Script.
-		{90, 100, 140, 35, -1}, // Existing Script.
+		{90, 40, 140, 35}, // New Script.
+		{90, 100, 140, 35}, // Existing Script.
 	};
 
 	// Creator Button Pos.
 	std::vector<Structs::ButtonPos> creatorButtons = {
-		{10, 40, 140, 35, -1},
-		{170, 40, 140, 35, -1},
-		{10, 100, 140, 35, -1},
-		{170, 100, 140, 35, -1},
-		{10, 160, 140, 35, -1},
-		{170, 160, 140, 35, -1},
+		{10, 40, 140, 35},
+		{170, 40, 140, 35},
+		{10, 100, 140, 35},
+		{170, 100, 140, 35},
+		{10, 160, 140, 35},
+		{170, 160, 140, 35},
 	};
 
 };

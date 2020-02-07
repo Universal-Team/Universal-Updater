@@ -1,4 +1,4 @@
-#include "utils/thread.hpp"
+#include "thread.hpp"
 
 #include <3ds.h>
 #include <stdio.h>

@@ -27,14 +27,13 @@
 #ifndef SCRIPTBROWSE_HPP
 #define SCRIPTBROWSE_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
+#include "common.hpp"
+#include "fileBrowse.hpp"
+#include "structs.hpp"
 
-#include "utils/config.hpp"
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+#include <vector>
 
-class ScriptBrowse : public screen
+class ScriptBrowse : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -49,12 +48,12 @@ private:
 	int keyRepeatDelay = 0;
 	int fastMode = false;
 	std::vector<Structs::ButtonPos> arrowPos = {
-		{295, 0, 25, 25, -1}, // Arrow Up.
-		{295, 215, 25, 25, -1}, // Arrow Down.
-		{0, 215, 25, 25, -1}, // Back Arrow.
-		{5, 0, 25, 25, -1}, // Download All.
-		{45, 0, 25, 25, -1}, // ViewMode Change.
-		{80, 0, 25, 25, -1}, // Search.
+		{295, 0, 25, 25}, // Arrow Up.
+		{295, 215, 25, 25}, // Arrow Down.
+		{0, 215, 25, 25}, // Back Arrow.
+		{5, 0, 25, 25}, // Download All.
+		{45, 0, 25, 25}, // ViewMode Change.
+		{80, 0, 25, 25}, // Search.
 	};
 };
 

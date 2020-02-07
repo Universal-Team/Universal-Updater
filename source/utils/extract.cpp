@@ -24,7 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "utils/extract.hpp"
+#include "extract.hpp"
 
 #include <archive.h>
 #include <archive_entry.h>
