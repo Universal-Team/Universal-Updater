@@ -39,6 +39,7 @@ steps:
     sudo 7z e makerom_015_ctrtool.zip Linux_x86_64/makerom
     sudo chmod +x makerom
     rm makerom_015_ctrtool.zip
+    git submodule update --init --recursive
   displayName: 'Setup devkitPro'
   
 - script: |
