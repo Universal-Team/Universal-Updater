@@ -60,12 +60,13 @@ steps:
     git config --global user.email "flamekat54@aol.com"
     git config --global user.name "TWLBot"
     git clone --depth 1 https://$GITHUB_TOKEN@github.com/Universal-Team/extras.git
+    # Must be made before entering extras
     mkdir extras/builds/Universal-Updater/
+    qrencode -o extras/builds/Universal-Updater/Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$(git describe --abbrev=0 --tags)/Universal-Updater.cia
     cd extras/builds/Universal-Updater/
     cp ../../../Universal-Updater.3dsx Universal-Updater.3dsx
     cp ../../../Universal-Updater.cia Universal-Updater.cia
     qrencode -o Universal-Updater.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.cia
-    qrencode -o Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$(git describe --abbrev=0 --tags)/Universal-Updater.cia
     git stage .
     git commit -m "Universal-Updater | $(COMMIT_TAG)"
     git push origin master
