@@ -31,7 +31,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "utils/files.h"
+#include "files.h"
 
 #include <malloc.h>
 #include <stdio.h>
@@ -42,8 +42,14 @@ extern "C" {
 #ifdef __cplusplus
 }
 
-#include "utils/json.hpp"
-#include "utils/stringutils.hpp"
+#include "config.hpp"
+#include "gfx.hpp"
+#include "gui.hpp"
+#include "json.hpp"
+#include "lang.hpp"
+#include "msg.hpp"
+#include "screenCommon.hpp"
+#include "stringutils.hpp"
 
 #include <cstdio>
 #include <iostream>

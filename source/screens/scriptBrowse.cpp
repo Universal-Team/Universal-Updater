@@ -24,12 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "download/download.hpp"
-
-#include "screens/scriptBrowse.hpp"
-
-#include "utils/fileBrowse.h"
-#include "utils/json.hpp"
+#include "download.hpp"
+#include "fileBrowse.hpp"
+#include "json.hpp"
+#include "scriptBrowse.hpp"
 
 #include <unistd.h>
 
@@ -94,7 +92,7 @@ void findExistingFiles(nlohmann::json &json) {
 }
 
 ScriptBrowse::ScriptBrowse() {
-	DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
+	Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
 	downloadToFile("https://github.com/Universal-Team/extras/raw/scripts/info/scriptInfo.json", metaFile);
@@ -107,7 +105,7 @@ ScriptBrowse::ScriptBrowse() {
 }
 
 void ScriptBrowse::Draw(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	std::string revision = std::to_string(int64_t(infoJson[selection]["curRevision"]));
 	revision += " / ";
 	revision += std::to_string(int64_t(infoJson[selection]["revision"]));
@@ -128,13 +126,13 @@ void ScriptBrowse::Draw(void) const {
 	} else if(infoJson[selection]["curRevision"] > infoJson[selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
 	}
-	Gui::DrawBottom();
-	Gui::DrawArrow(295, -1);
-	Gui::DrawArrow(315, 240, 180.0);
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(295, -1);
+	GFX::DrawArrow(315, 240, 180.0);
+	GFX::DrawArrow(0, 218, 0, 1);
 
-	Gui::spriteBlend(sprites_download_all_idx, arrowPos[3].x, arrowPos[3].y);
-	Gui::spriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
+	GFX::DrawSpriteBlend(sprites_download_all_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
 	//Gui::spriteBlend(sprites_search_idx, arrowPos[5].x, arrowPos[5].y);
 
 	Gui::DrawStringCentered(-23, 1, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
@@ -143,7 +141,7 @@ void ScriptBrowse::Draw(void) const {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 			if(screenPos + i == selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 			}
 
 			if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
@@ -158,7 +156,7 @@ void ScriptBrowse::Draw(void) const {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			if(screenPosList + i == selection) {
-				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
 				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
@@ -175,7 +173,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		infoJson.clear();
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 
@@ -217,7 +215,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 								titleFix[l] = '-';
 							}
 						}
-						DisplayMsg(fileName);
+						Msg::DisplayMsg(fileName);
 						downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
 						infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
 					}
@@ -234,7 +232,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 								titleFix[l] = '-';
 							}
 						}
-						DisplayMsg(fileName);
+						Msg::DisplayMsg(fileName);
 						downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
 						infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
 					}
@@ -253,7 +251,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				titleFix[i] = '-';
 			}
 		}
-			DisplayMsg(fileName);
+			Msg::DisplayMsg(fileName);
 
 			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json");
 			infoJson[selection]["curRevision"] = infoJson[selection]["revision"];
@@ -302,7 +300,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						titleFix[l] = '-';
 					}
 				}
-				DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
+				Msg::DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
 				downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json");
 				infoJson[i]["curRevision"] = infoJson[i]["revision"];
 			}

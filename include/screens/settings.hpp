@@ -27,15 +27,13 @@
 #ifndef SETTINGS_HPP
 #define SETTINGS_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "fileBrowse.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
-class Settings : public screen
+class Settings : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -58,36 +56,36 @@ private:
 	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35, -1}, // Language.
-		{90, 100, 140, 35, -1}, // Colors.
-		{90, 160, 140, 35, -1}, // Misc.
+		{90, 40, 140, 35}, // Language.
+		{90, 100, 140, 35}, // Colors.
+		{90, 160, 140, 35}, // Misc.
 	};
 
 	std::vector<Structs::ButtonPos> langBlocks = {
-		{37, 32, 20, 20, -1},
-		{37, 72, 20, 20, -1},
-		{37, 112, 20, 20, -1},
-		{37, 152, 20, 20, -1},
-		{37, 188, 20, 20, -1},
-		{177, 32, 20, 20, -1},
-		{177, 72, 20, 20, -1},
-		{177, 112, 20, 20, -1},
-		{177, 152, 20, 20, -1},
-		{177, 188, 20, 20, -1},
+		{37, 32, 20, 20},
+		{37, 72, 20, 20},
+		{37, 112, 20, 20},
+		{37, 152, 20, 20},
+		{37, 188, 20, 20},
+		{177, 32, 20, 20},
+		{177, 72, 20, 20},
+		{177, 112, 20, 20},
+		{177, 152, 20, 20},
+		{177, 188, 20, 20},
 	};
 
 	std::vector<Structs::ButtonPos> buttons = {
-		{10, 85, 95, 41, -1},
-		{115, 85, 95, 41, -1},
-		{220, 85, 95, 41, -1},
+		{10, 85, 95, 41},
+		{115, 85, 95, 41},
+		{220, 85, 95, 41},
 	};
 
 	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 0, 25, 25, -1}, // Previous Arrow.
-		{295, 0, 25, 25, -1}, // Next Arrow.
-		{0, 215, 25, 25, -1}, // Back Arrow.
-		{0, 0, 25, 25, -1}, // Back Arrow top left.
-		{295, 215, 25, 25, -1}, // Next Page / Misc Arrow.
+		{0, 0, 25, 25}, // Previous Arrow.
+		{295, 0, 25, 25}, // Next Arrow.
+		{0, 215, 25, 25}, // Back Arrow.
+		{0, 0, 25, 25}, // Back Arrow top left.
+		{295, 215, 25, 25}, // Next Page / Misc Arrow.
 	};
 };
 

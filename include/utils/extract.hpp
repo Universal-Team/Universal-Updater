@@ -24,7 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#pragma once
+#ifndef EXTRACT_HPP
+#define EXTRACT_HPP
 
 #include "common.hpp"
 
@@ -39,3 +40,5 @@ enum ExtractError {
 };
 
 Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath);
+
+#endif

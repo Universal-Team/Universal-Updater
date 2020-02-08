@@ -24,19 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "config.hpp"
+#include "download.hpp"
+#include "formatting.hpp"
 #include "gui.hpp"
+#include "lang.hpp"
+#include "screenCommon.hpp"
 
-#include "download/download.hpp"
-
-#include "lang/lang.hpp"
-
-#include "screens/screenCommon.hpp"
-
-#include "utils/config.hpp"
-#include "utils/formatting.hpp"
-
-#include <vector>
 #include <string>
+#include <vector>
 
 #define  USER_AGENT   APP_TITLE "-" VERSION_STRING
 
@@ -410,28 +406,28 @@ bool checkWifiStatus(void) {
 }
 
 void downloadFailed(void) {
-	DisplayMsg(Lang::get("DOWNLOAD_FAILED"));
+	Msg::DisplayMsg(Lang::get("DOWNLOAD_FAILED"));
 	for (int i = 0; i < 60*2; i++) {
 		gspWaitForVBlank();
 	}
 }
 
 void notImplemented(void) {
-	DisplayMsg(Lang::get("NOT_IMPLEMENTED"));
+	Msg::DisplayMsg(Lang::get("NOT_IMPLEMENTED"));
 	for (int i = 0; i < 60*2; i++) {
 		gspWaitForVBlank();
 	}
 }
 
 void doneMsg(void) {
-	DisplayMsg(Lang::get("DONE"));
+	Msg::DisplayMsg(Lang::get("DONE"));
 	for (int i = 0; i < 60*2; i++) {
 		gspWaitForVBlank();
 	}
 }
 
 void notConnectedMsg(void) {
-	DisplayMsg(Lang::get("CONNECT_WIFI"));
+	Msg::DisplayMsg(Lang::get("CONNECT_WIFI"));
 	for (int i = 0; i < 60*2; i++) {
 		gspWaitForVBlank();
 	}
@@ -654,9 +650,9 @@ void displayProgressBar() {
 
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(top, BLACK);
-		C2D_TargetClear(bottom, BLACK);
-		Gui::DrawTop();
+		C2D_TargetClear(Top, BLACK);
+		C2D_TargetClear(Bottom, BLACK);
+		GFX::DrawTop();
 		Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
 
 		// Display 'Currently Extracting: <Filename>'.
@@ -675,7 +671,7 @@ void displayProgressBar() {
 				Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
 			}
 		}
-		Gui::DrawBottom();
+		GFX::DrawBottom();
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
 	}

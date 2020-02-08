@@ -24,9 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
-#include <string>
-
-#include "utils/formatting.hpp"
+#include "formatting.hpp"
 
 // adapted from GM9i's byte parsing.
 std::string formatBytes(int bytes) {

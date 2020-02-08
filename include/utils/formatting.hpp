@@ -24,6 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#pragma once
+#ifndef FORMATTING_HPP
+#define FORMATTING_HPP
+
+#include <string>
 
 std::string formatBytes(int bytes);
+
+#endif

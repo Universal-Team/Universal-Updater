@@ -24,18 +24,17 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "download.hpp"
+#include "extract.hpp"
 #include "gui.hpp"
-
-#include "download/download.hpp"
-
-#include "utils/extract.hpp"
-#include "utils/scriptHelper.hpp"
-#include "utils/thread.hpp"
+#include "msg.hpp"
+#include "scriptHelper.hpp"
+#include "thread.hpp"
 
 #include <fstream>
 
 extern "C" {
-    #include "utils/cia.h"
+    #include "cia.h"
 }
 
 extern bool showProgressBar;
@@ -96,13 +95,13 @@ void ScriptHelper::downloadFile(std::string file, std::string output, std::strin
 
 // Remove a File.
 void ScriptHelper::removeFile(std::string file, std::string message) {
-	DisplayMsg(message);
+	Msg::DisplayMsg(message);
 	deleteFile(file.c_str());
 }
 
 // Install a file.
 void ScriptHelper::installFile(std::string file, std::string message) {
-	DisplayMsg(message);
+	Msg::DisplayMsg(message);
 	installCia(file.c_str());
 }
 
@@ -127,7 +126,7 @@ Result ScriptHelper::createFile(const char * path) {
 
 // Display a Message for a specific amount of time. 
 void ScriptHelper::displayTimeMsg(std::string message, int seconds) {
-	DisplayMsg(message);
+	Msg::DisplayMsg(message);
 	for (int i = 0; i < 60*seconds; i++) {
 		gspWaitForVBlank();
 	}

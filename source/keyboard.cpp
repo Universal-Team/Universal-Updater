@@ -1,15 +1,15 @@
+#include "config.hpp"
+#include "gfx.hpp"
 #include "gui.hpp"
 #include "keyboard.hpp"
-
-#include "utils/config.hpp"
-#include "utils/structs.hpp"
+#include "structs.hpp"
 
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
 
-extern C3D_RenderTarget* top;
-extern C3D_RenderTarget* bottom;
+extern C3D_RenderTarget* Top;
+extern C3D_RenderTarget* Bottom;
 
 bool caps = false, enter = false;
 int shift = 0;
@@ -128,13 +128,13 @@ std::string Input::Numpad(uint maxLength, std::string Text)
 			C3D_FrameEnd(0);
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			C2D_TargetClear(top, BLACK);
-			C2D_TargetClear(bottom, BLACK);
-			Gui::DrawTop();
+			C2D_TargetClear(Top, BLACK);
+			C2D_TargetClear(Bottom, BLACK);
+			GFX::DrawTop();
 			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, Config::TxtColor, Text, 400);
 			Gui::DrawString(180, 217, 0.8, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 400);
 			if(cursorBlink < -20)	cursorBlink = 20;
-			Gui::setDraw(bottom);
+			Gui::ScreenDraw(Bottom);
 			Gui::Draw_Rect(0, 0, 320, 240, Config::Color3);
 			DrawNumpad();
 			scanKeys();
@@ -211,9 +211,9 @@ std::string Input::getString(uint maxLength, std::string Text, float inputTextSi
 			C3D_FrameEnd(0);
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			Gui::DrawTop();
+			GFX::DrawTop();
 			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, Config::TxtColor, Text, 400);
-			Gui::DrawBottom();
+			GFX::DrawBottom();
 			drawKeyboard();
 			C2D_DrawRectSolid(0, 81, 0.5f, 320, 20, Config::Color1 & C2D_Color32(200, 200, 200, 200));
 			Gui::DrawString(2, 82, inputTextSize, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 316);

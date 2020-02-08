@@ -24,13 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "utils/fileBrowse.hpp"
 #include "keyboard.hpp"
 #include "logging.hpp"
-
-#include "screens/scriptCreator.hpp"
-
-#include "utils/config.hpp"
-#include "utils/fileBrowse.h"
+#include "scriptCreator.hpp"
 
 #include <fstream>
 #include <unistd.h>
@@ -80,14 +77,14 @@ void ScriptCreator::Draw(void) const {
 }
 
 void ScriptCreator::DrawSubMenu(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
 	}
 
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	for (int i = 0; i < 2; i++) {
 		if (Selection == i) {
@@ -102,14 +99,14 @@ void ScriptCreator::DrawSubMenu(void) const {
 }
 
 void ScriptCreator::DrawScriptScreen(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
 	}
 	
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	// Draw Page.
 	for (int i = 0; i < 2; i++) {
@@ -287,7 +284,7 @@ void ScriptCreator::setInfoStuff(void) {
 
 void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 

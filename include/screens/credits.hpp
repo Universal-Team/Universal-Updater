@@ -27,14 +27,12 @@
 #ifndef CREDITS_HPP
 #define CREDITS_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
-class Credits : public screen
+class Credits : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -43,8 +41,8 @@ private:
 	int creditsPage = 1;
 
 	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25, -1}, // Back Arrow.
-		{295, 215, 25, 25, -1}, // Next Page.
+		{0, 215, 25, 25}, // Back Arrow.
+		{295, 215, 25, 25}, // Next Page.
 	};
 };
 

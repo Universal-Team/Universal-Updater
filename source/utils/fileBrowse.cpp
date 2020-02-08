@@ -1,11 +1,10 @@
+#include "common.hpp"
+#include "config.hpp"
+#include "fileBrowse.hpp"
+#include "gfx.hpp"
 #include "gui.hpp"
-
-#include "screens/screenCommon.hpp"
-
-#include "utils/common.hpp"
-#include "utils/config.hpp"
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+#include "screenCommon.hpp"
+#include "structs.hpp"
 
 #include <3ds.h>
 #include <cstring>
@@ -31,81 +30,14 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern touchPosition touch;
 
 std::vector<Structs::ButtonPos> buttonPositions = {
-	{295, 0, 25, 25, -1}, // Arrow Up.
-	{295, 215, 25, 25, -1}, // Arrow Down.
-	{15, 220, 50, 15, -1}, // Open.
-	{80, 220, 50, 15, -1}, // Select.
-	{145, 220, 50, 15, -1}, // Refresh.
-	{210, 220, 50, 15, -1}, // Back.
-	{0, 0, 25, 25, -1}, // ViewMode Change.
+	{295, 0, 25, 25}, // Arrow Up.
+	{295, 215, 25, 25}, // Arrow Down.
+	{15, 220, 50, 15}, // Open.
+	{80, 220, 50, 15}, // Select.
+	{145, 220, 50, 15}, // Refresh.
+	{210, 220, 50, 15}, // Back.
+	{0, 0, 25, 25}, // ViewMode Change.
 };
-
-/**
- * Get the title ID.
- * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.)
- * @return 0 on success; non-zero on error.
- */
-int grabTID(FILE *ndsFile, char *buf) {
-	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-	size_t read = fread(buf, 1, 4, ndsFile);
-	return !(read == 4);
-}
-
-void findNdsFiles(vector<DirEntry>& dirContents) {
-	struct stat st;
-	DIR *pdir = opendir(".");
-
-	if (pdir == NULL) {
-		DisplayMsg("Unable to open the directory.");
-		for(int i=0;i<120;i++)
-			gspWaitForVBlank();
-	} else {
-		while (continueNdsScan)
-		{
-			DirEntry dirEntry;
-
-			struct dirent* pent = readdir(pdir);
-			if (pent == NULL) break;
-
-			stat(pent->d_name, &st);
-			dirEntry.name = pent->d_name;
-			char scanningMessage[512];
-			snprintf(scanningMessage, sizeof(scanningMessage), "Scanning SD card for DS roms...\n\n(Press B to cancel)\n\n\n\n\n\n\n\n\n%s", dirEntry.name.c_str());
-			DisplayMsg(scanningMessage);
-			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
-				if(!(dirEntry.isDirectory) && dirEntry.name.length() >= 3) {
-					if (strcasecmp(dirEntry.name.substr(dirEntry.name.length()-3, 3).c_str(), "nds") == 0) {
-						// Get game's TID
-						FILE *f_nds_file = fopen(dirEntry.name.c_str(), "rb");
-						// char game_TID[5];
-						grabTID(f_nds_file, dirEntry.tid);
-						dirEntry.tid[4] = 0;
-						fclose(f_nds_file);
-
-						// dirEntry.tid = game_TID;
-
-						dirContents.push_back(dirEntry);
-						file_count++;
-					}
-				} else if (dirEntry.isDirectory
-				&& dirEntry.name.compare(".") != 0
-				&& dirEntry.name.compare("_nds") != 0
-				&& dirEntry.name.compare("3ds") != 0
-				&& dirEntry.name.compare("DCIM") != 0
-				&& dirEntry.name.compare("gm9") != 0
-				&& dirEntry.name.compare("luma") != 0
-				&& dirEntry.name.compare("Nintendo 3DS") != 0
-				&& dirEntry.name.compare("private") != 0
-				&& dirEntry.name.compare("retroarch") != 0) {
-					chdir(dirEntry.name.c_str());
-					findNdsFiles(dirContents);
-					chdir("..");
-				}
-		}
-		closedir(pdir);
-	}
-}
 
 off_t getFileSize(const char *fileName)
 {
@@ -153,7 +85,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		DisplayMsg("Unable to open the directory.");
+		Msg::DisplayMsg("Unable to open the directory.");
 		for(int i=0;i<120;i++)	gspWaitForVBlank();
 	} else {
 		while(true) {
@@ -223,9 +155,9 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 	while (1) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(top, BLACK);
-		C2D_TargetClear(bottom, BLACK);
-		Gui::DrawTop();
+		C2D_TargetClear(Top, BLACK);
+		C2D_TargetClear(Bottom, BLACK);
+		GFX::DrawTop();
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
 		if (Config::UseBars == true) {
@@ -235,13 +167,13 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path, 390);
 			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 390);
 		}
-		Gui::DrawBottom();
+		GFX::DrawBottom();
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)dirContents.size();i++) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 				dirs = dirContents[screenPos + i].name;
 				if(screenPos + i == selectedFile) {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 				}
 				Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, dirs, 320);
 			}
@@ -250,7 +182,7 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 				dirs = dirContents[screenPosList + i].name;
 				if(screenPosList + i == selectedFile) {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 				}
 				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, dirs, 320);
 			}
@@ -261,9 +193,9 @@ std::string selectFilePath(std::string selectText, const std::vector<std::string
 		} else {
 			Gui::DrawStringCentered(0, 2, 0.45f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 260);
 		}
-		Gui::DrawArrow(295, -1);
-		Gui::DrawArrow(315, 240, 180.0);
-		Gui::spriteBlend(sprites_view_idx, buttonPositions[6].x, buttonPositions[6].y);
+		GFX::DrawArrow(295, -1);
+		GFX::DrawArrow(315, 240, 180.0);
+		GFX::DrawSpriteBlend(sprites_view_idx, buttonPositions[6].x, buttonPositions[6].y);
 		
 		Gui::Draw_Rect(buttonPositions[2].x, buttonPositions[2].y, buttonPositions[2].w, buttonPositions[2].h, C2D_Color32(0, 0, 0, 190));
 		Gui::Draw_Rect(buttonPositions[3].x, buttonPositions[3].y, buttonPositions[3].w, buttonPositions[3].h, C2D_Color32(0, 0, 0, 190));

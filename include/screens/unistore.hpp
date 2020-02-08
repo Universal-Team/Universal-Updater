@@ -27,13 +27,13 @@
 #ifndef UNISTORE_HPP
 #define UNISTORE_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
+#include "common.hpp"
+#include "fileBrowse.hpp"
+#include "structs.hpp"
 
-#include "utils/fileBrowse.h"
-#include "utils/structs.hpp"
+#include <vector>
 
-class UniStore : public screen
+class UniStore : public Screen
 {
 public:
 	void Draw(void) const override;
@@ -83,31 +83,31 @@ private:
 	std::vector<DirEntry> dirContents;
 
 	std::vector<Structs::ButtonPos> arrowPos = {
-		{295, 0, 25, 25, -1}, // Arrow Up.
-		{295, 215, 25, 25, -1}, // Arrow Down.
-		{0, 215, 25, 25, -1}, // Back Arrow.
-		{5, 0, 25, 25, -1}, // ViewMode Change.
-		{45, 0, 25, 25, -1}, // Search.
-		{85, 0, 25, 25, -1}, // Update.
+		{295, 0, 25, 25}, // Arrow Up.
+		{295, 215, 25, 25}, // Arrow Down.
+		{0, 215, 25, 25}, // Back Arrow.
+		{5, 0, 25, 25}, // ViewMode Change.
+		{45, 0, 25, 25}, // Search.
+		{85, 0, 25, 25}, // Update.
 	};
 
 	std::vector<Structs::ButtonPos> URLBtn = {
-		{10, 70, 140, 40, -1}, // FULL URL.
-		{170, 70, 140, 40, -1}, // Github.
-		{10, 145, 140, 40, -1}, // TinyDB.
-		{170, 145, 140, 40, -1}, // QR Code?
+		{10, 70, 140, 40}, // FULL URL.
+		{170, 70, 140, 40}, // Github.
+		{10, 145, 140, 40}, // TinyDB.
+		{170, 145, 140, 40}, // QR Code?
 	};
 
 	std::vector<Structs::ButtonPos> GitHubPos = {
-		{30, 50, 260, 30, -1}, // Owner & Repo.
-		{30, 130, 260, 30, -1}, // Filename.
-		{135, 180, 50, 30, -1}, // OK.
+		{30, 50, 260, 30}, // Owner & Repo.
+		{30, 130, 260, 30}, // Filename.
+		{135, 180, 50, 30}, // OK.
 	};
 
 	std::vector<Structs::ButtonPos> subPos = {
-		{90, 40, 140, 35, -1}, // StoreList.
-		{90, 100, 140, 35, -1}, // storeSearch.
-		{90, 160, 140, 35, -1}, // storePathChange.
+		{90, 40, 140, 35}, // StoreList.
+		{90, 100, 140, 35}, // storeSearch.
+		{90, 160, 140, 35}, // storePathChange.
 	};
 };
 

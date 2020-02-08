@@ -24,38 +24,36 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "screens/credits.hpp"
-
-#include "utils/config.hpp"
+#include "credits.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void Credits::Draw(void) const {
 	std::string title = "Universal-Updater - ";
 	title += Lang::get("CREDITS");
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (creditsPage != 4) {
 		if (Config::UseBars == true) {
 			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
 		} else {
 			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, title, 400);
 		}
-		Gui::DrawStringCentered(0, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
-		Gui::DrawStringCentered(0, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
-		Gui::sprite(sprites_stackZ_idx, 150, 95);
+		Gui::DrawStringCentered(0, 30, 0.7f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 390);
+		Gui::DrawStringCentered(0, 70, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
+		GFX::DrawSprite(sprites_stackZ_idx, 120, 105);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
 	} else {
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
-		Gui::sprite(sprites_discord_idx, 115, 35);
+		GFX::DrawSprite(sprites_discord_idx, 115, 35);
 	}
 
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	if (creditsPage != 4) {
-		Gui::DrawArrow(0, 218, 0, 1);
-		Gui::DrawArrow(318, 240, 180.0, 1);
+		GFX::DrawArrow(0, 218, 0, 1);
+		GFX::DrawArrow(318, 240, 180.0, 1);
 	}
 
 	if (creditsPage == 1) {
@@ -77,14 +75,14 @@ void Credits::Draw(void) const {
 	} else if (creditsPage == 4) {
 		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
 		Gui::DrawStringCentered(0, -2, 0.55f, Config::TxtColor, Lang::get("LINK"), 320);
-		Gui::DrawArrow(0, 218, 0, 1);
+		GFX::DrawArrow(0, 218, 0, 1);
 	}
 }
 
 void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_LEFT || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 		if (creditsPage == 1) {
-			Screen::back();
+			Gui::screenBack();
 			return;
 		} else if (creditsPage > 1) {
 			creditsPage--;
@@ -96,7 +94,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 }

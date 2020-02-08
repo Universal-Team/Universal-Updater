@@ -24,14 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "download/download.hpp"
-
-#include "screens/scriptBrowse.hpp"
-#include "screens/scriptCreator.hpp"
-#include "screens/scriptlist.hpp"
-
-#include "utils/config.hpp"
-#include "utils/scriptHelper.hpp"
+#include "download.hpp"
+#include "scriptBrowse.hpp"
+#include "scriptCreator.hpp"
+#include "scriptHelper.hpp"
+#include "scriptlist.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -82,7 +79,7 @@ void checkForValidate(void) {
 	fclose(file);
 	int ver = ScriptHelper::getNum(json, "info", "version");
 	if (ver < SCRIPT_VERSION || ver > SCRIPT_VERSION) {
-		Gui::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
+		Msg::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
 	}
 }
 
@@ -190,7 +187,7 @@ void runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
 			if(!missing) {
-				if (Gui::promptMsg(promptmsg)) {
+				if (Msg::promptMsg(promptmsg)) {
 					removeDirRecursive(directory.c_str());
 				}
 			}
@@ -270,20 +267,20 @@ void loadColors(nlohmann::json &json) {
 }
 
 void ScriptList::DrawSubMenu(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
 	}
 
-	Gui::DrawBottom();
-	Gui::DrawArrow(0, 218, 0, 1);
+	GFX::DrawBottom();
+	GFX::DrawArrow(0, 218, 0, 1);
 
 	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
 		if (SubSelection == i) {
-			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, Config::SelectedColor);
+			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, TRANSPARENT, Config::SelectedColor);
 		}
 	}
 
@@ -298,7 +295,7 @@ void ScriptList::DrawList(void) const {
 	std::string line1;
 	std::string line2;
 	std::string scriptAmount = std::to_string(selection +1) + " / " + std::to_string(fileInfo.size());
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
@@ -310,11 +307,11 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[selection].author), 400);
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[selection].shortDesc), 400);
 
-	Gui::DrawBottom();
-	Gui::DrawArrow(295, -1);
-	Gui::DrawArrow(315, 240, 180.0);
-	Gui::DrawArrow(0, 218, 0, 1);
-	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawBottom();
+	GFX::DrawArrow(295, -1);
+	GFX::DrawArrow(315, 240, 180.0);
+	GFX::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
@@ -322,7 +319,7 @@ void ScriptList::DrawList(void) const {
 			line1 = fileInfo[screenPos + i].title;
 			line2 = fileInfo[screenPos + i].author;
 			if(screenPos + i == selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
@@ -332,7 +329,7 @@ void ScriptList::DrawList(void) const {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = fileInfo[screenPosList + i].title;
 			if(screenPosList + i == selection) {
-				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
@@ -361,7 +358,7 @@ void loadDesc(void) {
 void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(fileInfo2.size());
-	Gui::DrawTop();
+	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, selectedTitle, 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
@@ -372,18 +369,18 @@ void ScriptList::DrawSingleObject(void) const {
 	for(uint i=0;i<lines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
-	Gui::DrawBottom();
-	Gui::DrawArrow(295, -1);
-	Gui::DrawArrow(315, 240, 180.0);
-	Gui::DrawArrow(0, 218, 0, 1);
-	Gui::spriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawBottom();
+	GFX::DrawArrow(295, -1);
+	GFX::DrawArrow(315, 240, 180.0);
+	GFX::DrawArrow(0, 218, 0, 1);
+	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			info = fileInfo2[screenPos2 + i];
 			if(screenPos2 + i == selection2) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, selected);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
@@ -393,7 +390,7 @@ void ScriptList::DrawSingleObject(void) const {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			info = fileInfo2[screenPosList2 + i];
 			if(screenPosList2 + i == selection2) {
-				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, selected);
+				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}
@@ -403,7 +400,7 @@ void ScriptList::DrawSingleObject(void) const {
 
 void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Screen::back();
+		Gui::screenBack();
 		return;
 	}
 
@@ -430,19 +427,19 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 					mode = 1;
 				} else {
-					Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+					Msg::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
 				}
 				break;
 			case 1:
 				if (checkWifiStatus() == true) {
-					Screen::set(std::make_unique<ScriptBrowse>());
+					Gui::setScreen(std::make_unique<ScriptBrowse>());
 				} else {
 					notConnectedMsg();
 				}
 				break;
 			case 2:
 				if (isTesting == true) {
-					Screen::set(std::make_unique<ScriptCreator>());
+					Gui::setScreen(std::make_unique<ScriptCreator>());
 				} else {
 					notImplemented();
 				}
@@ -467,17 +464,17 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				mode = 1;
 			} else {
-				Gui::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+				Msg::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
 			}
 		} else if (touching(touch, subPos[1])) {
 			if (checkWifiStatus() == true) {
-				Screen::set(std::make_unique<ScriptBrowse>());
+				Gui::setScreen(std::make_unique<ScriptBrowse>());
 			} else {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, subPos[2])) {
 			if (isTesting == true) {
-				Screen::set(std::make_unique<ScriptCreator>());
+				Gui::setScreen(std::make_unique<ScriptCreator>());
 			} else {
 				notImplemented();
 			}

@@ -24,12 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang/lang.hpp"
 
-#include "screens/ftpScreen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/config.hpp"
+#include "ftpScreen.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -54,14 +50,14 @@ void FTPScreen::Draw(void) const
 		ftp_loop();
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		Gui::DrawTop();
+		GFX::DrawTop();
 		if (Config::UseBars == true) {
 			Gui::DrawString((400-Gui::GetStringWidth(0.7f, Lang::get("FTP_MODE")))/2, 0, 0.7f, Config::TxtColor, Lang::get("FTP_MODE"), 400);
 		} else {
 			Gui::DrawString((400-Gui::GetStringWidth(0.7f, Lang::get("FTP_MODE")))/2, 2, 0.7f, Config::TxtColor, Lang::get("FTP_MODE"), 400);
 		}
-		Gui::DrawBottom();
-		Gui::DrawArrow(0, 218, 0, 1);
+		GFX::DrawBottom();
+		GFX::DrawArrow(0, 218, 0, 1);
 		ret = ACU_GetWifiStatus(&wifiStatus);
 
 		if ((wifiStatus != 0) && R_SUCCEEDED(ret)) {
@@ -95,7 +91,7 @@ void FTPScreen::Draw(void) const
 	memset(ftp_file_transfer, 0, 50); // Empty transfer status.
 	ftp_exit();
 
-	Screen::back();
+	Gui::screenBack();
 	return;
 }
 

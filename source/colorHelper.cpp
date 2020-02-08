@@ -24,20 +24,26 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "common.hpp"
-#include "structs.hpp"
+#include "colorHelper.hpp"
 
-#include <vector>
-
-class FTPScreen : public Screen
+int ColorHelper::getColorValue(int color, int bgr)
 {
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	char colorName[10];
+	int i;
+	std::stringstream ss;
 
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
-};
+	itoa(color, colorName, 16);
+	std::string colorNamePart(colorName, 2*bgr+2, 2);
+	ss << std::hex << colorNamePart.c_str();
+	ss >> i;
+
+	return i;
+}
+
+std::string ColorHelper::getColorName(int color, int bgr)
+{
+	char colorName[10];
+	int i = getColorValue(color, bgr);
+	itoa(i, colorName, 10);
+	return colorName;
+}

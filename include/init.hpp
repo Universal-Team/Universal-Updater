@@ -24,20 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "common.hpp"
-#include "structs.hpp"
+#ifndef INIT_HPP
+#define INIT_HPP
 
-#include <vector>
+#include <3ds.h>
 
-class FTPScreen : public Screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+namespace Init {
+	// Init, Mainloop & Exit.
+	Result Initialize();
+	Result MainLoop();
+	Result Exit();
 
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
-};
+	// Sound / Music stuff.
+	void loadSoundEffects(void);
+	void playMusic(void);
+	void stopMusic(void);
+}
+
+#endif

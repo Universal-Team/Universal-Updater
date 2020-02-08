@@ -1,0 +1,3 @@
+[submodule "Universal-Core"]
+	path = Universal-Core
+	url = https://github.com/Universal-Team/Universal-Core.git
