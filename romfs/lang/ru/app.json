@@ -93,5 +93,6 @@
 	"UNISTORE_SUBMENU": "Меню UniStore",
 	"OWNER_AND_REPO": "Владелец и Репозитория",
 	"FILENAME": "Имя файла",
-	"OK": "OK"
+	"OK": "OK",
+	"DELETE_STORE": "Вы хотите удалить этот магазин?"
 }
