@@ -95,7 +95,7 @@ ScriptBrowse::ScriptBrowse() {
 	Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
-	downloadToFile("https://github.com/Universal-Team/extras/raw/scripts/info/scriptInfo.json", metaFile);
+	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
 	FILE* file = fopen(metaFile, "r");
 	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
