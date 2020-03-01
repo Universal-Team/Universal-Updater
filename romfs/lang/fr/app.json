@@ -94,5 +94,9 @@
 	"OWNER_AND_REPO": "Propriétaire & dépôt",
 	"FILENAME": "Nom du fichier",
 	"OK": "OK",
-	"DELETE_STORE": "Voulez-vous supprimer cette boutique ?"
+	"DELETE_STORE": "Voulez-vous supprimer cette boutique ?",
+	"DELETE_TITLE": "Would you like to delete this title?",
+	"MEDIATYPE_SD": "MediaType SD",
+	"MEDIATYPE_NAND": "MediaType NAND",
+	"BOOT_TITLE": "Would you like to boot this title?"
 }
