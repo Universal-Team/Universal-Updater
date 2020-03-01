@@ -100,5 +100,7 @@
 	"MEDIATYPE_NAND": "Medientyp NAND",
 	"BOOT_TITLE": "Möchten Sie diesen Titel starten?",
 	"GODMODE": "GodMode: ",
-	"FUNCTION_NOT_ALLOWED": "Diese Funktion ist ohne GodMode nicht erlaubt!"
+	"FUNCTION_NOT_ALLOWED": "Diese Funktion ist ohne GodMode nicht erlaubt!",
+	"ENABLE_GODMODE": "Enable GodMode",
+	"ENABLE_GODMODE_PROMPT": "Would you like to enable GodMode?\n\nBe careful when you use GodMode!!"
 }
