@@ -47,6 +47,7 @@ bool Config::Logging;
 bool Config::UseBars;
 std::string Config::StorePath;
 int Config::LangPath;
+bool Config::GodMode = false;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -203,7 +204,6 @@ void Config::initializeNewConfig() {
 	Config::setBool("LOGGING", false);
 	Config::setBool("BARS", true);
 	Config::setString("STOREPATH", STORE_PATH);
-
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }

@@ -48,13 +48,13 @@ void MainMenu::Draw(void) const {
 	}
 
 	if (Config::UseBars == true) {
-		if (Config::getBool("GODMODE")) {
+		if (Config::GodMode) {
 			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
 		} else {
 			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);
 		}
 	} else {
-		if (Config::getBool("GODMODE")) {
+		if (Config::GodMode) {
 			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
 		} else {
 			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);

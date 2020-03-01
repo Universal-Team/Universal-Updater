@@ -194,7 +194,7 @@ void Settings::DrawMiscSettings(void) const {
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
 		if (Selection == i) {
 			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, TRANSPARENT, Config::SelectedColor);
@@ -203,6 +203,7 @@ void Settings::DrawMiscSettings(void) const {
 
 	Gui::DrawStringCentered(0, mainButtons[0].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_MUSICFILE"), 130);
 	Gui::DrawStringCentered(0, mainButtons[1].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_BAR_STYLE"), 130);
+	Gui::DrawStringCentered(0, mainButtons[2].y+10, 0.6f, Config::TxtColor, Lang::get("ENABLE_GODMODE"), 130);
 }
 
 void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -211,7 +212,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_DOWN) {
-		if (Selection < 1)	Selection++;
+		if (Selection < 2)	Selection++;
 	}
 
 	if (hDown & KEY_A) {
@@ -223,6 +224,10 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (Selection == 1) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+		} else if (Selection == 2) {
+			if (Msg::promptMsg(Lang::get("ENABLE_GODMODE_PROMPT"))) {
+				Config::GodMode = true;
+			}
 		}
 	}
 
@@ -235,6 +240,10 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[1])) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+		} else if (touching(touch, mainButtons[2])) {
+			if (Msg::promptMsg(Lang::get("ENABLE_GODMODE_PROMPT"))) {
+				Config::GodMode = true;
+			}
 		}
 	}
 

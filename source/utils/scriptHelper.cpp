@@ -151,7 +151,7 @@ bool ScriptHelper::checkIfValid(std::string scriptFile, int mode) {
 }
 
 void ScriptHelper::deleteTitle(const std::string TitleID, bool isNAND, std::string message) {
-	if (Config::getBool("GODMODE")) {
+	if (Config::GodMode) {
 		std::string MSG = Lang::get("DELETE_TITLE") + "\n\n";
 		if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 		else		MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;

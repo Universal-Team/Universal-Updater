@@ -119,5 +119,7 @@
 	"BOOT_TITLE":						"Would you like to boot this title?",
 
 	"GODMODE":							"GodMode: ",
-	"FUNCTION_NOT_ALLOWED":				"This function is not allowed without GodMode!"
+	"FUNCTION_NOT_ALLOWED":				"This function is not allowed without GodMode!",
+	"ENABLE_GODMODE":					"Enable GodMode",
+	"ENABLE_GODMODE_PROMPT":			"Would you like to enable GodMode?\n\nBe careful when you use GodMode!!"
 }
