@@ -100,5 +100,5 @@
 	"MEDIATYPE_NAND": "メディアタイプNAND",
 	"BOOT_TITLE": "このアプリを開始しますか？",
 	"GODMODE": "神モード：",
-	"FUNCTION_NOT_ALLOWED": "This function is not allowed without GodMode!"
+	"FUNCTION_NOT_ALLOWED": "この機能は神モードなしでは許可されていません！"
 }
