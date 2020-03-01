@@ -84,6 +84,7 @@ void Init::stopMusic(void) {
 Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
+	amInit();
 	Gui::init();
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	sdmcInit();
@@ -116,12 +117,12 @@ Result Init::Initialize() {
 		playMusic();
 	}
 
-    return 0;
+	return 0;
 }
 
 Result Init::MainLoop() {
-    // Initialize everything.
-    Initialize();
+	// Initialize everything.
+	Initialize();
 
 	// Loop as long as the status is not exiting.
 	while (aptMainLoop() && !exiting)
@@ -146,10 +147,12 @@ Result Init::MainLoop() {
 			}
 		}
 	}
-    // Exit all services and exit the app.
-    Exit();
-    return 0;
+	// Exit all services and exit the app.
+	Exit();
+	return 0;
 }
+
+extern void freeSheet();
 
 Result Init::Exit() {
 	if (songIsFound == true) {
@@ -159,12 +162,16 @@ Result Init::Exit() {
 	if (dspFound == true) {
 		ndspExit();
 	}
+
+	// Free UniStore spritesheet, just in case.
+	freeSheet();
 	Config::save();
 	Gui::exit();
 	Gui::unloadSheet(sprites);
 	gfxExit();
 	cfguExit();
 	acExit();
+	amExit();
 	romfsExit();
 	sdmcExit();
 	return 0;

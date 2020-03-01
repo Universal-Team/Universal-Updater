@@ -45,6 +45,9 @@ namespace ScriptHelper {
 	void displayTimeMsg(std::string message, int seconds);
 
 	bool checkIfValid(std::string scriptFile, int mode = 0);
+
+	void deleteTitle(const std::string TitleID, bool isNAND, std::string message);
+	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
 }
 
 #endif

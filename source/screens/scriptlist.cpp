@@ -211,6 +211,28 @@ void runFunctions(nlohmann::json &json) {
 			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 		} else if (type == "saveConfig") {
 			Config::save();
+		} else if (type == "deleteTitle") {
+			std::string TitleID = "";
+			std::string message = "";
+			bool isNAND = false, missing = false;
+			if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
+			else	missing = true;
+			if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			else	missing = true;
+			if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
+		} else if (type == "bootTitle") {
+			std::string TitleID = "";
+			std::string message = "";
+			bool isNAND = false, missing = false;
+			if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
+			else	missing = true;
+			if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
+			else	missing = true;
+			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+			else	missing = true;
+			if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 		}
 	}
 	doneMsg();

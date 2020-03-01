@@ -2,7 +2,7 @@
 
 bool updatingSelf = false;
 
-static Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
+Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
 	Result ret = 0;
 	u8 param[0x300];
 	u8 hmac[0x20];
@@ -74,12 +74,6 @@ Result installCia(const char * ciaPath)
 	AM_TitleEntry info;
 	Result ret = 0;
 
-	ret = amInit();
-	if (R_FAILED(ret)) {
-		printf("Error in:\namInit();\n");
-		return ret;
-	}
-
 	FS_MediaType media = MEDIATYPE_SD;
 
 	ret = openFile(&fileHandle, ciaPath, false);
@@ -140,6 +134,5 @@ Result installCia(const char * ciaPath)
 		if (R_FAILED(ret = CIA_LaunchTitle(info.titleID, MEDIATYPE_SD)))
 			return ret;
 	}
-	amExit();
 	return 0;
 }

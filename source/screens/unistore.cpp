@@ -49,7 +49,6 @@ extern u32 TextColor;
 extern u32 progressBar;
 extern u32 selected;
 extern u32 unselected;
-
 C2D_SpriteSheet appStoreSheet;
 
 struct storeInfo2 {
@@ -120,12 +119,16 @@ std::string storeDesc = "";
 bool sheetHasLoaded = false;
 // Sheet / Icon stuff.
 void loadStoreSheet(int pos) {
-	appStoreSheet = C2D_SpriteSheetLoad(storeInfo[pos].storeSheet.c_str());
-	sheetHasLoaded = true;
+	if (sheetHasLoaded == false) {
+		appStoreSheet = C2D_SpriteSheetLoad(storeInfo[pos].storeSheet.c_str());
+		sheetHasLoaded = true;
+	}
 }
 void freeSheet() {
-	C2D_SpriteSheetFree(appStoreSheet);
-	sheetHasLoaded = false;
+	if (sheetHasLoaded == true) {
+		C2D_SpriteSheetFree(appStoreSheet);
+		sheetHasLoaded = false;
+	}
 }
 
 void drawBlend(int key, int x, int y) {
@@ -857,6 +860,28 @@ void UniStore::execute() {
 			Config::save();
 		} else if (type == "notImplemented") {
 			notImplemented();
+		} else if (type == "deleteTitle") {
+			std::string TitleID = "";
+			std::string message = "";
+			bool isNAND = false, missing = false;
+			if(appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("TitleID"))	TitleID = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("TitleID");
+			else	missing = true;
+			if (appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("NAND") && appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("NAND").is_boolean())	isNAND = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("NAND");
+			else	missing = true;
+			if(appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("message");
+			else	missing = true;
+			if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
+		} else if (type == "bootTitle") {
+			std::string TitleID = "";
+			std::string message = "";
+			bool isNAND = false, missing = false;
+			if(appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("TitleID"))	TitleID = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("TitleID");
+			else	missing = true;
+			if (appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("NAND") && appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("NAND").is_boolean())	isNAND = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("NAND");
+			else	missing = true;
+			if(appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(selectedOptionAppStore).at("script").at(i).at("message");
+			else	missing = true;
+			if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 		}
 	}
 	doneMsg();
