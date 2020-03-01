@@ -94,5 +94,9 @@
 	"OWNER_AND_REPO": "Dono e Repositório",
 	"FILENAME": "Nome do ficheiro",
 	"OK": "OK",
-	"DELETE_STORE": "Gostarias de eliminar esta loja?"
+	"DELETE_STORE": "Gostarias de eliminar esta loja?",
+	"DELETE_TITLE": "Would you like to delete this title?",
+	"MEDIATYPE_SD": "MediaType SD",
+	"MEDIATYPE_NAND": "MediaType NAND",
+	"BOOT_TITLE": "Would you like to boot this title?"
 }
