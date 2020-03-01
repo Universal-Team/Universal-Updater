@@ -95,10 +95,10 @@
 	"FILENAME": "ファイル名",
 	"OK": "OK",
 	"DELETE_STORE": "このストアを削除しますか？",
-	"DELETE_TITLE": "Would you like to delete this title?",
-	"MEDIATYPE_SD": "MediaType SD",
-	"MEDIATYPE_NAND": "MediaType NAND",
-	"BOOT_TITLE": "Would you like to boot this title?",
-	"GODMODE": "GodMode: ",
+	"DELETE_TITLE": "このアプリを削除しますか？",
+	"MEDIATYPE_SD": "メディアタイプSD",
+	"MEDIATYPE_NAND": "メディアタイプNAND",
+	"BOOT_TITLE": "このアプリを開始しますか？",
+	"GODMODE": "神モード：",
 	"FUNCTION_NOT_ALLOWED": "This function is not allowed without GodMode!"
 }
