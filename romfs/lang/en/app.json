@@ -116,5 +116,8 @@
 	"DELETE_TITLE":						"Would you like to delete this title?",
 	"MEDIATYPE_SD":						"MediaType SD",
 	"MEDIATYPE_NAND":					"MediaType NAND",
-	"BOOT_TITLE":						"Would you like to boot this title?"
+	"BOOT_TITLE":						"Would you like to boot this title?",
+
+	"GODMODE":							"GodMode: ",
+	"FUNCTION_NOT_ALLOWED":				"This function is not allowed without GodMode!"
 }

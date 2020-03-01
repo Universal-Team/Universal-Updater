@@ -47,6 +47,20 @@ void MainMenu::Draw(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
 	}
 
+	if (Config::UseBars == true) {
+		if (Config::getBool("GODMODE")) {
+			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);
+		}
+	} else {
+		if (Config::getBool("GODMODE")) {
+			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);
+		}
+	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
