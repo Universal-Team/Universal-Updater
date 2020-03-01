@@ -95,10 +95,10 @@
 	"FILENAME": "Dateiname",
 	"OK": "OK",
 	"DELETE_STORE": "Möchten Sie diesen Shop löschen?",
-	"DELETE_TITLE": "Would you like to delete this title?",
-	"MEDIATYPE_SD": "MediaType SD",
-	"MEDIATYPE_NAND": "MediaType NAND",
-	"BOOT_TITLE": "Would you like to boot this title?",
+	"DELETE_TITLE": "Möchten Sie diesen Titel löschen?",
+	"MEDIATYPE_SD": "Medientyp SD",
+	"MEDIATYPE_NAND": "Medientyp NAND",
+	"BOOT_TITLE": "Möchten Sie diesen Titel starten?",
 	"GODMODE": "GodMode: ",
-	"FUNCTION_NOT_ALLOWED": "This function is not allowed without GodMode!"
+	"FUNCTION_NOT_ALLOWED": "Diese Funktion ist ohne GodMode nicht erlaubt!"
 }
