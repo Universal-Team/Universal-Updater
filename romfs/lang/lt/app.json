@@ -94,5 +94,9 @@
 	"OWNER_AND_REPO": "Sąvininkas ir repozitorija",
 	"FILENAME": "Failo pavadinimas",
 	"OK": "OK",
-	"DELETE_STORE": "Ar norite ištrinti šią repozitoriją?"
+	"DELETE_STORE": "Ar norite ištrinti šią repozitoriją?",
+	"DELETE_TITLE": "Would you like to delete this title?",
+	"MEDIATYPE_SD": "MediaType SD",
+	"MEDIATYPE_NAND": "MediaType NAND",
+	"BOOT_TITLE": "Would you like to boot this title?"
 }
