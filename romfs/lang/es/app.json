@@ -95,12 +95,12 @@
 	"FILENAME": "Nombre de archivo",
 	"OK": "Aceptar",
 	"DELETE_STORE": "¿Quieres eliminar esta tienda?",
-	"DELETE_TITLE": "Would you like to delete this title?",
-	"MEDIATYPE_SD": "MediaType SD",
+	"DELETE_TITLE": "¿Quieres eliminar este título?",
+	"MEDIATYPE_SD": "SD MediaType",
 	"MEDIATYPE_NAND": "MediaType NAND",
-	"BOOT_TITLE": "Would you like to boot this title?",
+	"BOOT_TITLE": "¿Quieres arrancar este título?",
 	"GODMODE": "GodMode: ",
-	"FUNCTION_NOT_ALLOWED": "This function is not allowed without GodMode!",
-	"ENABLE_GODMODE": "Enable GodMode",
-	"ENABLE_GODMODE_PROMPT": "Would you like to enable GodMode?\n\nBe careful when you use GodMode!!"
+	"FUNCTION_NOT_ALLOWED": "Esta función no está permitida sin GodMode!",
+	"ENABLE_GODMODE": "Activar GodMode",
+	"ENABLE_GODMODE_PROMPT": "¿Te gustaría activar GodMode?\n\n¡Ten cuidado al usar GodMode!!"
 }
