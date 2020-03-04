@@ -33,7 +33,7 @@
 #include "mainMenu.hpp"
 #include "screenCommon.hpp"
 #include "sound.h"
-#include "uniStore.hpp"
+#include "unistore.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
