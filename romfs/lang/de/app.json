@@ -101,6 +101,6 @@
 	"BOOT_TITLE": "Möchten Sie diesen Titel starten?",
 	"GODMODE": "GodMode: ",
 	"FUNCTION_NOT_ALLOWED": "Diese Funktion ist ohne GodMode nicht erlaubt!",
-	"ENABLE_GODMODE": "Enable GodMode",
-	"ENABLE_GODMODE_PROMPT": "Would you like to enable GodMode?\n\nBe careful when you use GodMode!!"
+	"ENABLE_GODMODE": "GodMode aktivieren",
+	"ENABLE_GODMODE_PROMPT": "Möchtest du GodMode aktivieren?\n\nSei vorsichtig, wenn du GodMode verwendest!!"
 }
