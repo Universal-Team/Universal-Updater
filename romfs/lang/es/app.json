@@ -102,5 +102,7 @@
 	"GODMODE": "GodMode: ",
 	"FUNCTION_NOT_ALLOWED": "Esta función no está permitida sin GodMode!",
 	"ENABLE_GODMODE": "Activar GodMode",
-	"ENABLE_GODMODE_PROMPT": "¿Te gustaría activar GodMode?\n\n¡Ten cuidado al usar GodMode!!"
+	"ENABLE_GODMODE_PROMPT": "¿Te gustaría activar GodMode?\n\n¡Ten cuidado al usar GodMode!!",
+	"DISABLE_AUTOBOOT_STORE": "Would you like to disable autoboot?",
+	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!"
 }
