@@ -29,6 +29,7 @@
 #include "formatting.hpp"
 #include "json.hpp"
 #include "keyboard.hpp"
+#include "mainMenu.hpp"
 #include "scriptHelper.hpp"
 #include "unistore.hpp"
 
@@ -49,6 +50,9 @@ extern u32 TextColor;
 extern u32 progressBar;
 extern u32 selected;
 extern u32 unselected;
+extern bool UniStoreAutoboot;
+bool changeBackState = false;
+
 C2D_SpriteSheet appStoreSheet;
 
 struct storeInfo2 {
@@ -61,7 +65,7 @@ struct storeInfo2 {
 	std::string sheetURL;
 };
 
-extern void notImplemented(void);
+storeInfo2 SI;
 
 // Parse informations like URL, Title, Author, Description.
 storeInfo2 parseStoreInfo(std::string fileName) {
@@ -92,6 +96,11 @@ nlohmann::json openStoreFile() {
 	return jsonFile;
 }
 
+std::vector<storeInfo2> storeInfo; // Store selection.
+std::vector<std::string> appStoreList; // Actual store. ;P
+std::vector<std::string> descLines;
+std::string storeDesc = "";
+
 // Parse the Objects.
 std::vector<std::string> parseStoreObjects(std::string storeName) {
 	FILE* file = fopen(storeName.c_str(), "rt");
@@ -111,11 +120,6 @@ std::vector<std::string> parseStoreObjects(std::string storeName) {
 	return objs;
 }
 
-std::vector<storeInfo2> storeInfo; // Store selection.
-std::vector<std::string> appStoreList; // Actual store. ;P
-std::vector<std::string> descLines;
-std::string storeDesc = "";
-
 bool sheetHasLoaded = false;
 // Sheet / Icon stuff.
 void loadStoreSheet(int pos) {
@@ -124,6 +128,14 @@ void loadStoreSheet(int pos) {
 		sheetHasLoaded = true;
 	}
 }
+
+void loadStoreAutobootSheet(const std::string &sheet) {
+	if (sheetHasLoaded == false) {
+		appStoreSheet = C2D_SpriteSheetLoad(sheet.c_str());
+		sheetHasLoaded = true;
+	}
+}
+
 void freeSheet() {
 	if (sheetHasLoaded == true) {
 		C2D_SpriteSheetFree(appStoreSheet);
@@ -183,6 +195,53 @@ void loadStoreColors(nlohmann::json &json) {
 	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "progressbarColor"));
 	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
 }
+
+UniStore::UniStore() {
+	// Autobooting UniStore. ;)
+	if (UniStoreAutoboot) {
+		// If store isn't found, go to MainMenu.
+		if (access(Config::UniStoreFile.c_str(), F_OK) != 0) {
+			Gui::setScreen(std::make_unique<MainMenu>());
+			changeBackState = true;
+		}
+
+		// Parse store.
+		SI = parseStoreInfo(Config::UniStoreFile);
+		// If WiFi enabled & File exist, update store.
+		if (checkWifiStatus()) {
+			if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+				if(SI.url != "" && SI.url != "MISSING: storeInfo.url" && SI.file != "" && SI.file != "MISSING: storeInfo.file") {
+					ScriptHelper::downloadFile(SI.url, SI.file, Lang::get("UPDATING"));
+				}
+				if(SI.sheetURL != "" && SI.sheetURL != "MISSING: storeInfo.sheetURL" && SI.storeSheet != "" && SI.storeSheet != "MISSING: storeInfo.sheet") {
+					ScriptHelper::downloadFile(SI.sheetURL, SI.storeSheet, Lang::get("UPDATING"));
+				}
+			}
+		} else {
+			notConnectedMsg();
+		}
+
+		if (ScriptHelper::checkIfValid(Config::UniStoreFile, 1) == true) {
+			currentStoreFile = Config::UniStoreFile;
+			Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
+			if (SI.storeSheet != "" || SI.storeSheet != "MISSING: storeInfo.sheet") {
+				if(access(SI.storeSheet.c_str(), F_OK) != -1 ) {
+					loadStoreAutobootSheet(SI.storeSheet);
+				}
+			}
+			appStoreJson = openStoreFile();
+			appStoreList = parseStoreObjects(currentStoreFile);
+			loadStoreColors(appStoreJson);
+			selectedOptionAppStore = 0;
+			displayInformations = handleIfDisplayText();
+			isScriptSelected = true;
+			mode = 2;
+			changeBackState = true;
+		}
+	}
+}
+
+extern void notImplemented(void);
 
 void UniStore::DrawSubMenu(void) const {
 	GFX::DrawTop();
@@ -396,8 +455,12 @@ void UniStore::updateStore(int selectedStore) {
 
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Gui::screenBack();
-		return;
+		if (changeBackState) {
+			Gui::setScreen(std::make_unique<MainMenu>());
+		} else {
+			Gui::screenBack();
+			return;
+		}
 	}
 
 	if (hDown & KEY_UP) {
@@ -650,18 +713,48 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		}
 	}
+
+	if (hDown & KEY_START) {
+		if (Config::autobootUnistore) {
+			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT_STORE"))) {
+				Config::autobootUnistore = false;
+				Config::UniStoreFile = "";
+			}
+		} else {
+			if (dirContents[selection].isDirectory) {
+			} else if (storeInfo.size() != 0) {
+				if (ScriptHelper::checkIfValid(dirContents[selection].name, 1) == true) {
+					if (Msg::promptMsg(Lang::get("AUTOBOOT_STORE"))) {
+						Config::UniStoreFile = Config::StorePath + dirContents[selection].name;
+						Config::autobootUnistore = true;
+					}
+				}
+			}
+		}
+	}
 }
 
 void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		mode = 1;
-		appStoreList.clear();
-		isScriptSelected = false;
-		selection2 = 0;
-		if (sheetHasLoaded == true) {
-			freeSheet();
+		if (UniStoreAutoboot) {
+			UniStoreAutoboot = false;
+			mode = 0;
+			appStoreList.clear();
+			isScriptSelected = false;
+			selection2 = 0;
+			if (sheetHasLoaded == true) {
+				freeSheet();
+			}
+		} else {
+			mode = 1;
+			appStoreList.clear();
+			isScriptSelected = false;
+			selection2 = 0;
+			if (sheetHasLoaded == true) {
+				freeSheet();
+			}
 		}
 	}
 

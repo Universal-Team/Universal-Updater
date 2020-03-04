@@ -48,6 +48,8 @@ bool Config::UseBars;
 std::string Config::StorePath;
 int Config::LangPath;
 bool Config::GodMode = false;
+bool Config::autobootUnistore = false;
+std::string Config::UniStoreFile = "";
 nlohmann::json configJson;
 
 void Config::load() {
@@ -145,6 +147,18 @@ void Config::load() {
 			Config::StorePath = getString("STOREPATH");
 		}
 
+		if(!configJson.contains("UNISTORE_AUTOBOOT")) {
+			Config::autobootUnistore = false;
+		} else {
+			Config::autobootUnistore = getBool("UNISTORE_AUTOBOOT");
+		}
+
+		if(!configJson.contains("UNISTORE_FILE")) {
+			Config::UniStoreFile = "";
+		} else {
+			Config::UniStoreFile = getString("UNISTORE_FILE");
+		}
+
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -162,6 +176,8 @@ void Config::load() {
 		Config::Logging = false;
 		Config::UseBars = true;
 		Config::StorePath = STORE_PATH;
+		Config::autobootUnistore = false;
+		Config::UniStoreFile = "";
 	}
 }
 
@@ -181,6 +197,10 @@ void Config::save() {
 	Config::setBool("LOGGING", Config::Logging);
 	Config::setBool("BARS", Config::UseBars);
 	Config::setString("STOREPATH", Config::StorePath);
+
+	Config::setBool("UNISTORE_AUTOBOOT", Config::autobootUnistore);
+	Config::setString("UNISTORE_FILE", Config::UniStoreFile);
+
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -204,6 +224,10 @@ void Config::initializeNewConfig() {
 	Config::setBool("LOGGING", false);
 	Config::setBool("BARS", true);
 	Config::setString("STOREPATH", STORE_PATH);
+
+	Config::setBool("UNISTORE_AUTOBOOT", false);
+	Config::setString("UNISTORE_FILE", "");
+
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }

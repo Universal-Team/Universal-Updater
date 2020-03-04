@@ -33,6 +33,7 @@
 #include "mainMenu.hpp"
 #include "screenCommon.hpp"
 #include "sound.h"
+#include "uniStore.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
@@ -47,6 +48,7 @@ bool dspFound = false;
 touchPosition touch;
 sound *bgm = NULL;
 bool songIsFound = false;
+bool UniStoreAutoboot = false;
 
 // Include all spritesheet's.
 C2D_SpriteSheet sprites;
@@ -107,7 +109,18 @@ Result Init::Initialize() {
 		Logging::createLogFile();
 	}
 
-	Gui::setScreen(std::make_unique<MainMenu>());
+	if (Config::autobootUnistore) {
+		UniStoreAutoboot = true;
+	}
+
+	if (UniStoreAutoboot) {
+		if (access(Config::UniStoreFile.c_str(), F_OK) == 0) {
+			Gui::setScreen(std::make_unique<UniStore>());
+		}
+	} else {
+		Gui::setScreen(std::make_unique<MainMenu>());
+	}
+
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
  	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
