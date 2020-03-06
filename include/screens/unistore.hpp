@@ -40,6 +40,8 @@ public:
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 	UniStore();
 private:
+	void refreshList();
+	
 	void DrawSubMenu(void) const;
 	void DrawStoreList(void) const;
 	void DrawStore(void) const;

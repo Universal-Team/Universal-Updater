@@ -38,9 +38,11 @@ class ScriptList : public Screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	ScriptList();
 private:
 	void deleteScript(int selectedScript);
-
+	void refreshList();
+	
 	void DrawSubMenu(void) const;
 	void DrawList(void) const;
 	void DrawSingleObject(void) const;

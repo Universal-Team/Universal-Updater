@@ -25,6 +25,7 @@
 */
 
 #include "download.hpp"
+#include "mainMenu.hpp"
 #include "scriptBrowse.hpp"
 #include "scriptCreator.hpp"
 #include "scriptHelper.hpp"
@@ -312,6 +313,49 @@ void ScriptList::DrawSubMenu(void) const {
 	Gui::DrawStringCentered(80, subPos[3].y+12, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 130);
 }
 
+void loadDesc(void) {
+	lines.clear();
+	while(Desc.find('\n') != Desc.npos) {
+		lines.push_back(Desc.substr(0, Desc.find('\n')));
+		Desc = Desc.substr(Desc.find('\n')+1);
+	}
+	lines.push_back(Desc.substr(0, Desc.find('\n')));
+}
+
+extern int AutobootWhat;
+bool changeBackHandle = false;
+
+ScriptList::ScriptList() {
+	if (AutobootWhat == 2) {
+		// If Script isn't found, go to MainMenu.
+		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
+			AutobootWhat = 0;
+			changeBackHandle = true;
+			Gui::setScreen(std::make_unique<MainMenu>());
+		}
+
+		if (ScriptHelper::checkIfValid(Config::AutobootFile) == true) {
+			Info fI = parseInfo(Config::AutobootFile);
+			currentFile = Config::AutobootFile;
+			selectedTitle = fI.title;
+			jsonFile = openScriptFile();
+			Desc = Description(jsonFile);
+			checkForValidate();
+			fileInfo2 = parseObjects(currentFile);
+			loadColors(jsonFile);
+			loadDesc();
+			isScriptSelected = true;
+			selection = 0;
+			mode = 2;
+			changeBackHandle = true;
+			AutobootWhat = 0;
+		} else {
+			AutobootWhat = 0;
+			changeBackHandle = true;
+			Gui::setScreen(std::make_unique<MainMenu>());
+		}
+	}
+}
 
 void ScriptList::DrawList(void) const {
 	std::string line1;
@@ -368,15 +412,6 @@ void ScriptList::Draw(void) const {
 	}
 }
 
-void loadDesc(void) {
-	lines.clear();
-	while(Desc.find('\n') != Desc.npos) {
-		lines.push_back(Desc.substr(0, Desc.find('\n')));
-		Desc = Desc.substr(Desc.find('\n')+1);
-	}
-	lines.push_back(Desc.substr(0, Desc.find('\n')));
-}
-
 void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	std::string entryAmount = std::to_string(selection2+1) + " / " + std::to_string(fileInfo2.size());
@@ -419,11 +454,33 @@ void ScriptList::DrawSingleObject(void) const {
 	}
 }
 
+void ScriptList::refreshList() {
+	if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+		Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
+		dirContents.clear();
+		fileInfo.clear();
+		chdir(Config::ScriptPath.c_str());
+		getDirectoryContents(dirContents, {"json"});
+		for(uint i=0;i<dirContents.size();i++) {
+			fileInfo.push_back(parseInfo(dirContents[i].name));
+		}
+		selection = 0;
+		mode = 1;
+	} else {
+		Msg::DisplayWarnMsg(Lang::get("GET_SCRIPTS_FIRST"));
+		selection = 0;
+		mode = 0;
+	}
+}
 
 void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Gui::screenBack();
-		return;
+		if (changeBackHandle) {
+			Gui::setScreen(std::make_unique<MainMenu>());
+		} else {
+			Gui::screenBack();
+			return;
+		}
 	}
 
 	// Navigation.
@@ -537,6 +594,25 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		fileInfo.clear();
 		mode = 0;
+	}
+
+	if (hDown & KEY_START) {
+		if (Config::autoboot == 2) {
+			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
+				Config::autoboot = 0;
+				Config::AutobootFile = "";
+			}
+		} else {
+			if (dirContents[selection].isDirectory) {
+			} else if (fileInfo.size() != 0) {
+				if (ScriptHelper::checkIfValid(dirContents[selection].name) == true) {
+					if (Msg::promptMsg(Lang::get("AUTOBOOT_SCRIPT"))) {
+						Config::AutobootFile = Config::ScriptPath + dirContents[selection].name;
+						Config::autoboot = 2;
+					}
+				}
+			}
+		}
 	}
 
 	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -665,7 +741,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		selection2 = 0;
 		fileInfo2.clear();
 		isScriptSelected = false;
-		mode = 1;
+		refreshList();
 	}
 
 	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {

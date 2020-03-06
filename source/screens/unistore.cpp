@@ -50,7 +50,7 @@ extern u32 TextColor;
 extern u32 progressBar;
 extern u32 selected;
 extern u32 unselected;
-extern bool UniStoreAutoboot;
+extern int AutobootWhat;
 bool changeBackState = false;
 
 C2D_SpriteSheet appStoreSheet;
@@ -198,29 +198,35 @@ void loadStoreColors(nlohmann::json &json) {
 
 UniStore::UniStore() {
 	// Autobooting UniStore. ;)
-	if (UniStoreAutoboot) {
+	if (AutobootWhat == 1) {
 		// If store isn't found, go to MainMenu.
-		if (access(Config::UniStoreFile.c_str(), F_OK) != 0) {
-			Gui::setScreen(std::make_unique<MainMenu>());
+		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
+			AutobootWhat = 0;
 			changeBackState = true;
+			Gui::setScreen(std::make_unique<MainMenu>());
 		}
 
-		// Parse store.
-		SI = parseStoreInfo(Config::UniStoreFile);
 		// If WiFi enabled & File exist, update store.
-		if (checkWifiStatus()) {
-			if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-				if(SI.url != "" && SI.url != "MISSING: storeInfo.url" && SI.file != "" && SI.file != "MISSING: storeInfo.file") {
-					ScriptHelper::downloadFile(SI.url, SI.file, Lang::get("UPDATING"));
-				}
-				if(SI.sheetURL != "" && SI.sheetURL != "MISSING: storeInfo.sheetURL" && SI.storeSheet != "" && SI.storeSheet != "MISSING: storeInfo.sheet") {
-					ScriptHelper::downloadFile(SI.sheetURL, SI.storeSheet, Lang::get("UPDATING"));
+		if (ScriptHelper::checkIfValid(Config::AutobootFile, 1) == true) {
+			SI = parseStoreInfo(Config::AutobootFile);
+			if (checkWifiStatus()) {
+				if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+					if(SI.url != "" && SI.url != "MISSING: storeInfo.url" && SI.file != "" && SI.file != "MISSING: storeInfo.file") {
+						ScriptHelper::downloadFile(SI.url, SI.file, Lang::get("UPDATING"));
+					}
+					if(SI.sheetURL != "" && SI.sheetURL != "MISSING: storeInfo.sheetURL" && SI.storeSheet != "" && SI.storeSheet != "MISSING: storeInfo.sheet") {
+						ScriptHelper::downloadFile(SI.sheetURL, SI.storeSheet, Lang::get("UPDATING"));
+					}
 				}
 			}
+		} else {
+			AutobootWhat = 0;
+			changeBackState = true;
+			Gui::setScreen(std::make_unique<MainMenu>());
 		}
 
-		if (ScriptHelper::checkIfValid(Config::UniStoreFile, 1) == true) {
-			currentStoreFile = Config::UniStoreFile;
+		if (ScriptHelper::checkIfValid(Config::AutobootFile, 1) == true) {
+			currentStoreFile = Config::AutobootFile;
 			Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
 			if (SI.storeSheet != "" || SI.storeSheet != "MISSING: storeInfo.sheet") {
 				if(access(SI.storeSheet.c_str(), F_OK) != -1 ) {
@@ -234,7 +240,12 @@ UniStore::UniStore() {
 			displayInformations = handleIfDisplayText();
 			isScriptSelected = true;
 			mode = 2;
+			AutobootWhat = 0;
 			changeBackState = true;
+		} else {
+			AutobootWhat = 0;
+			changeBackState = true;
+			Gui::setScreen(std::make_unique<MainMenu>());
 		}
 	}
 }
@@ -452,6 +463,24 @@ void UniStore::updateStore(int selectedStore) {
 	}
 }
 
+void UniStore::refreshList() {
+	if (returnIfExist(Config::StorePath, {"unistore"}) == true) {
+		Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
+		dirContents.clear();
+		storeInfo.clear();
+		chdir(Config::StorePath.c_str());
+		getDirectoryContents(dirContents, {"unistore"});
+		for(uint i=0;i<dirContents.size();i++) {
+			storeInfo.push_back(parseStoreInfo(dirContents[i].name));
+			descript();
+			loadStoreDesc();
+		}
+		mode = 1;
+	} else {
+		Msg::DisplayWarnMsg(Lang::get("GET_STORES_FIRST"));
+		mode = 0;
+	}
+}
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		if (changeBackState) {
@@ -717,18 +746,18 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_START) {
-		if (Config::autobootUnistore) {
-			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT_STORE"))) {
-				Config::autobootUnistore = false;
-				Config::UniStoreFile = "";
+		if (Config::autoboot == 1) {
+			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
+				Config::autoboot = 0;
+				Config::AutobootFile = "";
 			}
 		} else {
 			if (dirContents[selection].isDirectory) {
 			} else if (storeInfo.size() != 0) {
 				if (ScriptHelper::checkIfValid(dirContents[selection].name, 1) == true) {
 					if (Msg::promptMsg(Lang::get("AUTOBOOT_STORE"))) {
-						Config::UniStoreFile = Config::StorePath + dirContents[selection].name;
-						Config::autobootUnistore = true;
+						Config::AutobootFile = Config::StorePath + dirContents[selection].name;
+						Config::autoboot = 1;
 					}
 				}
 			}
@@ -740,23 +769,12 @@ void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		if (UniStoreAutoboot) {
-			UniStoreAutoboot = false;
-			mode = 0;
-			appStoreList.clear();
-			isScriptSelected = false;
-			selection2 = 0;
-			if (sheetHasLoaded == true) {
-				freeSheet();
-			}
-		} else {
-			mode = 1;
-			appStoreList.clear();
-			isScriptSelected = false;
-			selection2 = 0;
-			if (sheetHasLoaded == true) {
-				freeSheet();
-			}
+		refreshList();
+		appStoreList.clear();
+		isScriptSelected = false;
+		selection2 = 0;
+		if (sheetHasLoaded == true) {
+			freeSheet();
 		}
 	}
 

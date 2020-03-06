@@ -30,9 +30,9 @@
 #include <string>
 
 namespace Config {
-	extern int LangPath, lang, Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor, viewMode, progressbarColor;
-	extern std::string ScriptPath, MusicPath, StorePath, UniStoreFile;
-	extern bool Logging, UseBars, GodMode, autobootUnistore;
+	extern int LangPath, lang, Color1, Color2, Color3, TxtColor, SelectedColor, UnselectedColor, viewMode, progressbarColor, autoboot;
+	extern std::string ScriptPath, MusicPath, StorePath, AutobootFile;
+	extern bool Logging, UseBars, GodMode;
 
 	void load();
 	void save();

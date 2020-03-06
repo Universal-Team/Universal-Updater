@@ -32,6 +32,7 @@
 #include "logging.hpp"
 #include "mainMenu.hpp"
 #include "screenCommon.hpp"
+#include "scriptList.hpp"
 #include "sound.h"
 #include "unistore.hpp"
 
@@ -49,6 +50,7 @@ touchPosition touch;
 sound *bgm = NULL;
 bool songIsFound = false;
 bool UniStoreAutoboot = false;
+int AutobootWhat = 0; // 0 -> MainMenu ; 1 -> Store; 2 -> Script.
 
 // Include all spritesheet's.
 C2D_SpriteSheet sprites;
@@ -87,9 +89,8 @@ Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
 	amInit();
-	Gui::init();
-	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	sdmcInit();
+	Gui::init();
 	cfguInit();
 	acInit();
 	// Create Folder if missing.
@@ -104,20 +105,34 @@ Result Init::Initialize() {
 	}
 	Config::load();
 	Lang::load(Config::lang);
-
+	// In case it takes a bit longer to autoboot a script or so.
+	Msg::DisplayStartMSG();
 	if (Config::Logging == true) {
 		Logging::createLogFile();
 	}
+	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 
-	if (Config::autobootUnistore) {
-		UniStoreAutoboot = true;
-	}
+	AutobootWhat = Config::autoboot;
 
-	if (UniStoreAutoboot) {
-		if (access(Config::UniStoreFile.c_str(), F_OK) == 0) {
+	if (Config::autoboot == 1) {
+		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
 			Gui::setScreen(std::make_unique<UniStore>());
+		} else {
+			AutobootWhat = 0;
+			Config::autoboot = 0;
+			Gui::setScreen(std::make_unique<MainMenu>());
+		}
+	} else if (Config::autoboot == 2) {
+		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
+			Gui::setScreen(std::make_unique<ScriptList>());
+		} else {
+			AutobootWhat = 0;
+			Config::autoboot = 0;
+			Gui::setScreen(std::make_unique<MainMenu>());
 		}
 	} else {
+		AutobootWhat = 0;
+		Config::autoboot = 0;
 		Gui::setScreen(std::make_unique<MainMenu>());
 	}
 

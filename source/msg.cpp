@@ -34,6 +34,22 @@ extern u32 bgTopColor;
 extern u32 bgBottomColor;
 extern u32 TextColor;
 
+void Msg::DisplayStartMSG() {
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(Top, BLACK);
+	C2D_TargetClear(Bottom, BLACK);
+	Gui::ScreenDraw(Top);
+	Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
+	Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
+	Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
+	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("STARTING_UNIVERSAL_UPDATER"));
+	Gui::ScreenDraw(Bottom);
+	Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
+	Gui::Draw_Rect(0, 25, 320, 190, Config::Color2);
+	Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
+	C3D_FrameEnd(0);
+}
 void Msg::DisplayMsg(std::string text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);

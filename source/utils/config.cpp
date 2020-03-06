@@ -48,8 +48,8 @@ bool Config::UseBars;
 std::string Config::StorePath;
 int Config::LangPath;
 bool Config::GodMode = false;
-bool Config::autobootUnistore = false;
-std::string Config::UniStoreFile = "";
+int Config::autoboot = 0;
+std::string Config::AutobootFile = "";
 nlohmann::json configJson;
 
 void Config::load() {
@@ -147,16 +147,16 @@ void Config::load() {
 			Config::StorePath = getString("STOREPATH");
 		}
 
-		if(!configJson.contains("UNISTORE_AUTOBOOT")) {
-			Config::autobootUnistore = false;
+		if(!configJson.contains("AUTOBOOT")) {
+			Config::autoboot = 0;
 		} else {
-			Config::autobootUnistore = getBool("UNISTORE_AUTOBOOT");
+			Config::autoboot = getInt("AUTOBOOT");
 		}
 
-		if(!configJson.contains("UNISTORE_FILE")) {
-			Config::UniStoreFile = "";
+		if(!configJson.contains("AUTOBOOT_FILE")) {
+			Config::AutobootFile = "";
 		} else {
-			Config::UniStoreFile = getString("UNISTORE_FILE");
+			Config::AutobootFile = getString("AUTOBOOT_FILE");
 		}
 
 		fclose(file);
@@ -176,8 +176,8 @@ void Config::load() {
 		Config::Logging = false;
 		Config::UseBars = true;
 		Config::StorePath = STORE_PATH;
-		Config::autobootUnistore = false;
-		Config::UniStoreFile = "";
+		Config::autoboot = 0;
+		Config::AutobootFile = "";
 	}
 }
 
@@ -198,8 +198,8 @@ void Config::save() {
 	Config::setBool("BARS", Config::UseBars);
 	Config::setString("STOREPATH", Config::StorePath);
 
-	Config::setBool("UNISTORE_AUTOBOOT", Config::autobootUnistore);
-	Config::setString("UNISTORE_FILE", Config::UniStoreFile);
+	Config::setInt("AUTOBOOT", Config::autoboot);
+	Config::setString("AUTOBOOT_FILE", Config::AutobootFile);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -225,8 +225,8 @@ void Config::initializeNewConfig() {
 	Config::setBool("BARS", true);
 	Config::setString("STOREPATH", STORE_PATH);
 
-	Config::setBool("UNISTORE_AUTOBOOT", false);
-	Config::setString("UNISTORE_FILE", "");
+	Config::setInt("AUTOBOOT", 0);
+	Config::setString("AUTOBOOT_FILE", "");
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
