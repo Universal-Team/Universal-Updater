@@ -32,7 +32,7 @@
 #include "logging.hpp"
 #include "mainMenu.hpp"
 #include "screenCommon.hpp"
-#include "scriptList.hpp"
+#include "scriptlist.hpp"
 #include "sound.h"
 #include "unistore.hpp"
 
