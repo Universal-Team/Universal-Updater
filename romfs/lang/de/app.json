@@ -104,5 +104,8 @@
 	"ENABLE_GODMODE": "GodMode aktivieren",
 	"ENABLE_GODMODE_PROMPT": "Möchtest du GodMode aktivieren?\n\nSei vorsichtig, wenn du GodMode verwendest!!",
 	"DISABLE_AUTOBOOT_STORE": "Would you like to disable autoboot?",
-	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!"
+	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!",
+	"SCRIPT_NOT_FOUND": "This script does not exist.",
+	"DELETE_SCRIPT": "Would you like to delete this script?",
+	"REFRESHING_LIST": "Refreshing List..."
 }
