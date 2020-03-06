@@ -45,8 +45,8 @@ void fixInfo(nlohmann::json &json) {
 		if(!json[i].contains("author"))	json[i]["author"] = "AUTHOR";
 		if(!json[i].contains("shortDesc"))	json[i]["shortDesc"] = "SHORTDESC";
 		if(!json[i].contains("revision"))	json[i]["revision"] = 0;
-		if(!json[i].contains("curRevision"))	json[i]["curRevision"] = 0;
-		if(!json[i].contains("version"))	json[i]["revision"] = 0;
+		if(!json[i].contains("curRevision"))	json[i]["curRevision"] = -1;
+		if(!json[i].contains("version"))	json[i]["revision"] = -1;
 	}
 }
 
@@ -119,7 +119,9 @@ void ScriptBrowse::Draw(void) const {
 	}
 
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
-	if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
+	if (infoJson[selection]["curRevision"] == -1) {
+		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 370);
+	} else if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 370);
 	} else if(infoJson[selection]["curRevision"] == infoJson[selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 370);

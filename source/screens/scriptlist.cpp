@@ -441,6 +441,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		switch(SubSelection) {
 			case 0:
 				if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+					Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 					dirContents.clear();
 					chdir(Config::ScriptPath.c_str());
 					getDirectoryContents(dirContents, {"json"});
@@ -478,6 +479,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, subPos[0])) {
 			if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+				Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 				dirContents.clear();
 				chdir(Config::ScriptPath.c_str());
 				getDirectoryContents(dirContents, {"json"});
@@ -509,6 +511,26 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
+void ScriptList::deleteScript(int selectedScript) {
+	std::string path = Config::ScriptPath;
+	path += dirContents[selectedScript].name;
+	deleteFile(path.c_str());
+	// Refresh the list.
+	Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
+	dirContents.clear();
+	fileInfo.clear();
+	chdir(Config::ScriptPath.c_str());
+	getDirectoryContents(dirContents, {"json"});
+	for(uint i=0;i<dirContents.size();i++) {
+		fileInfo.push_back(parseInfo(dirContents[i].name));
+	}
+	if (dirContents.size() == 0) {
+		dirContents.clear();
+		fileInfo.clear();
+		mode = 0;
+	}
+}
+
 void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
@@ -527,6 +549,11 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			keyRepeatDelay = 3;
 		} else if (fastMode == false){
 			keyRepeatDelay = 6;
+		}
+	}
+	if (hDown & KEY_SELECT) {
+		if (Msg::promptMsg(Lang::get("DELETE_SCRIPT"))) {
+			deleteScript(selection);
 		}
 	}
 

@@ -217,8 +217,6 @@ UniStore::UniStore() {
 					ScriptHelper::downloadFile(SI.sheetURL, SI.storeSheet, Lang::get("UPDATING"));
 				}
 			}
-		} else {
-			notConnectedMsg();
 		}
 
 		if (ScriptHelper::checkIfValid(Config::UniStoreFile, 1) == true) {
@@ -438,6 +436,7 @@ void UniStore::updateStore(int selectedStore) {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].sheetURL, storeInfo[selectedStore].storeSheet, Lang::get("UPDATING"));
 			}
 			// Refresh the list.
+			Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 			dirContents.clear();
 			storeInfo.clear();
 			chdir(Config::StorePath.c_str());
@@ -474,6 +473,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		switch(subSelection) {
 			case 0:
 				if (returnIfExist(Config::StorePath, {"unistore"}) == true) {
+					Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 					dirContents.clear();
 					storeInfo.clear();
 					chdir(Config::StorePath.c_str());
@@ -507,6 +507,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, subPos[0])) {
 			if (returnIfExist(Config::StorePath, {"unistore"}) == true) {
+				Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 				dirContents.clear();
 				storeInfo.clear();
 				chdir(Config::StorePath.c_str());
@@ -540,6 +541,7 @@ void UniStore::deleteStore(int selectedStore) {
 	path += dirContents[selectedStore].name;
 	deleteFile(path.c_str());
 	// Refresh the list.
+	Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 	dirContents.clear();
 	storeInfo.clear();
 	chdir(Config::StorePath.c_str());
