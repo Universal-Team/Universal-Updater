@@ -102,12 +102,12 @@
 	"GODMODE": "神モード：",
 	"FUNCTION_NOT_ALLOWED": "この機能は神モードなしでは許可されていません！",
 	"ENABLE_GODMODE": "神モードを有効にする",
-	"ENABLE_GODMODE_PROMPT": "Would you like to enable GodMode?\n\nBe careful when you use GodMode!!",
-	"DISABLE_AUTOBOOT": "Would you like to disable autoboot?",
-	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!",
-	"SCRIPT_NOT_FOUND": "This script does not exist.",
-	"DELETE_SCRIPT": "Would you like to delete this script?",
-	"REFRESHING_LIST": "Refreshing List...",
-	"AUTOBOOT_SCRIPT": "Would you like to autoboot this Script?\n\nThis will autoboot this Script on startup!",
-	"STARTING_UNIVERSAL_UPDATER": "Starting Universal-Updater..."
+	"ENABLE_GODMODE_PROMPT": "神モードを有効にしますか？\n\n神モードを使用する場合は注意してください！！",
+	"DISABLE_AUTOBOOT": "自動起動を無効にしますか？",
+	"AUTOBOOT_STORE": "ストアを自動起動しますか？\n\n起動でストアを自動起動する！",
+	"SCRIPT_NOT_FOUND": "このスクリプトは存在しますん。",
+	"DELETE_SCRIPT": "このスクリプトを削除しますか？",
+	"REFRESHING_LIST": "リストを更新中…",
+	"AUTOBOOT_SCRIPT": "スクリプトを自動起動しますか？\n\n起動でスクリプトを自動起動する！",
+	"STARTING_UNIVERSAL_UPDATER": "Universal-Updaterを起動中…"
 }
