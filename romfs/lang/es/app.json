@@ -103,9 +103,11 @@
 	"FUNCTION_NOT_ALLOWED": "Esta función no está permitida sin GodMode!",
 	"ENABLE_GODMODE": "Activar GodMode",
 	"ENABLE_GODMODE_PROMPT": "¿Te gustaría activar GodMode?\n\n¡Ten cuidado al usar GodMode!!",
-	"DISABLE_AUTOBOOT_STORE": "Would you like to disable autoboot?",
+	"DISABLE_AUTOBOOT": "Would you like to disable autoboot?",
 	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!",
 	"SCRIPT_NOT_FOUND": "This script does not exist.",
 	"DELETE_SCRIPT": "Would you like to delete this script?",
-	"REFRESHING_LIST": "Refreshing List..."
+	"REFRESHING_LIST": "Refreshing List...",
+	"AUTOBOOT_SCRIPT": "Would you like to autoboot this Script?\n\nThis will autoboot this Script on startup!",
+	"STARTING_UNIVERSAL_UPDATER": "Starting Universal-Updater..."
 }
