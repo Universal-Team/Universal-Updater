@@ -101,7 +101,7 @@
 	"BOOT_TITLE": "このアプリを開始しますか？",
 	"GODMODE": "神モード：",
 	"FUNCTION_NOT_ALLOWED": "この機能は神モードなしでは許可されていません！",
-	"ENABLE_GODMODE": "Enable GodMode",
+	"ENABLE_GODMODE": "神モードを有効にする",
 	"ENABLE_GODMODE_PROMPT": "Would you like to enable GodMode?\n\nBe careful when you use GodMode!!",
 	"DISABLE_AUTOBOOT": "Would you like to disable autoboot?",
 	"AUTOBOOT_STORE": "Would you like to autoboot this Store?\n\nThis will autoboot this store on startup!",
