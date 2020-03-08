@@ -109,5 +109,16 @@
 	"DELETE_SCRIPT": "このスクリプトを削除しますか？",
 	"REFRESHING_LIST": "リストを更新中…",
 	"AUTOBOOT_SCRIPT": "スクリプトを自動起動しますか？\n\n起動でスクリプトを自動起動する！",
-	"STARTING_UNIVERSAL_UPDATER": "Universal-Updaterを起動中…"
+	"STARTING_UNIVERSAL_UPDATER": "Universal-Updaterを起動中…",
+	"EXECUTE_SCRIPT": "Would you like to execute this script?",
+	"EXECUTE_STORE": "Would you like to execute this entry?",
+	"GLOSSARY": "Glossary",
+	"DOWNLOAD_ALL": "Download all Scripts at once.",
+	"CHANGE_VIEW_MODE": "Change the viewMode.",
+	"ENTRY_UP": "Go one Entry up.",
+	"ENTRY_DOWN": "Go one Entry down.",
+	"GO_BACK": "Go back.",
+	"ENTRY": "Current Entry | Last Entry",
+	"REVISION": "Current Revision | Latest Revision",
+	"UPDATE_STORE": "Update selected UniStore."
 }
