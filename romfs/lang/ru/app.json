@@ -109,5 +109,16 @@
 	"DELETE_SCRIPT": "Would you like to delete this script?",
 	"REFRESHING_LIST": "Refreshing List...",
 	"AUTOBOOT_SCRIPT": "Would you like to autoboot this Script?\n\nThis will autoboot this Script on startup!",
-	"STARTING_UNIVERSAL_UPDATER": "Starting Universal-Updater..."
+	"STARTING_UNIVERSAL_UPDATER": "Starting Universal-Updater...",
+	"EXECUTE_SCRIPT": "Would you like to execute this script?",
+	"EXECUTE_STORE": "Would you like to execute this entry?",
+	"GLOSSARY": "Glossary",
+	"DOWNLOAD_ALL": "Download all Scripts at once.",
+	"CHANGE_VIEW_MODE": "Change the viewMode.",
+	"ENTRY_UP": "Go one Entry up.",
+	"ENTRY_DOWN": "Go one Entry down.",
+	"GO_BACK": "Go back.",
+	"ENTRY": "Current Entry | Last Entry",
+	"REVISION": "Current Revision | Latest Revision",
+	"UPDATE_STORE": "Update selected UniStore."
 }
