@@ -116,9 +116,9 @@
 	"DOWNLOAD_ALL": "Descargar todos los Scripts a la vez.",
 	"CHANGE_VIEW_MODE": "Cambiar el modo de vista.",
 	"ENTRY_UP": "Ir una Entrada arriba.",
-	"ENTRY_DOWN": "Go one Entry down.",
-	"GO_BACK": "Go back.",
-	"ENTRY": "Current Entry | Last Entry",
-	"REVISION": "Current Revision | Latest Revision",
-	"UPDATE_STORE": "Update selected UniStore."
+	"ENTRY_DOWN": "Ir una Entrada arriba.",
+	"GO_BACK": "Volver atrás.",
+	"ENTRY": "Entrada actual | Última entrada",
+	"REVISION": "Revisión actual | Última revisión",
+	"UPDATE_STORE": "Actualizar la UniStore seleccionada."
 }
