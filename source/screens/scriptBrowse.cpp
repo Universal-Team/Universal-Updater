@@ -33,12 +33,6 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-nlohmann::json infoJson;
-
-#define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"
-
-std::string maxScripts;
-
 void fixInfo(nlohmann::json &json) {
 	for(uint i=0;i<json.size();i++) {
 		if(!json[i].contains("title"))	json[i]["title"] = "TITLE";
@@ -95,37 +89,45 @@ ScriptBrowse::ScriptBrowse() {
 	Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
-	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
+//	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
 	FILE* file = fopen(metaFile, "r");
 	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	fixInfo(infoJson);
 	findExistingFiles(infoJson);
-	maxScripts = std::to_string(infoJson.size());
+	maxScripts = infoJson.size();
 }
 
 void ScriptBrowse::Draw(void) const {
+	if (mode == 0) {
+		DrawBrowse();
+	} else {
+		DrawGlossary();
+	}
+}
+
+void ScriptBrowse::DrawBrowse(void) const {
 	GFX::DrawTop();
-	std::string revision = std::to_string(int64_t(infoJson[selection]["curRevision"]));
-	revision += " / ";
-	revision += std::to_string(int64_t(infoJson[selection]["revision"]));
+	std::string revision = std::to_string(int64_t(infoJson[Selection]["curRevision"]));
+	revision += " | ";
+	revision += std::to_string(int64_t(infoJson[Selection]["revision"]));
 
 	if (Config::UseBars == true) {
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
 	} else {
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(infoJson[selection]["title"]), 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
 	}
 
-	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[selection]["shortDesc"]), 400);
-	if (infoJson[selection]["curRevision"] == -1) {
+	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[Selection]["shortDesc"]), 400);
+	if (infoJson[Selection]["curRevision"] == -1) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 370);
-	} else if(infoJson[selection]["curRevision"] < infoJson[selection]["revision"]) {
+	} else if(infoJson[Selection]["curRevision"] < infoJson[Selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 370);
-	} else if(infoJson[selection]["curRevision"] == infoJson[selection]["revision"]) {
+	} else if(infoJson[Selection]["curRevision"] == infoJson[Selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 370);
-	} else if(infoJson[selection]["curRevision"] > infoJson[selection]["revision"]) {
+	} else if(infoJson[Selection]["curRevision"] > infoJson[Selection]["revision"]) {
 		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
 	}
 	GFX::DrawBottom();
@@ -137,39 +139,95 @@ void ScriptBrowse::Draw(void) const {
 	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
 	//Gui::spriteBlend(sprites_search_idx, arrowPos[5].x, arrowPos[5].y);
 
-	Gui::DrawStringCentered(-23, 1, 0.6f, Config::TxtColor, std::to_string(selection + 1) + " / " + maxScripts);
+	Gui::DrawStringCentered(0, 1, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts));
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
-			if(screenPos + i == selection) {
+			if(screenPos + i == Selection) {
 				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 			}
-
-			if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
-			} else {
-				Gui::Draw_Rect(300, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+			if (infoJson[screenPos+i]["curRevision"] == -1) {
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(255, 128, 0, 255));
+			} else if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+			} else if(infoJson[screenPos+i]["curRevision"] == infoJson[screenPos+i]["revision"]) {
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+			} else if(infoJson[screenPos+i]["curRevision"] > infoJson[screenPos+i]["revision"]) {
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(255, 255, 0, 255));
 			}
-			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 320);
-			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 320);
+
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 317);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 317);
 		}
 	} else if (Config::viewMode == 1) {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
-			if(screenPosList + i == selection) {
+			if(screenPosList + i == Selection) {
 				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 			}
-			if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
+
+			// Script not found.
+			if (infoJson[screenPosList+i]["curRevision"] == -1) {
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(255, 128, 0, 255));
+				// Script outdaed.
+			} else if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
 				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
-			} else {
+				// Script up-to-date.
+			} else if(infoJson[screenPosList+i]["curRevision"] == infoJson[screenPosList+i]["revision"]) {
 				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+				// Future script.
+			} else if(infoJson[screenPosList+i]["curRevision"] > infoJson[screenPosList+i]["revision"]) {
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(255, 255, 0, 255));
 			}
-			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 320);
+
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 317);
 		}
 	}
 }
 
+
+void ScriptBrowse::DrawGlossary(void) const {
+	GFX::DrawTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+	}
+
+	Gui::Draw_Rect(20, 30, 30, 30, C2D_Color32(255, 128, 0, 255));
+	Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 300);
+
+	Gui::Draw_Rect(20, 70, 30, 30, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+	Gui::DrawString(65, 75, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 300);
+
+	Gui::Draw_Rect(20, 110, 30, 30, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	Gui::DrawString(65, 115, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 300);
+
+	Gui::Draw_Rect(20, 150, 30, 30, C2D_Color32(255, 255, 0, 255));
+	Gui::DrawString(65, 155, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 300);
+
+	Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
+	Gui::DrawString(65, 185, 0.7f, Config::TxtColor, Lang::get("REVISION"), 300);
+	GFX::DrawBottom();
+
+	GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 40);
+	Gui::DrawString(50, 42, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
+	GFX::DrawSpriteBlend(sprites_view_idx, 20, 70);
+	Gui::DrawString(50, 72, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
+
+	GFX::DrawArrow(20, 100);
+	Gui::DrawString(50, 102, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
+	GFX::DrawArrow(42, 155, 180.0);
+	Gui::DrawString(50, 132, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
+	GFX::DrawArrow(20, 160, 0, 1);
+	Gui::DrawString(50, 162, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
+
+	Gui::DrawString(10, 192, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts), 35);
+	Gui::DrawString(50, 192, 0.6f, Config::TxtColor, Lang::get("ENTRY"), 260);
+
+	GFX::DrawArrow(0, 218, 0, 1);
+}
 
 void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
@@ -179,133 +237,141 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		return;
 	}
 
-	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if (selection < (int)infoJson.size()-1) {
-			selection++;
-		} else {
-			selection = 0;
+	if (mode == 0) {
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
+			if (Selection < (int)infoJson.size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
+			}
 		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
 
-	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-		if (selection > 0) {
-			selection--;
-		} else {
-			selection = (int)infoJson.size()-1;
+		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+			if (Selection > 0) {
+				Selection--;
+			} else {
+				Selection = (int)infoJson.size()-1;
+			}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
+			}
 		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
 
-	if (hDown & KEY_TOUCH) {
-		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
-				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-					if (infoJson.size() != 0) {
-						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
-						std::string titleFix = infoJson[screenPos + i]["title"]; 
-						for (int l = 0; l < (int)titleFix.size(); l++) {
-							if (titleFix[l] == '/') {
-								titleFix[l] = '-';
+		if (hDown & KEY_TOUCH) {
+			if (Config::viewMode == 0) {
+				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
+					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+						if (infoJson.size() != 0) {
+							std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
+							std::string titleFix = infoJson[screenPos + i]["title"]; 
+							for (int l = 0; l < (int)titleFix.size(); l++) {
+								if (titleFix[l] == '/') {
+									titleFix[l] = '-';
+								}
 							}
+							Msg::DisplayMsg(fileName);
+							downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
+							infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
 						}
-						Msg::DisplayMsg(fileName);
-						downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
-						infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
 					}
 				}
+			} else if (Config::viewMode == 1) {
+				for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
+					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+						if (infoJson.size() != 0) {
+							std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
+							std::string titleFix = infoJson[screenPosList + i]["title"]; 
+							for (int l = 0; l < (int)titleFix.size(); l++) {
+								if (titleFix[l] == '/') {
+									titleFix[l] = '-';
+								}
+							}
+							Msg::DisplayMsg(fileName);
+							downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
+							infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
+						}
+					}
+				}
+			}
+		}
+
+		if (hDown & KEY_A) {
+			if (infoJson.size() != 0) {
+				std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[Selection]["title"]);
+
+			std::string titleFix = infoJson[Selection]["title"]; 
+			for (int i = 0; i < (int)titleFix.size(); i++) {
+				if (titleFix[i] == '/') {
+					titleFix[i] = '-';
+				}
+			}
+				Msg::DisplayMsg(fileName);	
+
+				downloadToFile(infoJson[Selection]["url"], Config::ScriptPath + titleFix + ".json");
+				infoJson[Selection]["curRevision"] = infoJson[Selection]["revision"];
+			}
+		}
+
+		if (hDown & KEY_R) {
+			fastMode = true;
+		}
+
+		if (hDown & KEY_L) {
+			fastMode = false;
+		}
+
+		if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
+			if (Config::viewMode == 0) {
+				Config::viewMode = 1;
+			} else {
+				Config::viewMode = 0;
+			}
+		}
+
+		if (Config::viewMode == 0) {
+			if(Selection < screenPos) {
+				screenPos = Selection;
+			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
-				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-					if (infoJson.size() != 0) {
-						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
-						std::string titleFix = infoJson[screenPosList + i]["title"]; 
-						for (int l = 0; l < (int)titleFix.size(); l++) {
-							if (titleFix[l] == '/') {
-								titleFix[l] = '-';
-							}
+			if(Selection < screenPosList) {
+				screenPosList = Selection;
+			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
+				screenPosList = Selection - ENTRIES_PER_LIST + 1;
+			}
+		}
+
+		if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			if (infoJson.size() != 0) {
+				for (int i = 0; i < (int)infoJson.size(); i++) {
+					int current = i+1;
+					int total = infoJson.size();
+					std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[i]["title"]);
+					std::string titleFix = infoJson[i]["title"]; 
+					for (int l = 0; l < (int)titleFix.size(); l++) {
+						if (titleFix[l] == '/') {
+							titleFix[l] = '-';
 						}
-						Msg::DisplayMsg(fileName);
-						downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
-						infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
 					}
+					Msg::DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
+					downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json");
+					infoJson[i]["curRevision"] = infoJson[i]["revision"];
 				}
 			}
 		}
 	}
 
-	if (hDown & KEY_A) {
-		if (infoJson.size() != 0) {
-			std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[selection]["title"]);
-
-		std::string titleFix = infoJson[selection]["title"]; 
-		for (int i = 0; i < (int)titleFix.size(); i++) {
-			if (titleFix[i] == '/') {
-				titleFix[i] = '-';
-			}
-		}
-			Msg::DisplayMsg(fileName);
-
-			downloadToFile(infoJson[selection]["url"], Config::ScriptPath + titleFix + ".json");
-			infoJson[selection]["curRevision"] = infoJson[selection]["revision"];
-		}
-	}
-
-	if (hDown & KEY_R) {
-		fastMode = true;
-	}
-
-	if (hDown & KEY_L) {
-		fastMode = false;
-	}
-
-	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
-		if (Config::viewMode == 0) {
-			Config::viewMode = 1;
-		} else {
-			Config::viewMode = 0;
-		}
-	}
-
-	if (Config::viewMode == 0) {
-		if(selection < screenPos) {
-			screenPos = selection;
-		} else if (selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-			screenPos = selection - ENTRIES_PER_SCREEN + 1;
-		}
-	} else if (Config::viewMode == 1) {
-		if(selection < screenPosList) {
-			screenPosList = selection;
-		} else if (selection > screenPosList + ENTRIES_PER_LIST - 1) {
-			screenPosList = selection - ENTRIES_PER_LIST + 1;
-		}
-	}
-
-	if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
-		if (infoJson.size() != 0) {
-			for (int i = 0; i < (int)infoJson.size(); i++) {
-				int current = i+1;
-				int total = infoJson.size();
-				std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[i]["title"]);
-				std::string titleFix = infoJson[i]["title"]; 
-				for (int l = 0; l < (int)titleFix.size(); l++) {
-					if (titleFix[l] == '/') {
-						titleFix[l] = '-';
-					}
-				}
-				Msg::DisplayMsg(fileName + " " + std::to_string(current) + " / " + std::to_string(total));
-				downloadToFile(infoJson[i]["url"], Config::ScriptPath + titleFix + ".json");
-				infoJson[i]["curRevision"] = infoJson[i]["revision"];
-			}
-		}
+	// Switch to Glossary and back.
+	if (hDown & KEY_RIGHT || hDown & KEY_LEFT) {
+		if (mode == 0)	mode = 1;
+		else	mode = 0;
 	}
 }

@@ -29,6 +29,24 @@
 
 #include <string>
 
+// Information like Title and Author.
+struct ScriptInfo {
+	std::string title;
+	std::string author;
+	std::string shortDesc;
+};
+
+// Store Information.
+struct StoreInfo {
+	std::string title;
+	std::string author;
+	std::string description;
+	std::string url;
+	std::string file;
+	std::string storeSheet;
+	std::string sheetURL;
+};
+
 namespace ScriptHelper {
 	// Get stuff from a JSON.
 	std::string getString(nlohmann::json json, const std::string &key, const std::string &key2);

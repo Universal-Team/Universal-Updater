@@ -24,49 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef SCRIPTBROWSE_HPP
-#define SCRIPTBROWSE_HPP
+#ifndef ANIMATION_HPP
+#define ANIMATION_HPP
 
-#include "common.hpp"
-#include "fileBrowse.hpp"
-#include "structs.hpp"
+#include <3ds.h>
+#include <string>
 
-#include <vector>
-
-class ScriptBrowse : public Screen
-{
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	ScriptBrowse();
-private:
-	// Selection.
-	mutable int screenPos = 0;
-	mutable int screenPosList = 0;
-	mutable int Selection = 0;
-	int mode = 0;
-
-	// Draws.
-	void DrawBrowse(void) const;
-	void DrawGlossary(void) const;
-
-	nlohmann::json infoJson;
-	int maxScripts;
-
-	// Browse stuff.
-	int keyRepeatDelay = 0;
-	int fastMode = false;
-	std::vector<DirEntry> dirContents;
-
-	// Button | Icon struct.
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{295, 0, 25, 25}, // Arrow Up.
-		{295, 215, 25, 25}, // Arrow Down.
-		{0, 215, 25, 25}, // Back Arrow.
-		{5, 0, 25, 25}, // Download All.
-		{45, 0, 25, 25}, // ViewMode Change.
-		{80, 0, 25, 25}, // Search.
-	};
-};
+namespace Animation {
+	// Draw Progressbar.
+	void DrawProgressBar(float currentProgress, float totalProgress, int mode);
+}
 
 #endif

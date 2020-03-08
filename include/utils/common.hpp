@@ -42,6 +42,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 
+#include "animation.hpp"
 #include "config.hpp"
 #include "gfx.hpp"
 #include "gui.hpp"
@@ -71,3 +72,4 @@ extern char * arg0;
 #define STORE_PATH "sdmc:/3ds/Universal-Updater/stores/" // Default Store path.
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
+#define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"

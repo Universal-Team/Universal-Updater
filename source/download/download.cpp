@@ -666,9 +666,9 @@ void displayProgressBar() {
 			Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
 			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 			if (isScriptSelected == true) {
-				Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, progressBar);
+				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);
 			} else {
-				Gui::Draw_Rect(31, 121, (int)(((float)downloadNow/(float)downloadTotal) * 338.0f), 28, Config::progressbarColor);
+				Animation::DrawProgressBar(downloadNow, downloadTotal, 2);
 			}
 		}
 		GFX::DrawBottom();

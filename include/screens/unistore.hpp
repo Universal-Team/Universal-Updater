@@ -29,6 +29,7 @@
 
 #include "common.hpp"
 #include "fileBrowse.hpp"
+#include "scriptHelper.hpp"
 #include "structs.hpp"
 
 #include <vector>
@@ -41,13 +42,17 @@ public:
 	UniStore();
 private:
 	void refreshList();
-	
+	nlohmann::json openStoreFile();
+	void loadStoreDesc(void);
+	void loadStoreSheet(int pos);
+
 	void DrawSubMenu(void) const;
 	void DrawStoreList(void) const;
 	void DrawStore(void) const;
 	void DrawSearch(void) const;
 	void DrawFullURLScreen(void) const;
 	void DrawGitHubScreen(void) const;
+	void DrawGlossary(void) const;
 
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch);
@@ -63,7 +68,7 @@ private:
 	void deleteStore(int selectedStore);
 	bool handleIfDisplayText();
 	int mode = 0;
-	int selectedOptionAppStore = 0;
+	int lastMode = 1;
 	mutable bool displayInformations = true;
 
 	// Stuff for the GitHub Store Search function and Full URL.
@@ -71,20 +76,25 @@ private:
 	std::string fileName = "";
 	std::string FullURL = "";
 
-	mutable int selection = 0;
-	mutable int selection2 = 0;
+	// Selections.
+	mutable int Selection = 0;
 	int screenPos = 0;
-	int screenPos2 = 0;
 	mutable int screenPosList = 0;
-	mutable int screenPosList2 = 0;
 
-	int searchSelection = 0;
-	int subSelection = 0;
-
+	// Browse stuff.
 	int keyRepeatDelay = 0;
 	int fastMode = false;
 	std::vector<DirEntry> dirContents;
 
+	// Other stuff.
+	std::vector<StoreInfo> storeInfo; // Store Selection.
+	std::vector<std::string> appStoreList; // Actual store. ;P
+	std::vector<std::string> descLines;
+	std::string storeDesc = "";
+	nlohmann::json appStoreJson;
+	std::string currentStoreFile;
+
+	// Icon | Button Structs.
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
@@ -93,20 +103,17 @@ private:
 		{45, 0, 25, 25}, // Search.
 		{85, 0, 25, 25}, // Update.
 	};
-
 	std::vector<Structs::ButtonPos> URLBtn = {
 		{10, 70, 140, 40}, // FULL URL.
 		{170, 70, 140, 40}, // Github.
 		{10, 145, 140, 40}, // TinyDB.
 		{170, 145, 140, 40}, // QR Code?
 	};
-
 	std::vector<Structs::ButtonPos> GitHubPos = {
 		{30, 50, 260, 30}, // Owner & Repo.
 		{30, 130, 260, 30}, // Filename.
 		{135, 180, 50, 30}, // OK.
 	};
-
 	std::vector<Structs::ButtonPos> subPos = {
 		{90, 40, 140, 35}, // StoreList.
 		{90, 100, 140, 35}, // storeSearch.

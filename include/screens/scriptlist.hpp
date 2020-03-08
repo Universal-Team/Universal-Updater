@@ -29,6 +29,7 @@
 
 #include "common.hpp"
 #include "fileBrowse.hpp"
+#include "scriptHelper.hpp"
 #include "structs.hpp"
 
 #include <vector>
@@ -38,32 +39,55 @@ class ScriptList : public Screen
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	ScriptList();
+	ScriptList(); // In case of "Autoboot", have a Constructor which handles stuff.
 private:
+	// Screen Mode.
+	int mode = 0;
+	int lastMode = 1;
+
+	// Helper functions.
 	void deleteScript(int selectedScript);
 	void refreshList();
+	nlohmann::json openScriptFile();
+	void checkForValidate(void);
+	void loadDesc(void);
+	void runFunctions(nlohmann::json &json);
 	
+	// Draw Functions.
 	void DrawSubMenu(void) const;
 	void DrawList(void) const;
 	void DrawSingleObject(void) const;
+	void DrawGlossary(void) const;
 
+	// Logic Functions.
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void ListSelection(u32 hDown, u32 hHeld, touchPosition touch);
 	void SelectFunction(u32 hDown, u32 hHeld, touchPosition touch);
 
-	int mode = 0;
-	int SubSelection = 0;
-	std::vector<DirEntry> dirContents;
+	// This is for the Script Creator, so no one can access it for now, until it is stable or so.
+	bool isTesting = false;
+
+	// Other includes which get destructed automatically.
+	std::string choice;
+	std::string currentFile;
+	std::string selectedTitle;
+	std::string Desc = "";
+	nlohmann::json jsonFile;
+	std::vector<ScriptInfo> fileInfo;
+	std::vector<std::string> fileInfo2;
+	std::vector<std::string> lines;
+
 	mutable int screenPos = 0;
 	mutable int screenPosList = 0;
-	mutable int selection = 0;
-	mutable int screenPos2 = 0;
-	mutable int screenPosList2 = 0;
-	mutable int selection2 = 0;
+	mutable int Selection = 0;
 
+	// Browse stuff.
 	int keyRepeatDelay = 0;
+	std::vector<DirEntry> dirContents;
 	int fastMode = false;
 
+
+	// Button | Icon structs.
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
@@ -71,7 +95,6 @@ private:
 		{5, 0, 25, 25}, // viewMode Change
 		{45, 0, 25, 25}, // Search.
 	};
-
 	std::vector<Structs::ButtonPos> subPos = {
 		{10, 70, 140, 40}, // Script list.
 		{170, 70, 140, 40}, // Get Scripts.
