@@ -120,5 +120,9 @@
 	"GO_BACK": "戻る",
 	"ENTRY": "現在のエントリー｜最終のエントリー",
 	"REVISION": "現在のリビジョン｜最新のリビジョン",
-	"UPDATE_STORE": "選択のUniStoreを更新する。"
+	"UPDATE_STORE": "選択のUniStoreを更新する。",
+	"NOT_FOUND_COLOR": "Not Found Script Color",
+	"OUTDATED_COLOR": "Outdated Script Color",
+	"UPTODATE_COLOR": "Up-To-Date Script Color",
+	"FUTURE_COLOR": "Future Script Color"
 }
