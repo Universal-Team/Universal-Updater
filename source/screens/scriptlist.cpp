@@ -473,6 +473,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
 				Config::autoboot = 0;
 				Config::AutobootFile = "";
+				changesMade = true;
 			}
 		} else {
 			if (dirContents[Selection].isDirectory) {
@@ -481,6 +482,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (Msg::promptMsg(Lang::get("AUTOBOOT_SCRIPT"))) {
 						Config::AutobootFile = Config::ScriptPath + dirContents[Selection].name;
 						Config::autoboot = 2;
+						changesMade = true;
 					}
 				}
 			}
@@ -690,7 +692,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		Config::TxtColor = TextColor;
 		Config::SelectedColor = selected;
 		Config::UnselectedColor = unselected;
-		Config::save();
+		changesMade = true;
 	}
 
 	if (Config::viewMode == 0) {

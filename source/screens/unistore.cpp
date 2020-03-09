@@ -745,6 +745,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
 				Config::autoboot = 0;
 				Config::AutobootFile = "";
+				changesMade = true;
 			}
 		} else {
 			if (dirContents[Selection].isDirectory) {
@@ -753,6 +754,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (Msg::promptMsg(Lang::get("AUTOBOOT_STORE"))) {
 						Config::AutobootFile = Config::StorePath + dirContents[Selection].name;
 						Config::autoboot = 1;
+						changesMade = true;
 					}
 				}
 			}
