@@ -120,5 +120,9 @@
 	"GO_BACK": "Volver atrás.",
 	"ENTRY": "Entrada actual | Última entrada",
 	"REVISION": "Revisión actual | Última revisión",
-	"UPDATE_STORE": "Actualizar la UniStore seleccionada."
+	"UPDATE_STORE": "Actualizar la UniStore seleccionada.",
+	"NOT_FOUND_COLOR": "Not Found Script Color",
+	"OUTDATED_COLOR": "Outdated Script Color",
+	"UPTODATE_COLOR": "Up-To-Date Script Color",
+	"FUTURE_COLOR": "Future Script Color"
 }
