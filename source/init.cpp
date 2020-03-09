@@ -51,6 +51,7 @@ sound *bgm = NULL;
 bool songIsFound = false;
 bool UniStoreAutoboot = false;
 int AutobootWhat = 0; // 0 -> MainMenu ; 1 -> Store; 2 -> Script.
+bool changesMade = false;
 
 // Include all spritesheet's.
 C2D_SpriteSheet sprites;
@@ -193,7 +194,11 @@ Result Init::Exit() {
 
 	// Free UniStore spritesheet, just in case.
 	freeSheet();
-	Config::save();
+	// Only save config, if *any* changes are made. (To reduce SD Writes.)
+	if (changesMade) {
+		Config::save();
+	}
+
 	Gui::exit();
 	Gui::unloadSheet(sprites);
 	gfxExit();

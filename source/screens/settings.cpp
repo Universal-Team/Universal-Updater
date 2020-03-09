@@ -31,6 +31,7 @@
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 int selectedLang;
+extern bool changesMade;
 
 Settings::Settings() {
 	selectedLang = Config::lang;
@@ -220,10 +221,12 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
 			if (tempMusic != "") {
 				Config::MusicPath = tempMusic;
+				changesMade = true;
 			}
 		} else if (Selection == 1) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+			changesMade = true;
 		} else if (Selection == 2) {
 			if (Msg::promptMsg(Lang::get("ENABLE_GODMODE_PROMPT"))) {
 				Config::GodMode = true;
@@ -236,10 +239,12 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), {"wav"}, 2);
 			if (tempMusic != "") {
 				Config::MusicPath = tempMusic;
+				changesMade = true;
 			}
 		} else if (touching(touch, mainButtons[1])) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+			changesMade = true;
 		} else if (touching(touch, mainButtons[2])) {
 			if (Msg::promptMsg(Lang::get("ENABLE_GODMODE_PROMPT"))) {
 				Config::GodMode = true;
@@ -273,7 +278,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			mode = 1;
 		} else if (touching(touch, mainButtons[1])) {
 			mode = 2;
- 		} else if (touching(touch, mainButtons[2])) {
+		} else if (touching(touch, mainButtons[2])) {
 			Gui::setScreen(std::make_unique<Credits>());
 		}
 	}
@@ -297,6 +302,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 				selectedLang = language;
 				Config::lang = language;
 				Lang::load(Config::lang);
+				changesMade = true;
 			}
 		}
 	}
@@ -306,6 +312,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 			selectedLang--;
 			Config::lang = selectedLang;
 			Lang::load(Config::lang);
+			changesMade = true;
 		}
 	}
 
@@ -314,6 +321,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 			selectedLang++;
 			Config::lang = selectedLang;
 			Lang::load(Config::lang);
+			changesMade = true;
 		}
 	}
 
@@ -323,6 +331,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 			selectedLang -= 5;
 			Config::lang = selectedLang;
 			Lang::load(Config::lang);
+			changesMade = true;
 		}
 	}
 
@@ -331,6 +340,7 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 			selectedLang += 5;
 			Config::lang = selectedLang;
 			Lang::load(Config::lang);
+			changesMade = true;
 		}
 	}
 
@@ -386,6 +396,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(red, ColorHelper::getColorValue(Config::progressbarColor, 1), ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
 				}
+				changesMade = true;
 			}
 
 
@@ -408,6 +419,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), green, ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
 				}
+				changesMade = true;
 			}
 		} else if (touching(touch, buttons[2])) {
 			int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
@@ -428,6 +440,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), ColorHelper::getColorValue(Config::progressbarColor, 1), blue, 255);
 				}
+				changesMade = true;
 			}
 		}
 	}

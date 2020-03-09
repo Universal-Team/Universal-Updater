@@ -49,7 +49,7 @@ extern u32 selected;
 extern u32 unselected;
 extern int AutobootWhat;
 bool changeBackState = false;
-
+extern bool changesMade;
 C2D_SpriteSheet appStoreSheet;
 
 // Parse informations like URL, Title, Author, Description.
@@ -515,6 +515,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
 				if (tempStore != "") {
 					Config::StorePath = tempStore;
+					changesMade = true;
 				}
 				break;
 		}
@@ -549,6 +550,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
 			if (tempStore != "") {
 				Config::StorePath = tempStore;
+				changesMade = true;
 			}
 		}
 	}

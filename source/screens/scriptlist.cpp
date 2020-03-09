@@ -40,6 +40,7 @@ extern bool checkWifiStatus(void);
 extern void notImplemented(void);
 
 bool isScriptSelected = false;
+extern bool changesMade;
 
 // Parse the script for the list.
 ScriptInfo parseInfo(std::string fileName) {
@@ -395,6 +396,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
 				if (tempScript != "") {
 					Config::ScriptPath = tempScript;
+					changesMade = true;
 				}
 				break;
 		}
@@ -430,6 +432,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
 			if (tempScript != "") {
 				Config::ScriptPath = tempScript;
+				changesMade = true;
 			}
 		}
 	}
