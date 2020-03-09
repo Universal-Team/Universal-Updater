@@ -144,5 +144,9 @@
 	"GO_BACK":							"Go back.",
 	"ENTRY":							"Current Entry | Last Entry",
 	"REVISION":							"Current Revision | Latest Revision",
-	"UPDATE_STORE":						"Update selected UniStore."
+	"UPDATE_STORE":						"Update selected UniStore.",
+	"NOT_FOUND_COLOR":					"Not Found Script Color",
+	"OUTDATED_COLOR":					"Outdated Script Color",
+	"UPTODATE_COLOR":					"Up-To-Date Script Color",
+	"FUTURE_COLOR":						"Future Script Color"
 }

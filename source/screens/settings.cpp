@@ -122,6 +122,14 @@ void Settings::DrawColorChanging(void) const {
 		Gui::DrawStringCentered(0, 45, 0.7f, Config::TxtColor, Lang::get("UNSELECTED_COLOR"), 320);
 	} else if (colorMode == 6) {
 		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::progressbarColor);
+	} else if (colorMode == 7) {
+		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::notFound);
+	} else if (colorMode == 8) {
+		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::outdated);
+	} else if (colorMode == 9) {
+		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::uptodate);
+	} else if (colorMode == 10) {
+		Gui::Draw_Rect(31, 121, (int)(((float)100/(float)100) * 338.0f), 28, Config::future);
 	}
 
 
@@ -132,14 +140,14 @@ void Settings::DrawColorChanging(void) const {
 	GFX::DrawArrow(0, 0, 0, 1);
 	GFX::DrawArrow(318, 22, 180.0, 1);
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 11; i++) {
 		if (colorMode == i) {
-			Gui::drawAnimatedSelector(54 + i * 25, 2, 16, 16, .060, TRANSPARENT, C2D_Color32(140, 140, 140, 255));
+			Gui::drawAnimatedSelector(24 + i * 25, 2, 16, 16, .060, TRANSPARENT, C2D_Color32(140, 140, 140, 255));
 		}
 	}
 
-	for (int i = 0; i < 7; i++) {
-		Gui::DrawString(58 + i * 25, 2, 0.5f, WHITE, std::to_string(i+1), 400);
+	for (int i = 0; i < 11; i++) {
+		Gui::DrawString(28 + i * 25, 2, 0.5f, WHITE, std::to_string(i+1), 400);
 	}
 
 	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
@@ -181,6 +189,26 @@ void Settings::DrawColorChanging(void) const {
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::progressbarColor, 0).c_str(), 400);
+	} else if (colorMode == 7) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("NOT_FOUND_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::notFound, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::notFound, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::notFound, 0).c_str(), 400);
+	} else if (colorMode == 8) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("OUTDATED_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::outdated, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::outdated, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::outdated, 0).c_str(), 400);
+	} else if (colorMode == 9) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("UPTODATE_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::uptodate, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::uptodate, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::uptodate, 0).c_str(), 400);
+	} else if (colorMode == 10) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("FUTURE_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::future, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::future, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::future, 0).c_str(), 400);
 	}
 }
 
@@ -356,8 +384,8 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	int blue;
 
 	if (hDown & KEY_TOUCH) {
-		for (int i = 0; i < 7; i++) {
-			if(touch.px > 54 + i * 25 && touch.px < 54 + i * 25+16 && touch.py > 2 && touch.py < 2+16) {
+		for (int i = 0; i < 11; i++) {
+			if(touch.px > 24 + i * 25 && touch.px < 24 + i * 25+16 && touch.py > 2 && touch.py < 2+16) {
 				colorMode = i;
 			}
 		}
@@ -373,7 +401,7 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 	}
 
 	if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if(colorMode < 6)	colorMode++;
+		if(colorMode < 10)	colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -395,12 +423,20 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::UnselectedColor = RGBA8(red, ColorHelper::getColorValue(Config::UnselectedColor, 1), ColorHelper::getColorValue(Config::UnselectedColor, 0), 255);
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(red, ColorHelper::getColorValue(Config::progressbarColor, 1), ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
+				} else if (colorMode == 7) {
+					Config::notFound = RGBA8(red, ColorHelper::getColorValue(Config::notFound, 1), ColorHelper::getColorValue(Config::notFound, 0), 255);
+				} else if (colorMode == 8) {
+					Config::outdated = RGBA8(red, ColorHelper::getColorValue(Config::outdated, 1), ColorHelper::getColorValue(Config::outdated, 0), 255);
+				} else if (colorMode == 9) {
+					Config::uptodate = RGBA8(red, ColorHelper::getColorValue(Config::uptodate, 1), ColorHelper::getColorValue(Config::uptodate, 0), 255);
+				} else if (colorMode == 10) {
+					Config::future = RGBA8(red, ColorHelper::getColorValue(Config::future, 1), ColorHelper::getColorValue(Config::future, 0), 255);
 				}
 				changesMade = true;
 			}
 
 
-		} else if (touching(touch, buttons[1]) && colorMode != 7) {
+		} else if (touching(touch, buttons[1])) {
 			int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
 			if(temp != -1) {
 				green = temp;
@@ -418,6 +454,14 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::UnselectedColor = RGBA8(ColorHelper::getColorValue(Config::UnselectedColor, 2), green, ColorHelper::getColorValue(Config::UnselectedColor, 0), 255);
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), green, ColorHelper::getColorValue(Config::progressbarColor, 0), 255);
+				} else if (colorMode == 7) {
+					Config::notFound = RGBA8(ColorHelper::getColorValue(Config::notFound, 2), green, ColorHelper::getColorValue(Config::notFound, 0), 255);
+				} else if (colorMode == 8) {
+					Config::outdated = RGBA8(ColorHelper::getColorValue(Config::outdated, 2), green, ColorHelper::getColorValue(Config::outdated, 0), 255);
+				} else if (colorMode == 9) {
+					Config::uptodate = RGBA8(ColorHelper::getColorValue(Config::uptodate, 2), green, ColorHelper::getColorValue(Config::uptodate, 0), 255);
+				} else if (colorMode == 10) {
+					Config::future = RGBA8(ColorHelper::getColorValue(Config::future, 2), green, ColorHelper::getColorValue(Config::future, 0), 255);
 				}
 				changesMade = true;
 			}
@@ -439,6 +483,14 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 					Config::UnselectedColor = RGBA8(ColorHelper::getColorValue(Config::UnselectedColor, 2), ColorHelper::getColorValue(Config::UnselectedColor, 1), blue, 255);
 				} else if (colorMode == 6) {
 					Config::progressbarColor = RGBA8(ColorHelper::getColorValue(Config::progressbarColor, 2), ColorHelper::getColorValue(Config::progressbarColor, 1), blue, 255);
+				} else if (colorMode == 7) {
+					Config::notFound = RGBA8(ColorHelper::getColorValue(Config::notFound, 2), ColorHelper::getColorValue(Config::notFound, 1), blue, 255);
+				} else if (colorMode == 8) {
+					Config::outdated = RGBA8(ColorHelper::getColorValue(Config::outdated, 2), ColorHelper::getColorValue(Config::outdated, 1), blue, 255);
+				} else if (colorMode == 9) {
+					Config::uptodate = RGBA8(ColorHelper::getColorValue(Config::uptodate, 2), ColorHelper::getColorValue(Config::uptodate, 1), blue, 255);
+				} else if (colorMode == 10) {
+					Config::future = RGBA8(ColorHelper::getColorValue(Config::future, 2), ColorHelper::getColorValue(Config::future, 1), blue, 255);
 				}
 				changesMade = true;
 			}

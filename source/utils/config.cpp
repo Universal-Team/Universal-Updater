@@ -50,6 +50,10 @@ int Config::LangPath;
 bool Config::GodMode = false;
 int Config::autoboot = 0;
 std::string Config::AutobootFile = "";
+int Config::outdated;
+int Config::uptodate;
+int Config::notFound;
+int Config::future;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -58,148 +62,178 @@ void Config::load() {
 		configJson = nlohmann::json::parse(file, nullptr, false);
 
 		if(!configJson.contains("BARCOLOR")) {
-			Config::Color1 = BarColor;
+			Color1 = BarColor;
 		} else {
-			Config::Color1 = getInt("BARCOLOR");
+			Color1 = getInt("BARCOLOR");
 		}
 
 		if(!configJson.contains("TOPBGCOLOR")) {
-			Config::Color2 = TopBGColor;
+			Color2 = TopBGColor;
 		} else {
-			Config::Color2 = getInt("TOPBGCOLOR");
+			Color2 = getInt("TOPBGCOLOR");
 		}
 
 		if(!configJson.contains("BOTTOMBGCOLOR")) {
-			Config::Color3 = BottomBGColor;
+			Color3 = BottomBGColor;
 		} else {
-			Config::Color3 = getInt("BOTTOMBGCOLOR");
+			Color3 = getInt("BOTTOMBGCOLOR");
 		}
 
 		if(!configJson.contains("TEXTCOLOR")) {
-			Config::TxtColor = WHITE;
+			TxtColor = WHITE;
 		} else {
-			Config::TxtColor = getInt("TEXTCOLOR");
+			TxtColor = getInt("TEXTCOLOR");
 		}
 
 		if(!configJson.contains("UNSELECTEDCOLOR")) {
-			Config::UnselectedColor = UnselectedColordefault;
+			UnselectedColor = UnselectedColordefault;
 		} else {
-			Config::UnselectedColor = getInt("UNSELECTEDCOLOR");
+			UnselectedColor = getInt("UNSELECTEDCOLOR");
 		}
 
 		if(!configJson.contains("SELECTEDCOLOR")) {
-			Config::SelectedColor = SelectedColordefault;
+			SelectedColor = SelectedColordefault;
 		} else {
-			Config::SelectedColor = getInt("SELECTEDCOLOR");
+			SelectedColor = getInt("SELECTEDCOLOR");
 		}
 
 		if(!configJson.contains("SCRIPTPATH")) {
-			Config::ScriptPath = SCRIPTS_PATH;
+			ScriptPath = SCRIPTS_PATH;
 		} else {
-			Config::ScriptPath = getString("SCRIPTPATH");
+			ScriptPath = getString("SCRIPTPATH");
 		}
 
 		if(!configJson.contains("LANGPATH")) {
-			Config::LangPath = 0;
+			LangPath = 0;
 		} else {
-			Config::LangPath = getInt("LANGPATH");
+			LangPath = getInt("LANGPATH");
 		}
 
 		if(!configJson.contains("LANGUAGE")) {
-			Config::lang = 2;
+			lang = 2;
 		} else {
-			Config::lang = getInt("LANGUAGE");
+			lang = getInt("LANGUAGE");
 		}
 
 		if(!configJson.contains("VIEWMODE")) {
-			Config::viewMode = 0;
+			viewMode = 0;
 		} else {
-			Config::viewMode = getInt("VIEWMODE");
+			viewMode = getInt("VIEWMODE");
 		}
 
 		if(!configJson.contains("PROGRESSBARCOLOR")) {
-			Config::progressbarColor = WHITE;
+			progressbarColor = WHITE;
 		} else {
-			Config::progressbarColor = getInt("PROGRESSBARCOLOR");
+			progressbarColor = getInt("PROGRESSBARCOLOR");
 		}
 
 		if(!configJson.contains("MUSICPATH")) {
-			Config::MusicPath = MUSIC_PATH;
+			MusicPath = MUSIC_PATH;
 		} else {
-			Config::MusicPath = getString("MUSICPATH");
+			MusicPath = getString("MUSICPATH");
 		}
 
 		if(!configJson.contains("LOGGING")) {
-			Config::Logging = false;
+			Logging = false;
 		} else {
-			Config::Logging = getBool("LOGGING");
+			Logging = getBool("LOGGING");
 		}
 
 		if(!configJson.contains("BARS")) {
-			Config::UseBars = true;
+			UseBars = true;
 		} else {
-			Config::UseBars = getBool("BARS");
+			UseBars = getBool("BARS");
 		}
 
 		if(!configJson.contains("STOREPATH")) {
-			Config::StorePath = STORE_PATH;
+			StorePath = STORE_PATH;
 		} else {
-			Config::StorePath = getString("STOREPATH");
+			StorePath = getString("STOREPATH");
 		}
 
 		if(!configJson.contains("AUTOBOOT")) {
-			Config::autoboot = 0;
+			autoboot = 0;
 		} else {
-			Config::autoboot = getInt("AUTOBOOT");
+			autoboot = getInt("AUTOBOOT");
 		}
 
 		if(!configJson.contains("AUTOBOOT_FILE")) {
-			Config::AutobootFile = "";
+			AutobootFile = "";
 		} else {
-			Config::AutobootFile = getString("AUTOBOOT_FILE");
+			AutobootFile = getString("AUTOBOOT_FILE");
 		}
 
+		if(!configJson.contains("OUTDATED")) {
+			outdated = C2D_Color32(0xfb, 0x5b, 0x5b, 255);
+		} else {
+			outdated = getInt("OUTDATED");
+		}
+
+		if(!configJson.contains("UPTODATE")) {
+			uptodate = C2D_Color32(0xa5, 0xdd, 0x81, 255);
+		} else {
+			uptodate = getInt("UPTODATE");
+		}
+
+		if(!configJson.contains("NOTFOUND")) {
+			notFound = C2D_Color32(255, 128, 0, 255);
+		} else {
+			notFound = getInt("NOTFOUND");
+		}
+
+		if(!configJson.contains("FUTURE")) {
+			future = C2D_Color32(255, 255, 0, 255);
+		} else {
+			future = getInt("FUTURE");
+		}
 		fclose(file);
 	} else {
-		Config::Color1 = BarColor;
-		Config::Color2 = TopBGColor;
-		Config::Color3 = BottomBGColor;
-		Config::TxtColor = WHITE;
-		Config::SelectedColor = SelectedColordefault;
-		Config::UnselectedColor = UnselectedColordefault;
-		Config::ScriptPath = SCRIPTS_PATH;
-		Config::LangPath = 0;
-		Config::lang = 2;
-		Config::viewMode = 0;
-		Config::progressbarColor = WHITE;
-		Config::MusicPath = MUSIC_PATH;
-		Config::Logging = false;
-		Config::UseBars = true;
-		Config::StorePath = STORE_PATH;
-		Config::autoboot = 0;
-		Config::AutobootFile = "";
+		Color1 = BarColor;
+		Color2 = TopBGColor;
+		Color3 = BottomBGColor;
+		TxtColor = WHITE;
+		SelectedColor = SelectedColordefault;
+		UnselectedColor = UnselectedColordefault;
+		ScriptPath = SCRIPTS_PATH;
+		LangPath = 0;
+		lang = 2;
+		viewMode = 0;
+		progressbarColor = WHITE;
+		MusicPath = MUSIC_PATH;
+		Logging = false;
+		UseBars = true;
+		StorePath = STORE_PATH;
+		autoboot = 0;
+		AutobootFile = "";
+		outdated = C2D_Color32(0xfb, 0x5b, 0x5b, 255);
+		uptodate = C2D_Color32(0xa5, 0xdd, 0x81, 255);
+		notFound = C2D_Color32(255, 128, 0, 255);
+		future	 = C2D_Color32(255, 255, 0, 255);
 	}
 }
 
 void Config::save() {
-	Config::setInt("BARCOLOR", Config::Color1);
-	Config::setInt("TOPBGCOLOR", Config::Color2);
-	Config::setInt("BOTTOMBGCOLOR", Config::Color3);
-	Config::setInt("TEXTCOLOR", Config::TxtColor);
-	Config::setInt("SELECTEDCOLOR", Config::SelectedColor);
-	Config::setInt("UNSELECTEDCOLOR", Config::UnselectedColor);
-	Config::setString("SCRIPTPATH", Config::ScriptPath);
-	Config::setInt("LANGPATH", Config::LangPath);
-	Config::setInt("LANGUAGE", Config::lang);
-	Config::setInt("VIEWMODE", Config::viewMode);
-	Config::setInt("PROGRESSBARCOLOR", Config::progressbarColor);
-	Config::setString("MUSICPATH", Config::MusicPath);
-	Config::setBool("LOGGING", Config::Logging);
-	Config::setBool("BARS", Config::UseBars);
-	Config::setString("STOREPATH", Config::StorePath);
-
-	Config::setInt("AUTOBOOT", Config::autoboot);
-	Config::setString("AUTOBOOT_FILE", Config::AutobootFile);
+	setInt("BARCOLOR", Color1);
+	setInt("TOPBGCOLOR", Color2);
+	setInt("BOTTOMBGCOLOR", Color3);
+	setInt("TEXTCOLOR", TxtColor);
+	setInt("SELECTEDCOLOR", SelectedColor);
+	setInt("UNSELECTEDCOLOR", UnselectedColor);
+	setString("SCRIPTPATH", ScriptPath);
+	setInt("LANGPATH", LangPath);
+	setInt("LANGUAGE", lang);
+	setInt("VIEWMODE", viewMode);
+	setInt("PROGRESSBARCOLOR", progressbarColor);
+	setString("MUSICPATH", MusicPath);
+	setBool("LOGGING", Logging);
+	setBool("BARS", UseBars);
+	setString("STOREPATH", StorePath);
+	setInt("AUTOBOOT", autoboot);
+	setString("AUTOBOOT_FILE", AutobootFile);
+	setInt("OUTDATED", outdated);
+	setInt("UPTODATE", uptodate);
+	setInt("NOTFOUND", notFound);
+	setInt("FUTURE", future);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -209,29 +243,32 @@ void Config::save() {
 void Config::initializeNewConfig() {
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
 	if(file) configJson = nlohmann::json::parse(file, nullptr, false);
-	Config::setInt("BARCOLOR", BarColor);
-	Config::setInt("TOPBGCOLOR", TopBGColor);
-	Config::setInt("BOTTOMBGCOLOR", BottomBGColor);
-	Config::setInt("TEXTCOLOR", WHITE);
-	Config::setInt("SELECTEDCOLOR", SelectedColordefault);
-	Config::setInt("UNSELECTEDCOLOR", UnselectedColordefault);
-	Config::setString("SCRIPTPATH", SCRIPTS_PATH);
-	Config::setInt("LANGPATH", 0);
-	Config::setInt("LANGUAGE", 2);
-	Config::setInt("VIEWMODE", 0);
-	Config::setInt("PROGRESSBARCOLOR", WHITE);
-	Config::setString("MUSICPATH", MUSIC_PATH);
-	Config::setBool("LOGGING", false);
-	Config::setBool("BARS", true);
-	Config::setString("STOREPATH", STORE_PATH);
 
-	Config::setInt("AUTOBOOT", 0);
-	Config::setString("AUTOBOOT_FILE", "");
+	setInt("BARCOLOR", BarColor);
+	setInt("TOPBGCOLOR", TopBGColor);
+	setInt("BOTTOMBGCOLOR", BottomBGColor);
+	setInt("TEXTCOLOR", WHITE);
+	setInt("SELECTEDCOLOR", SelectedColordefault);
+	setInt("UNSELECTEDCOLOR", UnselectedColordefault);
+	setString("SCRIPTPATH", SCRIPTS_PATH);
+	setInt("LANGPATH", 0);
+	setInt("LANGUAGE", 2);
+	setInt("VIEWMODE", 0);
+	setInt("PROGRESSBARCOLOR", WHITE);
+	setString("MUSICPATH", MUSIC_PATH);
+	setBool("LOGGING", false);
+	setBool("BARS", true);
+	setString("STOREPATH", STORE_PATH);
+	setInt("AUTOBOOT", 0);
+	setString("AUTOBOOT_FILE", "");
+	setInt("OUTDATED", C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+	setInt("UPTODATE", C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	setInt("NOTFOUND", C2D_Color32(255, 128, 0, 255));
+	setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }
-
 
 bool Config::getBool(const std::string &key) {
 	if(!configJson.contains(key)) {

@@ -148,13 +148,13 @@ void ScriptBrowse::DrawBrowse(void) const {
 				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 			}
 			if (infoJson[screenPos+i]["curRevision"] == -1) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(255, 128, 0, 255));
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::notFound);
 			} else if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::outdated);
 			} else if(infoJson[screenPos+i]["curRevision"] == infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::uptodate);
 			} else if(infoJson[screenPos+i]["curRevision"] > infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, C2D_Color32(255, 255, 0, 255));
+				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::future);
 			}
 
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 317);
@@ -169,16 +169,16 @@ void ScriptBrowse::DrawBrowse(void) const {
 
 			// Script not found.
 			if (infoJson[screenPosList+i]["curRevision"] == -1) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(255, 128, 0, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::notFound);
 				// Script outdaed.
 			} else if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::outdated);
 				// Script up-to-date.
 			} else if(infoJson[screenPosList+i]["curRevision"] == infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::uptodate);
 				// Future script.
 			} else if(infoJson[screenPosList+i]["curRevision"] > infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, C2D_Color32(255, 255, 0, 255));
+				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::future);
 			}
 
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 317);
@@ -195,16 +195,16 @@ void ScriptBrowse::DrawGlossary(void) const {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
 	}
 
-	Gui::Draw_Rect(20, 30, 30, 30, C2D_Color32(255, 128, 0, 255));
+	Gui::Draw_Rect(20, 30, 30, 30, Config::notFound);
 	Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 300);
 
-	Gui::Draw_Rect(20, 70, 30, 30, C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+	Gui::Draw_Rect(20, 70, 30, 30, Config::outdated);
 	Gui::DrawString(65, 75, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 300);
 
-	Gui::Draw_Rect(20, 110, 30, 30, C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	Gui::Draw_Rect(20, 110, 30, 30, Config::uptodate);
 	Gui::DrawString(65, 115, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 300);
 
-	Gui::Draw_Rect(20, 150, 30, 30, C2D_Color32(255, 255, 0, 255));
+	Gui::Draw_Rect(20, 150, 30, 30, Config::future);
 	Gui::DrawString(65, 155, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 300);
 
 	Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
