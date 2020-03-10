@@ -89,7 +89,7 @@ ScriptBrowse::ScriptBrowse() {
 	Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
-//	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
+	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
 	FILE* file = fopen(metaFile, "r");
 	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
@@ -98,6 +98,23 @@ ScriptBrowse::ScriptBrowse() {
 	maxScripts = infoJson.size();
 }
 
+void ScriptBrowse::refresh() {
+	if (checkWifiStatus() == true) {
+		if (Msg::promptMsg(Lang::get("REFRESH_SCRIPTBROWSE_PROMPT"))) {
+			Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
+			downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
+			FILE* file = fopen(metaFile, "r");
+			if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
+			fclose(file);
+			fixInfo(infoJson);
+			findExistingFiles(infoJson);
+			maxScripts = infoJson.size();
+			Selection = 0;
+		}
+	} else {
+		notConnectedMsg();
+	}
+}
 void ScriptBrowse::Draw(void) const {
 	if (mode == 0) {
 		DrawBrowse();
@@ -137,7 +154,7 @@ void ScriptBrowse::DrawBrowse(void) const {
 
 	GFX::DrawSpriteBlend(sprites_download_all_idx, arrowPos[3].x, arrowPos[3].y);
 	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[4].x, arrowPos[4].y);
-	//Gui::spriteBlend(sprites_search_idx, arrowPos[5].x, arrowPos[5].y);
+	GFX::DrawSpriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
 
 	Gui::DrawStringCentered(0, 1, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts));
 
@@ -209,23 +226,22 @@ void ScriptBrowse::DrawGlossary(void) const {
 
 	Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
 	Gui::DrawString(65, 185, 0.7f, Config::TxtColor, Lang::get("REVISION"), 300);
+
 	GFX::DrawBottom();
-
-	GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 40);
-	Gui::DrawString(50, 42, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
-	GFX::DrawSpriteBlend(sprites_view_idx, 20, 70);
-	Gui::DrawString(50, 72, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
-
-	GFX::DrawArrow(20, 100);
-	Gui::DrawString(50, 102, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
-	GFX::DrawArrow(42, 155, 180.0);
-	Gui::DrawString(50, 132, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
-	GFX::DrawArrow(20, 160, 0, 1);
-	Gui::DrawString(50, 162, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
-
-	Gui::DrawString(10, 192, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts), 35);
-	Gui::DrawString(50, 192, 0.6f, Config::TxtColor, Lang::get("ENTRY"), 260);
-
+	GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 25);
+	Gui::DrawString(50, 27, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
+	GFX::DrawSpriteBlend(sprites_view_idx, 20, 55);
+	Gui::DrawString(50, 57, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
+	GFX::DrawArrow(20, 85);
+	Gui::DrawString(50, 87, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
+	GFX::DrawArrow(42, 140, 180.0);
+	Gui::DrawString(50, 117, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
+	GFX::DrawArrow(20, 145, 0, 1);
+	Gui::DrawString(50, 147, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
+	Gui::DrawString(10, 177, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts), 35);
+	Gui::DrawString(50, 177, 0.6f, Config::TxtColor, Lang::get("ENTRY"), 260);
+	GFX::DrawSpriteBlend(sprites_update_idx, 20, 195);
+	Gui::DrawString(50, 197, 0.6f, Config::TxtColor, Lang::get("REFRESH_SCRIPTBROWSE"), 260);
 	GFX::DrawArrow(0, 218, 0, 1);
 }
 
@@ -333,6 +349,10 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else {
 				Config::viewMode = 0;
 			}
+		}
+
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[5]))) {
+			refresh();
 		}
 
 		if (Config::viewMode == 0) {

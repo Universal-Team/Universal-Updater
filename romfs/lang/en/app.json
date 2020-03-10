@@ -150,5 +150,7 @@
 	"UPTODATE_COLOR":					"Up-To-Date Script Color",
 	"FUTURE_COLOR":						"Future Script Color",
 	"DELETE_SCRIPT2":					"Delete the selected Script.",
-	"DELETE_UNISTORE":					"Delete the selected UniStore."
+	"DELETE_UNISTORE":					"Delete the selected UniStore.",
+	"REFRESH_SCRIPTBROWSE_PROMPT":		"Would you like to refresh the ScriptBrowse?",
+	"REFRESH_SCRIPTBROWSE":				"Refresh the ScriptBrowse."
 }

@@ -57,6 +57,7 @@ private:
 	int keyRepeatDelay = 0;
 	int fastMode = false;
 	std::vector<DirEntry> dirContents;
+	void refresh();
 
 	// Button | Icon struct.
 	std::vector<Structs::ButtonPos> arrowPos = {
