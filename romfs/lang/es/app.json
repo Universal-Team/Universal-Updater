@@ -121,12 +121,12 @@
 	"ENTRY": "Entrada actual | Última entrada",
 	"REVISION": "Revisión actual | Última revisión",
 	"UPDATE_STORE": "Actualizar la UniStore seleccionada.",
-	"NOT_FOUND_COLOR": "Not Found Script Color",
-	"OUTDATED_COLOR": "Outdated Script Color",
-	"UPTODATE_COLOR": "Up-To-Date Script Color",
-	"FUTURE_COLOR": "Future Script Color",
-	"DELETE_SCRIPT2": "Delete the selected Script.",
-	"DELETE_UNISTORE": "Delete the selected UniStore.",
-	"REFRESH_SCRIPTBROWSE_PROMPT": "Would you like to refresh the ScriptBrowse?",
-	"REFRESH_SCRIPTBROWSE": "Refresh the ScriptBrowse."
+	"NOT_FOUND_COLOR": "Color de script no encontrado",
+	"OUTDATED_COLOR": "Color de script obsoleto",
+	"UPTODATE_COLOR": "Color del script actualizado",
+	"FUTURE_COLOR": "Color del script futuro",
+	"DELETE_SCRIPT2": "Eliminar el Script seleccionado.",
+	"DELETE_UNISTORE": "Eliminar la UniStore seleccionada.",
+	"REFRESH_SCRIPTBROWSE_PROMPT": "¿Te gustaría actualizar el ScriptBrowse?",
+	"REFRESH_SCRIPTBROWSE": "Actualizar el ScriptBrowse."
 }
