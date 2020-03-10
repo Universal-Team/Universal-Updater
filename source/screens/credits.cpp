@@ -40,7 +40,8 @@ void Credits::Draw(void) const {
 		}
 		Gui::DrawStringCentered(0, 30, 0.7f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 390);
 		Gui::DrawStringCentered(0, 70, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
-		GFX::DrawSprite(sprites_stackZ_idx, 120, 105);
+		GFX::DrawSprite(sprites_stackZ_idx, 5, 85);
+		GFX::DrawSprite(sprites_universal_core_idx, 200, 110);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
