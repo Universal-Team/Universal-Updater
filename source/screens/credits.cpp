@@ -59,12 +59,12 @@ void Credits::Draw(void) const {
 
 	if (creditsPage == 1) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
-		Gui::DrawString(5, 30, 0.6f, Config::TxtColor, "- _mapple²\n- antoine62\n- Chips\n- David Pires\n- Flame\n- lemonnade0\n- Pk11\n- Roby Spia\n- StackZ\n- YoSoy");
+		Gui::DrawString(5, 30, 0.6f, Config::TxtColor, "- _mapple²\n- antoine62\n- Chips\n- David Pires\n- FlameKat53\n- lemonnade0\n- Pk11\n- Roby Spia\n- StackZ\n- YoSoy");
 		Gui::DrawString(180, 30, 0.6f, Config::TxtColor, "Русский\nFrançais\nPortuguês\nPortuguês\nBruh\nLietuvių\n日本語\nItaliano\nDeutsch, English\nEspañol");
 	} else if (creditsPage == 2) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
 		Gui::DrawStringCentered(0, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
-		Gui::DrawStringCentered(0, 65, 0.7f, Config::TxtColor, "Flame");
+		Gui::DrawStringCentered(0, 65, 0.7f, Config::TxtColor, "FlameKat53");
 		Gui::DrawStringCentered(0, 95, 0.7f, Config::TxtColor, "Pk11");
 		Gui::DrawStringCentered(0, 125, 0.7f, Config::TxtColor, "RocketRobz");
 		Gui::DrawStringCentered(0, 155, 0.7f, Config::TxtColor, "StackZ");
