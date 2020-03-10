@@ -244,6 +244,7 @@ void ScriptList::DrawList(void) const {
 	GFX::DrawArrow(315, 240, 180.0);
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawSpriteBlend(sprites_delete_idx, arrowPos[4].x, arrowPos[4].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
@@ -501,7 +502,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			keyRepeatDelay = 6;
 		}
 	}
-	if (hDown & KEY_SELECT) {
+	if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
 		if (Msg::promptMsg(Lang::get("DELETE_SCRIPT"))) {
 			deleteScript(Selection);
 		}
@@ -650,7 +651,9 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 					if (fileInfo2.size() != 0) {
 						choice = fileInfo2[screenPos + i];
-						runFunctions(jsonFile);
+						if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n\n" + choice)) {
+							runFunctions(jsonFile);
+						}
 					}
 				}
 			}
@@ -766,6 +769,10 @@ void ScriptList::DrawGlossary(void) const {
 	Gui::DrawString(50, 102, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
 	GFX::DrawArrow(20, 130, 0, 1);
 	Gui::DrawString(50, 132, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
+	if (lastMode == 1) {
+		GFX::DrawSpriteBlend(sprites_delete_idx, 20, 160);
+		Gui::DrawString(50, 162, 0.6f, Config::TxtColor, Lang::get("DELETE_SCRIPT2"), 260);
+	}
 	GFX::DrawArrow(0, 218, 0, 1);
 }
 

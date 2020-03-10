@@ -100,7 +100,7 @@ private:
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
 		{5, 0, 25, 25}, // ViewMode Change.
-		{45, 0, 25, 25}, // Search.
+		{45, 0, 25, 25}, // Delete.
 		{85, 0, 25, 25}, // Update.
 	};
 	std::vector<Structs::ButtonPos> URLBtn = {

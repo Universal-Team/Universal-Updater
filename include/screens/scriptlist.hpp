@@ -93,7 +93,7 @@ private:
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
 		{5, 0, 25, 25}, // viewMode Change
-		{45, 0, 25, 25}, // Search.
+		{45, 0, 25, 25}, // Delete.
 	};
 	std::vector<Structs::ButtonPos> subPos = {
 		{10, 70, 140, 40}, // Script list.

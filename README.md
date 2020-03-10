@@ -37,3 +37,7 @@ To build Universal-Updater from source, you need devkitPro installed, along with
 ## Contributions
 
 [PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.
+
+## Icon Credits
+
+<a target="_blank" href="https://icons8.com/icons/set/trash">Trash icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
