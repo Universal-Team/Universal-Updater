@@ -262,7 +262,7 @@ void UniStore::DrawSubMenu(void) const {
 void UniStore::DrawStoreList(void) const {
 	std::string line1;
 	std::string line2;
-	std::string storeAmount = std::to_string(Selection +1) + " / " + std::to_string(storeInfo.size());
+	std::string storeAmount = std::to_string(Selection +1) + " | " + std::to_string(storeInfo.size());
 	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, storeInfo[Selection].title, 400);
@@ -307,7 +307,7 @@ void UniStore::DrawStoreList(void) const {
 }
 
 void UniStore::DrawStore(void) const {
-	std::string entryAmount = std::to_string(Selection+1) + " / " + std::to_string((int)appStoreJson.at("storeContent").size());
+	std::string entryAmount = std::to_string(Selection+1) + " | " + std::to_string((int)appStoreJson.at("storeContent").size());
 	std::string info;
 	GFX::DrawTop();
 	// Top Background.
@@ -766,8 +766,8 @@ void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		refreshList();
 		Selection = 0;
+		refreshList();
 		mode = 1;
 		appStoreList.clear();
 		isScriptSelected = false;
@@ -1078,10 +1078,10 @@ void UniStore::DrawGlossary(void) const {
 	}
 
 	if (lastMode == 1) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection +1) + " / " + std::to_string(storeInfo.size()), 40);
+		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection +1) + " | " + std::to_string(storeInfo.size()), 40);
 		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
 	} else if (lastMode == 2) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection+1) + " / " + std::to_string((int)appStoreJson.at("storeContent").size()), 40);
+		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection+1) + " | " + std::to_string((int)appStoreJson.at("storeContent").size()), 40);
 		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
 	}
 	GFX::DrawBottom();
