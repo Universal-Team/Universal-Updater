@@ -104,7 +104,7 @@
 	"ENABLE_GODMODE": "GodMode aktivieren",
 	"ENABLE_GODMODE_PROMPT": "Möchtest du GodMode aktivieren?\n\nSei vorsichtig, wenn du GodMode verwendest!!",
 	"DISABLE_AUTOBOOT": "Möchten Sie den Autostart deaktivieren?",
-	"AUTOBOOT_STORE": "Möchten Sie diesen Store automatisch starten?\n\nDies wird diesen Store beim Start automatisch starten!",
+	"AUTOBOOT_STORE": "Möchten Sie diesen Shop automatisch starten?\n\nDies wird diesen Shop beim Start automatisch starten!",
 	"SCRIPT_NOT_FOUND": "Dieses Skript existiert nicht.",
 	"DELETE_SCRIPT": "Möchten Sie dieses Skript löschen?",
 	"REFRESHING_LIST": "Liste wird aktualisiert...",
@@ -120,13 +120,13 @@
 	"GO_BACK": "Gehe zurück.",
 	"ENTRY": "Aktueller Eintrag | Letzter Eintrag",
 	"REVISION": "Aktuelle Revision | Neueste Revision",
-	"UPDATE_STORE": "Ausgewählten UniStore aktualisieren.",
+	"UPDATE_STORE": "Ausgewähltes UniStore aktualisieren.",
 	"NOT_FOUND_COLOR": "Skript nicht gefunden Farbe",
 	"OUTDATED_COLOR": "Veraltete Skriptfarbe",
-	"UPTODATE_COLOR": "Up-To-Datum-Skriptfarbe",
+	"UPTODATE_COLOR": "Auf dem neusten Stand Skriptfarbe",
 	"FUTURE_COLOR": "Zukünftige Skriptfarbe",
-	"DELETE_SCRIPT2": "Delete the selected Script.",
-	"DELETE_UNISTORE": "Delete the selected UniStore.",
-	"REFRESH_SCRIPTBROWSE_PROMPT": "Would you like to refresh the ScriptBrowse?",
-	"REFRESH_SCRIPTBROWSE": "Refresh the ScriptBrowse."
+	"DELETE_SCRIPT2": "Ausgewähltes Skript löschen.",
+	"DELETE_UNISTORE": "Ausgewähltes UniStore löschen.",
+	"REFRESH_SCRIPTBROWSE_PROMPT": "Möchten Sie die Skriptbrowse aktualisieren?",
+	"REFRESH_SCRIPTBROWSE": "Aktualisiere die SkriptBrowse."
 }
