@@ -128,5 +128,10 @@
 	"DELETE_SCRIPT2": "選択のスクリプトを削除する",
 	"DELETE_UNISTORE": "選択のUniStoreを削除する",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "スクリプトブラウズを再読み込みますか？",
-	"REFRESH_SCRIPTBROWSE": "スクリプトブラウズを再読み込み"
+	"REFRESH_SCRIPTBROWSE": "スクリプトブラウズを再読み込み",
+	"DOWNLOAD_ALL_DDM": "Download All",
+	"REFRESH_BROWSE_DDM": "Refresh",
+	"VIEW_DDM": "Change ViewMode",
+	"DELETE_DDM": "Delete",
+	"UPDATE_DDM": "Update"
 }
