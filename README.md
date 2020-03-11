@@ -41,3 +41,5 @@ To build Universal-Updater from source, you need devkitPro installed, along with
 ## Icon Credits
 
 <a target="_blank" href="https://icons8.com/icons/set/trash">Trash icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+
+<a target="_blank" href="https://icons8.com/icons/set/menu">Menu icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>

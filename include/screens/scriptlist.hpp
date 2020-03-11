@@ -80,6 +80,8 @@ private:
 	mutable int screenPos = 0;
 	mutable int screenPosList = 0;
 	mutable int Selection = 0;
+	int dropSelection = 0;
+	bool dropDownMenu = false;
 
 	// Browse stuff.
 	int keyRepeatDelay = 0;
@@ -92,14 +94,23 @@ private:
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
-		{5, 0, 25, 25}, // viewMode Change
-		{45, 0, 25, 25}, // Delete.
+		{5, 0, 25, 25} // Dropdown Menu.
 	};
 	std::vector<Structs::ButtonPos> subPos = {
 		{10, 70, 140, 40}, // Script list.
 		{170, 70, 140, 40}, // Get Scripts.
 		{10, 145, 140, 40}, // Script Creator.
-		{170, 145, 140, 40}, // Script path change.
+		{170, 145, 140, 40} // Script path change.
+	};
+
+	// DropDownMenu.
+	std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 25, 25}, // Delete.
+		{5, 70, 25, 25} // ViewMode.
+	};
+	std::vector<Structs::ButtonPos> dropPos2 = {
+		{0, 28, 140, 30}, // Delete.
+		{0, 68, 140, 30} // ViewMode.
 	};
 };
 

@@ -80,6 +80,8 @@ private:
 	mutable int Selection = 0;
 	int screenPos = 0;
 	mutable int screenPosList = 0;
+	bool dropDownMenu = false;
+	int dropSelection = 0;
 
 	// Browse stuff.
 	int keyRepeatDelay = 0;
@@ -99,25 +101,35 @@ private:
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
-		{5, 0, 25, 25}, // ViewMode Change.
-		{45, 0, 25, 25}, // Delete.
-		{85, 0, 25, 25}, // Update.
+		{5, 0, 25, 25}, // Dropdown Menu.
 	};
 	std::vector<Structs::ButtonPos> URLBtn = {
 		{10, 70, 140, 40}, // FULL URL.
 		{170, 70, 140, 40}, // Github.
 		{10, 145, 140, 40}, // TinyDB.
-		{170, 145, 140, 40}, // QR Code?
+		{170, 145, 140, 40} // QR Code?
 	};
 	std::vector<Structs::ButtonPos> GitHubPos = {
 		{30, 50, 260, 30}, // Owner & Repo.
 		{30, 130, 260, 30}, // Filename.
-		{135, 180, 50, 30}, // OK.
+		{135, 180, 50, 30} // OK.
 	};
 	std::vector<Structs::ButtonPos> subPos = {
 		{90, 40, 140, 35}, // StoreList.
 		{90, 100, 140, 35}, // storeSearch.
-		{90, 160, 140, 35}, // storePathChange.
+		{90, 160, 140, 35} // storePathChange.
+	};
+
+	// DropDownMenu.
+	std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 25, 25}, // Delete.
+		{5, 70, 25, 25}, // Update.
+		{5, 110, 25, 25} // ViewMode.
+	};
+	std::vector<Structs::ButtonPos> dropPos2 = {
+		{0, 28, 140, 30}, // Delete.
+		{0, 68, 140, 30}, // Update.
+		{0, 108, 140, 30} // ViewMode.
 	};
 };
 

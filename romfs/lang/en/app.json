@@ -152,5 +152,11 @@
 	"DELETE_SCRIPT2":					"Delete the selected Script.",
 	"DELETE_UNISTORE":					"Delete the selected UniStore.",
 	"REFRESH_SCRIPTBROWSE_PROMPT":		"Would you like to refresh the ScriptBrowse?",
-	"REFRESH_SCRIPTBROWSE":				"Refresh the ScriptBrowse."
+	"REFRESH_SCRIPTBROWSE":				"Refresh the ScriptBrowse.",
+
+	"DOWNLOAD_ALL_DDM":					"Download All",
+	"REFRESH_BROWSE_DDM":				"Refresh",
+	"VIEW_DDM":							"Change ViewMode",
+	"DELETE_DDM":						"Delete",
+	"UPDATE_DDM":						"Update"
 }

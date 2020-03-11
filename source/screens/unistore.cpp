@@ -279,9 +279,7 @@ void UniStore::DrawStoreList(void) const {
 	GFX::DrawArrow(295, -1);
 	GFX::DrawArrow(315, 240, 180.0);
 	GFX::DrawArrow(0, 218, 0, 1);
-	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
-	GFX::DrawSpriteBlend(sprites_delete_idx, arrowPos[4].x, arrowPos[4].y);
-	GFX::DrawSpriteBlend(sprites_update_idx, arrowPos[5].x, arrowPos[5].y);
+	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
@@ -289,7 +287,9 @@ void UniStore::DrawStoreList(void) const {
 			line1 = storeInfo[screenPos + i].title;
 			line2 = storeInfo[screenPos + i].author;
 			if(screenPos + i == Selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				if (!dropDownMenu) {
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				}
 			}
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
@@ -299,10 +299,33 @@ void UniStore::DrawStoreList(void) const {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = storeInfo[screenPosList + i].title;
 			if(screenPosList + i == Selection) {
-				Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+				if (!dropDownMenu) {
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+				}
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
+	}
+
+	// DropDown Menu.
+	if (dropDownMenu) {
+		// Draw Operation Box.
+		Gui::Draw_Rect(0, 25, 140, 130, Config::Color1);
+		for (int i = 0; i < 3; i++) {
+			if (dropSelection == i) {
+				Gui::drawAnimatedSelector(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, .090, TRANSPARENT, Config::SelectedColor);
+			} else {
+				Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, Config::UnselectedColor);
+			}
+		}
+		// Draw Dropdown Icons.
+		GFX::DrawSpriteBlend(sprites_delete_idx, dropPos[0].x, dropPos[0].y);
+		GFX::DrawSpriteBlend(sprites_update_idx, dropPos[1].x, dropPos[1].y);
+		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[2].x, dropPos[2].y);
+		// Dropdown Text.
+		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("DELETE_DDM"), 100);
+		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("UPDATE_DDM"), 100);
+		Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
 }
 
@@ -359,7 +382,7 @@ void UniStore::DrawStore(void) const {
 	GFX::DrawArrow(295, -1);
 	GFX::DrawArrow(315, 240, 180.0);
 	GFX::DrawArrow(0, 218, 0, 1);
-	GFX::DrawSpriteBlend(sprites_view_idx, arrowPos[3].x, arrowPos[3].y);
+	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
 
 	if (Config::viewMode == 0) {
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
@@ -368,7 +391,9 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
 				} else {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
+					if (!dropDownMenu) {
+						Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
+					}
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
@@ -386,7 +411,9 @@ void UniStore::DrawStore(void) const {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
 					drawNormal(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
 				} else {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
+					if (!dropDownMenu) {
+						Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
+					}
 				}
 			} else {
 				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
@@ -397,6 +424,16 @@ void UniStore::DrawStore(void) const {
 			}
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
 		}
+	}
+	// DropDown Menu.
+	if (dropDownMenu) {
+		// Draw Operation Box.
+		Gui::Draw_Rect(0, 25, 140, 44, barColor);
+		Gui::drawAnimatedSelector(dropPos2[0].x, dropPos2[0].y, dropPos2[0].w, dropPos2[0].h, .090, TRANSPARENT, Config::SelectedColor);
+		// Draw Dropdown Icons.
+		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[0].x, dropPos[0].y);
+		// Dropdown Text.
+		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
 }
 
@@ -597,164 +634,213 @@ bool UniStore::handleIfDisplayText() {
 void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
-	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		storeInfo.clear();
-		Selection = 0;
-		mode = 0;
-	}
+	if (dropDownMenu) {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			dropDownMenu = false;
+		}
 
-	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if (Selection < (int)storeInfo.size()-1) {
-			Selection++;
-			descript();
-			loadStoreDesc();
-		} else {
-			Selection = 0;
-			descript();
-			loadStoreDesc();
+		if (hDown & KEY_DOWN) {
+			if (dropSelection < 2)	dropSelection++;
 		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
-	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-		if (Selection > 0) {
-			Selection--;
-			descript();
-			loadStoreDesc();
-		} else {
-			Selection = (int)storeInfo.size()-1;
-			descript();
-			loadStoreDesc();
-		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
 
-	if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, arrowPos[5]))) {
-		updateStore(Selection);
-	}
+		if (hDown & KEY_UP) {
+			if (dropSelection > 0)	dropSelection--;
+		}
 
-	if (hDown & KEY_A) {
-		if (dirContents[Selection].isDirectory) {
-		} else if (storeInfo.size() != 0) {
-			if (ScriptHelper::checkIfValid(dirContents[Selection].name, 1) == true) {
+		if (hDown & KEY_A) {
+			switch(dropSelection) {
+				case 0:
+					if (Msg::promptMsg(Lang::get("DELETE_STORE"))) {
+						deleteStore(Selection);
+					}
+					break;
+				case 1:
+					updateStore(Selection);
+					break;
+				case 2:
+					if (Config::viewMode == 0) {
+						Config::viewMode = 1;
+					} else {
+						Config::viewMode = 0;
+					}
+					break;
+			}
+			dropDownMenu = false;
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, dropPos2[0])) {
+				if (Msg::promptMsg(Lang::get("DELETE_STORE"))) {
+					deleteStore(Selection);
+				}
+				dropDownMenu = false;
+			} else if (touching(touch, dropPos2[1])) {
 				updateStore(Selection);
-				currentStoreFile = dirContents[Selection].name;
-				Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-				if (storeInfo[Selection].storeSheet != "" || storeInfo[Selection].storeSheet != "MISSING: storeInfo.sheet") {
-					if(access(storeInfo[Selection].storeSheet.c_str(), F_OK) != -1 ) {
-						loadStoreSheet(Selection);
-					}
+				dropDownMenu = false;
+			} else if (touching(touch, dropPos2[2])) {
+				if (Config::viewMode == 0) {
+					Config::viewMode = 1;
+				} else {
+					Config::viewMode = 0;
 				}
-				appStoreJson = openStoreFile();
-				appStoreList = parseStoreObjects(currentStoreFile);
-				loadStoreColors(appStoreJson);
+				dropDownMenu = false;
+			}
+		}
+	} else {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			dropSelection = 0;
+			dropDownMenu = true;
+		}
+
+		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+			storeInfo.clear();
+			Selection = 0;
+			mode = 0;
+		}
+
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
+			if (Selection < (int)storeInfo.size()-1) {
+				Selection++;
+				descript();
+				loadStoreDesc();
+			} else {
 				Selection = 0;
-				displayInformations = handleIfDisplayText();
-				isScriptSelected = true;
-				Selection = 0;
-				mode = 2;
+				descript();
+				loadStoreDesc();
+			}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
 			}
 		}
-	}
-
-	if (hDown & KEY_R) {
-		fastMode = true;
-	}
-
-	if (hDown & KEY_L) {
-		fastMode = false;
-	}
-
-	if (Config::viewMode == 0) {
-		if(Selection < screenPos) {
-			screenPos = Selection;
-		} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-			screenPos = Selection - ENTRIES_PER_SCREEN + 1;
-		}
-	} else if (Config::viewMode == 1) {
-		if(Selection < screenPosList) {
-			screenPosList = Selection;
-		} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
-			screenPosList = Selection - ENTRIES_PER_LIST + 1;
-		}
-	}
-
-	if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
-		if (Msg::promptMsg(Lang::get("DELETE_STORE"))) {
-			deleteStore(Selection);
-		}
-	}
-
-	if (hDown & KEY_TOUCH) {
-		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
-				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-					if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
-						updateStore(screenPos + i);
-						currentStoreFile = dirContents[screenPos + i].name;
-						Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-						if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
-							if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
-								loadStoreSheet(screenPos + i);
-							}
-						}
-						appStoreJson = openStoreFile();
-						appStoreList = parseStoreObjects(currentStoreFile);
-						loadStoreColors(appStoreJson);
-						Selection = 0;
-						displayInformations = handleIfDisplayText();
-						isScriptSelected = true;
-						mode = 2;
-					}
-				}
+		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+			if (Selection > 0) {
+				Selection--;
+				descript();
+				loadStoreDesc();
+			} else {
+				Selection = (int)storeInfo.size()-1;
+				descript();
+				loadStoreDesc();
 			}
-		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
-				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-					if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
-						updateStore(screenPosList + i);
-						currentStoreFile = dirContents[screenPosList + i].name;
-						Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-						if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
-							if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
-								loadStoreSheet(screenPosList + i);
-							}
-						}
-						appStoreJson = openStoreFile();
-						appStoreList = parseStoreObjects(currentStoreFile);
-						loadStoreColors(appStoreJson);
-						Selection = 0;
-						displayInformations = handleIfDisplayText();
-						isScriptSelected = true;
-						mode = 2;
-					}
-				}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
 			}
 		}
-	}
 
-	if (hDown & KEY_START) {
-		if (Config::autoboot == 1) {
-			if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
-				Config::autoboot = 0;
-				Config::AutobootFile = "";
-				changesMade = true;
-			}
-		} else {
+		if (hDown & KEY_A) {
 			if (dirContents[Selection].isDirectory) {
 			} else if (storeInfo.size() != 0) {
 				if (ScriptHelper::checkIfValid(dirContents[Selection].name, 1) == true) {
-					if (Msg::promptMsg(Lang::get("AUTOBOOT_STORE"))) {
-						Config::AutobootFile = Config::StorePath + dirContents[Selection].name;
-						Config::autoboot = 1;
-						changesMade = true;
+					updateStore(Selection);
+					currentStoreFile = dirContents[Selection].name;
+					Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
+					if (storeInfo[Selection].storeSheet != "" || storeInfo[Selection].storeSheet != "MISSING: storeInfo.sheet") {
+						if(access(storeInfo[Selection].storeSheet.c_str(), F_OK) != -1 ) {
+							loadStoreSheet(Selection);
+						}
+					}
+					appStoreJson = openStoreFile();
+					appStoreList = parseStoreObjects(currentStoreFile);
+					loadStoreColors(appStoreJson);
+					Selection = 0;
+					displayInformations = handleIfDisplayText();
+					isScriptSelected = true;
+					Selection = 0;
+					mode = 2;
+				}
+			}
+		}
+
+		if (hDown & KEY_R) {
+			fastMode = true;
+		}
+
+		if (hDown & KEY_L) {
+			fastMode = false;
+		}
+
+		if (Config::viewMode == 0) {
+			if(Selection < screenPos) {
+				screenPos = Selection;
+			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
+			}
+		} else if (Config::viewMode == 1) {
+			if(Selection < screenPosList) {
+				screenPosList = Selection;
+			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
+				screenPosList = Selection - ENTRIES_PER_LIST + 1;
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (Config::viewMode == 0) {
+				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)storeInfo.size();i++) {
+					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+						if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name, 1) == true) {
+							updateStore(screenPos + i);
+							currentStoreFile = dirContents[screenPos + i].name;
+							Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
+							if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
+								if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
+									loadStoreSheet(screenPos + i);
+								}
+							}
+							appStoreJson = openStoreFile();
+							appStoreList = parseStoreObjects(currentStoreFile);
+							loadStoreColors(appStoreJson);
+							Selection = 0;
+							displayInformations = handleIfDisplayText();
+							isScriptSelected = true;
+							mode = 2;
+						}
+					}
+				}
+			} else if (Config::viewMode == 1) {
+				for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
+					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+						if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
+							updateStore(screenPosList + i);
+							currentStoreFile = dirContents[screenPosList + i].name;
+							Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
+							if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
+								if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
+									loadStoreSheet(screenPosList + i);
+								}
+							}
+							appStoreJson = openStoreFile();
+							appStoreList = parseStoreObjects(currentStoreFile);
+							loadStoreColors(appStoreJson);
+							Selection = 0;
+							displayInformations = handleIfDisplayText();
+							isScriptSelected = true;
+							mode = 2;
+						}
+					}
+				}
+			}
+		}
+
+		if (hDown & KEY_START) {
+			if (Config::autoboot == 1) {
+				if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
+					Config::autoboot = 0;
+					Config::AutobootFile = "";
+					changesMade = true;
+				}
+			} else {
+				if (dirContents[Selection].isDirectory) {
+				} else if (storeInfo.size() != 0) {
+					if (ScriptHelper::checkIfValid(dirContents[Selection].name, 1) == true) {
+						if (Msg::promptMsg(Lang::get("AUTOBOOT_STORE"))) {
+							Config::AutobootFile = Config::StorePath + dirContents[Selection].name;
+							Config::autoboot = 1;
+							changesMade = true;
+						}
 					}
 				}
 			}
@@ -765,94 +851,131 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (keyRepeatDelay)	keyRepeatDelay--;
 
-	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Selection = 0;
-		refreshList();
-		mode = 1;
-		appStoreList.clear();
-		isScriptSelected = false;
-		freeSheet();
-	}
-
-	if (hDown & KEY_R) {
-		fastMode = true;
-	}
-
-	if (hDown & KEY_L) {
-		fastMode = false;
-	}
-
-	// Go one entry up.
-	if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-		if (Selection > 0) {
-			Selection--;
-		} else {
-			Selection = (int)appStoreJson.at("storeContent").size()-1;
+	//DropDown Logic.
+	if (dropDownMenu) {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			dropDownMenu = false;
 		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
+		if (hDown & KEY_DOWN) {
+			if (dropSelection < 1)	dropSelection++;
 		}
-	}
+		if (hDown & KEY_UP) {
+			if (dropSelection > 0)	dropSelection--;
+		}
+		if (hDown & KEY_A) {
+			if (Config::viewMode == 0) {
+				Config::viewMode = 1;
+			} else {
+				Config::viewMode = 0;
+			}
+			dropDownMenu = false;
+		}
 
-	// Go one entry down.
-	if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if (Selection < (int)appStoreJson.at("storeContent").size()-1) {
-			Selection++;
-		} else {
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, dropPos2[0])) {
+				if (Config::viewMode == 0) {
+					Config::viewMode = 1;
+				} else {
+					Config::viewMode = 0;
+				}
+				dropDownMenu = false;
+			}
+		}
+	} else {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			dropSelection = 0;
+			dropDownMenu = true;
+		}
+
+		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 			Selection = 0;
+			refreshList();
+			mode = 1;
+			appStoreList.clear();
+			isScriptSelected = false;
+			freeSheet();
 		}
-		if (fastMode == true) {
-			keyRepeatDelay = 3;
-		} else if (fastMode == false){
-			keyRepeatDelay = 6;
-		}
-	}
 
-	// Execute touched Entry.
-	if (hDown & KEY_TOUCH) {
-		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
-				if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-					Selection = screenPos + i;
-					std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-					if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-						execute();
+		if (hDown & KEY_R) {
+			fastMode = true;
+		}
+
+		if (hDown & KEY_L) {
+			fastMode = false;
+		}
+
+		// Go one entry up.
+		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+			if (Selection > 0) {
+				Selection--;
+			} else {
+				Selection = (int)appStoreJson.at("storeContent").size()-1;
+			}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
+			}
+		}
+
+		// Go one entry down.
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
+			if (Selection < (int)appStoreJson.at("storeContent").size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+			if (fastMode == true) {
+				keyRepeatDelay = 3;
+			} else if (fastMode == false){
+				keyRepeatDelay = 6;
+			}
+		}
+
+		// Execute touched Entry.
+		if (hDown & KEY_TOUCH) {
+			if (Config::viewMode == 0) {
+				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
+					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+						Selection = screenPos + i;
+						std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
+						if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
+							execute();
+						}
 					}
 				}
+			} else if (Config::viewMode == 1) {
+				for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreJson.at("storeContent").size();i++) {
+					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+						Selection = screenPosList + i;
+						std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
+						if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
+							execute();
+						}
+					}
+				}
+			}
+		}
+		// Execute that Entry.
+		if (hDown & KEY_A) {
+			std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
+			if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
+				execute();
+			}
+		}
+
+		if (Config::viewMode == 0) {
+			if(Selection < screenPos) {
+				screenPos = Selection;
+			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreJson.at("storeContent").size();i++) {
-				if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-					Selection = screenPosList + i;
-					std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-					if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-						execute();
-					}
-				}
+			if(Selection < screenPosList) {
+				screenPosList = Selection;
+			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
+				screenPosList = Selection - ENTRIES_PER_LIST + 1;
 			}
-		}
-	}
-	// Execute that Entry.
-	if (hDown & KEY_A) {
-		std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-		if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-			execute();
-		}
-	}
-
-	if (Config::viewMode == 0) {
-		if(Selection < screenPos) {
-			screenPos = Selection;
-		} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-			screenPos = Selection - ENTRIES_PER_SCREEN + 1;
-		}
-	} else if (Config::viewMode == 1) {
-		if(Selection < screenPosList) {
-			screenPosList = Selection;
-		} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
-			screenPosList = Selection - ENTRIES_PER_LIST + 1;
 		}
 	}
 }
@@ -870,15 +993,6 @@ void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		FullURLLogic(hDown, hHeld, touch);
 	} else if (mode == 5) {
 		GitHubLogic(hDown, hHeld, touch);
-	}
-
-	// Switch ViewMode.
-	if (((mode != 0 || mode != 3) && (hDown & KEY_X)) || ((mode != 0 || mode != 3) && (hDown & KEY_TOUCH && touching(touch, arrowPos[3])))) {
-		if (Config::viewMode == 0) {
-			Config::viewMode = 1;
-		} else {
-			Config::viewMode = 0;
-		}
 	}
 
 	if (hDown & KEY_LEFT || hDown & KEY_RIGHT) {

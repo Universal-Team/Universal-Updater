@@ -44,11 +44,15 @@ private:
 	mutable int screenPos = 0;
 	mutable int screenPosList = 0;
 	mutable int Selection = 0;
+	int dropSelection = 0;
 	int mode = 0;
+	bool dropDownMenu = false;
 
 	// Draws.
 	void DrawBrowse(void) const;
 	void DrawGlossary(void) const;
+
+	void DropDownLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	nlohmann::json infoJson;
 	int maxScripts;
@@ -58,15 +62,26 @@ private:
 	int fastMode = false;
 	std::vector<DirEntry> dirContents;
 	void refresh();
+	void downloadAll();
 
 	// Button | Icon struct.
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
-		{5, 0, 25, 25}, // Download All.
-		{45, 0, 25, 25}, // ViewMode Change.
-		{80, 0, 25, 25}, // Search.
+		{5, 0, 25, 25} // Dropdown Menu.
+	};
+
+	// DropDownMenu.
+	std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 25, 25}, // Download All.
+		{5, 70, 25, 25}, // Refresh.
+		{5, 110, 25, 25} // ViewMode.
+	};
+	std::vector<Structs::ButtonPos> dropPos2 = {
+		{0, 28, 140, 30}, // Download All.
+		{0, 68, 140, 30}, // Refresh.
+		{0, 108, 140, 30} // ViewMode.
 	};
 };
 
