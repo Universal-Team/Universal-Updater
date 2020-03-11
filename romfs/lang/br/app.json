@@ -128,5 +128,10 @@
 	"DELETE_SCRIPT2": "Delet the selected bruhpt.",
 	"DELETE_UNISTORE": "Eliminate the enemy.",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "Would you like to rebruhsh the ScriptBruhse?",
-	"REFRESH_SCRIPTBROWSE": "Rebruh the ScriptBruhse."
+	"REFRESH_SCRIPTBROWSE": "Rebruh the ScriptBruhse.",
+	"DOWNLOAD_ALL_DDM": "Download All",
+	"REFRESH_BROWSE_DDM": "Refresh",
+	"VIEW_DDM": "Change ViewMode",
+	"DELETE_DDM": "Delete",
+	"UPDATE_DDM": "Update"
 }
