@@ -128,5 +128,10 @@
 	"DELETE_SCRIPT2": "Ausgewähltes Skript löschen.",
 	"DELETE_UNISTORE": "Ausgewähltes UniStore löschen.",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "Möchten Sie die Skriptbrowse aktualisieren?",
-	"REFRESH_SCRIPTBROWSE": "Aktualisiere die SkriptBrowse."
+	"REFRESH_SCRIPTBROWSE": "Aktualisiere die SkriptBrowse.",
+	"DOWNLOAD_ALL_DDM": "Download All",
+	"REFRESH_BROWSE_DDM": "Refresh",
+	"VIEW_DDM": "Change ViewMode",
+	"DELETE_DDM": "Delete",
+	"UPDATE_DDM": "Update"
 }
