@@ -53,7 +53,7 @@ namespace ScriptHelper {
 	int getNum(nlohmann::json json, const std::string &key, const std::string &key2);
 
 	// Script Functions.
-	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
+	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message);
 	void downloadFile(std::string file, std::string output, std::string message);
 
 	void removeFile(std::string file, std::string message);

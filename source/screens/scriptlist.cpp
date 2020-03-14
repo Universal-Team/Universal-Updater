@@ -907,7 +907,7 @@ void ScriptList::runFunctions(nlohmann::json &json) {
 			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 		
 		} else if(type == "downloadRelease") {
-			bool missing = false, includePrereleases = false;
+			bool missing = false, includePrereleases = false, showVersions = false;
 			std::string repo, file, output, message;
 			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
 			else	missing = true;
@@ -917,8 +917,10 @@ void ScriptList::runFunctions(nlohmann::json &json) {
 			else	missing = true;
 			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
 				includePrereleases = json.at(choice).at(i).at("includePrereleases");
+			if(json.at(choice).at(i).contains("showVersions") && json.at(choice).at(i).at("showVersions").is_boolean())
+				showVersions = json.at(choice).at(i).at("showVersions");
 			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
 			
 		} else if(type == "extractFile") {
 			bool missing = false;

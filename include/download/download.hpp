@@ -41,7 +41,7 @@ enum DownloadError {
 };
 
 Result downloadToFile(std::string url, std::string path);
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool showVersions);
 
 void displayProgressBar();
 

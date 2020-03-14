@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "formatting.hpp"
 #include "gui.hpp"
+#include "keyboard.hpp"
 #include "lang.hpp"
 #include "screenCommon.hpp"
 
@@ -301,7 +302,7 @@ static Result setupContext(CURL *hnd, const char * url)
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases)
+Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool showVersions)
 {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -324,7 +325,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	std::string repoOwner = result[1].str(), repoName = result[2].str();
 
 	std::stringstream apiurlStream;
-	apiurlStream << "https://api.github.com/repos/" << repoOwner << "/" << repoName << (includePrereleases ? "/releases" : "/releases/latest");
+	apiurlStream << "https://api.github.com/repos/" << repoOwner << "/" << repoName << (includePrereleases || showVersions ? "/releases" : "/releases/latest");
 	std::string apiurl = apiurlStream.str();
 
 	printf("Downloading latest release from repo:\n%s\nby:\n%s\n", repoName.c_str(), repoOwner.c_str());
@@ -363,7 +364,25 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	printf("Looking for asset with matching name:\n%s\n", asset.c_str());
 	std::string assetUrl;
 	json parsedAPI = json::parse(result_buf);
-	if(includePrereleases)	parsedAPI = parsedAPI[0];
+	if(showVersions) {
+		if(!includePrereleases) {
+			for(auto it = parsedAPI.begin(); it != parsedAPI.end();) {
+				if((*it)["prerelease"]) {
+					parsedAPI.erase(it);
+				} else {
+					it++;
+				}
+			}
+		}
+		if(parsedAPI.size() == 0) {
+			// All were prereleases and those are being ignored
+			return -2; // TODO: Maybe change this? I'm note sure what good return values are -Pk11
+		}
+		int release = Input::getUint(parsedAPI.size(), "Which version do you want? (Releases back from latest)");
+		parsedAPI = parsedAPI[release];
+	} else if(includePrereleases) {
+		parsedAPI = parsedAPI[0];
+	}
 	if (parsedAPI["assets"].is_array()) {
 		for (auto jsonAsset : parsedAPI["assets"]) {
 			if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {

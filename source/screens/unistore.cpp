@@ -1239,7 +1239,7 @@ void UniStore::execute() {
 			if(!missing)	ScriptHelper::downloadFile(file, output, message);
 
 		} else if(type == "downloadRelease") {
-			bool missing = false, includePrereleases = false;
+			bool missing = false, includePrereleases = false, showVersions = false;
 			std::string repo, file, output, message;
 			if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("repo"))	repo = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("repo");
 			else	missing = true;
@@ -1249,8 +1249,10 @@ void UniStore::execute() {
 			else	missing = true;
 			if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("includePrereleases") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("includePrereleases").is_boolean())
 				includePrereleases = appStoreJson.at(Selection).at("script").at(i).at("includePrereleases");
+			if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("showVersions") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("showVersions").is_boolean())
+				showVersions = appStoreJson.at(Selection).at("script").at(i).at("showVersions");
 			if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, message);
+			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
 
 		} else if(type == "extractFile") {
 			bool missing = false;
