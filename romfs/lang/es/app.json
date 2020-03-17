@@ -129,9 +129,9 @@
 	"DELETE_UNISTORE": "Eliminar la UniStore seleccionada.",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "¿Te gustaría actualizar el ScriptBrowse?",
 	"REFRESH_SCRIPTBROWSE": "Actualizar el ScriptBrowse.",
-	"DOWNLOAD_ALL_DDM": "Download All",
-	"REFRESH_BROWSE_DDM": "Refresh",
-	"VIEW_DDM": "Change ViewMode",
-	"DELETE_DDM": "Delete",
-	"UPDATE_DDM": "Update"
+	"DOWNLOAD_ALL_DDM": "Descargar todo",
+	"REFRESH_BROWSE_DDM": "Refrescar",
+	"VIEW_DDM": "Cambiar modo de vista",
+	"DELETE_DDM": "Eliminar",
+	"UPDATE_DDM": "Actualizar"
 }
