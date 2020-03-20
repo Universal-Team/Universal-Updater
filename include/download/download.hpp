@@ -30,7 +30,16 @@
 #include "common.hpp"
 
 #define APP_TITLE "Universal-Updater"
-#define VERSION_STRING "2.2.1"
+#define VERSION_STRING "2.3.0"
+
+// The Release Fetch struct.
+struct ReleaseFetch {
+	std::string Target;
+	std::string TagName;
+	std::string ReleaseName;
+	std::string Created;
+	std::string Published;
+};
 
 enum DownloadError {
 	DL_ERROR_NONE = 0,
@@ -41,7 +50,7 @@ enum DownloadError {
 };
 
 Result downloadToFile(std::string url, std::string path);
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool showVersions);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases, bool showVersions);
 
 void displayProgressBar();
 

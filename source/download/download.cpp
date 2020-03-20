@@ -31,6 +31,7 @@
 #include "keyboard.hpp"
 #include "lang.hpp"
 #include "screenCommon.hpp"
+#include "thread.hpp"
 
 #include <string>
 #include <vector>
@@ -58,6 +59,7 @@ bool progressBarType = 0; // 0 = Download | 1 = Extract
 
 extern u32 progressBar;
 extern bool isScriptSelected;
+extern u32 TextColor;
 
 curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero later
 curl_off_t downloadNow = 0;
@@ -302,9 +304,197 @@ static Result setupContext(CURL *hnd, const char * url)
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, bool includePrereleases, bool showVersions)
+// Fetch GitHub Releases.
+std::vector<ReleaseFetch> fetchReleases(nlohmann::json API) {
+	size_t APISize = API.size();
+	ReleaseFetch fetch[APISize];
+	std::vector<ReleaseFetch> fetchVector;
+
+	for (int i = 0; i < (int)APISize; i++) {
+		fetch[i].Target = (std::string)API[i]["target_commitish"];
+		fetch[i].TagName = (std::string)API[i]["tag_name"];
+		fetch[i].ReleaseName = (std::string)API[i]["name"];
+		fetch[i].Created = (std::string)API[i]["created_at"];
+		fetch[i].Published = (std::string)API[i]["published_at"];
+
+		fetchVector.push_back(fetch[i]);
+	}
+	return fetchVector;
+}
+
+extern touchPosition touch;
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+std::vector<Structs::ButtonPos> arrowPos = {
+	{295, 0, 25, 25}, // Arrow Up.
+	{295, 215, 25, 25} // Arrow Down.
+};
+
+static int SelectRelease(std::vector<ReleaseFetch> bruh) {
+	std::string line1;
+	std::string line2;
+	static s32 selectedRelease = 0;
+	static int keyRepeatDelay = 4;
+	static bool fastMode = false;
+	static int screenPos = 0;
+	static int screenPosList = 0;
+
+	while (1) {
+		std::string releaseAmount = std::to_string(selectedRelease+1) + " | " + std::to_string(bruh.size());
+		// Draw Part.
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, BLACK);
+		C2D_TargetClear(Bottom, BLACK);
+		GFX::DrawTop();
+		if (Config::UseBars == true) {
+			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 239-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 237-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
+		}
+
+		Gui::DrawStringCentered(0, 50, 0.7f, TextColor, Lang::get("TAG_NAME") + std::string(bruh[selectedRelease].TagName), 400);
+		Gui::DrawStringCentered(0, 80, 0.7f, TextColor, Lang::get("TARGET") + std::string(bruh[selectedRelease].Target), 400);
+		Gui::DrawStringCentered(0, 110, 0.7f, TextColor, Lang::get("RELEASE_NAME") + std::string(bruh[selectedRelease].ReleaseName), 400);
+		Gui::DrawStringCentered(0, 140, 0.7f, TextColor, Lang::get("CREATED_AT") + std::string(bruh[selectedRelease].Created), 400);
+		Gui::DrawStringCentered(0, 170, 0.7f, TextColor, Lang::get("PUBLISHED_AT") + std::string(bruh[selectedRelease].Published), 400);
+
+		GFX::DrawBottom();
+		GFX::DrawArrow(295, -1);
+		GFX::DrawArrow(315, 240, 180.0);
+
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size();i++) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+				line1 = bruh[screenPos + i].TagName;
+				line2 = bruh[screenPos + i].Published.substr(0, 10);
+				if(screenPos + i == selectedRelease) {
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				}
+				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
+				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size();i++) {
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				line1 = bruh[screenPosList + i].TagName;
+				if(screenPosList + i == selectedRelease) {
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+				}
+				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
+			}
+		}
+		C3D_FrameEnd(0);
+
+		// The input part.
+		hidScanInput();
+		u32 hDown = hidKeysDown();
+		u32 hHeld = hidKeysHeld();
+		hidTouchRead(&touch);
+		if (keyRepeatDelay)	keyRepeatDelay--;
+
+		if (hidKeysDown() & KEY_Y) {
+			if (Config::viewMode == 0) {
+				Config::viewMode = 1;
+			} else {
+				Config::viewMode = 0;
+			}
+		}
+
+		if (hDown & KEY_A) {
+			return (int)selectedRelease;
+		}
+
+		if (hDown & KEY_B) {
+			return 0;
+		}
+
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, arrowPos[0])) {
+			if (selectedRelease > 0)	selectedRelease--;
+		}
+
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, arrowPos[1])) {
+			if ((uint)selectedRelease < bruh.size()-1)	selectedRelease++;
+		}
+
+		if (hHeld & KEY_UP) {
+			if (selectedRelease > 0 && !keyRepeatDelay) {
+				selectedRelease--;
+				if (fastMode == true) {
+					keyRepeatDelay = 3;
+				} else if (fastMode == false){
+					keyRepeatDelay = 6;
+				}
+			}
+		} else if (hHeld & KEY_DOWN && !keyRepeatDelay) {
+			if ((uint)selectedRelease < bruh.size()-1) {
+				selectedRelease++;
+				if (fastMode == true) {
+					keyRepeatDelay = 3;
+				} else if (fastMode == false){
+					keyRepeatDelay = 6;
+				}
+			}
+		}
+
+		if (hidKeysDown() & KEY_R) {
+			fastMode = true;
+		}
+
+		if (hidKeysDown() & KEY_L) {
+			fastMode = false;
+		}
+
+		if (hDown & KEY_START) {
+			return -2; // Cancel.
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (Config::viewMode == 0) {
+				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size(); i++) {
+					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+						if (bruh.size() != 0) {
+							return screenPos + i;
+						}
+					}
+				}
+			} else if (Config::viewMode == 1) {
+				for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size(); i++) {
+					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+						if (bruh.size() != 0) {
+							return screenPosList + i;
+						}
+					}
+				}
+			}
+		}
+
+		if (Config::viewMode == 0) {
+			if(selectedRelease < screenPos) {
+				screenPos = selectedRelease;
+			} else if (selectedRelease > screenPos + ENTRIES_PER_SCREEN - 1) {
+				screenPos = selectedRelease - ENTRIES_PER_SCREEN + 1;
+			}
+		} else if (Config::viewMode == 1) {
+			if(selectedRelease < screenPosList) {
+				screenPosList = selectedRelease;
+			} else if (selectedRelease > screenPosList + ENTRIES_PER_LIST - 1) {
+				screenPosList = selectedRelease - ENTRIES_PER_LIST + 1;
+			}
+		}
+	}
+}
+
+Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases, bool showVersions)
 {
 	Result ret = 0;
+	// Do not display progressbar.
+	if (showVersions) {
+		showProgressBar = false;
+		Msg::DisplayMsg(Lang::get("FETCHING_RELEASES"));
+	}
+
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf)
 	{
@@ -378,7 +568,10 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 			// All were prereleases and those are being ignored
 			return -2; // TODO: Maybe change this? I'm note sure what good return values are -Pk11
 		}
-		int release = Input::getUint(parsedAPI.size(), "Which version do you want? (Releases back from latest)");
+		std::vector<ReleaseFetch> fetchResult = fetchReleases(parsedAPI);
+		int release = SelectRelease(fetchResult);
+		if (release == -2)	return DL_ERROR_GIT; // Change that with "Cancel".
+
 		parsedAPI = parsedAPI[release];
 	} else if(includePrereleases) {
 		parsedAPI = parsedAPI[0];
@@ -400,12 +593,15 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	result_buf = NULL;
 	result_sz = 0;
 	result_written = 0;
-
-	if (assetUrl.empty())
+	if (assetUrl.empty()) {
 		ret = DL_ERROR_GIT;
-	else
+	} else {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), Message.c_str());
+		showProgressBar = true;
+		progressBarType = 0;
+		Threads::create((ThreadFunc)displayProgressBar);
 		ret = downloadToFile(assetUrl, path);
-
+	}
 	return ret;
 }
 
@@ -672,17 +868,17 @@ void displayProgressBar() {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
+		Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
 
 		// Display 'Currently Extracting: <Filename>'.
 		if (progressBarType == 1) {
-			Gui::DrawStringCentered(0, 140, 0.6f, Config::TxtColor, str, 400);
-			Gui::DrawStringCentered(0, 60, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + extractingFile, 400);
+			Gui::DrawStringCentered(0, 140, 0.6f, TextColor, str, 400);
+			Gui::DrawStringCentered(0, 60, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + extractingFile, 400);
 		}
 
 		// Only display this by downloading.
 		if (progressBarType == 0) {
-			Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+			Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
 			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 			if (isScriptSelected == true) {
 				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);
