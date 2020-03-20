@@ -27,6 +27,7 @@
 #include "config.hpp"
 #include "ftpScreen.hpp"
 #include "mainMenu.hpp"
+#include "scriptHelper.hpp"
 #include "scriptlist.hpp"
 #include "settings.hpp"
 #include "unistore.hpp"
@@ -35,6 +36,7 @@ extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern int fadealpha;
 extern bool fadein;
+extern u32 TextColor;
 
 void MainMenu::Draw(void) const {
 	GFX::DrawTop();
@@ -126,4 +128,10 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Gui::setScreen(std::make_unique<FTPScreen>());
 		}
 	}
+
+	/* That was a test.
+	if (hDown & KEY_X) {
+		TextColor = Config::TxtColor;
+		ScriptHelper::downloadRelease("Universal-Team/extras", "Universal-Updater.3dsx", "/3ds/Universal-Updater.3dsx", true, true, "Downloading Universal-Updater...");
+	}*/
 }
