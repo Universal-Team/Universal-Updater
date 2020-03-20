@@ -39,6 +39,7 @@ struct ReleaseFetch {
 	std::string ReleaseName;
 	std::string Created;
 	std::string Published;
+	bool PreRelease;
 };
 
 enum DownloadError {
@@ -47,6 +48,7 @@ enum DownloadError {
 	DL_ERROR_ALLOC,
 	DL_ERROR_STATUSCODE,
 	DL_ERROR_GIT,
+	DL_CANCEL, // No clue if that's needed tho.
 };
 
 Result downloadToFile(std::string url, std::string path);

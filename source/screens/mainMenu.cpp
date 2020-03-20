@@ -129,9 +129,9 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	// That was a test.
-/*	if (hDown & KEY_X) {
+	/* That was a test.
+	if (hDown & KEY_X) {
 		TextColor = Config::TxtColor;
-		ScriptHelper::downloadRelease("ahezard/nds-bootstrap", "nds-bootstrap.7z", "/nds-bootstrap.7z", false, true, "Downloading nds-bootstrap...");
+		ScriptHelper::downloadRelease("Universal-Team/extras", "Universal-Updater.3dsx", "/3ds/Universal-Updater.3dsx", true, true, "Downloading Universal-Updater...");
 	}*/
 }

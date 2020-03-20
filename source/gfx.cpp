@@ -25,6 +25,7 @@
 */
 
 #include "common.hpp"
+#include "gfx.hpp"
 
 extern bool isScriptSelected;
 extern u32 barColor;

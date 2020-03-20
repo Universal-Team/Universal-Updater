@@ -306,17 +306,18 @@ static Result setupContext(CURL *hnd, const char * url)
 
 // Fetch GitHub Releases.
 std::vector<ReleaseFetch> fetchReleases(nlohmann::json API) {
-	size_t APISize = API.size();
-	ReleaseFetch fetch[APISize];
+	ReleaseFetch fetch[API.size()];
 	std::vector<ReleaseFetch> fetchVector;
 
-	for (int i = 0; i < (int)APISize; i++) {
+	for (int i = 0; i < (int)API.size(); i++) {
+		// Get Stuff.
 		fetch[i].Target = (std::string)API[i]["target_commitish"];
 		fetch[i].TagName = (std::string)API[i]["tag_name"];
 		fetch[i].ReleaseName = (std::string)API[i]["name"];
 		fetch[i].Created = (std::string)API[i]["created_at"];
 		fetch[i].Published = (std::string)API[i]["published_at"];
-
+		fetch[i].PreRelease = API[i]["prerelease"];
+		// Push to the Vector.
 		fetchVector.push_back(fetch[i]);
 	}
 	return fetchVector;
@@ -329,14 +330,14 @@ std::vector<Structs::ButtonPos> arrowPos = {
 	{295, 215, 25, 25} // Arrow Down.
 };
 
-static int SelectRelease(std::vector<ReleaseFetch> bruh) {
+int SelectRelease(std::vector<ReleaseFetch> bruh) {
 	std::string line1;
 	std::string line2;
-	static s32 selectedRelease = 0;
-	static int keyRepeatDelay = 4;
-	static bool fastMode = false;
-	static int screenPos = 0;
-	static int screenPosList = 0;
+	int selectedRelease = 0;
+	int keyRepeatDelay = 4;
+	bool fastMode = false;
+	int screenPos = 0;
+	int screenPosList = 0;
 
 	while (1) {
 		std::string releaseAmount = std::to_string(selectedRelease+1) + " | " + std::to_string(bruh.size());
@@ -353,12 +354,14 @@ static int SelectRelease(std::vector<ReleaseFetch> bruh) {
 			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
 			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 237-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
 		}
-
-		Gui::DrawStringCentered(0, 50, 0.7f, TextColor, Lang::get("TAG_NAME") + std::string(bruh[selectedRelease].TagName), 400);
-		Gui::DrawStringCentered(0, 80, 0.7f, TextColor, Lang::get("TARGET") + std::string(bruh[selectedRelease].Target), 400);
-		Gui::DrawStringCentered(0, 110, 0.7f, TextColor, Lang::get("RELEASE_NAME") + std::string(bruh[selectedRelease].ReleaseName), 400);
-		Gui::DrawStringCentered(0, 140, 0.7f, TextColor, Lang::get("CREATED_AT") + std::string(bruh[selectedRelease].Created), 400);
-		Gui::DrawStringCentered(0, 170, 0.7f, TextColor, Lang::get("PUBLISHED_AT") + std::string(bruh[selectedRelease].Published), 400);
+		// Display Informations.
+		Gui::DrawStringCentered(0, 35, 0.7f, TextColor, Lang::get("TAG_NAME") + std::string(bruh[selectedRelease].TagName), 400);
+		Gui::DrawStringCentered(0, 65, 0.7f, TextColor, Lang::get("TARGET") + std::string(bruh[selectedRelease].Target), 400);
+		Gui::DrawStringCentered(0, 95, 0.7f, TextColor, Lang::get("RELEASE_NAME") + std::string(bruh[selectedRelease].ReleaseName), 400);
+		Gui::DrawStringCentered(0, 125, 0.7f, TextColor, Lang::get("CREATED_AT") + std::string(bruh[selectedRelease].Created), 400);
+		Gui::DrawStringCentered(0, 155, 0.7f, TextColor, Lang::get("PUBLISHED_AT") + std::string(bruh[selectedRelease].Published), 400);
+		if (bruh[selectedRelease].PreRelease)	Gui::DrawStringCentered(0, 185, 0.7f, TextColor, Lang::get("IS_PRERELEASE") + Lang::get("YES"), 400);
+		else	Gui::DrawStringCentered(0, 185, 0.7f, TextColor, Lang::get("IS_PRERELEASE") + Lang::get("NO"), 400);
 
 		GFX::DrawBottom();
 		GFX::DrawArrow(295, -1);
@@ -570,8 +573,17 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 		}
 		std::vector<ReleaseFetch> fetchResult = fetchReleases(parsedAPI);
 		int release = SelectRelease(fetchResult);
-		if (release == -2)	return DL_ERROR_GIT; // Change that with "Cancel".
 
+		if (release == -2) {
+			socExit();
+			free(result_buf);
+			free(socubuf);
+			result_buf = NULL;
+			result_sz = 0;
+			result_written = 0;
+			return -1;
+		}
+		
 		parsedAPI = parsedAPI[release];
 	} else if(includePrereleases) {
 		parsedAPI = parsedAPI[0];
