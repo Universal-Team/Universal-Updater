@@ -133,5 +133,13 @@
 	"REFRESH_BROWSE_DDM": "Bruhfrs",
 	"VIEW_DDM": "Bruh viewMode",
 	"DELETE_DDM": "Debruh",
-	"UPDATE_DDM": "Upbruh"
+	"UPDATE_DDM": "Upbruh",
+	"TAG_NAME": "Tag name: ",
+	"TARGET": "Target: ",
+	"RELEASE_NAME": "Release Name: ",
+	"CREATED_AT": "Created at: ",
+	"PUBLISHED_AT": "Published at: ",
+	"FETCHING_RELEASES": "Fetching Releases... please wait.",
+	"VERSION_SELECT": "Select the Release you want to download.",
+	"IS_PRERELEASE": "PreRelease: "
 }
