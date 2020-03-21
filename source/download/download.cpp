@@ -633,31 +633,19 @@ bool checkWifiStatus(void) {
 }
 
 void downloadFailed(void) {
-	Msg::DisplayMsg(Lang::get("DOWNLOAD_FAILED"));
-	for (int i = 0; i < 60*2; i++) {
-		gspWaitForVBlank();
-	}
+	Msg::DisplayWarnMsg(Lang::get("DOWNLOAD_FAILED"));
 }
 
 void notImplemented(void) {
-	Msg::DisplayMsg(Lang::get("NOT_IMPLEMENTED"));
-	for (int i = 0; i < 60*2; i++) {
-		gspWaitForVBlank();
-	}
+	Msg::DisplayWarnMsg(Lang::get("NOT_IMPLEMENTED"));
 }
 
 void doneMsg(void) {
-	Msg::DisplayMsg(Lang::get("DONE"));
-	for (int i = 0; i < 60*2; i++) {
-		gspWaitForVBlank();
-	}
+	Msg::DisplayWarnMsg(Lang::get("DONE"));
 }
 
 void notConnectedMsg(void) {
-	Msg::DisplayMsg(Lang::get("CONNECT_WIFI"));
-	for (int i = 0; i < 60*2; i++) {
-		gspWaitForVBlank();
-	}
+	Msg::DisplayWarnMsg(Lang::get("CONNECT_WIFI"));
 }
 
 std::string getLatestRelease(std::string repo, std::string item)
@@ -880,7 +868,11 @@ void displayProgressBar() {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
+		if (isScriptSelected == true) {
+			Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
+		} else {
+			Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
+		}
 
 		// Display 'Currently Extracting: <Filename>'.
 		if (progressBarType == 1) {
@@ -890,7 +882,12 @@ void displayProgressBar() {
 
 		// Only display this by downloading.
 		if (progressBarType == 0) {
-			Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
+			if (isScriptSelected == true) {
+				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
+			} else {
+				Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+			}
+
 			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 			if (isScriptSelected == true) {
 				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);

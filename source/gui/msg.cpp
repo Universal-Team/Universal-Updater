@@ -57,9 +57,9 @@ void Msg::DisplayMsg(std::string text) {
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	if (isScriptSelected == false) {
-		Gui::DrawString(10, 40, 0.45f, Config::TxtColor, text, 380);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, Config::TxtColor, text, 395, 70);
 	} else if (isScriptSelected == true) {
-		Gui::DrawString(10, 40, 0.45f, TextColor, text, 380);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, TextColor, text, 395, 70);
 	}
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -102,11 +102,11 @@ bool Msg::promptMsg(std::string promptMsg)
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	if (isScriptSelected == false) {
-		Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, Config::TxtColor, promptMsg.c_str(), 400);
-		Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 217, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, Config::TxtColor, promptMsg, 395, 70);
+		Gui::DrawStringCentered(0, 217, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	} else if (isScriptSelected == true) {
-		Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, TextColor, promptMsg.c_str(), 400);
-		Gui::DrawString((400-Gui::GetStringWidth(0.72f, Lang::get("CONFIRM_OR_CANCEL")))/2, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, TextColor, promptMsg, 395, 70);
+		Gui::DrawStringCentered(0, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	}
 	GFX::DrawBottom();
 	if (isScriptSelected == false) {
