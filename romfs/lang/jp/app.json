@@ -145,7 +145,7 @@
 	"DOWNLOAD_ERROR": "ダウンロードエラー！",
 	"SCRIPT_CANCELED": "スクリプトはキャンセルされました！",
 	"SYNTAX_ERROR": "構文エラー！",
-	"COPY_ERROR": "Copy Error!",
-	"MOVE_ERROR": "Move Error!",
-	"DELETE_ERROR": "Delete Error!"
+	"COPY_ERROR": "コピーエラー！",
+	"MOVE_ERROR": "移動エラー",
+	"DELETE_ERROR": "削除エラー！"
 }
