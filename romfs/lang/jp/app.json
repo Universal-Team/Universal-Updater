@@ -144,5 +144,8 @@
 	"IS_PRERELEASE": "プレリリース：",
 	"DOWNLOAD_ERROR": "ダウンロードエラー！",
 	"SCRIPT_CANCELED": "スクリプトはキャンセルされました！",
-	"SYNTAX_ERROR": "構文エラー！"
+	"SYNTAX_ERROR": "構文エラー！",
+	"COPY_ERROR": "Copy Error!",
+	"MOVE_ERROR": "Move Error!",
+	"DELETE_ERROR": "Delete Error!"
 }
