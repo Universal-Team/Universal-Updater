@@ -52,6 +52,9 @@ enum ScriptState {
 	FAILED_DOWNLOAD,
 	SCRIPT_CANCELED,
 	SYNTAX_ERROR,
+	COPY_ERROR,
+	MOVE_ERROR,
+	DELETE_ERROR,
 };
 
 namespace ScriptHelper {
@@ -63,7 +66,7 @@ namespace ScriptHelper {
 	Result downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message);
 	Result downloadFile(std::string file, std::string output, std::string message);
 
-	void removeFile(std::string file, std::string message);
+	Result removeFile(std::string file, std::string message);
 	void installFile(std::string file, std::string message);
 	void extractFile(std::string file, std::string input, std::string output, std::string message);
 	Result createFile(const char * path);
@@ -75,6 +78,9 @@ namespace ScriptHelper {
 	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
 
 	Result prompt(std::string message);
+
+	Result copyFile(std::string source, std::string destination, std::string message);
+	Result renameFile(std::string oldName, std::string newName, std::string message);
 }
 
 #endif

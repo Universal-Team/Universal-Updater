@@ -1228,7 +1228,7 @@ Result UniStore::execute() {
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::removeFile(file, message);
+				if(!missing)	ret = ScriptHelper::removeFile(file, message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if(type == "downloadFile") {
@@ -1296,8 +1296,12 @@ Result UniStore::execute() {
 				else	missing = true;
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
 				if(!missing) {
-					if (Msg::promptMsg(promptmsg)) {
-						removeDirRecursive(directory.c_str());
+					if(access(directory.c_str(), F_OK) != 0 ) {
+						ret = DELETE_ERROR;
+					} else {
+						if (Msg::promptMsg(promptmsg)) {
+							removeDirRecursive(directory.c_str());
+						}
 					}
 				}
 				else	ret = SYNTAX_ERROR;
@@ -1357,12 +1361,37 @@ Result UniStore::execute() {
 				std::string Message = "";
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				ret = ScriptHelper::prompt(Message);
+
+			} else if (type == "copy") {
+				std::string Message = "", source = "", destination = "";
+				bool missing = false;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("source"))	source = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("source");
+				else	missing = true;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("destination"))	destination = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("destination");
+				else	missing = true;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ret = ScriptHelper::copyFile(source, destination, Message);
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "move") {
+				std::string Message = "", oldFile = "", newFile = "";
+				bool missing = false;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("old"))	oldFile = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("old");
+				else	missing = true;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("new"))	newFile = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("new");
+				else	missing = true;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ret = ScriptHelper::renameFile(oldFile, newFile, Message);
+				else	ret = SYNTAX_ERROR;
 			}
 		}
 	}
 	if (ret == NONE)	doneMsg();
 	else if (ret == FAILED_DOWNLOAD)	Msg::DisplayWarnMsg(Lang::get("DOWNLOAD_ERROR"));
 	else if (ret == SCRIPT_CANCELED)	Msg::DisplayWarnMsg(Lang::get("SCRIPT_CANCELED"));
-	else	Msg::DisplayWarnMsg(Lang::get("SYNTAX_ERROR"));
+	else if (ret == SYNTAX_ERROR)		Msg::DisplayWarnMsg(Lang::get("SYNTAX_ERROR"));
+	else if (ret == COPY_ERROR)			Msg::DisplayWarnMsg(Lang::get("COPY_ERROR"));
+	else if (ret == MOVE_ERROR)			Msg::DisplayWarnMsg(Lang::get("MOVE_ERROR"));
+	else if (ret == DELETE_ERROR)		Msg::DisplayWarnMsg(Lang::get("DELETE_ERROR"));
 	return ret;
 }

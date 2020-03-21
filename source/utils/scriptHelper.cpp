@@ -26,12 +26,14 @@
 
 #include "download.hpp"
 #include "extract.hpp"
+#include "fileBrowse.hpp"
 #include "gui.hpp"
 #include "msg.hpp"
 #include "scriptHelper.hpp"
 #include "thread.hpp"
 
 #include <fstream>
+#include <unistd.h>
 
 extern "C" {
 	#include "cia.h"
@@ -96,9 +98,14 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 }
 
 // Remove a File.
-void ScriptHelper::removeFile(std::string file, std::string message) {
+Result ScriptHelper::removeFile(std::string file, std::string message) {
+	Result ret = NONE;
+	if(access(file.c_str(), F_OK) != 0 ) {
+		return DELETE_ERROR;
+	}
 	Msg::DisplayMsg(message);
 	deleteFile(file.c_str());
+	return ret;
 }
 
 // Install a file.
@@ -193,5 +200,31 @@ Result ScriptHelper::prompt(std::string message) {
 	if (!Msg::promptMsg(message)) {
 		ret = SCRIPT_CANCELED;
 	}
+	return ret;
+}
+
+Result ScriptHelper::copyFile(std::string source, std::string destination, std::string message) {
+	Result ret = NONE;
+	if(access(source.c_str(), F_OK) != 0 ) {
+		return COPY_ERROR;
+	}
+	Msg::DisplayMsg(message);
+	// If destination does not exist, create dirs.
+	if(access(destination.c_str(), F_OK) != 0 ) {
+		makeDirs(destination.c_str());
+	}
+	fcopy(source.c_str(), destination.c_str());
+	return ret;
+}
+
+Result ScriptHelper::renameFile(std::string oldName, std::string newName, std::string message) {
+	Result ret = NONE;
+	if(access(oldName.c_str(), F_OK) != 0 ) {
+		return MOVE_ERROR;
+	}
+	Msg::DisplayMsg(message);
+	// TODO: Kinda avoid that?
+	makeDirs(newName.c_str());
+	rename(oldName.c_str(), newName.c_str());
 	return ret;
 }

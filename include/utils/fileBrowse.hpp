@@ -24,4 +24,7 @@ bool returnIfExist(const std::string &path, const std::vector<std::string> &exte
 
 std::string selectFilePath(std::string selectText, const std::vector<std::string> &extensionList, int selectionMode = 1);
 
+void dirCopy(DirEntry* entry, int i, const char *destinationPath, const char *sourcePath);
+int fcopy(const char *sourcePath, const char *destinationPath);
+
 #endif //FILE_BROWSE_HPP
