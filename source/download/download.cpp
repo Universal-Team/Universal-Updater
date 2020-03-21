@@ -60,6 +60,8 @@ bool progressBarType = 0; // 0 = Download | 1 = Extract
 extern u32 progressBar;
 extern bool isScriptSelected;
 extern u32 TextColor;
+extern u32 selected;
+extern u32 unselected;
 
 curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero later
 curl_off_t downloadNow = 0;
@@ -369,23 +371,23 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 
 		if (Config::viewMode == 0) {
 			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size();i++) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 				line1 = bruh[screenPos + i].TagName;
 				line2 = bruh[screenPos + i].Published.substr(0, 10);
 				if(screenPos + i == selectedRelease) {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
 				}
-				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
-				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, TextColor, line1, 320);
+				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, TextColor, line2, 320);
 			}
 		} else if (Config::viewMode == 1) {
 			for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size();i++) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 				line1 = bruh[screenPosList + i].TagName;
 				if(screenPosList + i == selectedRelease) {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
 				}
-				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
+				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, line1, 320);
 			}
 		}
 		C3D_FrameEnd(0);
