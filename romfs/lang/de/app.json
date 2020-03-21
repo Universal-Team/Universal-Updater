@@ -145,7 +145,7 @@
 	"DOWNLOAD_ERROR": "Download-Fehler!",
 	"SCRIPT_CANCELED": "Skript abgebrochen!",
 	"SYNTAX_ERROR": "Syntax-Fehler!",
-	"COPY_ERROR": "Copy Error!",
-	"MOVE_ERROR": "Move Error!",
-	"DELETE_ERROR": "Delete Error!"
+	"COPY_ERROR": "Fehler beim Kopieren!",
+	"MOVE_ERROR": "Verschiebe-Fehler!",
+	"DELETE_ERROR": "Fehler beim Löschen!"
 }
