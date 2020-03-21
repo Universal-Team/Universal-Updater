@@ -884,128 +884,149 @@ void ScriptList::DrawGlossary(void) const {
 }
 
 // Execute | run the script.
-void ScriptList::runFunctions(nlohmann::json &json) {
+Result ScriptList::runFunctions(nlohmann::json &json) {
+	Result ret = NONE; // No Error as of yet.
 	for(int i=0;i<(int)json.at(choice).size();i++) {
-		std::string type = json.at(choice).at(i).at("type");
+		if (ret == NONE) {
+			std::string type = json.at(choice).at(i).at("type");
 
-		if(type == "deleteFile") {
-			bool missing = false;
-			std::string file, message;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::removeFile(file, message);
+			if(type == "deleteFile") {
+				bool missing = false;
+				std::string file, message;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if(!missing)	ScriptHelper::removeFile(file, message);
+				else	ret = SYNTAX_ERROR;
 
-		} else if(type == "downloadFile") {
-			bool missing = false;
-			std::string file, output, message;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadFile(file, output, message);
+			} else if(type == "downloadFile") {
+				bool missing = false;
+				std::string file, output, message;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if(!missing)	ret = ScriptHelper::downloadFile(file, output, message);
+				else	ret = SYNTAX_ERROR;
 		
-		} else if(type == "downloadRelease") {
-			bool missing = false, includePrereleases = false, showVersions = false;
-			std::string repo, file, output, message;
-			if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
-				includePrereleases = json.at(choice).at(i).at("includePrereleases");
-			if(json.at(choice).at(i).contains("showVersions") && json.at(choice).at(i).at("showVersions").is_boolean())
-				showVersions = json.at(choice).at(i).at("showVersions");
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
-			
-		} else if(type == "extractFile") {
-			bool missing = false;
-			std::string file, input, output, message;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("input"))	input = json.at(choice).at(i).at("input");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::extractFile(file, input, output, message);
+			} else if(type == "downloadRelease") {
+				bool missing = false, includePrereleases = false, showVersions = false;
+				std::string repo, file, output, message;
+				if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
+					includePrereleases = json.at(choice).at(i).at("includePrereleases");
+				if(json.at(choice).at(i).contains("showVersions") && json.at(choice).at(i).at("showVersions").is_boolean())
+					showVersions = json.at(choice).at(i).at("showVersions");
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if(!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
 
-		} else if(type == "installCia") {
-			bool missing = false;
-			std::string file, message;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			if(!missing)	ScriptHelper::installFile(file, message);
+			} else if(type == "extractFile") {
+				bool missing = false;
+				std::string file, input, output, message;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("input"))	input = json.at(choice).at(i).at("input");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if(!missing)	ScriptHelper::extractFile(file, input, output, message);
+				else	ret = SYNTAX_ERROR;
 
-		} else if (type == "mkdir") {
-			bool missing = false;
-			std::string directory, message;
-			if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
-			else	missing = true;
-			if(!missing)	makeDirs(directory.c_str());
+			} else if(type == "installCia") {
+				bool missing = false;
+				std::string file, message;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if(!missing)	ScriptHelper::installFile(file, message);
+				else	ret = SYNTAX_ERROR;
 
-		} else if (type == "rmdir") {
-			bool missing = false;
-			std::string directory, message, promptmsg;
-			if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
-			else	missing = true;
-			promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-			if(!missing) {
-				if (Msg::promptMsg(promptmsg)) {
-					removeDirRecursive(directory.c_str());
+			} else if (type == "mkdir") {
+				bool missing = false;
+				std::string directory, message;
+				if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+				else	missing = true;
+				if(!missing)	makeDirs(directory.c_str());
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "rmdir") {
+				bool missing = false;
+				std::string directory, message, promptmsg;
+				if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+				else	missing = true;
+				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
+				if(!missing) {
+					if (Msg::promptMsg(promptmsg)) {
+						removeDirRecursive(directory.c_str());
+					}
 				}
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "mkfile") {
+				bool missing = false;
+				std::string file;
+				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				else	missing = true;
+				if(!missing)	ScriptHelper::createFile(file.c_str());
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "timeMsg") {
+				bool missing = false;
+				std::string message;
+				int seconds;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
+				seconds = json.at(choice).at(i).at("seconds");
+				else	missing = true;
+				if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "saveConfig") {
+				Config::save();
+
+			} else if (type == "deleteTitle") {
+				std::string TitleID = "";
+				std::string message = "";
+				bool isNAND = false, missing = false;
+				if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
+				else	missing = true;
+				if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				else	missing = true;
+				if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
+				else	ret = SYNTAX_ERROR;
+
+			} else if (type == "bootTitle") {
+				std::string TitleID = "";
+				std::string message = "";
+				bool isNAND = false, missing = false;
+				if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
+				else	missing = true;
+				if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
+				else	missing = true;
+				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				else	missing = true;
+				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
+				else	ret = SYNTAX_ERROR;
+			} else if (type == "promptMessage") {
+				std::string Message = "";
+				if(json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
+				ret = ScriptHelper::prompt(Message);
 			}
-
-		} else if (type == "mkfile") {
-			bool missing = false;
-			std::string file;
-			if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
-			else	missing = true;
-			if(!missing)	ScriptHelper::createFile(file.c_str());
-
-		} else if (type == "timeMsg") {
-			bool missing = false;
-			std::string message;
-			int seconds;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
-			seconds = json.at(choice).at(i).at("seconds");
-			else	missing = true;
-			if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
-
-		} else if (type == "saveConfig") {
-			Config::save();
-
-		} else if (type == "deleteTitle") {
-			std::string TitleID = "";
-			std::string message = "";
-			bool isNAND = false, missing = false;
-			if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
-			else	missing = true;
-			if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			else	missing = true;
-			if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
-
-		} else if (type == "bootTitle") {
-			std::string TitleID = "";
-			std::string message = "";
-			bool isNAND = false, missing = false;
-			if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
-			else	missing = true;
-			if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
-			else	missing = true;
-			if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-			else	missing = true;
-			if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 		}
 	}
-	doneMsg();
+	if (ret == NONE)	doneMsg();
+	else if (ret == FAILED_DOWNLOAD)	Msg::DisplayWarnMsg(Lang::get("DOWNLOAD_ERROR"));
+	else if (ret == SCRIPT_CANCELED)	Msg::DisplayWarnMsg(Lang::get("SCRIPT_CANCELED"));
+	else	Msg::DisplayWarnMsg(Lang::get("SYNTAX_ERROR"));
+	return ret;
 }

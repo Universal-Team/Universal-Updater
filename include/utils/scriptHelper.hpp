@@ -47,14 +47,21 @@ struct StoreInfo {
 	std::string sheetURL;
 };
 
+enum ScriptState {
+	NONE = 0,
+	FAILED_DOWNLOAD,
+	SCRIPT_CANCELED,
+	SYNTAX_ERROR,
+};
+
 namespace ScriptHelper {
 	// Get stuff from a JSON.
 	std::string getString(nlohmann::json json, const std::string &key, const std::string &key2);
 	int getNum(nlohmann::json json, const std::string &key, const std::string &key2);
 
 	// Script Functions.
-	void downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message);
-	void downloadFile(std::string file, std::string output, std::string message);
+	Result downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message);
+	Result downloadFile(std::string file, std::string output, std::string message);
 
 	void removeFile(std::string file, std::string message);
 	void installFile(std::string file, std::string message);
@@ -66,6 +73,8 @@ namespace ScriptHelper {
 
 	void deleteTitle(const std::string TitleID, bool isNAND, std::string message);
 	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
+
+	Result prompt(std::string message);
 }
 
 #endif

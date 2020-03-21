@@ -51,7 +51,7 @@ private:
 	nlohmann::json openScriptFile();
 	void checkForValidate(void);
 	void loadDesc(void);
-	void runFunctions(nlohmann::json &json);
+	Result runFunctions(nlohmann::json &json);
 	
 	// Draw Functions.
 	void DrawSubMenu(void) const;

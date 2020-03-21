@@ -34,7 +34,7 @@
 #include <fstream>
 
 extern "C" {
-    #include "cia.h"
+	#include "cia.h"
 }
 
 extern bool showProgressBar;
@@ -66,17 +66,21 @@ int ScriptHelper::getNum(nlohmann::json json, const std::string &key, const std:
 }
 
 // Download from a Github Release.
-void ScriptHelper::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message) {
+Result ScriptHelper::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message) {
+	Result ret = NONE;
 	if (downloadFromRelease("https://github.com/" + repo, file, output, message, includePrereleases, showVersions) != 0) {
 		showProgressBar = false;
 		downloadFailed();
-		return;
+		ret = FAILED_DOWNLOAD;
+		return ret;
 	}
 	showProgressBar = false;
+	return ret;
 }
 
 // Download a File from everywhere.
-void ScriptHelper::downloadFile(std::string file, std::string output, std::string message) {
+Result ScriptHelper::downloadFile(std::string file, std::string output, std::string message) {
+	Result ret = NONE;
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressBarType = 0;
@@ -84,9 +88,11 @@ void ScriptHelper::downloadFile(std::string file, std::string output, std::strin
 	if (downloadToFile(file, output) != 0) {
 		showProgressBar = false;
 		downloadFailed();
-		return;
+		ret = FAILED_DOWNLOAD;
+		return ret;
 	}
 	showProgressBar = false;
+	return ret;
 }
 
 // Remove a File.
@@ -180,4 +186,12 @@ void ScriptHelper::bootTitle(const std::string TitleID, bool isNAND, std::string
 			CIA_LaunchTitle(ID, MEDIATYPE_SD);
 		}
 	}
+}
+
+Result ScriptHelper::prompt(std::string message) {
+	Result ret = NONE;
+	if (!Msg::promptMsg(message)) {
+		ret = SCRIPT_CANCELED;
+	}
+	return ret;
 }

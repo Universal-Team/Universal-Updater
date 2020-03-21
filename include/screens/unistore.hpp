@@ -62,7 +62,7 @@ private:
 	void GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 
-	void execute();
+	Result execute();
 	void descript();
 	void updateStore(int selectedStore);
 	void deleteStore(int selectedStore);
