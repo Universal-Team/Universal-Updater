@@ -144,5 +144,8 @@
 	"IS_PRERELEASE": "PreRelease: ",
 	"DOWNLOAD_ERROR": "Download Error!",
 	"SCRIPT_CANCELED": "Script Canceled!",
-	"SYNTAX_ERROR": "Syntax Error!"
+	"SYNTAX_ERROR": "Syntax Error!",
+	"COPY_ERROR": "Copy Error!",
+	"MOVE_ERROR": "Move Error!",
+	"DELETE_ERROR": "Delete Error!"
 }
