@@ -303,7 +303,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 1:
-				std::string tempScript = selectFilePath("Select the Script file.", {"json"}, 2);
+				std::string tempScript = selectFilePath("Select the Script file.", Config::ScriptPath, {"json"}, 2);
 				if (tempScript != "") {
 					jsonFileName = tempScript;
 					if(access(jsonFileName.c_str(), F_OK) != -1 ) {

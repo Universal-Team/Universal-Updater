@@ -431,7 +431,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 3:
-				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), Config::ScriptPath, {});
 				if (tempScript != "") {
 					Config::ScriptPath = tempScript;
 					changesMade = true;
@@ -467,7 +467,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				notImplemented();
 			}
 		} else if (touching(touch, subPos[3])) {
-			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), {});
+			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), Config::ScriptPath, {});
 			if (tempScript != "") {
 				Config::ScriptPath = tempScript;
 				changesMade = true;

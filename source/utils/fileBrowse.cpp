@@ -141,16 +141,26 @@ bool returnIfExist(const std::string &path, const std::vector<std::string> &exte
 // returns a Path or file to 'std::string'.
 // selectText is the Text which is displayed on the bottom bar of the top screen.
 // selectionMode is how you select it. 1 -> Path, 2 -> File.
-std::string selectFilePath(std::string selectText, const std::vector<std::string> &extensionList, int selectionMode) {
-	static uint selectedFile = 0;
+std::string selectFilePath(std::string selectText, std::string initialPath, const std::vector<std::string> &extensionList, int selectionMode) {
+	uint selectedFile = 0;
 	std::string selectedPath = "";
-	static int keyRepeatDelay = 4;
-	static bool dirChanged = true;
-	static bool fastMode = false;
+	int keyRepeatDelay = 4;
+	bool dirChanged = true;
+	bool fastMode = false;
 	uint screenPos = 0;
 	uint screenPosList = 0;
 	std::vector<DirEntry> dirContents;
 	std::string dirs;
+
+	// Initial dir change.
+	dirContents.clear();
+	chdir(initialPath.c_str());
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, extensionList);
+	for(uint i=0;i<dirContentsTemp.size();i++) {
+		dirContents.push_back(dirContentsTemp[i]);
+	}
+	selectedFile = 0;
 
 	while (1) {
 		Gui::clearTextBufs();

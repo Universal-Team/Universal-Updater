@@ -549,7 +549,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 2:
-				std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
+				std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), Config::StorePath, {});
 				if (tempStore != "") {
 					Config::StorePath = tempStore;
 					changesMade = true;
@@ -584,7 +584,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, subPos[2])) {
-			std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), {});
+			std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), Config::StorePath, {});
 			if (tempStore != "") {
 				Config::StorePath = tempStore;
 				changesMade = true;
