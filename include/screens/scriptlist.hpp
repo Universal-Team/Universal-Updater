@@ -97,10 +97,10 @@ private:
 		{5, 0, 25, 25} // Dropdown Menu.
 	};
 	std::vector<Structs::ButtonPos> subPos = {
-		{10, 70, 140, 40}, // Script list.
-		{170, 70, 140, 40}, // Get Scripts.
-		{10, 145, 140, 40}, // Script Creator.
-		{170, 145, 140, 40} // Script path change.
+		{0, 60, 149, 52}, // Script list.
+		{162, 60, 149, 52}, // Get Scripts.
+		{0, 130, 149, 52}, // Script Creator.
+		{162, 130, 149, 52} // Script path change.
 	};
 
 	// DropDownMenu.

@@ -41,11 +41,11 @@ private:
 	int Selection = 0;
 
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{10, 70, 140, 40}, // Scripts.
-		{170, 70, 140, 40}, // UniStore.
-		{10, 145, 140, 40}, // Settings.
-		{170, 145, 140, 40}, // FTP.
-		{0, 215, 25, 25}, // Back Arrow.
+		{0, 60, 149, 52}, // UniStore.
+		{162, 60, 149, 52}, // Scripts.
+		{0, 130, 149, 52}, // Settings.
+		{162, 130, 149, 52}, // FTP.
+		{0, 215, 25, 25} // Back Arrow.
 	};
 };
 

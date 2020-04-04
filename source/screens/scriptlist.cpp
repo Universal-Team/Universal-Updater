@@ -164,17 +164,12 @@ void ScriptList::DrawSubMenu(void) const {
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 4; i++) {
-		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
-		if (Selection == i) {
-			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, TRANSPARENT, Config::SelectedColor);
-		}
-	}
-
-	Gui::DrawStringCentered(-80, subPos[0].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTLIST"), 130);
-	Gui::DrawStringCentered(80, subPos[1].y+12, 0.6f, Config::TxtColor, Lang::get("GET_SCRIPTS"), 130);
-	Gui::DrawStringCentered(-80, subPos[2].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 130);
-	Gui::DrawStringCentered(80, subPos[3].y+12, 0.6f, Config::TxtColor, Lang::get("CHANGE_SCRIPTPATH"), 130);
+	GFX::DrawButton(subPos[0].x, subPos[0].y, Lang::get("SCRIPTLIST"));
+	GFX::DrawButton(subPos[1].x, subPos[1].y, Lang::get("GET_SCRIPTS"));
+	GFX::DrawButton(subPos[2].x, subPos[2].y, Lang::get("SCRIPTCREATOR"));
+	GFX::DrawButton(subPos[3].x, subPos[3].y, Lang::get("CHANGE_SCRIPTPATH"));
+	// Selector.
+	Animation::Button(subPos[Selection].x, subPos[Selection].y, .060);
 }
 
 // Load the description.
@@ -996,19 +991,6 @@ Result ScriptList::runFunctions(nlohmann::json &json) {
 			} else if (type == "saveConfig") {
 				Config::save();
 
-			} else if (type == "deleteTitle") {
-				std::string TitleID = "";
-				std::string message = "";
-				bool isNAND = false, missing = false;
-				if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
-				else	missing = true;
-				if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
-				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				else	missing = true;
-				if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
-				else	ret = SYNTAX_ERROR;
-
 			} else if (type == "bootTitle") {
 				std::string TitleID = "";
 				std::string message = "";
@@ -1021,10 +1003,12 @@ Result ScriptList::runFunctions(nlohmann::json &json) {
 				else	missing = true;
 				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 				else	ret = SYNTAX_ERROR;
+
 			} else if (type == "promptMessage") {
 				std::string Message = "";
 				if(json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
 				ret = ScriptHelper::prompt(Message);
+				
 			} else if (type == "copy") {
 				std::string Message = "", source = "", destination = "";
 				bool missing = false;

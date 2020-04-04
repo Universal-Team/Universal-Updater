@@ -74,7 +74,6 @@ namespace ScriptHelper {
 
 	bool checkIfValid(std::string scriptFile, int mode = 0);
 
-	void deleteTitle(const std::string TitleID, bool isNAND, std::string message);
 	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
 
 	Result prompt(std::string message);

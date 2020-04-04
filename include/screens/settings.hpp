@@ -43,6 +43,9 @@ private:
 	int colorMode = 0;
 	int mode = 0;
 	int Selection = 0;
+	bool dropDownMenu = false;
+	mutable int screenPos = 0;
+	int colorSelection = 0;
 
 	// Draws.
 	void DrawSubMenu(void) const;
@@ -56,9 +59,9 @@ private:
 	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 35}, // Language.
-		{90, 100, 140, 35}, // Colors.
-		{90, 160, 140, 35}, // Misc.
+		{80, 30, 149, 52}, // Language.
+		{80, 90, 149, 52}, // Colors.
+		{80, 150, 149, 52} // Misc.
 	};
 
 	std::vector<Structs::ButtonPos> langBlocks = {
@@ -74,18 +77,13 @@ private:
 		{177, 188, 20, 20},
 	};
 
-	std::vector<Structs::ButtonPos> buttons = {
-		{10, 85, 95, 41},
-		{115, 85, 95, 41},
-		{220, 85, 95, 41},
-	};
-
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 0, 25, 25}, // Previous Arrow.
 		{295, 0, 25, 25}, // Next Arrow.
 		{0, 215, 25, 25}, // Back Arrow.
 		{0, 0, 25, 25}, // Back Arrow top left.
 		{295, 215, 25, 25}, // Next Page / Misc Arrow.
+		{5, 0, 25, 25} // Dropdown Menu.
 	};
 };
 

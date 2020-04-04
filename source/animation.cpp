@@ -26,7 +26,11 @@
 
 #include "common.hpp"
 
+extern bool isScriptSelected;
 extern u32 progressBar;
+extern u32 selected;
+
+extern C2D_SpriteSheet sprites;
 
 // Draws a Rectangle as the progressbar.
 void Animation::DrawProgressBar(float currentProgress, float totalProgress, int mode) {
@@ -35,4 +39,32 @@ void Animation::DrawProgressBar(float currentProgress, float totalProgress, int 
 	} else {
 		Gui::Draw_Rect(31, 121, (int)(((float)currentProgress/(float)totalProgress) * 338.0f), 28, Config::progressbarColor);
 	}
+}
+
+void Animation::Button(int x, int y, float speed)
+{
+	static float timer	= 0.0f;
+	float highlight_multiplier = fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
+	u8 r, g, b;
+	if (isScriptSelected) {
+		r	= selected & 0xFF;
+		g	= (selected >> 8) & 0xFF;
+		b	= (selected >> 16) & 0xFF;
+	} else {
+		r	= Config::SelectedColor & 0xFF;
+		g	= (Config::SelectedColor >> 8) & 0xFF;
+		b	= (Config::SelectedColor >> 16) & 0xFF;
+	}
+
+	u32 color = C2D_Color32(r + (255 - r) * highlight_multiplier, g + (255 - g) * highlight_multiplier, b + (255 - b) * highlight_multiplier, 255);
+
+	// The actual draw part.
+	C2D_ImageTint tint;
+	C2D_SetImageTint(&tint, C2D_TopLeft, color, 1);
+	C2D_SetImageTint(&tint, C2D_TopRight, color, 1);
+	C2D_SetImageTint(&tint, C2D_BotLeft, color, 1);
+	C2D_SetImageTint(&tint, C2D_BotRight, color, 1);
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_selector_idx), x+4, y+4, 0.5f, &tint); // +4 because to fit the button.
+
+	timer += speed; // Speed of the animation. Example : .030f / .030
 }

@@ -245,16 +245,11 @@ void UniStore::DrawSubMenu(void) const {
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 3; i++) {
-		Gui::Draw_Rect(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, Config::UnselectedColor);
-		if (Selection == i) {
-			Gui::drawAnimatedSelector(subPos[i].x, subPos[i].y, subPos[i].w, subPos[i].h, .060, TRANSPARENT, Config::SelectedColor);
-		}
-	}
-
-	Gui::DrawStringCentered(0, subPos[0].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_LIST"), 130);
-	Gui::DrawStringCentered(0, subPos[1].y+10, 0.6f, Config::TxtColor, Lang::get("STORE_SEARCH"), 130);
-	Gui::DrawStringCentered(0, subPos[2].y+10, 0.6f, Config::TxtColor, Lang::get("CHANGE_STOREPATH"), 130);
+	GFX::DrawButton(subPos[0].x, subPos[0].y,Lang::get("STORE_LIST"));
+	GFX::DrawButton(subPos[1].x, subPos[1].y, Lang::get("STORE_SEARCH"));
+	GFX::DrawButton(subPos[2].x, subPos[2].y, Lang::get("CHANGE_STOREPATH"));
+	// Selector.
+	Animation::Button(subPos[Selection].x, subPos[Selection].y, .060);
 }
 
 
@@ -541,12 +536,12 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 1:
-				if (checkWifiStatus()) {
+//				if (checkWifiStatus()) {
 					Selection = 0;
 					mode = 3;
-				} else {
-					notConnectedMsg();
-				}
+//				} else {
+//					notConnectedMsg();
+//				}
 				break;
 			case 2:
 				std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), Config::StorePath, {});
@@ -1020,16 +1015,12 @@ void UniStore::DrawSearch(void) const {
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 3; i++) {
-		Gui::Draw_Rect(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, Config::UnselectedColor);
-		if (Selection == i) {
-			Gui::drawAnimatedSelector(URLBtn[i].x, URLBtn[i].y, URLBtn[i].w, URLBtn[i].h, .060, TRANSPARENT, Config::SelectedColor);
-		}
-	}
-
-	Gui::DrawStringCentered(-80, URLBtn[0].y+12, 0.6f, Config::TxtColor, Lang::get("FULL_URL"), 130);
-	Gui::DrawStringCentered(80, URLBtn[1].y+12, 0.6f, Config::TxtColor, Lang::get("GITHUB"), 130);
-	Gui::DrawStringCentered(-80, URLBtn[2].y+12, 0.6f, Config::TxtColor, "TinyDB", 130);
+	GFX::DrawButton(URLBtn[0].x, URLBtn[0].y,Lang::get("FULL_URL"));
+	GFX::DrawButton(URLBtn[1].x, URLBtn[1].y, Lang::get("GITHUB"));
+	GFX::DrawButton(URLBtn[2].x, URLBtn[2].y, "TinyDB");
+	GFX::DrawButton(URLBtn[3].x, URLBtn[3].y, "QR Code");
+	// Selector.
+	Animation::Button(URLBtn[Selection].x, URLBtn[Selection].y, .060);
 }
 
 void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -1332,19 +1323,6 @@ Result UniStore::execute() {
 			} else if (type == "notImplemented") {
 				notImplemented();
 
-			} else if (type == "deleteTitle") {
-				std::string TitleID = "";
-				std::string message = "";
-				bool isNAND = false, missing = false;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("TitleID"))	TitleID = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("TitleID");
-				else	missing = true;
-				if (appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("NAND") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("NAND").is_boolean())	isNAND = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("NAND");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				else	missing = true;
-				if(!missing)	ScriptHelper::deleteTitle(TitleID, isNAND, message);
-				else	ret = SYNTAX_ERROR;
-
 			} else if (type == "bootTitle") {
 				std::string TitleID = "";
 				std::string message = "";
@@ -1357,6 +1335,7 @@ Result UniStore::execute() {
 				else	missing = true;
 				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 				else	ret = SYNTAX_ERROR;
+				
 			} else if (type == "promptMessage") {
 				std::string Message = "";
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");

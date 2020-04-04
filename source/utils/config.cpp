@@ -54,6 +54,7 @@ int Config::outdated;
 int Config::uptodate;
 int Config::notFound;
 int Config::future;
+int Config::Button;
 nlohmann::json configJson;
 
 void Config::load() {
@@ -186,6 +187,13 @@ void Config::load() {
 		} else {
 			future = getInt("FUTURE");
 		}
+
+		if(!configJson.contains("BUTTON")) {
+			Button = C2D_Color32(0, 0, 50, 255);
+		} else {
+			Button = getInt("BUTTON");
+		}
+
 		fclose(file);
 	} else {
 		Color1 = BarColor;
@@ -209,6 +217,7 @@ void Config::load() {
 		uptodate = C2D_Color32(0xa5, 0xdd, 0x81, 255);
 		notFound = C2D_Color32(255, 128, 0, 255);
 		future	 = C2D_Color32(255, 255, 0, 255);
+		Button 	 = C2D_Color32(0, 0, 50, 255);
 	}
 }
 
@@ -234,6 +243,7 @@ void Config::save() {
 	setInt("UPTODATE", uptodate);
 	setInt("NOTFOUND", notFound);
 	setInt("FUTURE", future);
+	setInt("BUTTON", Button);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -265,6 +275,7 @@ void Config::initializeNewConfig() {
 	setInt("UPTODATE", C2D_Color32(0xa5, 0xdd, 0x81, 255));
 	setInt("NOTFOUND", C2D_Color32(255, 128, 0, 255));
 	setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
+	setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);

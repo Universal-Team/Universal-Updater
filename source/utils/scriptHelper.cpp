@@ -159,26 +159,6 @@ bool ScriptHelper::checkIfValid(std::string scriptFile, int mode) {
 	return true;
 }
 
-void ScriptHelper::deleteTitle(const std::string TitleID, bool isNAND, std::string message) {
-	if (Config::GodMode) {
-		std::string MSG = Lang::get("DELETE_TITLE") + "\n\n";
-		if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
-		else		MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
-		u64 ID = std::stoull(TitleID, 0, 16);
-		if (Msg::promptMsg(MSG)) {
-			if (isNAND == true) {
-				Msg::DisplayMsg(message);
-				deletePrevious(ID, MEDIATYPE_NAND);
-			} else {
-				Msg::DisplayMsg(message);
-				deletePrevious(ID, MEDIATYPE_SD);
-			}
-		}
-	} else {
-		Msg::DisplayWarnMsg(Lang::get("FUNCTION_NOT_ALLOWED"));
-	}
-}
-
 void ScriptHelper::bootTitle(const std::string TitleID, bool isNAND, std::string message) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;

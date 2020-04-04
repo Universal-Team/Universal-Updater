@@ -49,38 +49,19 @@ void MainMenu::Draw(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
 	}
 
-	if (Config::UseBars == true) {
-		if (Config::GodMode) {
-			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);
-		}
-	} else {
-		if (Config::GodMode) {
-			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("YES"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 218, 0.7f, Config::TxtColor, Lang::get("GODMODE") + Lang::get("NO"), 400);
-		}
-	}
-
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int i = 0; i < 4; i++) {
-		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
-		if (Selection == i) {
-			Gui::drawAnimatedSelector(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, .060, TRANSPARENT, Config::SelectedColor);
-		}
-	}
-
-	Gui::DrawStringCentered(-80+10, mainButtons[0].y+12, 0.6f, Config::TxtColor, "UniStore", 130);
-	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, Config::TxtColor, Lang::get("SCRIPTS"), 130);
-	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, Config::TxtColor, Lang::get("SETTINGS"), 130);
-	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, Config::TxtColor, "FTP", 130);
+	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, "UniStore");
+	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("SCRIPTS"));
+	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("SETTINGS"));
+	GFX::DrawButton(mainButtons[3].x, mainButtons[3].y, "FTP");
+	// Selector.
+	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
 
 	// Draw UniStore Icon. ;P
-	GFX::DrawSprite(sprites_uniStore_idx, 10, 65);
+	//GFX::DrawSprite(sprites_uniStore_idx, 10, 65);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
 }
 
@@ -128,10 +109,4 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Gui::setScreen(std::make_unique<FTPScreen>());
 		}
 	}
-
-	/* That was a test.
-	if (hDown & KEY_X) {
-		TextColor = Config::TxtColor;
-		ScriptHelper::downloadRelease("Universal-Team/extras", "Universal-Updater.3dsx", "/3ds/Universal-Updater.3dsx", true, true, "Downloading Universal-Updater...");
-	}*/
 }

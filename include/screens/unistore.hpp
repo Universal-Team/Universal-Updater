@@ -103,21 +103,24 @@ private:
 		{0, 215, 25, 25}, // Back Arrow.
 		{5, 0, 25, 25}, // Dropdown Menu.
 	};
+
 	std::vector<Structs::ButtonPos> URLBtn = {
-		{10, 70, 140, 40}, // FULL URL.
-		{170, 70, 140, 40}, // Github.
-		{10, 145, 140, 40}, // TinyDB.
-		{170, 145, 140, 40} // QR Code?
+		{0, 60, 149, 52}, // FULL URL.
+		{162, 60, 149, 52}, // GitHub.
+		{0, 130, 149, 52}, // TinyDB.
+		{162, 130, 149, 52} // QR Code?
 	};
+
 	std::vector<Structs::ButtonPos> GitHubPos = {
 		{30, 50, 260, 30}, // Owner & Repo.
 		{30, 130, 260, 30}, // Filename.
 		{135, 180, 50, 30} // OK.
 	};
+
 	std::vector<Structs::ButtonPos> subPos = {
-		{90, 40, 140, 35}, // StoreList.
-		{90, 100, 140, 35}, // storeSearch.
-		{90, 160, 140, 35} // storePathChange.
+		{80, 30, 149, 52}, // StoreList.
+		{80, 90, 149, 52}, // storeSearch.
+		{80, 150, 149, 52} // storePathChange.
 	};
 
 	// DropDownMenu.

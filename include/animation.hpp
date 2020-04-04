@@ -33,6 +33,8 @@
 namespace Animation {
 	// Draw Progressbar.
 	void DrawProgressBar(float currentProgress, float totalProgress, int mode);
+	// Draw Button.
+	void Button(int x, int y, float speed = .030);
 }
 
 #endif

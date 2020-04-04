@@ -111,7 +111,7 @@ void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 		C2D_SetImageTint(&tint, C2D_TopLeft, Config::TxtColor, 0.5);
 		C2D_SetImageTint(&tint, C2D_TopRight, Config::TxtColor, 0.5);
 		C2D_SetImageTint(&tint, C2D_BotLeft, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, Config::TxtColor, 0.5);	
+		C2D_SetImageTint(&tint, C2D_BotRight, Config::TxtColor, 0.5);
 	}
 
 	if (arrowSprite == 0) {
@@ -123,4 +123,21 @@ void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 	C2D_SpriteSetPos(&sprite, x, y);
 	C2D_SpriteSetDepth(&sprite, 0.5);
 	C2D_DrawSpriteTinted(&sprite, &tint);
+}
+
+// Draw a Button and draw Text on it.
+void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
+	C2D_ImageTint tint;
+	C2D_SetImageTint(&tint, C2D_TopLeft, color, 0.5);
+	C2D_SetImageTint(&tint, C2D_TopRight, color, 0.5);
+	C2D_SetImageTint(&tint, C2D_BotLeft, color, 0.5);
+	C2D_SetImageTint(&tint, C2D_BotRight, color, 0.5);
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_button_idx), x, y, 0.5f, &tint);
+
+	// Draw String. TODO: Center.
+	if (isScriptSelected) {
+		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, TextColor, ButtonText, 145, 30);
+	} else {
+		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, Config::TxtColor, ButtonText, 145, 30);
+	}
 }

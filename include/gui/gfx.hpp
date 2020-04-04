@@ -41,6 +41,8 @@ namespace GFX
 	// Draw Sprites.
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
 	void DrawSpriteBlend(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
+
+	void DrawButton(int x, int y, std::string ButtonText = "", u32 color = Config::Button);
 }
 
 #endif
