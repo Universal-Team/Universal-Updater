@@ -121,7 +121,7 @@
 	"OUTDATED_COLOR": "古すぎましたスクリプトの色",
 	"UPTODATE_COLOR": "最新スクリプトの色",
 	"FUTURE_COLOR": "未来スクリプトの色",
-	"BUTTON_COLOR": "Button Color",
+	"BUTTON_COLOR": "ボタンの色",
 	"DELETE_SCRIPT2": "選択のスクリプトを削除する",
 	"DELETE_UNISTORE": "選択のUniStoreを削除する",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "スクリプトブラウズを再読み込みますか？",
