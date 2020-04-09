@@ -27,12 +27,55 @@
 #include "credits.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+// Language Page 1.
+const std::vector<std::string> Translators = {
+	"_mapple²",
+	"AlbertCoolGuy",
+	"antoine62",
+	"Chips",
+	"cooolgamer",
+	"David Pires",
+	"FlameKat53",
+	"lemonnade0",
+	"Pk11",
+	"Roby Spia",
+	"StackZ",
+	"YoSoy"
+};
+const std::vector<std::string> Languages = {
+	"Русский",
+	"Dansk",
+	"Français",
+	"Português",
+	"Français",
+	"Português",
+	"Bruh",
+	"Lietuvių",
+	"日本語",
+	"Italiano",
+	"deutsch, English",
+	"Español"
+};
+// Universal-Team Page 2.
+const std::vector<std::string> UniversalTeam = {
+	"DeadPhoenix",
+	"FlameKat53",
+	"Pk11",
+	"RocketRobz",
+	"StackZ",
+	"TotallyNotGuy"
+};
+// Script Page 3.
+const std::vector<std::string> ScriptCreators = {
+	"DualBladedKirito", "Glazed_Belmont", "Pk11", "StackZ", "The Conceptionist", "YoSoy"
+};
+const std::vector<std::string> ScriptAmount = {"1", "1", "1", "5", "10", "1 | 2"};
 
 void Credits::Draw(void) const {
 	std::string title = "Universal-Updater - ";
 	title += Lang::get("CREDITS");
 	GFX::DrawTop();
-	if (creditsPage != 4) {
+	if (creditsPage != 3) {
 		if (Config::UseBars == true) {
 			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
 		} else {
@@ -49,53 +92,89 @@ void Credits::Draw(void) const {
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		GFX::DrawSprite(sprites_discord_idx, 115, 35);
 	}
+	DrawBottom();
+}
+
+void Credits::DrawBottom(void) const {
+	std::string line1;
+	std::string line2;
 
 	GFX::DrawBottom();
-
-	if (creditsPage != 4) {
-		GFX::DrawArrow(0, 218, 0, 1);
-		GFX::DrawArrow(318, 240, 180.0, 1);
-	}
-
-	if (creditsPage == 1) {
+	if (creditsPage == 0) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
-		Gui::DrawString(5, 21, 0.6f, Config::TxtColor, "- _mapple²\n- antoine62\n- Chips\n- cooolgamer\n- David Pires\n- FlameKat53\n- lemonnade0\n- Pk11\n- Roby Spia\n- StackZ\n- YoSoy");
-		Gui::DrawString(180, 21, 0.6f, Config::TxtColor, "Русский\nFrançais\nPortuguês\nFrançais\nPortuguês\nBruh\nLietuvių\n日本語\nItaliano\nDeutsch, English\nEspañol");
-	} else if (creditsPage == 2) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)Translators.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			line1 = Translators[screenPos + i];
+			line2 = Languages[screenPos + i];
+			if (screenPos + i == Selection) {
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+			}
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+		}
+	} else if (creditsPage == 1) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
-		Gui::DrawStringCentered(0, 35, 0.7f, Config::TxtColor, "DeadPhoenix");
-		Gui::DrawStringCentered(0, 65, 0.7f, Config::TxtColor, "FlameKat53");
-		Gui::DrawStringCentered(0, 95, 0.7f, Config::TxtColor, "Pk11");
-		Gui::DrawStringCentered(0, 125, 0.7f, Config::TxtColor, "RocketRobz");
-		Gui::DrawStringCentered(0, 155, 0.7f, Config::TxtColor, "StackZ");
-		Gui::DrawStringCentered(0, 185, 0.7f, Config::TxtColor, "TotallyNotGuy");
-	} else if (creditsPage == 3) {
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)UniversalTeam.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			line1 = UniversalTeam[screenPos + i];
+			if (screenPos + i == Selection) {
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+			}
+			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, line1, 320);
+		}
+	} else if (creditsPage == 2) {
 		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
-		Gui::DrawString(5, 27, 0.55f, Config::TxtColor, "- DualBladedKirito\n\n- Glazed_Belmont\n\n- Pk11\n\n- StackZ\n\n- The Conceptionist\n\n- YoSoy");
-		Gui::DrawString(180, 27, 0.55f, Config::TxtColor, "1\n\n1\n\n1\n\n5\n\n10\n\n1/2");
-	} else if (creditsPage == 4) {
-		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)ScriptCreators.size();i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			line1 = ScriptCreators[screenPos + i];
+			line2 = ScriptAmount[screenPos + i];
+			if (screenPos + i == Selection) {
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+			}
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+		}
+	} else {
 		Gui::DrawStringCentered(0, -2, 0.55f, Config::TxtColor, Lang::get("LINK"), 320);
-		GFX::DrawArrow(0, 218, 0, 1);
 	}
 }
 
+
 void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if ((hDown & KEY_LEFT || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-		if (creditsPage == 1) {
-			Gui::screenBack();
-			return;
-		} else if (creditsPage > 1) {
+	// KEY_DOWN Logic. (SIZE)
+	if (creditsPage == 0) {
+		if (hDown & KEY_DOWN) {	if (Selection < (int)Translators.size()-1)	Selection++; }
+	} else if (creditsPage == 1) {
+		if (hDown & KEY_DOWN) {	if (Selection < (int)UniversalTeam.size()-1)	Selection++; }
+	} else if (creditsPage == 2) {
+		if (hDown & KEY_DOWN) {	if (Selection < (int)ScriptCreators.size()-1)	Selection++; }
+	}
+
+	if (hDown & KEY_UP) {	if (Selection > 0)	Selection--; }
+	
+		
+	if ((hDown & KEY_L || hDown & KEY_LEFT)) {
+		if (creditsPage > 0) {
+			Selection = 0;
 			creditsPage--;
 		}
 	}
-		
-	if ((hDown & KEY_R || hDown & KEY_RIGHT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-		if (creditsPage < 4)	creditsPage++;
+
+	if ((hDown & KEY_R || hDown & KEY_RIGHT)) {
+		if (creditsPage < 3) {
+			Selection = 0;
+			creditsPage++;
+		}
 	}
 
 	if (hDown & KEY_B) {
 		Gui::screenBack();
 		return;
+	}
+
+	if (Selection < screenPos) {
+		screenPos = Selection;
+	} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+		screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 	}
 }

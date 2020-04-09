@@ -34,7 +34,7 @@ int selectedLang;
 extern bool changesMade;
 
 Settings::Settings() {
-	selectedLang = Config::lang;
+	selectedLang = 0;
 }
 
 void Settings::Draw(void) const {
@@ -68,7 +68,21 @@ void Settings::DrawSubMenu(void) const {
 	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
 }
 
+const std::vector<std::string> languages = {
+	"Bruh",
+	"Dansk",
+	"Deutsch",
+	"English",
+	"Español",
+	"Français",
+	"Italiano",
+	"Lietuvių",
+	"Português",
+	"Русский",
+	"日本語"
+};
 void Settings::DrawLanguageSelection(void) const {
+	std::string line1;
 	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
@@ -76,26 +90,15 @@ void Settings::DrawLanguageSelection(void) const {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	}
 	GFX::DrawBottom();
-	GFX::DrawArrow(0, 218, 0, 1);
 
-	for (int language = 0; language < 10; language++) {
-		Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, Config::UnselectedColor);
-		if (Config::lang == language) {
-			Gui::drawAnimatedSelector(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, .060, TRANSPARENT, Config::SelectedColor);
+	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)languages.size();i++) {
+		Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+		line1 = languages[screenPos + i];
+		if (screenPos + i == selectedLang) {
+			Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 		}
+		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, line1, 320);
 	}
-
-	Gui::DrawString(langBlocks[0].x+25, langBlocks[0].y, 0.7f, Config::TxtColor, "Bruh", 320);
-	Gui::DrawString(langBlocks[1].x+25, langBlocks[1].y, 0.7f, Config::TxtColor, "Deutsch", 320);
-	Gui::DrawString(langBlocks[2].x+25, langBlocks[2].y, 0.7f, Config::TxtColor, "English", 320);
-	Gui::DrawString(langBlocks[3].x+25, langBlocks[3].y, 0.7f, Config::TxtColor, "Español", 320);
-	Gui::DrawString(langBlocks[4].x+25, langBlocks[4].y, 0.7f, Config::TxtColor, "Français", 320);
-
-	Gui::DrawString(langBlocks[5].x+25, langBlocks[5].y, 0.7f, Config::TxtColor, "Italiano", 320);
-	Gui::DrawString(langBlocks[6].x+25, langBlocks[6].y, 0.7f, Config::TxtColor, "Lietuvių", 320);
-	Gui::DrawString(langBlocks[7].x+25, langBlocks[7].y, 0.7f, Config::TxtColor, "Português", 320);
-	Gui::DrawString(langBlocks[8].x+25, langBlocks[8].y, 0.7f, Config::TxtColor, "Русский", 320);
-	Gui::DrawString(langBlocks[9].x+25, langBlocks[9].y, 0.7f, Config::TxtColor, "日本語", 320);
 }
 
 const std::vector<std::string> colorList = {
@@ -290,14 +293,29 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
-		if (Selection + 1 == 3)	Gui::setScreen(std::make_unique<Credits>());
-		else	mode = Selection+1;
+		switch (Selection) {
+			case 0:
+				screenPos = 0;
+				selectedLang = 0;
+				mode = 1;
+				break;
+			case 1:
+				screenPos = 0;
+				mode = 2;
+				break;
+			case 2:
+				Gui::setScreen(std::make_unique<Credits>());
+				break;
+		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
+			screenPos = 0;
+			selectedLang = 0;
 			mode = 1;
 		} else if (touching(touch, mainButtons[1])) {
+			screenPos = 0;
 			mode = 2;
 		} else if (touching(touch, mainButtons[2])) {
 			Gui::setScreen(std::make_unique<Credits>());
@@ -315,58 +333,34 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
+std::string langsTemp[] = {"br", "da", "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp"};
 void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
-
-	if (hDown & KEY_TOUCH) {
-		for (int language = 0; language < 10; language++) {
-			if (touching(touch, langBlocks[language])) {
-				selectedLang = language;
-				Config::lang = language;
-				Lang::load(Config::lang);
-				changesMade = true;
-			}
-		}
-	}
-
 	if (hDown & KEY_UP) {
 		if(selectedLang > 0) {
 			selectedLang--;
-			Config::lang = selectedLang;
-			Lang::load(Config::lang);
-			changesMade = true;
 		}
+	}
+
+	if (hDown & KEY_A) {
+		Config::lang = langsTemp[selectedLang];
+		Lang::load(Config::lang);
+		changesMade = true;
+		mode = 0;
 	}
 
 	if (hDown & KEY_DOWN) {
-		if(selectedLang < 9) {
+		if(selectedLang < (int)languages.size()-1) {
 			selectedLang++;
-			Config::lang = selectedLang;
-			Lang::load(Config::lang);
-			changesMade = true;
 		}
 	}
 
-
-	if (hDown & KEY_LEFT) {
-		if (selectedLang > 4) {
-			selectedLang -= 5;
-			Config::lang = selectedLang;
-			Lang::load(Config::lang);
-			changesMade = true;
-		}
-	}
-
-	if (hDown & KEY_RIGHT) {
-		if (selectedLang < 5) {
-			selectedLang += 5;
-			Config::lang = selectedLang;
-			Lang::load(Config::lang);
-			changesMade = true;
-		}
-	}
-
-	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+	if ((hDown & KEY_B)) {
 		mode = 0;
+	}
+	if (selectedLang < screenPos) {
+		screenPos = selectedLang;
+	} else if (selectedLang > screenPos + ENTRIES_PER_SCREEN - 1) {
+		screenPos = selectedLang - ENTRIES_PER_SCREEN + 1;
 	}
 }
 

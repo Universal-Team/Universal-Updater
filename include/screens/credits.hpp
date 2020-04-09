@@ -38,7 +38,10 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	int creditsPage = 1;
+	void DrawBottom(void) const;
+	int creditsPage = 0;
+	int screenPos = 0;
+	int Selection = 0;
 
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 215, 25, 25}, // Back Arrow.

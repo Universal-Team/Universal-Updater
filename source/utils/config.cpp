@@ -32,7 +32,7 @@
 #include <string>
 #include <unistd.h>
 
-int Config::lang; // Current Language.
+std::string Config::lang; // Current Language.
 int Config::Color1;
 int Config::Color2;
 int Config::Color3;
@@ -56,6 +56,7 @@ int Config::notFound;
 int Config::future;
 int Config::Button;
 nlohmann::json configJson;
+extern bool changesMade;
 
 void Config::load() {
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
@@ -110,10 +111,16 @@ void Config::load() {
 			LangPath = getInt("LANGPATH");
 		}
 
+		// Conversion to string.
+		if (configJson.contains("LANGUAGE") && configJson.at("LANGUAGE").is_number()) {
+			setString("LANGUAGE", "en");
+			changesMade = true;
+		}
+
 		if(!configJson.contains("LANGUAGE")) {
-			lang = 2;
+			lang = "en";
 		} else {
-			lang = getInt("LANGUAGE");
+			lang = getString("LANGUAGE");
 		}
 
 		if(!configJson.contains("VIEWMODE")) {
@@ -204,7 +211,7 @@ void Config::load() {
 		UnselectedColor = UnselectedColordefault;
 		ScriptPath = SCRIPTS_PATH;
 		LangPath = 0;
-		lang = 2;
+		lang = "en";
 		viewMode = 0;
 		progressbarColor = WHITE;
 		MusicPath = MUSIC_PATH;
@@ -230,7 +237,7 @@ void Config::save() {
 	setInt("UNSELECTEDCOLOR", UnselectedColor);
 	setString("SCRIPTPATH", ScriptPath);
 	setInt("LANGPATH", LangPath);
-	setInt("LANGUAGE", lang);
+	setString("LANGUAGE", lang);
 	setInt("VIEWMODE", viewMode);
 	setInt("PROGRESSBARCOLOR", progressbarColor);
 	setString("MUSICPATH", MusicPath);
@@ -262,7 +269,7 @@ void Config::initializeNewConfig() {
 	setInt("UNSELECTEDCOLOR", UnselectedColordefault);
 	setString("SCRIPTPATH", SCRIPTS_PATH);
 	setInt("LANGPATH", 0);
-	setInt("LANGUAGE", 2);
+	setString("LANGUAGE", "en");
 	setInt("VIEWMODE", 0);
 	setInt("PROGRESSBARCOLOR", WHITE);
 	setString("MUSICPATH", MUSIC_PATH);

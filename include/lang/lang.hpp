@@ -7,7 +7,7 @@
 
 namespace Lang {
 	std::string get(const std::string &key);
-	void load(int lang);
+	void load(const std::string lang);
 }
 
 #endif
