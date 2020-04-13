@@ -121,7 +121,7 @@
 	"OUTDATED_COLOR": "Устаревший цвет скрипта",
 	"UPTODATE_COLOR": "Современный цвет скрипта",
 	"FUTURE_COLOR": "Будущий цвет скрипта",
-	"BUTTON_COLOR": "Button Color",
+	"BUTTON_COLOR": "Цвет кнопки",
 	"DELETE_SCRIPT2": "Удалить выбранный скрипт.",
 	"DELETE_UNISTORE": "Удалить выбранный UniStore.",
 	"REFRESH_SCRIPTBROWSE_PROMPT": "Вы хотите обновить ScriptBrowse?",
