@@ -4,7 +4,7 @@
 	"DONE": "Atlikta!",
 	"CONNECT_WIFI": "Prašome prisijungti prie WiFi.",
 	"DOWNLOADING": "Atsisiunčiama: ",
-	"CURRENTLY_EXTRACTING": "\nDabar išskleidžiama:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
 	"FILE_EXTRACTED": "failas išskleistas.",
 	"FILES_EXTRACTED": "failai išskleisti.",
 	"SCRIPTLIST": "Skriptų sąrašas",
