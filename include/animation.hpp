@@ -31,8 +31,10 @@
 #include <string>
 
 namespace Animation {
-	// Draw Progressbar.
+	// Downloading Progressbar.
 	void DrawProgressBar(float currentProgress, float totalProgress, int mode);
+	// Extracting progressbar.
+	void DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, int mode);
 	// Draw Button.
 	void Button(int x, int y, float speed = .030);
 }

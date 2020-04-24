@@ -47,6 +47,7 @@ private:
 	int dropSelection = 0;
 	int mode = 0;
 	bool dropDownMenu = false;
+	bool loaded = false;
 
 	// Draws.
 	void DrawBrowse(void) const;

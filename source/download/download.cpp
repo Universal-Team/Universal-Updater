@@ -52,10 +52,14 @@ char progressBarMsg[128] = "";
 bool showProgressBar = false;
 bool progressBarType = 0; // 0 = Download | 1 = Extract
 
-#define TIME_IN_US 1  
+// That are our extract Progressbar variables.
+extern u64 extractSize;
+extern u64 writeOffset;
+
+#define TIME_IN_US 1
 #define TIMETYPE curl_off_t
 #define TIMEOPT CURLINFO_TOTAL_TIME_T
-#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL     3000000
+#define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL	3000000
 
 extern u32 progressBar;
 extern bool isScriptSelected;
@@ -178,7 +182,7 @@ Result downloadToFile(std::string url, std::string path) {
 	hnd = curl_easy_init();
 	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, FILE_ALLOC_SIZE);
 	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L); 
+	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(hnd, CURLOPT_USERAGENT, USER_AGENT);
 	curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(hnd, CURLOPT_FAILONERROR, 1L);
@@ -853,12 +857,12 @@ void displayProgressBar() {
 		}
 
 		if (progressBarType) {
-			snprintf(str, sizeof(str), "%i %s",  
+			snprintf(str, sizeof(str), "%i %s",
 					filesExtracted, 
 					(filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED")).c_str())
 					);
 		} else {
-			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",  
+			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
 					formatBytes(downloadNow).c_str(),
 					formatBytes(downloadTotal).c_str(),
 					((float)downloadNow/(float)downloadTotal) * 100.0f
@@ -878,8 +882,24 @@ void displayProgressBar() {
 
 		// Display 'Currently Extracting: <Filename>'.
 		if (progressBarType == 1) {
-			Gui::DrawStringCentered(0, 140, 0.6f, TextColor, str, 400);
-			Gui::DrawStringCentered(0, 60, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + extractingFile, 400);
+			// Text.
+			if (isScriptSelected == true) {
+				Gui::DrawStringCentered(0, 100, 0.6f, TextColor, str, 400);
+				Gui::DrawStringCentered(0, 180, 0.6f, TextColor, formatBytes(writeOffset) + " / " + formatBytes(extractSize), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+			} else {
+				Gui::DrawStringCentered(0, 100, 0.6f, Config::TxtColor, str, 400);
+				Gui::DrawStringCentered(0, 180, 0.6f, Config::TxtColor, formatBytes(writeOffset) + " / " + formatBytes(extractSize), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+			}
+			// Outline of progressbar.
+			Gui::Draw_Rect(30, 140, 340, 30, BLACK);
+			// Progressbar.
+			if (isScriptSelected == true) {
+				Animation::DrawProgressBarExtract(writeOffset, extractSize, 1);
+			} else {
+				Animation::DrawProgressBarExtract(writeOffset, extractSize, 2);
+			}
 		}
 
 		// Only display this by downloading.
@@ -889,7 +909,7 @@ void displayProgressBar() {
 			} else {
 				Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
 			}
-
+			// Outline of progressbar.
 			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 			if (isScriptSelected == true) {
 				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);

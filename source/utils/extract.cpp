@@ -25,6 +25,7 @@
 */
 
 #include "extract.hpp"
+#include "logging.hpp"
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -33,7 +34,14 @@
 int filesExtracted = 0;
 std::string extractingFile = "";
 
+// That are our File Progressbar variable.
+u64 extractSize = 0;
+u64 writeOffset = 0;
+
 Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath) {
+	extractSize = 0;
+	writeOffset = 0;
+
 	archive_entry *entry;
 
 	archive *a = archive_read_new();
@@ -41,6 +49,7 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 	archive_read_support_format_raw(a);
 
 	if(archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
+		Logging::writeToLog("EXTRACT_ERROR_ARCHIVE");
 		return EXTRACT_ERROR_ARCHIVE;
 	}
 
@@ -57,45 +66,48 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 			int substrPos = 1;
 			while(out.find("/", substrPos)) {
 				mkdir(out.substr(0, substrPos).c_str(), 0777);
+				Logging::writeToLog(out.substr(0, substrPos));
 				substrPos = out.find("/", substrPos)+1;
 			}
 
 			Handle fileHandle;
 			Result res = openFile(&fileHandle, (outputPath + match.suffix().str()).c_str(), true);
 			if (R_FAILED(res)) {
+				Logging::writeToLog("EXTRACT_ERROR_OPENFILE");
 				ret = EXTRACT_ERROR_OPENFILE;
 				break;
 			}
-
 			u64 fileSize = archive_entry_size(entry);
-			u32 toRead = 0x4000;
-			u8 * buf = (u8 *)malloc(toRead);
+			extractSize = fileSize; // Get Size.
+			u32 toRead = 0x30000;
+			u8 * buf = (u8 *)memalign(0x1000, toRead);
 			if (buf == NULL) {
+				Logging::writeToLog("EXTRACT_ERROR_ALLOC");
 				ret = EXTRACT_ERROR_ALLOC;
 				FSFILE_Close(fileHandle);
 				break;
 			}
 
 			u32 bytesWritten = 0;
-			u64 offset = 0;
+			writeOffset = 0;
 			do {
 				if (toRead > fileSize) toRead = fileSize;
 				ssize_t size = archive_read_data(a, buf, toRead);
 				if (size < 0) {
+					Logging::writeToLog("EXTRACT_ERROR_READFILE");
 					ret = EXTRACT_ERROR_READFILE;
 					break;
 				}
-
-				res = FSFILE_Write(fileHandle, &bytesWritten, offset, buf, toRead, 0);
+				res = FSFILE_Write(fileHandle, &bytesWritten, writeOffset, buf, toRead, 0);
 				if (R_FAILED(res)) {
+					Logging::writeToLog("EXTRACT_ERROR_WRITEFILE");
 					ret = EXTRACT_ERROR_WRITEFILE;
 					break;
 				}
 
-				offset += bytesWritten;
+				writeOffset += bytesWritten;
 				fileSize -= bytesWritten;
 			} while(fileSize);
-
 			FSFILE_Close(fileHandle);
 			free(buf);
 			filesExtracted++;
@@ -103,6 +115,5 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 	}
 
 	archive_read_free(a);
-
 	return ret;
 }

@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+extern void downloadFailed();
 
 void fixInfo(nlohmann::json &json) {
 	for(uint i=0;i<json.size();i++) {
@@ -89,27 +90,46 @@ ScriptBrowse::ScriptBrowse() {
 	Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
 
 	// Get repo info
-	downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
+	if (downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile) != 0) {
+		downloadFailed();
+		loaded = false;
+		return;
+	}
 	FILE* file = fopen(metaFile, "r");
-	if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
-	fixInfo(infoJson);
-	findExistingFiles(infoJson);
-	maxScripts = infoJson.size();
+	if(file) {
+		infoJson = nlohmann::json::parse(file, nullptr, false);
+		fclose(file);
+		fixInfo(infoJson);
+		findExistingFiles(infoJson);
+		maxScripts = infoJson.size();
+		loaded = true;
+		// File is not able to be parsed, go screen back.
+	} else {
+		loaded = false;
+	}
 }
 
 void ScriptBrowse::refresh() {
 	if (checkWifiStatus() == true) {
 		if (Msg::promptMsg(Lang::get("REFRESH_SCRIPTBROWSE_PROMPT"))) {
 			Msg::DisplayMsg(Lang::get("GETTING_SCRIPT_LIST"));
-			downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile);
+			if (downloadToFile("https://github.com/Universal-Team/Universal-Updater-Scripts/raw/master/info/scriptInfo.json", metaFile) != 0) {
+				downloadFailed();
+				loaded = false;
+				return;
+			}
 			FILE* file = fopen(metaFile, "r");
-			if(file)	infoJson = nlohmann::json::parse(file, nullptr, false);
-			fclose(file);
-			fixInfo(infoJson);
-			findExistingFiles(infoJson);
-			maxScripts = infoJson.size();
-			Selection = 0;
+			if(file) {
+				infoJson = nlohmann::json::parse(file, nullptr, false);
+				fclose(file);
+				fixInfo(infoJson);
+				findExistingFiles(infoJson);
+				maxScripts = infoJson.size();
+				Selection = 0;
+				loaded = true;
+			} else {
+				loaded = false;
+			}
 		}
 	} else {
 		notConnectedMsg();
@@ -125,195 +145,206 @@ void ScriptBrowse::Draw(void) const {
 
 void ScriptBrowse::DrawBrowse(void) const {
 	GFX::DrawTop();
-	std::string revision = std::to_string(int64_t(infoJson[Selection]["curRevision"]));
-	revision += " | ";
-	revision += std::to_string(int64_t(infoJson[Selection]["revision"]));
+	if (loaded) {
+		std::string revision = std::to_string(int64_t(infoJson[Selection]["curRevision"]));
+		revision += " | ";
+		revision += std::to_string(int64_t(infoJson[Selection]["revision"]));
 
-	if (Config::UseBars == true) {
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
+		if (Config::UseBars == true) {
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
+			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
+		} else {
+			Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
+			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
+		}
+
+		Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[Selection]["shortDesc"]), 400);
+		if (infoJson[Selection]["curRevision"] == -1) {
+			Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 370);
+		} else if(infoJson[Selection]["curRevision"] < infoJson[Selection]["revision"]) {
+			Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 370);
+		} else if(infoJson[Selection]["curRevision"] == infoJson[Selection]["revision"]) {
+			Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 370);
+		} else if(infoJson[Selection]["curRevision"] > infoJson[Selection]["revision"]) {
+			Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
+		}
+		GFX::DrawBottom();
+		GFX::DrawArrow(295, -1);
+		GFX::DrawArrow(315, 240, 180.0);
+		GFX::DrawArrow(0, 218, 0, 1);
+
+		GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
+
+		Gui::DrawStringCentered(0, 1, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts));
+
+		if (Config::viewMode == 0) {
+			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+				if(screenPos + i == Selection) {
+					if (!dropDownMenu) {
+						Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+					}
+				}
+				if (infoJson[screenPos+i]["curRevision"] == -1) {
+					Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::notFound);
+				} else if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
+					Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::outdated);
+				} else if(infoJson[screenPos+i]["curRevision"] == infoJson[screenPos+i]["revision"]) {
+					Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::uptodate);
+				} else if(infoJson[screenPos+i]["curRevision"] > infoJson[screenPos+i]["revision"]) {
+					Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::future);
+				}
+
+				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 317);
+				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 317);
+			}
+		} else if (Config::viewMode == 1) {
+			for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+				if(screenPosList + i == Selection) {
+					if (!dropDownMenu) {
+						Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+					}
+				}
+
+				// Script not found.
+				if (infoJson[screenPosList+i]["curRevision"] == -1) {
+					Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::notFound);
+					// Script outdaed.
+				} else if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
+					Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::outdated);
+					// Script up-to-date.
+				} else if(infoJson[screenPosList+i]["curRevision"] == infoJson[screenPosList+i]["revision"]) {
+					Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::uptodate);
+					// Future script.
+				} else if(infoJson[screenPosList+i]["curRevision"] > infoJson[screenPosList+i]["revision"]) {
+					Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::future);
+				}
+
+				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 317);
+			}
+		}
+
+		// DropDown Menu.
+		if (dropDownMenu) {
+			// Draw Operation Box.
+			Gui::Draw_Rect(0, 25, 140, 130, Config::Color1);
+			for (int i = 0; i < 3; i++) {
+				if (dropSelection == i) {
+					Gui::drawAnimatedSelector(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, .090, TRANSPARENT, Config::SelectedColor);
+				} else {
+					Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, Config::UnselectedColor);
+				}
+			}
+			// Draw Dropdown Icons.
+			GFX::DrawSpriteBlend(sprites_download_all_idx, dropPos[0].x, dropPos[0].y);
+			GFX::DrawSpriteBlend(sprites_update_idx, dropPos[1].x, dropPos[1].y);
+			GFX::DrawSpriteBlend(sprites_view_idx, dropPos[2].x, dropPos[2].y);
+			// Dropdown Text.
+			Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("DOWNLOAD_ALL_DDM"), 100);
+			Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("REFRESH_BROWSE_DDM"), 100);
+			Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
+		}
 	} else {
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, Config::TxtColor, revision);
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, std::string(infoJson[Selection]["title"]), 400);
-	}
-
-	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(infoJson[Selection]["shortDesc"]), 400);
-	if (infoJson[Selection]["curRevision"] == -1) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 370);
-	} else if(infoJson[Selection]["curRevision"] < infoJson[Selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 370);
-	} else if(infoJson[Selection]["curRevision"] == infoJson[Selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 370);
-	} else if(infoJson[Selection]["curRevision"] > infoJson[Selection]["revision"]) {
-		Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
-	}
-	GFX::DrawBottom();
-	GFX::DrawArrow(295, -1);
-	GFX::DrawArrow(315, 240, 180.0);
-	GFX::DrawArrow(0, 218, 0, 1);
-
-	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
-
-	Gui::DrawStringCentered(0, 1, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts));
-
-	if (Config::viewMode == 0) {
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
-			if(screenPos + i == Selection) {
-				if (!dropDownMenu) {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
-				}
-			}
-			if (infoJson[screenPos+i]["curRevision"] == -1) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::notFound);
-			} else if(infoJson[screenPos+i]["curRevision"] < infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::outdated);
-			} else if(infoJson[screenPos+i]["curRevision"] == infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::uptodate);
-			} else if(infoJson[screenPos+i]["curRevision"] > infoJson[screenPos+i]["revision"]) {
-				Gui::Draw_Rect(295, 45+(i*59), 20, 20, Config::future);
-			}
-
-			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["title"], 317);
-			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, infoJson[screenPos+i]["author"], 317);
-		}
-	} else if (Config::viewMode == 1) {
-		for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
-			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
-			if(screenPosList + i == Selection) {
-				if (!dropDownMenu) {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
-				}
-			}
-
-			// Script not found.
-			if (infoJson[screenPosList+i]["curRevision"] == -1) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::notFound);
-				// Script outdaed.
-			} else if(infoJson[screenPosList+i]["curRevision"] < infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::outdated);
-				// Script up-to-date.
-			} else if(infoJson[screenPosList+i]["curRevision"] == infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::uptodate);
-				// Future script.
-			} else if(infoJson[screenPosList+i]["curRevision"] > infoJson[screenPosList+i]["revision"]) {
-				Gui::Draw_Rect(302, ((i+1)*27)+7, 11, 11, Config::future);
-			}
-
-			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, infoJson[screenPosList+i]["title"], 317);
-		}
-	}
-
-	// DropDown Menu.
-	if (dropDownMenu) {
-		// Draw Operation Box.
-		Gui::Draw_Rect(0, 25, 140, 130, Config::Color1);
-		for (int i = 0; i < 3; i++) {
-			if (dropSelection == i) {
-				Gui::drawAnimatedSelector(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, .090, TRANSPARENT, Config::SelectedColor);
-			} else {
-				Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, Config::UnselectedColor);
-			}
-		}
-		// Draw Dropdown Icons.
-		GFX::DrawSpriteBlend(sprites_download_all_idx, dropPos[0].x, dropPos[0].y);
-		GFX::DrawSpriteBlend(sprites_update_idx, dropPos[1].x, dropPos[1].y);
-		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[2].x, dropPos[2].y);
-		// Dropdown Text.
-		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("DOWNLOAD_ALL_DDM"), 100);
-		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("REFRESH_BROWSE_DDM"), 100);
-		Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
+		GFX::DrawBottom();
 	}
 }
 
 
 void ScriptBrowse::DrawGlossary(void) const {
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+	if (loaded) {
+		if (Config::UseBars == true) {
+			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+		}
+
+		Gui::Draw_Rect(20, 30, 30, 30, Config::notFound);
+		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 300);
+
+		Gui::Draw_Rect(20, 70, 30, 30, Config::outdated);
+		Gui::DrawString(65, 75, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 300);
+
+		Gui::Draw_Rect(20, 110, 30, 30, Config::uptodate);
+		Gui::DrawString(65, 115, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 300);
+
+		Gui::Draw_Rect(20, 150, 30, 30, Config::future);
+		Gui::DrawString(65, 155, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 300);
+
+		Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
+		Gui::DrawString(65, 185, 0.7f, Config::TxtColor, Lang::get("REVISION"), 300);
+
+		GFX::DrawBottom();
+		GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 25);
+		Gui::DrawString(50, 27, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
+		GFX::DrawSpriteBlend(sprites_view_idx, 20, 55);
+		Gui::DrawString(50, 57, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
+		GFX::DrawArrow(20, 85);
+		Gui::DrawString(50, 87, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
+		GFX::DrawArrow(42, 140, 180.0);
+		Gui::DrawString(50, 117, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
+		GFX::DrawArrow(20, 145, 0, 1);
+		Gui::DrawString(50, 147, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
+		Gui::DrawString(10, 177, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts), 35);
+		Gui::DrawString(50, 177, 0.6f, Config::TxtColor, Lang::get("ENTRY"), 260);
+		GFX::DrawSpriteBlend(sprites_update_idx, 20, 195);
+		Gui::DrawString(50, 197, 0.6f, Config::TxtColor, Lang::get("REFRESH_SCRIPTBROWSE"), 260);
+		GFX::DrawArrow(0, 218, 0, 1);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+		GFX::DrawBottom();
 	}
-
-	Gui::Draw_Rect(20, 30, 30, 30, Config::notFound);
-	Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("SCRIPT_NOT_FOUND"), 300);
-
-	Gui::Draw_Rect(20, 70, 30, 30, Config::outdated);
-	Gui::DrawString(65, 75, 0.7f, Config::TxtColor, Lang::get("OUTDATED_SCRIPT"), 300);
-
-	Gui::Draw_Rect(20, 110, 30, 30, Config::uptodate);
-	Gui::DrawString(65, 115, 0.7f, Config::TxtColor, Lang::get("UP-TO-DATE"), 300);
-
-	Gui::Draw_Rect(20, 150, 30, 30, Config::future);
-	Gui::DrawString(65, 155, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 300);
-
-	Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
-	Gui::DrawString(65, 185, 0.7f, Config::TxtColor, Lang::get("REVISION"), 300);
-
-	GFX::DrawBottom();
-	GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 25);
-	Gui::DrawString(50, 27, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
-	GFX::DrawSpriteBlend(sprites_view_idx, 20, 55);
-	Gui::DrawString(50, 57, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
-	GFX::DrawArrow(20, 85);
-	Gui::DrawString(50, 87, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
-	GFX::DrawArrow(42, 140, 180.0);
-	Gui::DrawString(50, 117, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
-	GFX::DrawArrow(20, 145, 0, 1);
-	Gui::DrawString(50, 147, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
-	Gui::DrawString(10, 177, 0.6f, Config::TxtColor, std::to_string(Selection + 1) + " | " + std::to_string(maxScripts), 35);
-	Gui::DrawString(50, 177, 0.6f, Config::TxtColor, Lang::get("ENTRY"), 260);
-	GFX::DrawSpriteBlend(sprites_update_idx, 20, 195);
-	Gui::DrawString(50, 197, 0.6f, Config::TxtColor, Lang::get("REFRESH_SCRIPTBROWSE"), 260);
-	GFX::DrawArrow(0, 218, 0, 1);
 }
+	
 
 void ScriptBrowse::DropDownLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
-		dropDownMenu = false;
-	}
+	if (loaded) {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+			dropDownMenu = false;
+		}
 
-	if (hDown & KEY_DOWN) {
-		if (dropSelection < 2)	dropSelection++;
-	}
+		if (hDown & KEY_DOWN) {
+			if (dropSelection < 2)	dropSelection++;
+		}
 
-	if (hDown & KEY_UP) {
-		if (dropSelection > 0)	dropSelection--;
-	}
+		if (hDown & KEY_UP) {
+			if (dropSelection > 0)	dropSelection--;
+		}
 
-	if (hDown & KEY_A) {
-		switch(dropSelection) {
-			case 0:
+		if (hDown & KEY_A) {
+			switch(dropSelection) {
+				case 0:
+					downloadAll();
+					break;
+				case 1:
+					refresh();
+					break;
+				case 2:
+					if (Config::viewMode == 0) {
+						Config::viewMode = 1;
+					} else {
+						Config::viewMode = 0;
+					}
+					break;
+			}
+			dropDownMenu = false;
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, dropPos2[0])) {
 				downloadAll();
-				break;
-			case 1:
+				dropDownMenu = false;
+			} else if (touching(touch, dropPos2[1])) {
 				refresh();
-				break;
-			case 2:
+				dropDownMenu = false;
+			} else if (touching(touch, dropPos2[2])) {
 				if (Config::viewMode == 0) {
 					Config::viewMode = 1;
 				} else {
 					Config::viewMode = 0;
 				}
-				break;
-		}
-		dropDownMenu = false;
-	}
-
-	if (hDown & KEY_TOUCH) {
-		if (touching(touch, dropPos2[0])) {
-			downloadAll();
-			dropDownMenu = false;
-		} else if (touching(touch, dropPos2[1])) {
-			refresh();
-			dropDownMenu = false;
-		} else if (touching(touch, dropPos2[2])) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
-			} else {
-				Config::viewMode = 0;
+				dropDownMenu = false;
 			}
-			dropDownMenu = false;
 		}
 	}
 }
@@ -338,127 +369,134 @@ void ScriptBrowse::downloadAll() {
 }
 
 void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (keyRepeatDelay)	keyRepeatDelay--;
-	if (dropDownMenu) {
-		DropDownLogic(hDown, hHeld, touch);
-	} else {
-		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-			infoJson.clear();
-			Gui::screenBack();
-			return;
-		}
-		if (mode == 0) {
-			if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-				if (Selection < (int)infoJson.size()-1) {
-					Selection++;
-				} else {
-					Selection = 0;
-				}
-				if (fastMode == true) {
-					keyRepeatDelay = 3;
-				} else if (fastMode == false){
-					keyRepeatDelay = 6;
-				}
+	if (loaded) {
+		if (keyRepeatDelay)	keyRepeatDelay--;
+		if (dropDownMenu) {
+			DropDownLogic(hDown, hHeld, touch);
+		} else {
+			if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+				infoJson.clear();
+				Gui::screenBack();
+				return;
 			}
-
-			if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
-				dropDownMenu = true;
-			}
-
-			if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-				if (Selection > 0) {
-					Selection--;
-				} else {
-					Selection = (int)infoJson.size()-1;
+			if (mode == 0) {
+				if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
+					if (Selection < (int)infoJson.size()-1) {
+						Selection++;
+					} else {
+						Selection = 0;
+					}
+					if (fastMode == true) {
+						keyRepeatDelay = 3;
+					} else if (fastMode == false){
+						keyRepeatDelay = 6;
+					}
 				}
-				if (fastMode == true) {
-					keyRepeatDelay = 3;
-				} else if (fastMode == false){
-					keyRepeatDelay = 6;
-				}
-			}
 
-			if (hDown & KEY_TOUCH) {
-				if (Config::viewMode == 0) {
-					for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
-						if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-							if (infoJson.size() != 0) {
-								std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
-								std::string titleFix = infoJson[screenPos + i]["title"]; 
-								for (int l = 0; l < (int)titleFix.size(); l++) {
-									if (titleFix[l] == '/') {
-										titleFix[l] = '-';
-									}
-								}	
-								Msg::DisplayMsg(fileName);
-								downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
-								infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
+				if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
+					dropDownMenu = true;
+				}
+
+				if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
+					if (Selection > 0) {
+						Selection--;
+					} else {
+						Selection = (int)infoJson.size()-1;
+					}
+					if (fastMode == true) {
+						keyRepeatDelay = 3;
+					} else if (fastMode == false){
+						keyRepeatDelay = 6;
+					}
+				}
+
+				if (hDown & KEY_TOUCH) {
+					if (Config::viewMode == 0) {
+						for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)infoJson.size();i++) {
+							if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+								if (infoJson.size() != 0) {
+									std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPos + i]["title"]);
+									std::string titleFix = infoJson[screenPos + i]["title"]; 
+									for (int l = 0; l < (int)titleFix.size(); l++) {
+										if (titleFix[l] == '/') {
+											titleFix[l] = '-';
+										}
+									}	
+									Msg::DisplayMsg(fileName);
+									downloadToFile(infoJson[screenPos + i]["url"], Config::ScriptPath + titleFix + ".json");
+									infoJson[screenPos + i]["curRevision"] = infoJson[screenPos + i]["revision"];
+								}
 							}
 						}
+					} else if (Config::viewMode == 1) {
+						for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
+							if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+								if (infoJson.size() != 0) {
+									std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
+									std::string titleFix = infoJson[screenPosList + i]["title"]; 
+									for (int l = 0; l < (int)titleFix.size(); l++) {
+										if (titleFix[l] == '/') {
+											titleFix[l] = '-';
+										}
+									}
+									Msg::DisplayMsg(fileName);
+									downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
+									infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
+								}
+							}
+						}
+					}
+				}
+
+				if (hDown & KEY_A) {
+					if (infoJson.size() != 0) {
+						std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[Selection]["title"]);
+
+					std::string titleFix = infoJson[Selection]["title"]; 
+					for (int i = 0; i < (int)titleFix.size(); i++) {
+						if (titleFix[i] == '/') {
+							titleFix[i] = '-';
+						}
+					}
+						Msg::DisplayMsg(fileName);
+
+						downloadToFile(infoJson[Selection]["url"], Config::ScriptPath + titleFix + ".json");
+						infoJson[Selection]["curRevision"] = infoJson[Selection]["revision"];
+					}
+				}
+
+				if (hDown & KEY_R) {
+					fastMode = true;
+				}
+
+				if (hDown & KEY_L) {
+					fastMode = false;
+				}
+
+				if (Config::viewMode == 0) {
+					if(Selection < screenPos) {
+						screenPos = Selection;
+					} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
+						screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 					}
 				} else if (Config::viewMode == 1) {
-					for(int i=0;i<ENTRIES_PER_LIST && i<(int)infoJson.size();i++) {
-						if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-							if (infoJson.size() != 0) {
-								std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[screenPosList + i]["title"]);
-								std::string titleFix = infoJson[screenPosList + i]["title"]; 
-								for (int l = 0; l < (int)titleFix.size(); l++) {
-									if (titleFix[l] == '/') {
-										titleFix[l] = '-';
-									}
-								}
-								Msg::DisplayMsg(fileName);
-								downloadToFile(infoJson[screenPosList + i]["url"], Config::ScriptPath + titleFix + ".json");
-								infoJson[screenPosList + i]["curRevision"] = infoJson[screenPosList + i]["revision"];
-							}
-						}
+					if(Selection < screenPosList) {
+						screenPosList = Selection;
+					} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
+						screenPosList = Selection - ENTRIES_PER_LIST + 1;
 					}
 				}
 			}
-
-			if (hDown & KEY_A) {
-				if (infoJson.size() != 0) {
-					std::string fileName = Lang::get("DOWNLOADING") + std::string(infoJson[Selection]["title"]);
-
-				std::string titleFix = infoJson[Selection]["title"]; 
-				for (int i = 0; i < (int)titleFix.size(); i++) {
-					if (titleFix[i] == '/') {
-						titleFix[i] = '-';
-					}
-				}
-					Msg::DisplayMsg(fileName);
-
-					downloadToFile(infoJson[Selection]["url"], Config::ScriptPath + titleFix + ".json");
-					infoJson[Selection]["curRevision"] = infoJson[Selection]["revision"];
-				}
-			}
-
-			if (hDown & KEY_R) {
-				fastMode = true;
-			}
-
-			if (hDown & KEY_L) {
-				fastMode = false;
-			}
-
-			if (Config::viewMode == 0) {
-				if(Selection < screenPos) {
-					screenPos = Selection;
-				} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-					screenPos = Selection - ENTRIES_PER_SCREEN + 1;
-				}
-			} else if (Config::viewMode == 1) {
-				if(Selection < screenPosList) {
-					screenPosList = Selection;
-				} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
-					screenPosList = Selection - ENTRIES_PER_LIST + 1;
-				}
+			// Switch to Glossary and back.
+			if (hDown & KEY_RIGHT || hDown & KEY_LEFT) {
+				if (mode == 0)	mode = 1;
+				else	mode = 0;
 			}
 		}
-		// Switch to Glossary and back.
-		if (hDown & KEY_RIGHT || hDown & KEY_LEFT) {
-			if (mode == 0)	mode = 1;
-			else	mode = 0;
+	} else {
+		if (hDown & KEY_B) {
+			Gui::screenBack();
+			return;
 		}
 	}
 }
