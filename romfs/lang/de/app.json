@@ -4,7 +4,7 @@
 	"DONE": "Fertig!",
 	"CONNECT_WIFI": "Bitte mit dem WLAN verbinden.",
 	"DOWNLOADING": "Herunterladen: ",
-	"CURRENTLY_EXTRACTING": "\nMomentan extrahieren:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
 	"FILE_EXTRACTED": "Datei entpackt.",
 	"FILES_EXTRACTED": "Dateien entpackt.",
 	"SCRIPTLIST": "Skriptliste",
