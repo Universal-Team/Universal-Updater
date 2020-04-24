@@ -4,7 +4,7 @@
 	"DONE": "Fatto!",
 	"CONNECT_WIFI": "Per favore connettiti al WiFi.",
 	"DOWNLOADING": "Download in corso: ",
-	"CURRENTLY_EXTRACTING": "\nSto estraendo:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
 	"FILE_EXTRACTED": "File estratto.",
 	"FILES_EXTRACTED": "File estratti.",
 	"SCRIPTLIST": "Lista script",
