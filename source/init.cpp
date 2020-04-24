@@ -90,7 +90,6 @@ Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
 	amInit();
-	sdmcInit();
 	Gui::init();
 	cfguInit();
 	acInit();
@@ -206,6 +205,5 @@ Result Init::Exit() {
 	acExit();
 	amExit();
 	romfsExit();
-	sdmcExit();
 	return 0;
 }
