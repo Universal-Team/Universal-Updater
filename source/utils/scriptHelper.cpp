@@ -106,12 +106,12 @@ Result ScriptHelper::removeFile(std::string file, std::string message) {
 }
 
 // Install a file.
-void ScriptHelper::installFile(std::string file, std::string message) {
+void ScriptHelper::installFile(std::string file, bool updatingSelf, std::string message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressBarType = 2;
 	Threads::create((ThreadFunc)displayProgressBar);
-	installCia(file.c_str());
+	installCia(file.c_str(), updatingSelf);
 	showProgressBar = false;
 }
 

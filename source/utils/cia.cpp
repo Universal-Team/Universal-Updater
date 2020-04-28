@@ -1,7 +1,5 @@
 #include "cia.hpp"
 
-bool updatingSelf = false;
-
 Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
 	Result ret = 0;
 	u8 param[0x300];
@@ -67,7 +65,7 @@ FS_MediaType getTitleDestination(u64 titleId) {
 // Variables.
 u64 installSize = 0, installOffset = 0;
 
-Result installCia(const char * ciaPath)
+Result installCia(const char * ciaPath, bool updatingSelf)
 {
 	u32 bytes_read = 0, bytes_written;
 	installSize = 0, installOffset = 0; u64 size = 0;
@@ -89,9 +87,6 @@ Result installCia(const char * ciaPath)
 	}
 
 	media = getTitleDestination(info.titleID);
-	if (info.titleID == 0x0004000004391700) {
-		updatingSelf = true;
-	}
 
 	if (!updatingSelf) {
 		ret = deletePrevious(info.titleID, media);

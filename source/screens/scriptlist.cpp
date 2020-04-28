@@ -935,12 +935,15 @@ Result ScriptList::runFunctions(nlohmann::json &json) {
 				else	ret = SYNTAX_ERROR;
 
 			} else if(type == "installCia") {
-				bool missing = false;
+				bool missing = false, updateSelf = false;
 				std::string file, message;
 				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
+				if(json.at(choice).at(i).contains("updateSelf") && json.at(choice).at(i).at("updateSelf").is_boolean()) {
+					updateSelf = json.at(choice).at(i).at("updateSelf");
+				}
 				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ScriptHelper::installFile(file, message);
+				if(!missing)	ScriptHelper::installFile(file, updateSelf, message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "mkdir") {

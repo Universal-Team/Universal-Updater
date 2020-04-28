@@ -67,7 +67,7 @@ namespace ScriptHelper {
 	Result downloadFile(std::string file, std::string output, std::string message);
 
 	Result removeFile(std::string file, std::string message);
-	void installFile(std::string file, std::string message);
+	void installFile(std::string file, bool updateSelf, std::string message);
 	void extractFile(std::string file, std::string input, std::string output, std::string message);
 	Result createFile(const char * path);
 	void displayTimeMsg(std::string message, int seconds);

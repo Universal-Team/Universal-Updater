@@ -1264,12 +1264,15 @@ Result UniStore::execute() {
 				else	ret = SYNTAX_ERROR;
 
 			} else if(type == "installCia") {
-				bool missing = false;
+				bool missing = false, updateSelf = false;
 				std::string file, message;
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
+				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("updateSelf") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf").is_boolean()) {
+					updateSelf = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf");
+				}
 				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::installFile(file, message);
+				if(!missing)	ScriptHelper::installFile(file, updateSelf, message);
 				else	ret = SYNTAX_ERROR;
 	
 			} else if (type == "mkdir") {
