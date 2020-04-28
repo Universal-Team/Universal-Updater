@@ -4,7 +4,7 @@
 	"DONE": "Готово!",
 	"CONNECT_WIFI": "Пожалуйста, подключитесь к WiFi.",
 	"DOWNLOADING": "Загрузка: ",
-	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
+	"CURRENTLY_EXTRACTING": "Извлекается:\n",
 	"FILE_EXTRACTED": "файл извлечен.",
 	"FILES_EXTRACTED": "файлы извлечены.",
 	"SCRIPTLIST": "Список скриптов",
