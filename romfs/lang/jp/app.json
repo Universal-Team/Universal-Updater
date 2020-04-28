@@ -4,7 +4,7 @@
 	"DONE": "完了！",
 	"CONNECT_WIFI": "WiFiに接続してください",
 	"DOWNLOADING": "ダウンロード中：",
-	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
+	"CURRENTLY_EXTRACTING": "現在展開中：\n",
 	"FILE_EXTRACTED": "抽出されたファイル",
 	"FILES_EXTRACTED": "抽出されたファイル",
 	"SCRIPTLIST": "スクリプトリスト",
