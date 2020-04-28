@@ -41,6 +41,14 @@ void Animation::DrawProgressBar(float currentProgress, float totalProgress, int 
 	}
 }
 
+void Animation::DrawProgressBarInstall(u64 currentProgress, u64 totalProgress, int mode) {
+	if (mode == 1) {
+		Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
+	} else {
+		Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, Config::progressbarColor);
+	}
+}
+
 void Animation::DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, int mode) {
 	if (mode == 1) {
 		Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);

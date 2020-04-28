@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "cia.hpp"
 #include "download.hpp"
 #include "extract.hpp"
 #include "fileBrowse.hpp"
@@ -35,12 +36,8 @@
 #include <fstream>
 #include <unistd.h>
 
-extern "C" {
-	#include "cia.h"
-}
-
 extern bool showProgressBar;
-extern bool progressBarType;
+extern int progressBarType;
 extern char progressBarMsg[128];
 extern int filesExtracted;
 
@@ -110,8 +107,12 @@ Result ScriptHelper::removeFile(std::string file, std::string message) {
 
 // Install a file.
 void ScriptHelper::installFile(std::string file, std::string message) {
-	Msg::DisplayMsg(message);
+	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+	showProgressBar = true;
+	progressBarType = 2;
+	Threads::create((ThreadFunc)displayProgressBar);
 	installCia(file.c_str());
+	showProgressBar = false;
 }
 
 // Extract Files.

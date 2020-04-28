@@ -35,8 +35,7 @@ int filesExtracted = 0;
 std::string extractingFile = "";
 
 // That are our File Progressbar variable.
-u64 extractSize = 0;
-u64 writeOffset = 0;
+u64 extractSize = 0, writeOffset = 0;
 
 Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath) {
 	extractSize = 0, writeOffset = 0, filesExtracted = 0;

@@ -50,11 +50,12 @@ extern std::string extractingFile;
 
 char progressBarMsg[128] = "";
 bool showProgressBar = false;
-bool progressBarType = 0; // 0 = Download | 1 = Extract
+int progressBarType = 0; // 0 = Download | 1 = Extract | 2 = Install
 
 // That are our extract Progressbar variables.
-extern u64 extractSize;
-extern u64 writeOffset;
+extern u64 extractSize, writeOffset;
+// That are our install Progressbar variables.
+extern u64 installSize, installOffset;
 
 #define TIME_IN_US 1
 #define TIMETYPE curl_off_t
@@ -856,50 +857,36 @@ void displayProgressBar() {
 			downloadTotal = downloadNow;
 		}
 
-		if (progressBarType) {
-			snprintf(str, sizeof(str), "%i %s",
-					filesExtracted, 
-					(filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED")).c_str())
-					);
-		} else {
+		// Downloading.
+		if (progressBarType == 0){
 			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
 					formatBytes(downloadNow).c_str(),
 					formatBytes(downloadTotal).c_str(),
-					((float)downloadNow/(float)downloadTotal) * 100.0f
-					);
-		}
+					((float)downloadNow/(float)downloadTotal) * 100.0f);
+					// Extracting.
+		} else if (progressBarType == 1) {
+			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+					formatBytes(writeOffset).c_str(),
+					formatBytes(extractSize).c_str(),
+					((float)writeOffset/(float)extractSize) * 100.0f);
+			// Installing.
+		} else if (progressBarType == 2){
+			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+					formatBytes(installOffset).c_str(),
+					formatBytes(installSize).c_str(),
+					((float)installOffset/(float)installSize) * 100.0f);
+		};
 
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
+		// Display this by all.
 		if (isScriptSelected == true) {
 			Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
 		} else {
 			Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
-		}
-
-		// Display 'Currently Extracting: <Filename>'.
-		if (progressBarType == 1) {
-			// Text.
-			if (isScriptSelected == true) {
-				Gui::DrawStringCentered(0, 100, 0.6f, TextColor, str, 400);
-				Gui::DrawStringCentered(0, 180, 0.6f, TextColor, formatBytes(writeOffset) + " / " + formatBytes(extractSize), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
-			} else {
-				Gui::DrawStringCentered(0, 100, 0.6f, Config::TxtColor, str, 400);
-				Gui::DrawStringCentered(0, 180, 0.6f, Config::TxtColor, formatBytes(writeOffset) + " / " + formatBytes(extractSize), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
-			}
-			// Outline of progressbar.
-			Gui::Draw_Rect(30, 140, 340, 30, BLACK);
-			// Progressbar.
-			if (isScriptSelected == true) {
-				Animation::DrawProgressBarExtract(writeOffset, extractSize, 1);
-			} else {
-				Animation::DrawProgressBarExtract(writeOffset, extractSize, 2);
-			}
 		}
 
 		// Only display this by downloading.
@@ -915,6 +902,44 @@ void displayProgressBar() {
 				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);
 			} else {
 				Animation::DrawProgressBar(downloadNow, downloadTotal, 2);
+			}
+		}
+
+		// Only Display this by extracting.
+		if (progressBarType == 1) {
+			// Text.
+			if (isScriptSelected == true) {
+				Gui::DrawStringCentered(0, 180, 0.6f, TextColor, str, 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, TextColor, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+			} else {
+				Gui::DrawStringCentered(0, 180, 0.6f, Config::TxtColor, str, 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, Config::TxtColor, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+			}
+			// Outline of progressbar.
+			Gui::Draw_Rect(30, 140, 340, 30, BLACK);
+			// Progressbar.
+			if (isScriptSelected == true) {
+				Animation::DrawProgressBarExtract(writeOffset, extractSize, 1);
+			} else {
+				Animation::DrawProgressBarExtract(writeOffset, extractSize, 2);
+			}
+		}
+
+		// Only display this by installing.
+		if (progressBarType == 2) {
+			if (isScriptSelected == true) {
+				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
+			} else {
+				Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+			}
+			// Outline of progressbar.
+			Gui::Draw_Rect(30, 120, 340, 30, BLACK);
+			if (isScriptSelected == true) {
+				Animation::DrawProgressBarInstall(installOffset, installSize, 1);
+			} else {
+				Animation::DrawProgressBarInstall(installOffset, installSize, 2);
 			}
 		}
 		GFX::DrawBottom();
