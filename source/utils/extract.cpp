@@ -91,8 +91,8 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 					fwrite(buf, 1, size, file);
 					sizeLeft -= size;
 					writeOffset += size;
-					filesExtracted++;
 				}
+				filesExtracted++;
 				fclose(file);
 				delete[] buf;
 			}
