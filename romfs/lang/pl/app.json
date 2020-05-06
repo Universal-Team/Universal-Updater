@@ -144,5 +144,7 @@
 	"SYNTAX_ERROR": "Błąd składni!",
 	"COPY_ERROR": "Błąd kopiowania!",
 	"MOVE_ERROR": "Błąd przenoszenia!",
-	"DELETE_ERROR": "Błąd usuwania!"
+	"DELETE_ERROR": "Błąd usuwania!",
+	"CHANGE_KEY_DELAY": "Change Key Delay",
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
 }
