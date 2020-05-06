@@ -42,6 +42,7 @@ private:
 	int creditsPage = 0;
 	int screenPos = 0;
 	int Selection = 0;
+	int keyRepeatDelay = 0;
 
 	std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 215, 25, 25}, // Back Arrow.

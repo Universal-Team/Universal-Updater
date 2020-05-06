@@ -146,16 +146,54 @@ void Credits::DrawBottom(void) const {
 
 
 void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (keyRepeatDelay)	keyRepeatDelay--;
 	// KEY_DOWN Logic. (SIZE)
 	if (creditsPage == 0) {
-		if (hDown & KEY_DOWN) {	if (Selection < (int)Translators.size()-1)	Selection++; }
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+			if (Selection < (int)Translators.size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+
+			keyRepeatDelay = Config::keyDelay;
+		}
 	} else if (creditsPage == 1) {
-		if (hDown & KEY_DOWN) {	if (Selection < (int)UniversalTeam.size()-1)	Selection++; }
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+			if (Selection < (int)UniversalTeam.size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+
+			keyRepeatDelay = Config::keyDelay;
+		}
 	} else if (creditsPage == 2) {
-		if (hDown & KEY_DOWN) {	if (Selection < (int)ScriptCreators.size()-1)	Selection++; }
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+			if (Selection < (int)ScriptCreators.size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+
+			keyRepeatDelay = Config::keyDelay;
+		}
 	}
 
-	if (hDown & KEY_UP) {	if (Selection > 0)	Selection--; }
+	if ((hHeld & KEY_UP && !keyRepeatDelay)) {
+		if (Selection > 0) {
+			Selection--;
+		} else {
+			if (creditsPage == 0) {
+				Selection = (int)Translators.size()-1;
+			} else if (creditsPage == 1) {
+				Selection = (int)UniversalTeam.size()-1;
+			} else if (creditsPage == 2) {
+				Selection = (int)ScriptCreators.size()-1;
+			}
+		}
+		keyRepeatDelay = Config::keyDelay;
+	}
 	
 		
 	if ((hDown & KEY_L || hDown & KEY_LEFT)) {

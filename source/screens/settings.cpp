@@ -343,11 +343,27 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 std::string langsTemp[] = {"br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp"};
-void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
-	if (hDown & KEY_UP) {
-		if(selectedLang > 0) {
-			selectedLang--;
+void Settings::LanguageSelection(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (keyRepeatDelay)	keyRepeatDelay--;
+
+	if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+		if (selectedLang < (int)languages.size()-1) {
+			selectedLang++;
+		} else {
+			selectedLang = 0;
 		}
+		
+		keyRepeatDelay = Config::keyDelay;
+	}
+
+	if ((hHeld & KEY_UP && !keyRepeatDelay)) {
+		if (selectedLang > 0) {
+			selectedLang--;
+		} else {
+			selectedLang = (int)languages.size()-1;
+		}
+			
+		keyRepeatDelay = Config::keyDelay;
 	}
 
 	if (hDown & KEY_A) {
@@ -355,12 +371,6 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 		Lang::load(Config::lang);
 		changesMade = true;
 		mode = 0;
-	}
-
-	if (hDown & KEY_DOWN) {
-		if(selectedLang < (int)languages.size()-1) {
-			selectedLang++;
-		}
 	}
 
 	if ((hDown & KEY_B)) {
@@ -374,7 +384,8 @@ void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 }
 
 
-void Settings::colorChanging(u32 hDown, touchPosition touch) {
+void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (keyRepeatDelay)	keyRepeatDelay--;
 	int red;
 	int green;
 	int blue;
@@ -385,8 +396,26 @@ void Settings::colorChanging(u32 hDown, touchPosition touch) {
 			dropDownMenu = false;
 		}
 
-		if (hDown & KEY_UP) {	if (colorSelection > 0)	colorSelection--; }
-		if (hDown & KEY_DOWN) {	if (colorSelection < (int)colorList.size()-1)	colorSelection++; }
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+			if (colorSelection < (int)colorList.size()-1) {
+				colorSelection++;
+			} else {
+				colorSelection = 0;
+			}
+
+			keyRepeatDelay = Config::keyDelay;
+		}
+
+		if ((hHeld & KEY_UP && !keyRepeatDelay)) {
+			if (colorSelection > 0) {
+				colorSelection--;
+			} else {
+				colorSelection = (int)colorList.size()-1;
+			}
+
+			keyRepeatDelay = Config::keyDelay;
+		}
+
 	} else {
 
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
@@ -514,9 +543,9 @@ void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
 		SubMenuLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {
-		LanguageSelection(hDown, touch);
+		LanguageSelection(hDown, hHeld, touch);
 	} else if (mode == 2) {
-		colorChanging(hDown, touch);
+		colorChanging(hDown, hHeld, touch);
 	} else if (mode == 4) {
 		MiscSettingsLogic(hDown, hHeld, touch);
 	}
