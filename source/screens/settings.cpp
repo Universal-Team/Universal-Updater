@@ -77,10 +77,12 @@ const std::vector<std::string> languages = {
 	"Français",
 	"Italiano",
 	"Lietuvių",
+	"Polski",
 	"Português",
 	"Русский",
 	"日本語"
 };
+
 void Settings::DrawLanguageSelection(void) const {
 	std::string line1;
 	GFX::DrawTop();
@@ -333,7 +335,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
-std::string langsTemp[] = {"br", "da", "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp"};
+std::string langsTemp[] = {"br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp"};
 void Settings::LanguageSelection(u32 hDown, touchPosition touch) {
 	if (hDown & KEY_UP) {
 		if(selectedLang > 0) {

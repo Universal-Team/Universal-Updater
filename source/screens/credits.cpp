@@ -40,6 +40,7 @@ const std::vector<std::string> Translators = {
 	"Pk11",
 	"Roby Spia",
 	"StackZ",
+	"XDgierman",
 	"YoSoy"
 };
 const std::vector<std::string> Languages = {
@@ -53,7 +54,8 @@ const std::vector<std::string> Languages = {
 	"Lietuvių",
 	"日本語",
 	"Italiano",
-	"deutsch, English",
+	"Deutsch, English",
+	"Polski",
 	"Español"
 };
 // Universal-Team Page 2.
