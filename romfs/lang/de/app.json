@@ -144,5 +144,7 @@
 	"SYNTAX_ERROR": "Syntax-Fehler!",
 	"COPY_ERROR": "Fehler beim Kopieren!",
 	"MOVE_ERROR": "Verschiebe-Fehler!",
-	"DELETE_ERROR": "Fehler beim Löschen!"
+	"DELETE_ERROR": "Fehler beim Löschen!",
+	"CHANGE_KEY_DELAY": "Change Key Delay",
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
 }
