@@ -144,5 +144,7 @@
 	"SYNTAX_ERROR": "¡Error de sintaxis!",
 	"COPY_ERROR": "¡Copiar error!",
 	"MOVE_ERROR": "¡Mover error!",
-	"DELETE_ERROR": "¡Eliminar error!"
+	"DELETE_ERROR": "¡Eliminar error!",
+	"CHANGE_KEY_DELAY": "Change Key Delay",
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
 }
