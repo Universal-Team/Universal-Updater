@@ -386,11 +386,44 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					} else {
 						Selection = 0;
 					}
-					if (fastMode == true) {
-						keyRepeatDelay = 3;
-					} else if (fastMode == false){
-						keyRepeatDelay = 6;
+					
+					keyRepeatDelay = Config::keyDelay;
+				}
+
+				if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
+					if (Config::viewMode == 0) {
+						if (Selection < (int)infoJson.size()-1-3) {
+							Selection += 3;
+						} else {
+							Selection = (int)infoJson.size()-1;
+						}
+					} else {
+						if (Selection < (int)infoJson.size()-1-6) {
+							Selection += 7;
+						} else {
+							Selection = (int)infoJson.size()-1;
+						}
 					}
+
+					keyRepeatDelay = Config::keyDelay;
+				}
+
+				if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
+					if (Config::viewMode == 0) {
+						if (Selection > 2) {
+							Selection -= 3;
+						} else {
+							Selection = 0;
+						}
+					} else {
+						if (Selection > 6) {
+							Selection -= 7;
+						} else {
+							Selection = 0;
+						}
+					}
+
+					keyRepeatDelay = Config::keyDelay;
 				}
 
 				if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
@@ -403,11 +436,8 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					} else {
 						Selection = (int)infoJson.size()-1;
 					}
-					if (fastMode == true) {
-						keyRepeatDelay = 3;
-					} else if (fastMode == false){
-						keyRepeatDelay = 6;
-					}
+					
+					keyRepeatDelay = Config::keyDelay;
 				}
 
 				if (hDown & KEY_TOUCH) {
@@ -465,14 +495,6 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 
-				if (hDown & KEY_R) {
-					fastMode = true;
-				}
-
-				if (hDown & KEY_L) {
-					fastMode = false;
-				}
-
 				if (Config::viewMode == 0) {
 					if(Selection < screenPos) {
 						screenPos = Selection;
@@ -488,7 +510,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			// Switch to Glossary and back.
-			if (hDown & KEY_RIGHT || hDown & KEY_LEFT) {
+			if (hDown & KEY_R || hDown & KEY_L) {
 				if (mode == 0)	mode = 1;
 				else	mode = 0;
 			}

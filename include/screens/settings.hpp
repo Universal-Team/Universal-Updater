@@ -61,20 +61,7 @@ private:
 	std::vector<Structs::ButtonPos> mainButtons = {
 		{80, 30, 149, 52}, // Language.
 		{80, 90, 149, 52}, // Colors.
-		{80, 150, 149, 52} // Misc.
-	};
-
-	std::vector<Structs::ButtonPos> langBlocks = {
-		{37, 32, 20, 20},
-		{37, 72, 20, 20},
-		{37, 112, 20, 20},
-		{37, 152, 20, 20},
-		{37, 188, 20, 20},
-		{177, 32, 20, 20},
-		{177, 72, 20, 20},
-		{177, 112, 20, 20},
-		{177, 152, 20, 20},
-		{177, 188, 20, 20},
+		{80, 150, 149, 52} // Credits.
 	};
 
 	std::vector<Structs::ButtonPos> arrowPos = {

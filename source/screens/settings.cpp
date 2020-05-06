@@ -237,6 +237,7 @@ void Settings::DrawMiscSettings(void) const {
 
 	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("CHANGE_MUSICFILE"));
 	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("CHANGE_BAR_STYLE"));
+	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_KEY_DELAY"));
 	// Selector.
 	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
 }
@@ -247,7 +248,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_DOWN) {
-		if (Selection < 1)	Selection++;
+		if (Selection < 2)	Selection++;
 	}
 
 	if (hDown & KEY_A) {
@@ -260,6 +261,9 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (Selection == 1) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+			changesMade = true;
+		} else if (Selection == 2) {
+			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
 		}
 	}
@@ -274,6 +278,9 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[1])) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
+			changesMade = true;
+		} else if (touching(touch, mainButtons[2])) {
+			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
 		}
 	}

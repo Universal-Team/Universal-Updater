@@ -536,12 +536,12 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 1:
-//				if (checkWifiStatus()) {
+				if (checkWifiStatus()) {
 					Selection = 0;
 					mode = 3;
-//				} else {
-//					notConnectedMsg();
-//				}
+				} else {
+					notConnectedMsg();
+				}
 				break;
 			case 2:
 				std::string tempStore = selectFilePath(Lang::get("SELECT_STORE_PATH"), Config::StorePath, {});
@@ -703,12 +703,10 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				descript();
 				loadStoreDesc();
 			}
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
-			}
+			
+			keyRepeatDelay = Config::keyDelay;
 		}
+
 		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 			if (Selection > 0) {
 				Selection--;
@@ -719,11 +717,60 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				descript();
 				loadStoreDesc();
 			}
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
+			
+			keyRepeatDelay = Config::keyDelay;
+		}
+
+		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
+			if (Config::viewMode == 0) {
+				if (Selection < (int)storeInfo.size()-1-3) {
+					Selection += 3;
+					descript();
+					loadStoreDesc();
+				} else {
+					Selection = (int)storeInfo.size()-1;
+					descript();
+					loadStoreDesc();
+				}
+			} else {
+				if (Selection < (int)storeInfo.size()-1-6) {
+					Selection += 7;
+					descript();
+					loadStoreDesc();
+				} else {
+					Selection = (int)storeInfo.size()-1;
+					descript();
+					loadStoreDesc();
+				}
 			}
+			
+			keyRepeatDelay = Config::keyDelay;
+		}
+
+		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
+			if (Config::viewMode == 0) {
+				if (Selection > 2) {
+					Selection -= 3;
+					descript();
+					loadStoreDesc();
+				} else {
+					Selection = 0;
+					descript();
+					loadStoreDesc();
+				}
+			} else {
+				if (Selection > 6) {
+					Selection -= 7;
+					descript();
+					loadStoreDesc();
+				} else {
+					Selection = 0;
+					descript();
+					loadStoreDesc();
+				}
+			}
+			
+			keyRepeatDelay = Config::keyDelay;
 		}
 
 		if (hDown & KEY_A) {
@@ -748,14 +795,6 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					mode = 2;
 				}
 			}
-		}
-
-		if (hDown & KEY_R) {
-			fastMode = true;
-		}
-
-		if (hDown & KEY_L) {
-			fastMode = false;
 		}
 
 		if (Config::viewMode == 0) {
@@ -891,14 +930,6 @@ void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			freeSheet();
 		}
 
-		if (hDown & KEY_R) {
-			fastMode = true;
-		}
-
-		if (hDown & KEY_L) {
-			fastMode = false;
-		}
-
 		// Go one entry up.
 		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
 			if (Selection > 0) {
@@ -906,11 +937,8 @@ void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else {
 				Selection = (int)appStoreJson.at("storeContent").size()-1;
 			}
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
-			}
+			
+			keyRepeatDelay = Config::keyDelay;
 		}
 
 		// Go one entry down.
@@ -920,11 +948,44 @@ void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else {
 				Selection = 0;
 			}
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
+			
+			keyRepeatDelay = Config::keyDelay;
+		}
+
+		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
+			if (Config::viewMode == 0) {
+				if (Selection < (int)appStoreJson.at("storeContent").size()-1-3) {
+					Selection += 3;
+				} else {
+					Selection = (int)appStoreJson.at("storeContent").size()-1;
+				}
+			} else {
+				if (Selection < (int)appStoreJson.at("storeContent").size()-1-6) {
+					Selection += 7;
+				} else {
+					Selection = (int)appStoreJson.at("storeContent").size()-1;
+				}
 			}
+			
+			keyRepeatDelay = Config::keyDelay;
+		}
+
+		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
+			if (Config::viewMode == 0) {
+				if (Selection > 2) {
+					Selection -= 3;
+				} else {
+					Selection = 0;
+				}
+			} else {
+				if (Selection > 6) {
+					Selection -= 7;
+				} else {
+					Selection = 0;
+				}
+			}
+			
+			keyRepeatDelay = Config::keyDelay;
 		}
 
 		// Execute touched Entry.
@@ -990,7 +1051,7 @@ void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		GitHubLogic(hDown, hHeld, touch);
 	}
 
-	if (hDown & KEY_LEFT || hDown & KEY_RIGHT) {
+	if (hDown & KEY_L || hDown & KEY_R) {
 		if (mode == 6) {
 			mode = lastMode;
 		} else if (mode == 1) {

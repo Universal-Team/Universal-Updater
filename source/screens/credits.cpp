@@ -43,6 +43,7 @@ const std::vector<std::string> Translators = {
 	"XDgierman",
 	"YoSoy"
 };
+
 const std::vector<std::string> Languages = {
 	"Русский",
 	"Dansk",
@@ -58,6 +59,7 @@ const std::vector<std::string> Languages = {
 	"Polski",
 	"Español"
 };
+
 // Universal-Team Page 2.
 const std::vector<std::string> UniversalTeam = {
 	"DeadPhoenix",
@@ -67,6 +69,7 @@ const std::vector<std::string> UniversalTeam = {
 	"StackZ",
 	"TotallyNotGuy"
 };
+
 // Script Page 3.
 const std::vector<std::string> ScriptCreators = {
 	"DualBladedKirito", "Glazed_Belmont", "Pk11", "StackZ", "The Conceptionist", "YoSoy"

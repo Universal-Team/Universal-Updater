@@ -86,7 +86,6 @@ private:
 	// Browse stuff.
 	int keyRepeatDelay = 0;
 	std::vector<DirEntry> dirContents;
-	int fastMode = false;
 
 
 	// Button | Icon structs.

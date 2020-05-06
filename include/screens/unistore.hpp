@@ -85,7 +85,6 @@ private:
 
 	// Browse stuff.
 	int keyRepeatDelay = 0;
-	int fastMode = false;
 	std::vector<DirEntry> dirContents;
 
 	// Other stuff.

@@ -55,6 +55,7 @@ int Config::uptodate;
 int Config::notFound;
 int Config::future;
 int Config::Button;
+int Config::keyDelay = 5;
 nlohmann::json configJson;
 extern bool changesMade;
 
@@ -201,6 +202,12 @@ void Config::load() {
 			Button = getInt("BUTTON");
 		}
 
+		if(!configJson.contains("KEY_DELAY")) {
+			keyDelay = 5;
+		} else {
+			keyDelay = getInt("KEY_DELAY");
+		}
+
 		fclose(file);
 	} else {
 		Color1 = BarColor;
@@ -225,6 +232,7 @@ void Config::load() {
 		notFound = C2D_Color32(255, 128, 0, 255);
 		future	 = C2D_Color32(255, 255, 0, 255);
 		Button 	 = C2D_Color32(0, 0, 50, 255);
+		keyDelay = 5;
 	}
 }
 
@@ -251,6 +259,7 @@ void Config::save() {
 	setInt("NOTFOUND", notFound);
 	setInt("FUTURE", future);
 	setInt("BUTTON", Button);
+	setInt("KEY_DELAY", keyDelay);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -283,6 +292,7 @@ void Config::initializeNewConfig() {
 	setInt("NOTFOUND", C2D_Color32(255, 128, 0, 255));
 	setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
 	setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
+	setInt("KEY_DELAY", 5);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
