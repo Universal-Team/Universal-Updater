@@ -144,5 +144,7 @@
 	"SYNTAX_ERROR": "Синтаксическая ошибка!",
 	"COPY_ERROR": "Ошибка копирования!",
 	"MOVE_ERROR": "Ошибка перемещения!",
-	"DELETE_ERROR": "Ошибка удаления!"
+	"DELETE_ERROR": "Ошибка удаления!",
+	"CHANGE_KEY_DELAY": "Change Key Delay",
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
 }
