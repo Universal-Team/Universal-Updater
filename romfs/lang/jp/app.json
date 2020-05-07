@@ -145,6 +145,6 @@
 	"COPY_ERROR": "コピーエラー！",
 	"MOVE_ERROR": "移動エラー",
 	"DELETE_ERROR": "削除エラー！",
-	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
+	"CHANGE_KEY_DELAY": "キー遅延の変更",
+	"ENTER_KEY_DELAY": "スクロールのキー遅延を入力します"
 }
