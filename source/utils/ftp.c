@@ -33,6 +33,10 @@
 #define BIT(x) (1<<(x))
 #endif
 
+
+bool isTransfering;
+char ftp_accepted_connection[50], ftp_file_transfer[100];
+
 #define POLL_UNKNOWN    (~(POLLIN|POLLPRI|POLLOUT))
 
 #define XFER_BUFFERSIZE 32768
