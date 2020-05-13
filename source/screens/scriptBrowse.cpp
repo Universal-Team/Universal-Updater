@@ -79,7 +79,6 @@ void findExistingFiles(nlohmann::json &json) {
 	for(uint i=0;i<json.size();i++) {
 		for(uint j=0;j<current.size();j++) {
 			if(current[j]["title"] == json[i]["title"]) {
-				Gui::DrawString(0, 0, .5f, WHITE, json[i]["title"]);
 				json[i]["curRevision"] = current[j]["revision"];
 			}
 		}
