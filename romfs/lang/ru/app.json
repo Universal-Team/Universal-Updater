@@ -145,6 +145,6 @@
 	"COPY_ERROR": "Ошибка копирования!",
 	"MOVE_ERROR": "Ошибка перемещения!",
 	"DELETE_ERROR": "Ошибка удаления!",
-	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
+	"CHANGE_KEY_DELAY": "Изменить час задержки ключа",
+	"ENTER_KEY_DELAY": "Введите задержку ключа для прокрутки."
 }
