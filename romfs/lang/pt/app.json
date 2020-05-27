@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Criador de scripts",
 	"CREDITS": "Créditos",
 	"DEVELOPED_BY": "Programado por: Universal-Team.",
-	"MAIN_DEV": "Programador Principal: StackZ",
+	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
 	"CURRENT_VERSION": "Versão atual: ",
 	"MANY_THANKS": "Grande agradecimento a:",
 	"TRANSLATORS": "Todos os nossos Tradutores",
@@ -146,5 +146,10 @@
 	"MOVE_ERROR": "Erro ao Mover!",
 	"DELETE_ERROR": "Erro ao Eliminar!",
 	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling.",
+	"TOGGLE_FADE": "Toggle Fade Effect",
+	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
+	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
+	"ENABLED": "Enabled!",
+	"DISABLED": "Disabled!"
 }
