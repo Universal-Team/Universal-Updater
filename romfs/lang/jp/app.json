@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "スクリプトの作成",
 	"CREDITS": "クレジット",
 	"DEVELOPED_BY": "開発: Universal-Team",
-	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV": "主な開発者：SuperSaiyajinStackie",
 	"CURRENT_VERSION": "現在のバージョン: ",
 	"MANY_THANKS": "多くのおかげで:",
 	"TRANSLATORS": "すべての翻訳者",
@@ -147,9 +147,9 @@
 	"DELETE_ERROR": "削除エラー！",
 	"CHANGE_KEY_DELAY": "キー遅延の変更",
 	"ENTER_KEY_DELAY": "スクロールのキー遅延を入力します",
-	"TOGGLE_FADE": "Toggle Fade Effect",
-	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
-	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
-	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!"
+	"TOGGLE_FADE": "フェード効果を切り替える",
+	"TOGGLE_FADE_ENABLE": "画面のフェード効果を有効にしますか？",
+	"TOGGLE_FADE_DISABLE": "画面のフェード効果を無効にしますか？",
+	"ENABLED": "有効！",
+	"DISABLED": "無効！"
 }
