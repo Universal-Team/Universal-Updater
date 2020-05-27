@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Créateur de script",
 	"CREDITS": "Crédits",
 	"DEVELOPED_BY": "Développé par : Universal-Team.",
-	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV": "Développeur principal : SuperSaiyajinStackie",
 	"CURRENT_VERSION": "Version actuelle: ",
 	"MANY_THANKS": "Merci beaucoup à :",
 	"TRANSLATORS": "Tous nos traducteurs",
@@ -147,9 +147,9 @@
 	"DELETE_ERROR": "Erreur d'effacement!",
 	"CHANGE_KEY_DELAY": "Change Key Delay",
 	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling.",
-	"TOGGLE_FADE": "Toggle Fade Effect",
-	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
-	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
-	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!"
+	"TOGGLE_FADE": "Activer/désactiver l'effet de fondu",
+	"TOGGLE_FADE_ENABLE": "Voulez-vous activer les transitions en fondu?",
+	"TOGGLE_FADE_DISABLE": "Voulez-vous désactiver les transitions en fondu?",
+	"ENABLED": "Activé!",
+	"DISABLED": "Désactivé!"
 }
