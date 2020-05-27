@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Kreator skryptów",
 	"CREDITS": "Współautorzy",
 	"DEVELOPED_BY": "Opracowane przez: Universal-Team.",
-	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV": "Główny programista: SuperSaiyajinStackie",
 	"CURRENT_VERSION": "Bieżąca wersja:",
 	"MANY_THANKS": "Podziękowania dla:",
 	"TRANSLATORS": "Wszystkich naszych tłumaczy",
@@ -147,9 +147,9 @@
 	"DELETE_ERROR": "Błąd usuwania!",
 	"CHANGE_KEY_DELAY": "Zmień opóźnienie klawisza",
 	"ENTER_KEY_DELAY": "Wprowadź opóźnienie klawisza dla przewijania.",
-	"TOGGLE_FADE": "Toggle Fade Effect",
-	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
-	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
-	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!"
+	"TOGGLE_FADE": "Przełącz efekt zanikania",
+	"TOGGLE_FADE_ENABLE": "Czy chcesz włączyć efekt zanikania ekranu?",
+	"TOGGLE_FADE_DISABLE": "Czy chcesz wyłączyć efekt zanikania ekranu?",
+	"ENABLED": "Włączony!",
+	"DISABLED": "Wyłączony!"
 }
