@@ -25,18 +25,13 @@
 */
 
 #include "common.hpp"
-#include "structs.hpp"
+#include "exiting.hpp"
 
-#include <vector>
+void Exiting::Draw(void) const {
+	GFX::DrawTop();
+	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, 255)); // Fade in/out effect
+	Gui::ScreenDraw(Bottom);
+	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, 255)); // Fade in/out effect
+}
 
-class FTPScreen : public Screen {
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
-};
+void Exiting::Logic(u32 hDown, u32 hHeld, touchPosition touch) { }

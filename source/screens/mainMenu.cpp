@@ -25,6 +25,7 @@
 */
 
 #include "config.hpp"
+#include "exiting.hpp"
 #include "ftpScreen.hpp"
 #include "mainMenu.hpp"
 #include "scriptHelper.hpp"
@@ -49,7 +50,7 @@ void MainMenu::Draw(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
 	}
 
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
@@ -62,12 +63,14 @@ void MainMenu::Draw(void) const {
 
 	// Draw UniStore Icon. ;P
 	//GFX::DrawSprite(sprites_uniStore_idx, 10, 65);
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadealpha)); // Fade in out effect
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, mainButtons[4]))) {
 		exiting = true;
+		Gui::setScreen(std::make_unique<Exiting>(), Config::fading, true);
+		fadecolor = 0;
 	}
 
 	// Navigation.
@@ -84,29 +87,29 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				Gui::setScreen(std::make_unique<UniStore>());
+				Gui::setScreen(std::make_unique<UniStore>(), Config::fading, true);
 				break;
 			case 1:
-				Gui::setScreen(std::make_unique<ScriptList>());
+				Gui::setScreen(std::make_unique<ScriptList>(), Config::fading, true);
 				break;
 			case 2:
-				Gui::setScreen(std::make_unique<Settings>());
+				Gui::setScreen(std::make_unique<Settings>(), Config::fading, true);
 				break;
 			case 3:
-				Gui::setScreen(std::make_unique<FTPScreen>());
+				Gui::setScreen(std::make_unique<FTPScreen>(), false, true);
 				break;
 		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Gui::setScreen(std::make_unique<UniStore>());
+			Gui::setScreen(std::make_unique<UniStore>(), Config::fading, true);
 		} else if (touching(touch, mainButtons[1])) {
-			Gui::setScreen(std::make_unique<ScriptList>());
+			Gui::setScreen(std::make_unique<ScriptList>(), Config::fading, true);
 		} else if (touching(touch, mainButtons[2])) {
-			Gui::setScreen(std::make_unique<Settings>());
+			Gui::setScreen(std::make_unique<Settings>(), Config::fading, true);
 		} else if (touching(touch, mainButtons[3])) {
-			Gui::setScreen(std::make_unique<FTPScreen>());
+			Gui::setScreen(std::make_unique<FTPScreen>(), false, true);
 		}
 	}
 }

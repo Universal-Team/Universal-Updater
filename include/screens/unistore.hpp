@@ -34,8 +34,7 @@
 
 #include <vector>
 
-class UniStore : public Screen
-{
+class UniStore : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;

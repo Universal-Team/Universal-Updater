@@ -160,7 +160,7 @@ void ScriptList::DrawSubMenu(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
 	}
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
@@ -170,6 +170,7 @@ void ScriptList::DrawSubMenu(void) const {
 	GFX::DrawButton(subPos[3].x, subPos[3].y, Lang::get("CHANGE_SCRIPTPATH"));
 	// Selector.
 	Animation::Button(subPos[Selection].x, subPos[Selection].y, .060);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 // Load the description.
@@ -192,7 +193,7 @@ ScriptList::ScriptList() {
 		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
 			AutobootWhat = 0;
 			changeBackHandle = true;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		}
 
 		if (ScriptHelper::checkIfValid(Config::AutobootFile) == true) {
@@ -213,7 +214,7 @@ ScriptList::ScriptList() {
 		} else {
 			AutobootWhat = 0;
 			changeBackHandle = true;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		}
 	}
 }
@@ -233,7 +234,7 @@ void ScriptList::DrawList(void) const {
 	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(fileInfo[Selection].title), 400);
 	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[Selection].author), 400);
 	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[Selection].shortDesc), 400);
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
 	GFX::DrawArrow(315, 240, 180.0);
@@ -284,6 +285,7 @@ void ScriptList::DrawList(void) const {
 		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("DELETE_DDM"), 100);
 		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void ScriptList::Draw(void) const {
@@ -312,6 +314,7 @@ void ScriptList::DrawSingleObject(void) const {
 	for(uint i=0;i<lines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
 	GFX::DrawArrow(315, 240, 180.0);
@@ -353,6 +356,7 @@ void ScriptList::DrawSingleObject(void) const {
 		// Dropdown Text.
 		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void ScriptList::refreshList() {
@@ -377,9 +381,9 @@ void ScriptList::refreshList() {
 void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		if (changeBackHandle) {
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		} else {
-			Gui::screenBack();
+			Gui::screenBack(Config::fading);
 			return;
 		}
 	}
@@ -413,14 +417,14 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 			case 1:
 				if (checkWifiStatus() == true) {
-					Gui::setScreen(std::make_unique<ScriptBrowse>());
+					Gui::setScreen(std::make_unique<ScriptBrowse>(), Config::fading, true);
 				} else {
 					notConnectedMsg();
 				}
 				break;
 			case 2:
 				if (isTesting == true) {
-					Gui::setScreen(std::make_unique<ScriptCreator>());
+					Gui::setScreen(std::make_unique<ScriptCreator>(), Config::fading, true);
 				} else {
 					notImplemented();
 				}
@@ -451,13 +455,13 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		} else if (touching(touch, subPos[1])) {
 			if (checkWifiStatus() == true) {
-				Gui::setScreen(std::make_unique<ScriptBrowse>());
+				Gui::setScreen(std::make_unique<ScriptBrowse>(), Config::fading, true);
 			} else {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, subPos[2])) {
 			if (isTesting == true) {
-				Gui::setScreen(std::make_unique<ScriptCreator>());
+				Gui::setScreen(std::make_unique<ScriptCreator>(), Config::fading, true);
 			} else {
 				notImplemented();
 			}

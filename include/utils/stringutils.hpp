@@ -5,8 +5,7 @@
 
 bool matchPattern(std::string pattern, std::string tested);
 
-namespace StringUtils
-{
+namespace StringUtils {
 	std::string format(const std::string& fmt_str, ...);
 }
 

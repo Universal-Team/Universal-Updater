@@ -47,7 +47,6 @@ bool Config::Logging;
 bool Config::UseBars;
 std::string Config::StorePath;
 int Config::LangPath;
-bool Config::GodMode = false;
 int Config::autoboot = 0;
 std::string Config::AutobootFile = "";
 int Config::outdated;
@@ -56,6 +55,7 @@ int Config::notFound;
 int Config::future;
 int Config::Button;
 int Config::keyDelay = 5;
+bool Config::fading = true;
 nlohmann::json configJson;
 extern bool changesMade;
 
@@ -208,6 +208,12 @@ void Config::load() {
 			keyDelay = getInt("KEY_DELAY");
 		}
 
+		if(!configJson.contains("SCREEN_FADE")) {
+			fading = true;
+		} else {
+			fading = getBool("SCREEN_FADE");
+		}
+
 		fclose(file);
 	} else {
 		Color1 = BarColor;
@@ -233,6 +239,7 @@ void Config::load() {
 		future	 = C2D_Color32(255, 255, 0, 255);
 		Button 	 = C2D_Color32(0, 0, 50, 255);
 		keyDelay = 5;
+		fading = true;
 	}
 }
 
@@ -260,6 +267,7 @@ void Config::save() {
 	setInt("FUTURE", future);
 	setInt("BUTTON", Button);
 	setInt("KEY_DELAY", keyDelay);
+	setBool("SCREEN_FADE", fading);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -293,6 +301,7 @@ void Config::initializeNewConfig() {
 	setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
 	setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
 	setInt("KEY_DELAY", 5);
+	setBool("SCREEN_FADE", true);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);

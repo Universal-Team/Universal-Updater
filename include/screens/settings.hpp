@@ -33,8 +33,7 @@
 
 #include <vector>
 
-class Settings : public Screen
-{
+class Settings : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
@@ -63,6 +62,13 @@ private:
 		{80, 30, 149, 52}, // Language.
 		{80, 90, 149, 52}, // Colors.
 		{80, 150, 149, 52} // Credits.
+	};
+
+	std::vector<Structs::ButtonPos> mainButtons2 = {
+		{0, 60, 149, 52}, // Change Music File.
+		{162, 60, 149, 52}, // Change bar style.
+		{0, 130, 149, 52}, // Change Key Delay.
+		{162, 130, 149, 52} // Toggle animation.
 	};
 
 	std::vector<Structs::ButtonPos> arrowPos = {

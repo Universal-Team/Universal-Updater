@@ -40,10 +40,6 @@
 #include <dirent.h>
 #include <unistd.h>
 
-// The classic Fade Effect! ;P
-int fadealpha = 255;
-bool fadein = true;
-
 bool exiting = false;
 bool dspFound = false;
 touchPosition touch;
@@ -100,11 +96,18 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
 
 	// We need to make sure, the file exist.
-	if(access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) == -1 ) {
+	if (access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) == -1 ) {
 		Config::initializeNewConfig();
 	}
+
 	Config::load();
 	Lang::load(Config::lang);
+
+	if (Config::fading) {
+		fadein = true;
+		fadealpha = 255;
+	}
+
 	// In case it takes a bit longer to autoboot a script or so.
 	Msg::DisplayStartMSG();
 	if (Config::Logging == true) {
@@ -116,24 +119,24 @@ Result Init::Initialize() {
 
 	if (Config::autoboot == 1) {
 		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<UniStore>());
+			Gui::setScreen(std::make_unique<UniStore>(), false, true);
 		} else {
 			AutobootWhat = 0;
 			Config::autoboot = 0;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 		}
 	} else if (Config::autoboot == 2) {
 		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<ScriptList>());
+			Gui::setScreen(std::make_unique<ScriptList>(), false, true);
 		} else {
 			AutobootWhat = 0;
 			Config::autoboot = 0;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 		}
 	} else {
 		AutobootWhat = 0;
 		Config::autoboot = 0;
-		Gui::setScreen(std::make_unique<MainMenu>());
+		Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 	}
 
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
@@ -151,10 +154,8 @@ Result Init::Initialize() {
 Result Init::MainLoop() {
 	// Initialize everything.
 	Initialize();
-
 	// Loop as long as the status is not exiting.
-	while (aptMainLoop() && !exiting)
-	{
+	while (aptMainLoop()) {
 		hidScanInput();
 		u32 hHeld = hidKeysHeld();
 		u32 hDown = hidKeysDown();
@@ -163,17 +164,15 @@ Result Init::MainLoop() {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		Gui::clearTextBufs();
-		Gui::mainLoop(hDown, hHeld, touch);
+		Gui::DrawScreen(true);
+		Gui::ScreenLogic(hDown, hHeld, touch, true, true);
 		C3D_FrameEnd(0);
 		gspWaitForVBlank();
-
-		if (fadein == true) {
-			fadealpha -= 3;
-			if (fadealpha < 0) {
-				fadealpha = 0;
-				fadein = false;
-			}
+		if (exiting) {
+			if (!fadeout)	break;
 		}
+
+		Gui::fadeEffects(16, 16, true);
 	}
 	// Exit all services and exit the app.
 	Exit();

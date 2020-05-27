@@ -39,7 +39,7 @@ const std::vector<std::string> Translators = {
 	"lemonnade0",
 	"Pk11",
 	"Roby Spia",
-	"StackZ",
+	"SuperSaiyajinStackie",
 	"XDgierman",
 	"YoSoy"
 };
@@ -66,15 +66,15 @@ const std::vector<std::string> UniversalTeam = {
 	"FlameKat53",
 	"Pk11",
 	"RocketRobz",
-	"StackZ",
+	"SuperSaiyajinStackie",
 	"TotallyNotGuy"
 };
 
 // Script Page 3.
 const std::vector<std::string> ScriptCreators = {
-	"DualBladedKirito", "Glazed_Belmont", "Pk11", "StackZ", "The Conceptionist", "YoSoy"
+	"cooolgamer", "DualBladedKirito", "Glazed_Belmont", "Pk11", "SuperSaiyajinStackie", "The Conceptionist", "YoSoy"
 };
-const std::vector<std::string> ScriptAmount = {"1", "1", "1", "5", "10", "1 | 2"};
+const std::vector<std::string> ScriptAmount = {"1", "1", "1", "1", "5", "10", "1 | 2"};
 
 void Credits::Draw(void) const {
 	std::string title = "Universal-Updater - ";
@@ -87,8 +87,8 @@ void Credits::Draw(void) const {
 			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, title, 400);
 		}
 		Gui::DrawStringCentered(0, 30, 0.7f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 390);
-		Gui::DrawStringCentered(0, 70, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
-		GFX::DrawSprite(sprites_stackZ_idx, 5, 85);
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
+		GFX::DrawSprite(sprites_stackie_idx, 5, 85);
 		GFX::DrawSprite(sprites_universal_core_idx, 200, 110);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
@@ -97,7 +97,9 @@ void Credits::Draw(void) const {
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		GFX::DrawSprite(sprites_discord_idx, 115, 35);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	DrawBottom();
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void Credits::DrawBottom(void) const {
@@ -211,7 +213,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(Config::fading);
 		return;
 	}
 

@@ -32,8 +32,7 @@
 
 #include <vector>
 
-class ScriptCreator : public Screen
-{
+class ScriptCreator : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;

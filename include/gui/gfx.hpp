@@ -31,8 +31,7 @@
 #include "gui.hpp"
 #include "sprites.h"
 
-namespace GFX
-{
+namespace GFX {
 	// Basic GUI.
 	void DrawTop(void);
 	void DrawBottom(void);

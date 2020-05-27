@@ -94,6 +94,7 @@ ScriptBrowse::ScriptBrowse() {
 		loaded = false;
 		return;
 	}
+
 	FILE* file = fopen(metaFile, "r");
 	if(file) {
 		infoJson = nlohmann::json::parse(file, nullptr, false);
@@ -167,6 +168,7 @@ void ScriptBrowse::DrawBrowse(void) const {
 		} else if(infoJson[Selection]["curRevision"] > infoJson[Selection]["revision"]) {
 			Gui::DrawStringCentered(0, 219, 0.7f, Config::TxtColor, Lang::get("FUTURE_SCRIPT"), 370);
 		}
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 		GFX::DrawBottom();
 		GFX::DrawArrow(295, -1);
 		GFX::DrawArrow(315, 240, 180.0);
@@ -244,8 +246,10 @@ void ScriptBrowse::DrawBrowse(void) const {
 			Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("REFRESH_BROWSE_DDM"), 100);
 			Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 		}
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	} else {
 		GFX::DrawBottom();
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	}
 }
 
@@ -273,7 +277,7 @@ void ScriptBrowse::DrawGlossary(void) const {
 
 		Gui::DrawString(15, 185, 0.7f, Config::TxtColor, std::to_string(int64_t(infoJson[Selection]["curRevision"])) + " | " + std::to_string(int64_t(infoJson[Selection]["revision"])), 40);
 		Gui::DrawString(65, 185, 0.7f, Config::TxtColor, Lang::get("REVISION"), 300);
-
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 		GFX::DrawBottom();
 		GFX::DrawSpriteBlend(sprites_download_all_idx, 20, 25);
 		Gui::DrawString(50, 27, 0.6f, Config::TxtColor, Lang::get("DOWNLOAD_ALL"), 260);
@@ -290,8 +294,10 @@ void ScriptBrowse::DrawGlossary(void) const {
 		GFX::DrawSpriteBlend(sprites_update_idx, 20, 195);
 		Gui::DrawString(50, 197, 0.6f, Config::TxtColor, Lang::get("REFRESH_SCRIPTBROWSE"), 260);
 		GFX::DrawArrow(0, 218, 0, 1);
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	} else {
 		GFX::DrawBottom();
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	}
 }
 	
@@ -375,8 +381,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else {
 			if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 				infoJson.clear();
-				Gui::screenBack();
-				return;
+				Gui::screenBack(Config::fading);
 			}
 			if (mode == 0) {
 				if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -516,8 +521,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	} else {
 		if (hDown & KEY_B) {
-			Gui::screenBack();
-			return;
+			Gui::screenBack(Config::fading);
 		}
 	}
 }

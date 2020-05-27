@@ -183,7 +183,7 @@ UniStore::UniStore() {
 		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
 			AutobootWhat = 0;
 			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		}
 		
 		StoreInfo SI;
@@ -203,7 +203,7 @@ UniStore::UniStore() {
 		} else {
 			AutobootWhat = 0;
 			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		}
 
 		if (ScriptHelper::checkIfValid(Config::AutobootFile, 1) == true) {
@@ -226,7 +226,7 @@ UniStore::UniStore() {
 		} else {
 			AutobootWhat = 0;
 			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		}
 	}
 }
@@ -242,6 +242,7 @@ void UniStore::DrawSubMenu(void) const {
 	}
 
 	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
@@ -250,6 +251,7 @@ void UniStore::DrawSubMenu(void) const {
 	GFX::DrawButton(subPos[2].x, subPos[2].y, Lang::get("CHANGE_STOREPATH"));
 	// Selector.
 	Animation::Button(subPos[Selection].x, subPos[Selection].y, .060);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 
@@ -269,7 +271,7 @@ void UniStore::DrawStoreList(void) const {
 	for(uint i=0;i<descLines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, Config::TxtColor, descLines[i], 400);
 	}
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
 	GFX::DrawArrow(315, 240, 180.0);
@@ -322,6 +324,7 @@ void UniStore::DrawStoreList(void) const {
 		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("UPDATE_DDM"), 100);
 		Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void UniStore::DrawStore(void) const {
@@ -368,6 +371,7 @@ void UniStore::DrawStore(void) const {
 		}
 	}
 	
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	// Bottom Background.
 	if (appStoreJson.at("storeInfo").contains("iconIndexBottom") && sheetHasLoaded == true) {
@@ -430,6 +434,7 @@ void UniStore::DrawStore(void) const {
 		// Dropdown Text.
 		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void UniStore::Draw(void) const {
@@ -501,9 +506,9 @@ void UniStore::refreshList() {
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		if (changeBackState) {
-			Gui::setScreen(std::make_unique<MainMenu>());
+			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
 		} else {
-			Gui::screenBack();
+			Gui::screenBack(Config::fading);
 			return;
 		}
 	}

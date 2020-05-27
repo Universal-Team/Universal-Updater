@@ -24,7 +24,6 @@
 *         reasonable ways as different from the original version.
 */
 
-
 #include "ftpScreen.hpp"
 
 #include <algorithm>
@@ -38,8 +37,7 @@ extern "C" {
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern touchPosition touch;
 
-void FTPScreen::Draw(void) const
-{
+void FTPScreen::Draw(void) const {
 	ftp_init();
 	Result ret = 0;
 	char buf[137], hostname[128];
@@ -56,6 +54,7 @@ void FTPScreen::Draw(void) const
 		} else {
 			Gui::DrawString((400-Gui::GetStringWidth(0.7f, Lang::get("FTP_MODE")))/2, 2, 0.7f, Config::TxtColor, Lang::get("FTP_MODE"), 400);
 		}
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 		GFX::DrawBottom();
 		GFX::DrawArrow(0, 218, 0, 1);
 		ret = ACU_GetWifiStatus(&wifiStatus);
@@ -77,7 +76,7 @@ void FTPScreen::Draw(void) const
 
 		Gui::DrawStringCentered(0, 60, 0.48, Config::TxtColor, buf, 320);
 		Gui::DrawStringCentered(0, 222, 0.48f, Config::TxtColor, Lang::get("B_FTP_EXIT"), 320);
-
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 		Gui::clearTextBufs();
 		C3D_FrameEnd(0);
 		hidScanInput();
@@ -91,11 +90,8 @@ void FTPScreen::Draw(void) const
 	memset(ftp_file_transfer, 0, 50); // Empty transfer status.
 	ftp_exit();
 
-	Gui::screenBack();
-	return;
+	Gui::screenBack(false);
 }
 
 // Needed here, otherwise it won't compile.
-void FTPScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch)
-{
-}
+void FTPScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) { }

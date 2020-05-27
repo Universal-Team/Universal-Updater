@@ -34,6 +34,7 @@ extern u32 bgTopColor;
 extern u32 bgBottomColor;
 extern u32 TextColor;
 
+// I do not think we need that at all.
 void Msg::DisplayStartMSG() {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -44,12 +45,15 @@ void Msg::DisplayStartMSG() {
 	Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
 	Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("STARTING_UNIVERSAL_UPDATER"));
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	Gui::ScreenDraw(Bottom);
 	Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
 	Gui::Draw_Rect(0, 25, 320, 190, Config::Color2);
 	Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	C3D_FrameEnd(0);
 }
+
 void Msg::DisplayMsg(std::string text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -65,8 +69,7 @@ void Msg::DisplayMsg(std::string text) {
 	C3D_FrameEnd(0);
 }
 
-void Msg::DisplayWarnMsg(std::string Text)
-{
+void Msg::DisplayWarnMsg(std::string Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -94,8 +97,7 @@ extern touchPosition touch;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 // Display a Message, which needs to be confirmed with A/B.
-bool Msg::promptMsg(std::string promptMsg)
-{
+bool Msg::promptMsg(std::string promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -108,6 +110,7 @@ bool Msg::promptMsg(std::string promptMsg)
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, TextColor, promptMsg, 395, 70);
 		Gui::DrawStringCentered(0, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	}
+
 	GFX::DrawBottom();
 	if (isScriptSelected == false) {
 		Gui::Draw_Rect(10, 100, 140, 35, Config::Color1);
@@ -122,8 +125,7 @@ bool Msg::promptMsg(std::string promptMsg)
 	}
 
 	C3D_FrameEnd(0);
-	while(1)
-	{
+	while(1) {
 		gspWaitForVBlank();
 		hidScanInput();
 		hidTouchRead(&touch);

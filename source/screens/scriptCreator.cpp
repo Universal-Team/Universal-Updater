@@ -83,7 +83,7 @@ void ScriptCreator::DrawSubMenu(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
 	}
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 
 	for (int i = 0; i < 2; i++) {
@@ -96,6 +96,7 @@ void ScriptCreator::DrawSubMenu(void) const {
 
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "New script"))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, "New script", 140);
 	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "Existing script"))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, "Existing script", 140);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void ScriptCreator::DrawScriptScreen(void) const {
@@ -105,7 +106,7 @@ void ScriptCreator::DrawScriptScreen(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
 	}
-	
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 
 	// Draw Page.
@@ -142,6 +143,7 @@ void ScriptCreator::DrawScriptScreen(void) const {
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "rmdir"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "rmdir", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkfile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "mkfile", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TimeMsg"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "TimeMsg", 140);
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	}
 }
 
@@ -284,7 +286,7 @@ void ScriptCreator::setInfoStuff(void) {
 
 void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(Config::fading);
 		return;
 	}
 
@@ -323,7 +325,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_DOWN) {
-		if(Selection == 0)	Selection = 1;
+		if (Selection == 0)	Selection = 1;
 	}
 }
 
@@ -364,7 +366,6 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Page 2.
-
 	if (hDown & KEY_R) {
 		if (page == 0) {
 			page = 1;

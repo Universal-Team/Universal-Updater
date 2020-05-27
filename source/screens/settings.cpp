@@ -57,6 +57,7 @@ void Settings::DrawSubMenu(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawArrow(318, 240, 180.0, 1);
@@ -66,6 +67,7 @@ void Settings::DrawSubMenu(void) const {
 	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CREDITS"));
 	// Selector.
 	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 const std::vector<std::string> languages = {
@@ -91,6 +93,7 @@ void Settings::DrawLanguageSelection(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 
 	for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)languages.size();i++) {
@@ -101,6 +104,7 @@ void Settings::DrawLanguageSelection(void) const {
 		}
 		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, line1, 320);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 const std::vector<std::string> colorList = {
@@ -155,7 +159,7 @@ void Settings::DrawColorChanging(void) const {
 	}
 
 
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	if (!dropDownMenu) {
 		GFX::DrawArrow(0, 218, 0, 1);
@@ -222,6 +226,7 @@ void Settings::DrawColorChanging(void) const {
 			GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, ColorHelper::getColorName(Config::Button, 0).c_str(), C2D_Color32(0, 0, 255, 255));
 		}
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void Settings::DrawMiscSettings(void) const {
@@ -231,26 +236,21 @@ void Settings::DrawMiscSettings(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
 	}
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
 
-	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("CHANGE_MUSICFILE"));
-	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("CHANGE_BAR_STYLE"));
-	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_KEY_DELAY"));
+	GFX::DrawButton(mainButtons2[0].x, mainButtons2[0].y, Lang::get("CHANGE_MUSICFILE"));
+	GFX::DrawButton(mainButtons2[1].x, mainButtons2[1].y, Lang::get("CHANGE_BAR_STYLE"));
+	GFX::DrawButton(mainButtons2[2].x, mainButtons2[2].y, Lang::get("CHANGE_KEY_DELAY"));
+	GFX::DrawButton(mainButtons2[3].x, mainButtons2[3].y, Lang::get("TOGGLE_FADE"));
+
 	// Selector.
-	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
+	Animation::Button(mainButtons2[Selection].x, mainButtons2[Selection].y, .060);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_UP) {
-		if (Selection > 0)	Selection--;
-	}
-
-	if (hDown & KEY_DOWN) {
-		if (Selection < 2)	Selection++;
-	}
-
 	if (hDown & KEY_A) {
 		if (Selection == 0) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
@@ -265,29 +265,69 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (Selection == 2) {
 			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
+		} else if (Selection == 3) {
+			if (Config::fading) {
+				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
+					Config::fading = false;
+					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					changesMade = true;
+				}
+			} else {
+				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
+					Config::fading = true;
+					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					changesMade = true;
+				}
+			}
 		}
 	}
 
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, mainButtons[0])) {
+		if (touching(touch, mainButtons2[0])) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
 			if (tempMusic != "") {
 				Config::MusicPath = tempMusic;
 				changesMade = true;
 			}
-		} else if (touching(touch, mainButtons[1])) {
+		} else if (touching(touch, mainButtons2[1])) {
 			if (Config::UseBars == true)	Config::UseBars = false;
 			else if (Config::UseBars == false)	Config::UseBars = true;
 			changesMade = true;
-		} else if (touching(touch, mainButtons[2])) {
+		} else if (touching(touch, mainButtons2[2])) {
 			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
+		} else if (touching(touch, mainButtons2[3])) {
+			if (Config::fading) {
+				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
+					Config::fading = false;
+					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					changesMade = true;
+				}
+			} else {
+				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
+					Config::fading = true;
+					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					changesMade = true;
+				}
+			}
 		}
 	}
 
 	if ((hDown & KEY_B || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		Selection = 0;
 		mode = 0;
+	}
+
+
+	// Navigation.
+	if (hDown & KEY_UP) {
+		if (Selection > 1)	Selection -= 2;
+	} else if (hDown & KEY_DOWN) {
+		if (Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
+	} else if (hDown & KEY_LEFT) {
+		if (Selection%2) Selection--;
+	} else if (hDown & KEY_RIGHT) {
+		if (!(Selection%2)) Selection++;
 	}
 }
 
@@ -313,7 +353,7 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				mode = 2;
 				break;
 			case 2:
-				Gui::setScreen(std::make_unique<Credits>());
+				Gui::setScreen(std::make_unique<Credits>(), Config::fading, true);
 				break;
 		}
 	}
@@ -327,12 +367,12 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPos = 0;
 			mode = 2;
 		} else if (touching(touch, mainButtons[2])) {
-			Gui::setScreen(std::make_unique<Credits>());
+			Gui::setScreen(std::make_unique<Credits>(), Config::fading, true);
 		}
 	}
 
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Gui::screenBack();
+		Gui::screenBack(Config::fading);
 		return;
 	}
 

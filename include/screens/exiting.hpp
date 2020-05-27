@@ -24,19 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
+#ifndef EXITING_HPP
+#define EXITING_HPP
+
 #include "common.hpp"
-#include "structs.hpp"
 
-#include <vector>
-
-class FTPScreen : public Screen {
+class Exiting : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-
-private:
-	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
-	};
 };
+
+#endif

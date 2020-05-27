@@ -29,8 +29,7 @@
 
 #include <string>
 
-namespace Msg
-{
+namespace Msg {
 	void DisplayMsg(std::string text);
 	void DisplayWarnMsg(std::string Text);
 	bool promptMsg(std::string promptMsg);
