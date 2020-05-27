@@ -266,7 +266,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
 		} else if (Selection == 3) {
-			if (Config::fading) {
+			/*if (Config::fading) {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
 					Config::fading = false;
 					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
@@ -278,7 +278,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
 					changesMade = true;
 				}
-			}
+			}*/
 		}
 	}
 
@@ -296,7 +296,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons2[2])) {
 			Config::keyDelay = Input::getUint(255, Lang::get("ENTER_KEY_DELAY"));
 			changesMade = true;
-		} else if (touching(touch, mainButtons2[3])) {
+		} /*else if (touching(touch, mainButtons2[3])) {
 			if (Config::fading) {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
 					Config::fading = false;
@@ -310,7 +310,7 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					changesMade = true;
 				}
 			}
-		}
+		}*/
 	}
 
 	if ((hDown & KEY_B || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
