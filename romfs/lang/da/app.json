@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Script Skaber",
 	"CREDITS": "Medvirkende",
 	"DEVELOPED_BY": "Udviklet af: Universal-Team.",
-	"MAIN_DEV": "Hovedudvikler: StackZ",
+	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
 	"CURRENT_VERSION": "Nuværende version: ",
 	"MANY_THANKS": "Mange Tak Til:",
 	"TRANSLATORS": "Alle vores oversættere",
@@ -146,5 +146,10 @@
 	"MOVE_ERROR": "Flytnings Fejl!",
 	"DELETE_ERROR": "Sletnings Fejl!",
 	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling."
+	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling.",
+	"TOGGLE_FADE": "Toggle Fade Effect",
+	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
+	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
+	"ENABLED": "Enabled!",
+	"DISABLED": "Disabled!"
 }
