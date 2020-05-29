@@ -208,11 +208,11 @@ void Config::load() {
 			keyDelay = getInt("KEY_DELAY");
 		}
 
-	/*	if(!configJson.contains("SCREEN_FADE")) {
+		if(!configJson.contains("SCREEN_FADE")) {
 			fading = false;
 		} else {
 			fading = getBool("SCREEN_FADE");
-		}*/
+		}
 
 		fclose(file);
 	} else {
