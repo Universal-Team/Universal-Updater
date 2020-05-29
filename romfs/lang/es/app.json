@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Creador de script",
 	"CREDITS": "Agradecimientos",
 	"DEVELOPED_BY": "Desarrollado por: Universal-Team.",
-	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV": "Desarrollador principal: SuperSaiyajinStackie",
 	"CURRENT_VERSION": "Versión Actual: ",
 	"MANY_THANKS": "Muchas gracias a:",
 	"TRANSLATORS": "Todos nuestros traductores",
@@ -145,11 +145,11 @@
 	"COPY_ERROR": "¡Copiar error!",
 	"MOVE_ERROR": "¡Mover error!",
 	"DELETE_ERROR": "¡Eliminar error!",
-	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling.",
-	"TOGGLE_FADE": "Toggle Fade Effect",
-	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
-	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
-	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!"
+	"CHANGE_KEY_DELAY": "Cambiar retardo de clave",
+	"ENTER_KEY_DELAY": "Introduzca el retardo de la clave para el desplazamiento.",
+	"TOGGLE_FADE": "Cambiar efecto de fundido",
+	"TOGGLE_FADE_ENABLE": "¿Quieres activar el efecto de fundido de pantalla?",
+	"TOGGLE_FADE_DISABLE": "¿Le gustaría desactivar el efecto de fundido de pantalla?",
+	"ENABLED": "¡Habilitado!",
+	"DISABLED": "deshabilitado!"
 }
