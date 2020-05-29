@@ -1,7 +1,7 @@
 trigger:
   branches:
     include: ['*']
-    exclude: [translation, cleanup, full-rewrite]
+    exclude: [translation, cleanup, crash-fix-attempt]
   tags:
     include: ['*']
 

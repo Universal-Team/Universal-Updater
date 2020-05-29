@@ -380,8 +380,8 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			DropDownLogic(hDown, hHeld, touch);
 		} else {
 			if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-				infoJson.clear();
 				Gui::screenBack(Config::fading);
+				return;
 			}
 			if (mode == 0) {
 				if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
@@ -522,6 +522,7 @@ void ScriptBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	} else {
 		if (hDown & KEY_B) {
 			Gui::screenBack(Config::fading);
+			return;
 		}
 	}
 }
