@@ -91,6 +91,7 @@ void FTPScreen::Draw(void) const {
 	ftp_exit();
 
 	Gui::screenBack(false);
+	return;
 }
 
 // Needed here, otherwise it won't compile.
