@@ -34,6 +34,11 @@ To build Universal-Updater from source, you need devkitPro installed, along with
 
 ![](https://universal-team.github.io/images/universal-updater/script-browse-3.png)![](https://universal-team.github.io/images/universal-updater/script-browse-7.png)![](https://universal-team.github.io/images/universal-updater/scriptlist-selection.png)![](https://universal-team.github.io/images/universal-updater/mainMenu.png)
 
+## Translations
+
+Want to help to translate Universal-Updater? Then feel free to join us on Crowdin [here](https://crwd.in/universal-updater).
+Is it a new Language which isn't available in Universal-Updater? Then join our [Discord Server](https://discord.gg/KDJCfGF) and ask Evie to add the language to crowdin.
+
 ## Contributions
 
 [PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.
