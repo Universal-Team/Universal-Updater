@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "Voulez-vous activer les transitions en fondu?",
 	"TOGGLE_FADE_DISABLE": "Voulez-vous désactiver les transitions en fondu?",
 	"ENABLED": "Activé!",
-	"DISABLED": "Désactivé!"
+	"DISABLED": "Désactivé!",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
