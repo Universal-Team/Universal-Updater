@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
 	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
 	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!"
+	"DISABLED": "Disabled!",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
