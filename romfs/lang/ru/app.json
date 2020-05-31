@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "Хотите включить эффект затухания экрана?",
 	"TOGGLE_FADE_DISABLE": "Хотите выключить эффект затухания экрана?",
 	"ENABLED": "Включено!",
-	"DISABLED": "Выключено!"
+	"DISABLED": "Выключено!",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
