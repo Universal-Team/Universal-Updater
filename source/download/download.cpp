@@ -47,7 +47,6 @@ std::string jsonName;
 extern bool downloadNightlies;
 extern int filesExtracted;
 extern std::string extractingFile;
-
 char progressBarMsg[128] = "";
 bool showProgressBar = false;
 int progressBarType = 0; // 0 = Download | 1 = Extract | 2 = Install
@@ -68,8 +67,10 @@ extern u32 TextColor;
 extern u32 selected;
 extern u32 unselected;
 
+CURL *hnd; // Needed to display download speed properly?
 curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero later
 curl_off_t downloadNow = 0;
+curl_off_t downloadSpeed = 0;
 
 static FILE *downfile = NULL;
 static size_t file_buffer_pos = 0;
@@ -155,7 +156,6 @@ Result downloadToFile(std::string url, std::string path) {
 	downloadTotal = 1;
 	downloadNow = 0;
 	int res;
-	CURL *hnd;
 	CURLcode cres;
 
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
@@ -197,6 +197,7 @@ Result downloadToFile(std::string url, std::string path) {
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
 
 	cres = curl_easy_perform(hnd);
+	downloadSpeed = 0;
 	curl_easy_cleanup(hnd);
 	
 	if (cres != CURLE_OK) {
@@ -252,8 +253,7 @@ exit:
 
 // following function is from
 // https://github.com/angelsl/libctrfgh/blob/master/curl_test/src/main.c
-static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata)
-{
+static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata) {
 	(void) userdata;
 	const size_t bsz = size*nmemb;
 
@@ -290,8 +290,7 @@ static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata)
 	return bsz;
 }
 
-static Result setupContext(CURL *hnd, const char * url)
-{
+static Result setupContext(CURL *hnd, const char * url) {
 	downloadTotal = 1;
 	downloadNow = 0;
 	curl_easy_setopt(hnd, CURLOPT_XFERINFOFUNCTION, curlProgress);
@@ -496,8 +495,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 	}
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases, bool showVersions)
-{
+Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases, bool showVersions) {
 	Result ret = 0;
 	// Do not display progressbar.
 	if (showVersions) {
@@ -531,7 +529,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	printf("Downloading latest release from repo:\n%s\nby:\n%s\n", repoName.c_str(), repoOwner.c_str());
 	printf("Crafted API url:\n%s\n", apiurl.c_str());
 
-	CURL *hnd = curl_easy_init();
+	hnd = curl_easy_init();
 
 	ret = setupContext(hnd, apiurl.c_str());
 	if (ret != 0) {
@@ -719,8 +717,7 @@ std::string getLatestRelease(std::string repo, std::string item)
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string item)
-{
+std::string getLatestCommit(std::string repo, std::string item) {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf)
@@ -783,8 +780,7 @@ std::string getLatestCommit(std::string repo, std::string item)
 	return jsonItem;
 }
 
-std::string getLatestCommit(std::string repo, std::string array, std::string item)
-{
+std::string getLatestCommit(std::string repo, std::string array, std::string item) {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf)
@@ -857,12 +853,15 @@ void displayProgressBar() {
 			downloadTotal = downloadNow;
 		}
 
+		if (progressBarType == 0)	curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed); // Get download speed.
+
 		// Downloading.
 		if (progressBarType == 0){
-			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+			snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
 					formatBytes(downloadNow).c_str(),
 					formatBytes(downloadTotal).c_str(),
-					((float)downloadNow/(float)downloadTotal) * 100.0f);
+					((float)downloadNow/(float)downloadTotal) * 100.0f, 
+					Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed / 1024), Lang::get("BYTES_PER_SECOND").c_str());
 					// Extracting.
 		} else if (progressBarType == 1) {
 			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
