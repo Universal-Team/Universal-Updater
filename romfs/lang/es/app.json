@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "¿Quieres activar el efecto de fundido de pantalla?",
 	"TOGGLE_FADE_DISABLE": "¿Le gustaría desactivar el efecto de fundido de pantalla?",
 	"ENABLED": "¡Habilitado!",
-	"DISABLED": "deshabilitado!"
+	"DISABLED": "deshabilitado!",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
