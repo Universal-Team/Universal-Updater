@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "Czy chcesz włączyć efekt zanikania ekranu?",
 	"TOGGLE_FADE_DISABLE": "Czy chcesz wyłączyć efekt zanikania ekranu?",
 	"ENABLED": "Włączony!",
-	"DISABLED": "Wyłączony!"
+	"DISABLED": "Wyłączony!",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
