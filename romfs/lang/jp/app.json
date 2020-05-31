@@ -151,5 +151,7 @@
 	"TOGGLE_FADE_ENABLE": "画面のフェード効果を有効にしますか？",
 	"TOGGLE_FADE_DISABLE": "画面のフェード効果を無効にしますか？",
 	"ENABLED": "有効！",
-	"DISABLED": "無効！"
+	"DISABLED": "無効！",
+	"DOWNLOAD_SPEED": "Download Speed: ",
+	"BYTES_PER_SECOND": " bytes per second"
 }
