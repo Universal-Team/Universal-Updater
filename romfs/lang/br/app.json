@@ -145,13 +145,13 @@
 	"COPY_ERROR": "Copy Bruhror!",
 	"MOVE_ERROR": "Move Bruhror!",
 	"DELETE_ERROR": "Delete Bruhror!",
-	"CHANGE_KEY_DELAY": "Change Key Delay",
-	"ENTER_KEY_DELAY": "Enter the Key Delay for Scrolling.",
-	"TOGGLE_FADE": "Toggle Fade Effect",
+	"CHANGE_KEY_DELAY": "Change Bruhey Delay",
+	"ENTER_KEY_DELAY": "Enter the Bruhey Delay for Scrolling.",
+	"TOGGLE_FADE": "Toggle Bruhade Effect",
 	"TOGGLE_FADE_ENABLE": "Would you like to enable the Screen fade effect?",
 	"TOGGLE_FADE_DISABLE": "Would you like to disable the Screen fade effect?",
-	"ENABLED": "Enabled!",
-	"DISABLED": "Disabled!",
-	"DOWNLOAD_SPEED": "Download Speed: ",
-	"BYTES_PER_SECOND": " bytes per second"
+	"ENABLED": "Bruhnabled!",
+	"DISABLED": "Bruhsabled!",
+	"DOWNLOAD_SPEED": "Bruwnload Speed: ",
+	"BYTES_PER_SECOND": " bruhytes per sec"
 }
