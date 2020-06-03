@@ -153,5 +153,7 @@
 	"ENABLED": "Activé!",
 	"DISABLED": "Désactivé!",
 	"DOWNLOAD_SPEED": "Vitesse de téléchargement : ",
-	"BYTES_PER_SECOND": " bytes par seconde"
+	"BYTES_PER_SECOND": " bytes par seconde",
+	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
+	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
 }
