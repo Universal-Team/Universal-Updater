@@ -153,5 +153,7 @@
 	"ENABLED": "Включено!",
 	"DISABLED": "Выключено!",
 	"DOWNLOAD_SPEED": "Скорость загрузки: ",
-	"BYTES_PER_SECOND": " байтов в секунду"
+	"BYTES_PER_SECOND": " байтов в секунду",
+	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
+	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
 }
