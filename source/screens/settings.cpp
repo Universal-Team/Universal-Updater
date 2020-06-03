@@ -318,6 +318,22 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		mode = 0;
 	}
 
+	// No idea where to place the button for it, so do it here for now.
+	if (hDown & KEY_SELECT) {
+		if (Config::progress) {
+			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_DISABLE"))) {
+					Config::progress = false;
+					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					changesMade = true;
+			}
+		} else {
+			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_ENABLE"))) {
+				Config::progress = true;
+				Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+				changesMade = true;
+			}
+		}
+	}
 
 	// Navigation.
 	if (hDown & KEY_UP) {

@@ -56,6 +56,7 @@ int Config::future;
 int Config::Button;
 int Config::keyDelay = 5;
 bool Config::fading = false;
+bool Config::progress = true;
 nlohmann::json configJson;
 extern bool changesMade;
 
@@ -214,6 +215,12 @@ void Config::load() {
 			fading = getBool("SCREEN_FADE");
 		}
 
+		if(!configJson.contains("PROGRESS_DISPLAY")) {
+			progress = true;
+		} else {
+			progress = getBool("PROGRESS_DISPLAY");
+		}
+
 		fclose(file);
 	} else {
 		Color1 = BarColor;
@@ -240,6 +247,7 @@ void Config::load() {
 		Button	 = C2D_Color32(0, 0, 50, 255);
 		keyDelay = 5;
 		fading = false;
+		progress = true;
 	}
 }
 
@@ -268,6 +276,7 @@ void Config::save() {
 	setInt("BUTTON", Button);
 	setInt("KEY_DELAY", keyDelay);
 	setBool("SCREEN_FADE", fading);
+	setBool("PROGRESS_DISPLAY", progress);
 
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
@@ -302,6 +311,7 @@ void Config::initializeNewConfig() {
 	setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
 	setInt("KEY_DELAY", 5);
 	setBool("SCREEN_FADE", false);
+	setBool("PROGRESS_DISPLAY", true);
 
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
