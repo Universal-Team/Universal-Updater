@@ -153,5 +153,7 @@
 	"ENABLED": "Bruhnabled!",
 	"DISABLED": "Bruhsabled!",
 	"DOWNLOAD_SPEED": "Bruwnload Speed: ",
-	"BYTES_PER_SECOND": " bruhytes per sec"
+	"BYTES_PER_SECOND": " bruhytes per sec",
+	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
+	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
 }
