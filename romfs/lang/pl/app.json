@@ -152,8 +152,8 @@
 	"TOGGLE_FADE_DISABLE": "Czy chcesz wyłączyć efekt zanikania ekranu?",
 	"ENABLED": "Włączony!",
 	"DISABLED": "Wyłączony!",
-	"DOWNLOAD_SPEED": "Download Speed: ",
-	"BYTES_PER_SECOND": " bytes per second",
-	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
-	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
+	"DOWNLOAD_SPEED": "Prędkość Pobierania:",
+	"BYTES_PER_SECOND": "bajty na sekundę",
+	"PROGRESS_BAR_ENABLE": "Czy chcesz włączyć pasek postępów?",
+	"PROGRESS_BAR_DISABLE": "Czy chcesz wyłączyć pasek postępów?"
 }
