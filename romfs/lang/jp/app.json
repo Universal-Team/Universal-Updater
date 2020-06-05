@@ -153,7 +153,7 @@
 	"ENABLED": "有効！",
 	"DISABLED": "無効！",
 	"DOWNLOAD_SPEED": "ダウンロード速度：",
-	"BYTES_PER_SECOND": " bytes per second",
-	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
-	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
+	"BYTES_PER_SECOND": " バイト/秒",
+	"PROGRESS_BAR_ENABLE": "プログレスバーを有効にしますか？",
+	"PROGRESS_BAR_DISABLE": "プログレスバーを無効にしますか？"
 }
