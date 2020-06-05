@@ -152,7 +152,7 @@
 	"TOGGLE_FADE_DISABLE": "画面のフェード効果を無効にしますか？",
 	"ENABLED": "有効！",
 	"DISABLED": "無効！",
-	"DOWNLOAD_SPEED": "Download Speed: ",
+	"DOWNLOAD_SPEED": "ダウンロード速度：",
 	"BYTES_PER_SECOND": " bytes per second",
 	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
 	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
