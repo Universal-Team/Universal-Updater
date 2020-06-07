@@ -148,12 +148,12 @@
 	"CHANGE_KEY_DELAY": "Cambiar retardo de clave",
 	"ENTER_KEY_DELAY": "Introduzca el retardo de la clave para el desplazamiento.",
 	"TOGGLE_FADE": "Cambiar efecto de fundido",
-	"TOGGLE_FADE_ENABLE": "¿Quieres activar el efecto de fundido de pantalla?",
+	"TOGGLE_FADE_ENABLE": "¿Quiere activar el efecto de fundido de pantalla?",
 	"TOGGLE_FADE_DISABLE": "¿Le gustaría desactivar el efecto de fundido de pantalla?",
 	"ENABLED": "¡Habilitado!",
-	"DISABLED": "deshabilitado!",
-	"DOWNLOAD_SPEED": "Download Speed: ",
-	"BYTES_PER_SECOND": " bytes per second",
-	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
-	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
+	"DISABLED": "¡Deshabilitado!",
+	"DOWNLOAD_SPEED": "Veloc. descarga: ",
+	"BYTES_PER_SECOND": " bytes por segundo",
+	"PROGRESS_BAR_ENABLE": "¿Quiere activar la barra de progreso?",
+	"PROGRESS_BAR_DISABLE": "¿Le gustaría desactivar la barra de progreso?"
 }
