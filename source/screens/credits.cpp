@@ -41,7 +41,8 @@ const std::vector<std::string> Translators = {
 	"Roby Spia",
 	"SuperSaiyajinStackie",
 	"XDgierman",
-	"YoSoy"
+	"YoSoy",
+	"XxPhoenix1996xX"
 };
 
 const std::vector<std::string> Languages = {
@@ -57,6 +58,7 @@ const std::vector<std::string> Languages = {
 	"Italiano",
 	"Deutsch, English",
 	"Polski",
+	"Español",
 	"Español"
 };
 
