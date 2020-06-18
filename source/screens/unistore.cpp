@@ -31,26 +31,13 @@
 #include "keyboard.hpp"
 #include "mainMenu.hpp"
 #include "unistore.hpp"
+#include "unistore_v1.hpp"
+#include "unistore_v2.hpp"
 
-#include <algorithm>
-#include <regex>
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-extern u32 getColor(std::string colorString);
-extern bool isScriptSelected;
-
-extern u32 barColor;
-extern u32 bgTopColor;
-extern u32 bgBottomColor;
-extern u32 TextColor;
-extern u32 progressBar;
-extern u32 selected;
-extern u32 unselected;
-extern int AutobootWhat;
-bool changeBackState = false;
 extern bool changesMade;
-C2D_SpriteSheet appStoreSheet;
 
 // Parse informations like URL, Title, Author, Description.
 StoreInfo parseStoreInfo(std::string fileName) {
@@ -70,13 +57,14 @@ StoreInfo parseStoreInfo(std::string fileName) {
 	info.file = ScriptHelper::getString(json, "storeInfo", "file");
 	info.storeSheet = ScriptHelper::getString(json, "storeInfo", "sheet");
 	info.sheetURL = ScriptHelper::getString(json, "storeInfo", "sheetURL");
+	info.version = ScriptHelper::getNum(json, "storeInfo", "version");
 	return info;
 }
 
 nlohmann::json UniStore::openStoreFile() {
 	FILE* file = fopen(currentStoreFile.c_str(), "rt");
 	nlohmann::json jsonFile;
-	if(file)	jsonFile = nlohmann::json::parse(file, nullptr, false);
+	if (file)	jsonFile = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	return jsonFile;
 }
@@ -84,56 +72,22 @@ nlohmann::json UniStore::openStoreFile() {
 // Parse the Objects.
 std::vector<std::string> parseStoreObjects(std::string storeName) {
 	FILE* file = fopen(storeName.c_str(), "rt");
-	if(!file) {
+	if (!file) {
 		printf("File not found\n");
 		return {{""}};
 	}
+
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
 	std::vector<std::string> objs;
 	for(auto it = json.begin();it != json.end(); it++) {
-		if(it.key() != "storeInfo") {
+		if (it.key() != "storeInfo") {
 			objs.push_back(it.key());
 		}
 	}
+
 	return objs;
-}
-
-bool sheetHasLoaded = false;
-// Sheet / Icon stuff.
-void UniStore::loadStoreSheet(int pos) {
-	if (sheetHasLoaded == false) {
-		appStoreSheet = C2D_SpriteSheetLoad(storeInfo[pos].storeSheet.c_str());
-		sheetHasLoaded = true;
-	}
-}
-
-void loadStoreAutobootSheet(const std::string &sheet) {
-	if (sheetHasLoaded == false) {
-		appStoreSheet = C2D_SpriteSheetLoad(sheet.c_str());
-		sheetHasLoaded = true;
-	}
-}
-
-void freeSheet() {
-	if (sheetHasLoaded == true) {
-		C2D_SpriteSheetFree(appStoreSheet);
-		sheetHasLoaded = false;
-	}
-}
-
-void drawBlend(int key, int x, int y) {
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, C2D_Color32(0, 0, 0, 180), 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, C2D_Color32(0, 0, 0, 180), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, C2D_Color32(0, 0, 0, 180), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, C2D_Color32(0, 0, 0, 180), 0.5);
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, key), x, y, 0.5f, &tint);
-}
-
-void drawNormal(int key, int x, int y) {
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(appStoreSheet, key), x, y, 0.5f, NULL);
 }
 
 void UniStore::descript() {
@@ -148,88 +102,11 @@ void UniStore::loadStoreDesc(void) {
 		descLines.push_back(storeDesc.substr(0, storeDesc.find('\n')));
 		storeDesc = storeDesc.substr(storeDesc.find('\n')+1);
 	}
+
 	descLines.push_back(storeDesc.substr(0, storeDesc.find('\n')));
 }
 
-// Store colors.
-void loadStoreColors(nlohmann::json &json) {
-	u32 colorTemp;
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "barColor"));
-	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "bgTopColor"));
-	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "bgBottomColor"));
-	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "textColor"));
-	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "selectedColor"));
-	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "unselectedColor"));
-	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
-
-	colorTemp = getColor(ScriptHelper::getString(json, "storeInfo", "progressbarColor"));
-	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
-}
-
-UniStore::UniStore() {
-	// Autobooting UniStore. ;)
-	if (AutobootWhat == 1) {
-		// If store isn't found, go to MainMenu.
-		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
-			AutobootWhat = 0;
-			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
-		}
-		
-		StoreInfo SI;
-		// If WiFi enabled & File exist, update store.
-		if (ScriptHelper::checkIfValid(Config::AutobootFile, 1) == true) {
-			SI = parseStoreInfo(Config::AutobootFile);
-			if (checkWifiStatus()) {
-				if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-					if(SI.url != "" && SI.url != "MISSING: storeInfo.url" && SI.file != "" && SI.file != "MISSING: storeInfo.file") {
-						ScriptHelper::downloadFile(SI.url, SI.file, Lang::get("UPDATING"));
-					}
-					if(SI.sheetURL != "" && SI.sheetURL != "MISSING: storeInfo.sheetURL" && SI.storeSheet != "" && SI.storeSheet != "MISSING: storeInfo.sheet") {
-						ScriptHelper::downloadFile(SI.sheetURL, SI.storeSheet, Lang::get("UPDATING"));
-					}
-				}
-			}
-		} else {
-			AutobootWhat = 0;
-			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
-		}
-
-		if (ScriptHelper::checkIfValid(Config::AutobootFile, 1) == true) {
-			currentStoreFile = Config::AutobootFile;
-			Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-			if (SI.storeSheet != "" || SI.storeSheet != "MISSING: storeInfo.sheet") {
-				if(access(SI.storeSheet.c_str(), F_OK) != -1 ) {
-					loadStoreAutobootSheet(SI.storeSheet);
-				}
-			}
-			appStoreJson = openStoreFile();
-			appStoreList = parseStoreObjects(currentStoreFile);
-			loadStoreColors(appStoreJson);
-			Selection = 0;
-			displayInformations = handleIfDisplayText();
-			isScriptSelected = true;
-			mode = 2;
-			AutobootWhat = 0;
-			changeBackState = true;
-		} else {
-			AutobootWhat = 0;
-			changeBackState = true;
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
-		}
-	}
-}
+UniStore::UniStore() { }
 
 extern void notImplemented(void);
 
@@ -283,11 +160,12 @@ void UniStore::DrawStoreList(void) const {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
 			line1 = storeInfo[screenPos + i].title;
 			line2 = storeInfo[screenPos + i].author;
-			if(screenPos + i == Selection) {
+			if (screenPos + i == Selection) {
 				if (!dropDownMenu) {
 					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
 				}
 			}
+
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
 		}
@@ -295,11 +173,12 @@ void UniStore::DrawStoreList(void) const {
 		for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
 			line1 = storeInfo[screenPosList + i].title;
-			if(screenPosList + i == Selection) {
+			if (screenPosList + i == Selection) {
 				if (!dropDownMenu) {
 					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
 				}
 			}
+
 			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
 		}
 	}
@@ -315,6 +194,7 @@ void UniStore::DrawStoreList(void) const {
 				Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, Config::UnselectedColor);
 			}
 		}
+
 		// Draw Dropdown Icons.
 		GFX::DrawSpriteBlend(sprites_delete_idx, dropPos[0].x, dropPos[0].y);
 		GFX::DrawSpriteBlend(sprites_update_idx, dropPos[1].x, dropPos[1].y);
@@ -324,116 +204,7 @@ void UniStore::DrawStoreList(void) const {
 		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("UPDATE_DDM"), 100);
 		Gui::DrawString(dropPos[2].x+30, dropPos[2].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
 	}
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
-}
 
-void UniStore::DrawStore(void) const {
-	std::string entryAmount = std::to_string(Selection+1) + " | " + std::to_string((int)appStoreJson.at("storeContent").size());
-	std::string info;
-	GFX::DrawTop();
-	// Top Background.
-	if (appStoreJson.at("storeInfo").contains("iconIndexTop") && sheetHasLoaded == true) {
-		drawNormal(appStoreJson["storeInfo"]["iconIndexTop"], 0, 0);
-	}
-
-	// Icon.
-	if (appStoreJson.at("storeContent").at(Selection).at("info").contains("iconIndex") && sheetHasLoaded == true) {
-		if (appStoreJson.at("storeContent").at(Selection).at("info").contains("posX") && appStoreJson.at("storeContent").at(Selection).at("info").contains("posY")) {
-			drawNormal(appStoreJson["storeContent"][Selection]["info"]["iconIndex"], appStoreJson["storeContent"][Selection]["info"]["posX"], appStoreJson["storeContent"][Selection]["info"]["posY"]);
-		} else {
-			drawNormal(appStoreJson["storeContent"][Selection]["info"]["iconIndex"], 175, 155);
-		}
-	}
-
-	if (displayInformations != false) {
-		if (Config::UseBars == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(appStoreJson["storeInfo"]["title"]), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-		}
-
-		Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(appStoreJson["storeContent"][Selection]["info"]["title"]), 400);
-		Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(appStoreJson["storeContent"][Selection]["info"]["author"]), 400);
-		Gui::DrawStringCentered(0, 82, 0.6f, TextColor, Lang::get("DESC") + std::string(appStoreJson["storeContent"][Selection]["info"]["description"]), 400);
-
-		if (appStoreJson["storeContent"][Selection]["info"]["version"] != "") {
-			Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + std::string(appStoreJson["storeContent"][Selection]["info"]["version"]), 400);
-		} else {
-			Gui::DrawStringCentered(0, 107, 0.6f, TextColor, Lang::get("VERSION") + Lang::get("UNKNOWN"), 400);
-		}
-
-		if (appStoreJson["storeContent"][Selection]["info"]["fileSize"] != 0) {
-			Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + formatBytes(int64_t(appStoreJson["storeContent"][Selection]["info"]["fileSize"])), 400);
-		} else {
-			Gui::DrawStringCentered(0, 132, 0.6f, TextColor, Lang::get("FILE_SIZE") + Lang::get("UNKNOWN"), 400);
-		}
-	}
-	
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
-	GFX::DrawBottom();
-	// Bottom Background.
-	if (appStoreJson.at("storeInfo").contains("iconIndexBottom") && sheetHasLoaded == true) {
-		drawNormal(appStoreJson["storeInfo"]["iconIndexBottom"], 0, 0);
-	}
-
-	GFX::DrawArrow(295, -1);
-	GFX::DrawArrow(315, 240, 180.0);
-	GFX::DrawArrow(0, 218, 0, 1);
-	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
-
-	if (Config::viewMode == 0) {
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
-			info = appStoreJson["storeContent"][screenPos + i]["info"]["title"];
-			if(screenPos + i == Selection) {
-				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
-					drawNormal(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
-				} else {
-					if (!dropDownMenu) {
-						Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
-					}
-				}
-			} else {
-				if (appStoreJson.at("storeInfo").contains("buttonLarge") && sheetHasLoaded == true) {
-					drawBlend(appStoreJson["storeInfo"]["buttonLarge"], 0, 40+(i*57));
-				} else {
-					Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
-				}
-			}
-			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
-		}
-	} else if (Config::viewMode == 1) {
-		for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreJson.at("storeContent").size();i++) {
-			info = appStoreJson["storeContent"][screenPosList + i]["info"]["title"];
-			if(screenPosList + i == Selection) {
-				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
-					drawNormal(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
-				} else {
-					if (!dropDownMenu) {
-						Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
-					}
-				}
-			} else {
-				if (appStoreJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
-					drawBlend(appStoreJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
-				} else {
-					Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
-				}
-			}
-			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, info, 320);
-		}
-	}
-	// DropDown Menu.
-	if (dropDownMenu) {
-		// Draw Operation Box.
-		Gui::Draw_Rect(0, 25, 140, 44, barColor);
-		Gui::drawAnimatedSelector(dropPos2[0].x, dropPos2[0].y, dropPos2[0].w, dropPos2[0].h, .090, TRANSPARENT, Config::SelectedColor);
-		// Draw Dropdown Icons.
-		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[0].x, dropPos[0].y);
-		// Dropdown Text.
-		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
-	}
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
@@ -443,29 +214,26 @@ void UniStore::Draw(void) const {
 	} else if (mode == 1) {
 		DrawStoreList();
 	} else if (mode == 2) {
-		DrawStore();
-	} else if (mode == 3) {
 		DrawSearch();
-	} else if (mode == 4) {
+	} else if (mode == 3) {
 		DrawFullURLScreen();
-	} else if (mode == 5) {
+	} else if (mode == 4) {
 		DrawGitHubScreen();
-	} else if (mode == 6) {
-		DrawGlossary();
 	}
 }
 
 void UniStore::updateStore(int selectedStore) {
 	if (checkWifiStatus()) {
 		if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
-			if(storeInfo[selectedStore].url != "" && storeInfo[selectedStore].url != "MISSING: storeInfo.url" &&
+			if (storeInfo[selectedStore].url != "" && storeInfo[selectedStore].url != "MISSING: storeInfo.url" &&
 			storeInfo[selectedStore].file != "" && storeInfo[selectedStore].file != "MISSING: storeInfo.file") {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].url, storeInfo[selectedStore].file, Lang::get("UPDATING"));
 			}
-			if(storeInfo[selectedStore].sheetURL != "" && storeInfo[selectedStore].sheetURL != "MISSING: storeInfo.sheetURL" &&
+			if (storeInfo[selectedStore].sheetURL != "" && storeInfo[selectedStore].sheetURL != "MISSING: storeInfo.sheetURL" &&
 			storeInfo[selectedStore].storeSheet != "" && storeInfo[selectedStore].storeSheet != "MISSING: storeInfo.sheet") {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].sheetURL, storeInfo[selectedStore].storeSheet, Lang::get("UPDATING"));
 			}
+
 			// Refresh the list.
 			Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 			dirContents.clear();
@@ -505,12 +273,8 @@ void UniStore::refreshList() {
 }
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		if (changeBackState) {
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
-		} else {
-			Gui::screenBack(Config::fading);
-			return;
-		}
+		Gui::screenBack(Config::fading);
+		return;
 	}
 
 	if (hDown & KEY_UP) {
@@ -543,7 +307,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			case 1:
 				if (checkWifiStatus()) {
 					Selection = 0;
-					mode = 3;
+					mode = 2;
 				} else {
 					notConnectedMsg();
 				}
@@ -579,7 +343,7 @@ void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, subPos[1])) {
 			if (checkWifiStatus() == true) {
 				Selection = 0;
-				mode = 3;
+				mode = 2;
 			} else {
 				notConnectedMsg();
 			}
@@ -609,6 +373,7 @@ void UniStore::deleteStore(int selectedStore) {
 		descript();
 		loadStoreDesc();
 	}
+
 	if (dirContents.size() == 0) {
 		dirContents.clear();
 		storeInfo.clear();
@@ -619,8 +384,8 @@ void UniStore::deleteStore(int selectedStore) {
 
 
 bool UniStore::handleIfDisplayText() {
-	if (appStoreJson.at("storeInfo").contains("displayInformation")) {
-		if (appStoreJson["storeInfo"]["displayInformation"] != true) {
+	if (JSON.at("storeInfo").contains("displayInformation")) {
+		if (JSON["storeInfo"]["displayInformation"] != true) {
 			return false;
 		} else {
 			return true;
@@ -785,19 +550,14 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					updateStore(Selection);
 					currentStoreFile = dirContents[Selection].name;
 					Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-					if (storeInfo[Selection].storeSheet != "" || storeInfo[Selection].storeSheet != "MISSING: storeInfo.sheet") {
-						if(access(storeInfo[Selection].storeSheet.c_str(), F_OK) != -1 ) {
-							loadStoreSheet(Selection);
-						}
-					}
-					appStoreJson = openStoreFile();
-					appStoreList = parseStoreObjects(currentStoreFile);
-					loadStoreColors(appStoreJson);
-					Selection = 0;
+					JSON = openStoreFile();
 					displayInformations = handleIfDisplayText();
-					isScriptSelected = true;
-					Selection = 0;
-					mode = 2;
+					const std::string sheetURL = storeInfo[Selection].storeSheet;
+					if (storeInfo[Selection].version == 1) {
+						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+					} else {
+						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+					}
 				}
 			}
 		}
@@ -824,40 +584,33 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							updateStore(screenPos + i);
 							currentStoreFile = dirContents[screenPos + i].name;
 							Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-							if (storeInfo[screenPos + i].storeSheet != "" || storeInfo[screenPos + i].storeSheet != "MISSING: storeInfo.sheet") {
-								if(access(storeInfo[screenPos + i].storeSheet.c_str(), F_OK) != -1 ) {
-									loadStoreSheet(screenPos + i);
-								}
-							}
-							appStoreJson = openStoreFile();
-							appStoreList = parseStoreObjects(currentStoreFile);
-							loadStoreColors(appStoreJson);
-							Selection = 0;
+							JSON = openStoreFile();
 							displayInformations = handleIfDisplayText();
-							isScriptSelected = true;
-							mode = 2;
+							const std::string sheetURL = storeInfo[screenPos + i].storeSheet;
+							if (storeInfo[screenPos + i].version == 1) {
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+							} else {
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+							}
 						}
 					}
 				}
 			} else if (Config::viewMode == 1) {
 				for(int i=0;i<ENTRIES_PER_LIST && i<(int)storeInfo.size();i++) {
-					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+					if (touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 						if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name, 1) == true) {
 							updateStore(screenPosList + i);
 							currentStoreFile = dirContents[screenPosList + i].name;
 							Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
-							if (storeInfo[screenPosList + i].storeSheet != "" || storeInfo[screenPosList + i].storeSheet != "MISSING: storeInfo.sheet") {
-								if(access(storeInfo[screenPosList + i].storeSheet.c_str(), F_OK) != -1 ) {
-									loadStoreSheet(screenPosList + i);
-								}
-							}
-							appStoreJson = openStoreFile();
-							appStoreList = parseStoreObjects(currentStoreFile);
-							loadStoreColors(appStoreJson);
-							Selection = 0;
+
+							JSON = openStoreFile();
 							displayInformations = handleIfDisplayText();
-							isScriptSelected = true;
-							mode = 2;
+							const std::string sheetURL = storeInfo[screenPosList + i].storeSheet;
+							if (storeInfo[screenPosList + i].version == 1) {
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+							} else {
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+							}
 						}
 					}
 				}
@@ -887,185 +640,17 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
-void UniStore::StoreLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (keyRepeatDelay)	keyRepeatDelay--;
-
-	//DropDown Logic.
-	if (dropDownMenu) {
-		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
-			dropDownMenu = false;
-		}
-		if (hDown & KEY_DOWN) {
-			if (dropSelection < 1)	dropSelection++;
-		}
-		if (hDown & KEY_UP) {
-			if (dropSelection > 0)	dropSelection--;
-		}
-		if (hDown & KEY_A) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
-			} else {
-				Config::viewMode = 0;
-			}
-			dropDownMenu = false;
-		}
-
-		if (hDown & KEY_TOUCH) {
-			if (touching(touch, dropPos2[0])) {
-				if (Config::viewMode == 0) {
-					Config::viewMode = 1;
-				} else {
-					Config::viewMode = 0;
-				}
-				dropDownMenu = false;
-			}
-		}
-	} else {
-		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
-			dropSelection = 0;
-			dropDownMenu = true;
-		}
-
-		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-			Selection = 0;
-			refreshList();
-			mode = 1;
-			appStoreList.clear();
-			isScriptSelected = false;
-			freeSheet();
-		}
-
-		// Go one entry up.
-		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
-			if (Selection > 0) {
-				Selection--;
-			} else {
-				Selection = (int)appStoreJson.at("storeContent").size()-1;
-			}
-			
-			keyRepeatDelay = Config::keyDelay;
-		}
-
-		// Go one entry down.
-		if ((hHeld & KEY_DOWN && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[1]))) {
-			if (Selection < (int)appStoreJson.at("storeContent").size()-1) {
-				Selection++;
-			} else {
-				Selection = 0;
-			}
-			
-			keyRepeatDelay = Config::keyDelay;
-		}
-
-		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
-				if (Selection < (int)appStoreJson.at("storeContent").size()-1-3) {
-					Selection += 3;
-				} else {
-					Selection = (int)appStoreJson.at("storeContent").size()-1;
-				}
-			} else {
-				if (Selection < (int)appStoreJson.at("storeContent").size()-1-6) {
-					Selection += 7;
-				} else {
-					Selection = (int)appStoreJson.at("storeContent").size()-1;
-				}
-			}
-			
-			keyRepeatDelay = Config::keyDelay;
-		}
-
-		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
-				if (Selection > 2) {
-					Selection -= 3;
-				} else {
-					Selection = 0;
-				}
-			} else {
-				if (Selection > 6) {
-					Selection -= 7;
-				} else {
-					Selection = 0;
-				}
-			}
-			
-			keyRepeatDelay = Config::keyDelay;
-		}
-
-		// Execute touched Entry.
-		if (hDown & KEY_TOUCH) {
-			if (Config::viewMode == 0) {
-				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)appStoreJson.at("storeContent").size();i++) {
-					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-						Selection = screenPos + i;
-						std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-						if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-							execute();
-						}
-					}
-				}
-			} else if (Config::viewMode == 1) {
-				for(int i=0;i<ENTRIES_PER_LIST && i<(int)appStoreJson.at("storeContent").size();i++) {
-					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-						Selection = screenPosList + i;
-						std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-						if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-							execute();
-						}
-					}
-				}
-			}
-		}
-		// Execute that Entry.
-		if (hDown & KEY_A) {
-			std::string info = appStoreJson["storeContent"][Selection]["info"]["title"];
-			if (Msg::promptMsg(Lang::get("EXECUTE_STORE") + "\n\n" + info)) {
-				execute();
-			}
-		}
-
-		if (Config::viewMode == 0) {
-			if(Selection < screenPos) {
-				screenPos = Selection;
-			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
-				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
-			}
-		} else if (Config::viewMode == 1) {
-			if(Selection < screenPosList) {
-				screenPosList = Selection;
-			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
-				screenPosList = Selection - ENTRIES_PER_LIST + 1;
-			}
-		}
-	}
-}
-
 void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (mode == 0) {
 		SubMenuLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {
 		StoreSelectionLogic(hDown, hHeld, touch);
 	} else if (mode == 2) {
-		StoreLogic(hDown, hHeld, touch);
-	} else if (mode == 3) {
 		SearchLogic(hDown, hHeld, touch);
-	} else if (mode == 4) {
+	} else if (mode == 3) {
 		FullURLLogic(hDown, hHeld, touch);
-	} else if (mode == 5) {
+	} else if (mode == 4) {
 		GitHubLogic(hDown, hHeld, touch);
-	}
-
-	if (hDown & KEY_L || hDown & KEY_R) {
-		if (mode == 6) {
-			mode = lastMode;
-		} else if (mode == 1) {
-			lastMode = 1;
-			mode = 6;
-		} else if (mode == 2) {
-			lastMode = 2;
-			mode = 6;
-		}
 	}
 }
 
@@ -1084,7 +669,7 @@ void UniStore::DrawSearch(void) const {
 	GFX::DrawButton(URLBtn[0].x, URLBtn[0].y,Lang::get("FULL_URL"));
 	GFX::DrawButton(URLBtn[1].x, URLBtn[1].y, Lang::get("GITHUB"));
 	GFX::DrawButton(URLBtn[2].x, URLBtn[2].y, "TinyDB");
-	GFX::DrawButton(URLBtn[3].x, URLBtn[3].y, "QR Code");
+	GFX::DrawButton(URLBtn[3].x, URLBtn[3].y, "Universal DB");
 	// Selector.
 	Animation::Button(URLBtn[Selection].x, URLBtn[Selection].y, .060);
 }
@@ -1097,39 +682,47 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_RIGHT || hDown & KEY_R) {
 		if (Selection == 0)	Selection = 1;
+		else if (Selection == 2) Selection = 3;
 	}
 	if (hDown & KEY_LEFT || hDown & KEY_L) {
 		if (Selection == 1)	Selection = 0;
+		else if (Selection == 3) Selection = 2;
 	}
 
 	if (hDown & KEY_DOWN) {
 		if (Selection == 0)	Selection = 2;
+		else if (Selection == 1) Selection = 3;
 	}
 
 	if (hDown & KEY_UP) {
 		if (Selection == 2)	Selection = 0;
+		else if (Selection == 3) Selection = 1;
 	}
 
 	if (hDown & KEY_A) {
 		if (Selection == 0) {
 			Selection = 0;
-			mode = 4;
+			mode = 3;
 		} else if (Selection == 1) {
 			Selection = 0;
-			mode = 5;
+			mode = 4;
 		} else if (Selection == 2) {
 			ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", Config::StorePath + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+		} else if (Selection == 3) {
+			ScriptHelper::downloadFile("https://github.com/Universal-Team/db/raw/master/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 		}
 	}
 
 	if (hDown & KEY_TOUCH && touching(touch, URLBtn[0])) {
 		Selection = 0;
-		mode = 4;
+		mode = 3;
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[1])) {
 		Selection = 0;
-		mode = 5;
+		mode = 4;
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[2])) {
 		ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", Config::StorePath + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+	} else if (hDown & KEY_TOUCH & touching(touch, URLBtn[3])) {
+		ScriptHelper::downloadFile("https://github.com/Universal-Team/db/raw/master/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 	}
 }
 
@@ -1184,7 +777,7 @@ void UniStore::GitHubLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		OwnerAndRepo = "";
 		fileName = "";
 		Selection = 0;
-		mode = 3;
+		mode = 2;
 	}
 }
 
@@ -1235,211 +828,6 @@ void UniStore::FullURLLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		FullURL = "";
 		fileName = "";
 		Selection = 0;
-		mode = 3;
+		mode = 2;
 	}
-}
-
-
-void UniStore::DrawGlossary(void) const {
-	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
-	}
-
-	if (lastMode == 1) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection +1) + " | " + std::to_string(storeInfo.size()), 40);
-		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
-	} else if (lastMode == 2) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection+1) + " | " + std::to_string((int)appStoreJson.at("storeContent").size()), 40);
-		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
-	}
-	GFX::DrawBottom();
-
-	GFX::DrawSpriteBlend(sprites_view_idx, 20, 40);
-	Gui::DrawString(50, 42, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
-	GFX::DrawArrow(20, 70);
-	Gui::DrawString(50, 72, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
-	GFX::DrawArrow(42, 125, 180.0);
-	Gui::DrawString(50, 102, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
-	GFX::DrawArrow(20, 130, 0, 1);
-	Gui::DrawString(50, 132, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
-	if (lastMode == 1) {
-		GFX::DrawSpriteBlend(sprites_update_idx, 20, 160);
-		Gui::DrawString(50, 162, 0.6f, Config::TxtColor, Lang::get("UPDATE_STORE"), 260);
-		GFX::DrawSpriteBlend(sprites_delete_idx, 20, 190);
-		Gui::DrawString(50, 192, 0.6f, Config::TxtColor, Lang::get("DELETE_UNISTORE"), 260);
-	}
-}
-
-// Execute Entry.
-Result UniStore::execute() {
-	Result ret = NONE; // No Error has been occured now.
-	for(int i=0;i<(int)appStoreJson.at("storeContent").at(Selection).at("script").size();i++) {
-		if (ret == NONE) {
-			std::string type = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("type");
-			if(type == "deleteFile") {
-				bool missing = false;
-				std::string file, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::removeFile(file, message);
-				else	ret = SYNTAX_ERROR;
-
-			} else if(type == "downloadFile") {
-				bool missing = false;
-				std::string file, output, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("output");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadFile(file, output, message);
-				else	ret = SYNTAX_ERROR;
-
-			} else if(type == "downloadRelease") {
-				bool missing = false, includePrereleases = false, showVersions = false;
-				std::string repo, file, output, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("repo"))	repo = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("repo");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("output");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("includePrereleases") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("includePrereleases").is_boolean())
-					includePrereleases = appStoreJson.at(Selection).at("script").at(i).at("includePrereleases");
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("showVersions") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("showVersions").is_boolean())
-					showVersions = appStoreJson.at(Selection).at("script").at(i).at("showVersions");
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
-				else	ret = SYNTAX_ERROR;
-
-			} else if(type == "extractFile") {
-				bool missing = false;
-				std::string file, input, output, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("input"))	input = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("input");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("output");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::extractFile(file, input, output, message);
-				else	ret = SYNTAX_ERROR;
-
-			} else if(type == "installCia") {
-				bool missing = false, updateSelf = false;
-				std::string file, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("updateSelf") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf").is_boolean()) {
-					updateSelf = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf");
-				}
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::installFile(file, updateSelf, message);
-				else	ret = SYNTAX_ERROR;
-	
-			} else if (type == "mkdir") {
-				bool missing = false;
-				std::string directory, message;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
-				else	missing = true;
-				if(!missing)	makeDirs(directory.c_str());
-				else	ret = SYNTAX_ERROR;
-
-			} else if (type == "rmdir") {
-				bool missing = false;
-				std::string directory, message, promptmsg;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
-				else	missing = true;
-				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-				if(!missing) {
-					if(access(directory.c_str(), F_OK) != 0 ) {
-						ret = DELETE_ERROR;
-					} else {
-						if (Msg::promptMsg(promptmsg)) {
-							removeDirRecursive(directory.c_str());
-						}
-					}
-				}
-				else	ret = SYNTAX_ERROR;
-
-			} else if (type == "mkfile") {
-				bool missing = false;
-				std::string file;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("file");
-				else	missing = true;
-				if(!missing)	ScriptHelper::createFile(file.c_str());
-				else	ret = SYNTAX_ERROR;
-
-			} else if (type == "timeMsg") {
-				bool missing = false;
-				std::string message;
-				int seconds;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("seconds") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("seconds").is_number())
-				seconds = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("seconds");
-				else	missing = true;
-				if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
-				else	ret = SYNTAX_ERROR;
-
-			} else if (type == "saveConfig") {
-				Config::save();
-
-			} else if (type == "notImplemented") {
-				notImplemented();
-
-			} else if (type == "bootTitle") {
-				std::string TitleID = "";
-				std::string message = "";
-				bool isNAND = false, missing = false;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("TitleID"))	TitleID = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("TitleID");
-				else	missing = true;
-				if (appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("NAND") && appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("NAND").is_boolean())	isNAND = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("NAND");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				else	missing = true;
-				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
-				else	ret = SYNTAX_ERROR;
-				
-			} else if (type == "promptMessage") {
-				std::string Message = "";
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				ret = ScriptHelper::prompt(Message);
-
-			} else if (type == "copy") {
-				std::string Message = "", source = "", destination = "";
-				bool missing = false;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("source"))	source = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("source");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("destination"))	destination = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("destination");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if (!missing)	ret = ScriptHelper::copyFile(source, destination, Message);
-				else	ret = SYNTAX_ERROR;
-
-			} else if (type == "move") {
-				std::string Message = "", oldFile = "", newFile = "";
-				bool missing = false;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("old"))	oldFile = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("old");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("new"))	newFile = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("new");
-				else	missing = true;
-				if(appStoreJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = appStoreJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if (!missing)	ret = ScriptHelper::renameFile(oldFile, newFile, Message);
-				else	ret = SYNTAX_ERROR;
-			}
-		}
-	}
-	if (ret == NONE)	doneMsg();
-	else if (ret == FAILED_DOWNLOAD)	Msg::DisplayWarnMsg(Lang::get("DOWNLOAD_ERROR"));
-	else if (ret == SCRIPT_CANCELED)	Msg::DisplayWarnMsg(Lang::get("SCRIPT_CANCELED"));
-	else if (ret == SYNTAX_ERROR)		Msg::DisplayWarnMsg(Lang::get("SYNTAX_ERROR"));
-	else if (ret == COPY_ERROR)			Msg::DisplayWarnMsg(Lang::get("COPY_ERROR"));
-	else if (ret == MOVE_ERROR)			Msg::DisplayWarnMsg(Lang::get("MOVE_ERROR"));
-	else if (ret == DELETE_ERROR)		Msg::DisplayWarnMsg(Lang::get("DELETE_ERROR"));
-	return ret;
 }

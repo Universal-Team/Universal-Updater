@@ -34,7 +34,6 @@
 #include "screenCommon.hpp"
 #include "scriptlist.hpp"
 #include "sound.h"
-#include "unistore.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
@@ -117,15 +116,7 @@ Result Init::Initialize() {
 
 	AutobootWhat = Config::autoboot;
 
-	if (Config::autoboot == 1) {
-		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<UniStore>(), false, true);
-		} else {
-			AutobootWhat = 0;
-			Config::autoboot = 0;
-			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
-		}
-	} else if (Config::autoboot == 2) {
+	if (Config::autoboot == 2) {
 		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
 			Gui::setScreen(std::make_unique<ScriptList>(), false, true);
 		} else {
@@ -179,8 +170,6 @@ Result Init::MainLoop() {
 	return 0;
 }
 
-extern void freeSheet();
-
 Result Init::Exit() {
 	if (songIsFound == true) {
 		stopMusic();
@@ -190,8 +179,6 @@ Result Init::Exit() {
 		ndspExit();
 	}
 
-	// Free UniStore spritesheet, just in case.
-	freeSheet();
 	// Only save config, if *any* changes are made. (To reduce SD Writes.)
 	if (changesMade) {
 		Config::save();
