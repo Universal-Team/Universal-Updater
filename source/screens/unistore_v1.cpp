@@ -42,6 +42,7 @@ extern u32 TextColor;
 extern u32 progressBar;
 extern u32 selected;
 extern u32 unselected;
+extern bool didAutoboot;
 
 UniStoreV1::UniStoreV1(nlohmann::json &JSON, const std::string sheetPath, bool displayInf) {
 	this->storeJson = JSON;
@@ -255,6 +256,7 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+			if (!didAutoboot) didAutoboot = true;
 			Gui::screenBack(true);
 			return;
 		}

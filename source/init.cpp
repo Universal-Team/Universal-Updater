@@ -34,6 +34,7 @@
 #include "screenCommon.hpp"
 #include "scriptlist.hpp"
 #include "sound.h"
+#include "unistore.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
@@ -116,7 +117,15 @@ Result Init::Initialize() {
 
 	AutobootWhat = Config::autoboot;
 
-	if (Config::autoboot == 2) {
+	if (Config::autoboot == 1) {
+		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
+			Gui::setScreen(std::make_unique<UniStore>(true, Config::AutobootFile), false, true);
+		} else {
+			AutobootWhat = 0;
+			Config::autoboot = 0;
+			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
+		}
+	} else if (Config::autoboot == 2) {
 		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
 			Gui::setScreen(std::make_unique<ScriptList>(), false, true);
 		} else {

@@ -27,7 +27,6 @@
 #include "download.hpp"
 #include "fileBrowse.hpp"
 #include "formatting.hpp"
-#include "json.hpp"
 #include "keyboard.hpp"
 #include "mainMenu.hpp"
 #include "unistore.hpp"
@@ -36,16 +35,66 @@
 
 #include <unistd.h>
 
+extern void notImplemented(void);
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool changesMade;
+bool specialHandling = false;
+bool didAutoboot = false;
+
+UniStore::UniStore(bool doAutoboot, std::string file) {
+	this->doAutoboot = doAutoboot;
+	this->autobootFile = file;
+}
+
+// Autoboot stuff.
+void UniStore::autobootLogic() {
+	if (this->doAutoboot) {
+		if (!didAutoboot) {
+			specialHandling = true; // Special back handling.
+			if (ScriptHelper::checkIfValid(this->autobootFile, 1) == true) {
+				storeInfo.push_back(parseStoreInfo(this->autobootFile));
+
+				// Update if WiFi found and wanted.
+				if (checkWifiStatus()) {
+					if (Msg::promptMsg(Lang::get("WOULD_YOU_LIKE_UPDATE"))) {
+						if (storeInfo[0].url != "" && storeInfo[0].url != "MISSING: storeInfo.url" &&
+							storeInfo[0].file != "" && storeInfo[0].file != "MISSING: storeInfo.file") {
+								ScriptHelper::downloadFile(storeInfo[0].url, storeInfo[0].file, Lang::get("UPDATING"));
+							}
+
+						if (storeInfo[0].sheetURL != "" && storeInfo[0].sheetURL != "MISSING: storeInfo.sheetURL" &&
+							storeInfo[0].storeSheet != "" && storeInfo[0].storeSheet != "MISSING: storeInfo.sheet") {
+								ScriptHelper::downloadFile(storeInfo[0].sheetURL, storeInfo[0].storeSheet, Lang::get("UPDATING"));
+						}
+					}
+				}
+
+				currentStoreFile = this->autobootFile;
+				Msg::DisplayMsg(Lang::get("PREPARE_STORE"));
+				JSON = openStoreFile();
+				displayInformations = handleIfDisplayText();
+				const std::string sheetURL = storeInfo[0].storeSheet;
+				if (storeInfo[0].version == 1) {
+					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+				} else {
+					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+				}
+			} else {
+				specialHandling = true; // Special back handling.
+				// Display Warn or so?
+			}
+		}
+	}
+}
 
 // Parse informations like URL, Title, Author, Description.
-StoreInfo parseStoreInfo(std::string fileName) {
+StoreInfo UniStore::parseStoreInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
-	if(!file) {
+	if (!file) {
 		printf("File not found\n");
 		return {"", ""};
 	}
+
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
@@ -61,6 +110,7 @@ StoreInfo parseStoreInfo(std::string fileName) {
 	return info;
 }
 
+// Return a parsed UniStore file.
 nlohmann::json UniStore::openStoreFile() {
 	FILE* file = fopen(currentStoreFile.c_str(), "rt");
 	nlohmann::json jsonFile;
@@ -69,33 +119,14 @@ nlohmann::json UniStore::openStoreFile() {
 	return jsonFile;
 }
 
-// Parse the Objects.
-std::vector<std::string> parseStoreObjects(std::string storeName) {
-	FILE* file = fopen(storeName.c_str(), "rt");
-	if (!file) {
-		printf("File not found\n");
-		return {{""}};
-	}
-
-	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
-
-	std::vector<std::string> objs;
-	for(auto it = json.begin();it != json.end(); it++) {
-		if (it.key() != "storeInfo") {
-			objs.push_back(it.key());
-		}
-	}
-
-	return objs;
-}
-
+// Do the description, if found.
 void UniStore::descript() {
 	if (storeInfo[Selection].description != "" || storeInfo[Selection].description != "MISSING: storeInfo.description") {
 		storeDesc = storeInfo[Selection].description;
 	} else storeDesc = "";
 }
 
+// Load the store description.
 void UniStore::loadStoreDesc(void) {
 	descLines.clear();
 	while(storeDesc.find('\n') != storeDesc.npos) {
@@ -105,10 +136,6 @@ void UniStore::loadStoreDesc(void) {
 
 	descLines.push_back(storeDesc.substr(0, storeDesc.find('\n')));
 }
-
-UniStore::UniStore() { }
-
-extern void notImplemented(void);
 
 void UniStore::DrawSubMenu(void) const {
 	GFX::DrawTop();
@@ -145,9 +172,11 @@ void UniStore::DrawStoreList(void) const {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, storeInfo[Selection].title, 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 237-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
 	}
+
 	for(uint i=0;i<descLines.size();i++) {
 		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, Config::TxtColor, descLines[i], 400);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
@@ -229,6 +258,7 @@ void UniStore::updateStore(int selectedStore) {
 			storeInfo[selectedStore].file != "" && storeInfo[selectedStore].file != "MISSING: storeInfo.file") {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].url, storeInfo[selectedStore].file, Lang::get("UPDATING"));
 			}
+
 			if (storeInfo[selectedStore].sheetURL != "" && storeInfo[selectedStore].sheetURL != "MISSING: storeInfo.sheetURL" &&
 			storeInfo[selectedStore].storeSheet != "" && storeInfo[selectedStore].storeSheet != "MISSING: storeInfo.sheet") {
 				ScriptHelper::downloadFile(storeInfo[selectedStore].sheetURL, storeInfo[selectedStore].storeSheet, Lang::get("UPDATING"));
@@ -273,8 +303,12 @@ void UniStore::refreshList() {
 }
 void UniStore::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Gui::screenBack(Config::fading);
-		return;
+		if (specialHandling) {
+			Gui::setScreen(std::make_unique<MainMenu>(), true, true);
+		} else {
+			Gui::screenBack(Config::fading);
+			return;
+		}
 	}
 
 	if (hDown & KEY_UP) {
@@ -641,6 +675,8 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void UniStore::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	this->autobootLogic();
+
 	if (mode == 0) {
 		SubMenuLogic(hDown, hHeld, touch);
 	} else if (mode == 1) {

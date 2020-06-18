@@ -35,6 +35,7 @@ extern u32 getColor(std::string colorString);
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 #define STORE_ENTRIES	 9
 #define DOWNLOAD_ENTRIES 5
+extern bool didAutoboot;
 
 UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath) {
 	this->DBJson = JSON;
@@ -259,6 +260,7 @@ void UniStoreV2::Draw(void) const {
 void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (this->mode == 0) {
 		if (hDown & KEY_B) {
+			if (!didAutoboot) didAutoboot = true;
 			Gui::screenBack(true);
 			return;
 		}
