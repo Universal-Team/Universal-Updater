@@ -42,7 +42,7 @@ public:
 	~UniStoreV2();
 private:
 	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false;
-	int selectedBox = 0, selection = -1, storePage = 0, downloadPage = 0, mode = 0, subSelection = 0;
+	int selectedBox = 0, lastViewMode = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
 	nlohmann::json DBJson;
 	C2D_SpriteSheet sheet;
 	std::vector<std::string> objects;
@@ -50,13 +50,13 @@ private:
 	// Base stuff.
 	void DrawBaseTop(void) const;
 	void DrawBaseBottom(void) const;
-	void drawBox(float xPos, float yPos, bool selected) const;
-	void DrawBoxes(void) const;
+	void drawBox(float xPos, float yPos, float width, float height, bool selected) const;
+	void DrawGrid(void) const;
 	void DrawDescription(int selection) const;
 	u32 returnTextColor() const;
 	void parseObjects(int selection);
 	Result runFunctions(std::string entry);
-	void DrawPage(void) const;
+	void DrawList(void) const;
 	void displaySelectedEntry(int selection) const;
 
 	const std::vector<Structs::ButtonPos> StoreBoxes = {
@@ -71,6 +71,12 @@ private:
 		{20, 160, 100, 50},
 		{150, 160, 100, 50},
 		{280, 160, 100, 50}
+	};
+
+	const std::vector<Structs::ButtonPos> StoreBoxesList = {
+		{20, 30, 360, 50},
+		{20, 95, 360, 50},
+		{20, 160, 360, 50}
 	};
 
 	const std::vector<Structs::ButtonPos> downloadBoxes = {
