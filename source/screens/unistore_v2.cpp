@@ -187,39 +187,39 @@ void UniStoreV2::displaySelectedEntry(int selection) const {
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("author")) {
-		Gui::DrawStringCentered(0, 40, 0.6f, this->returnTextColor(), "Author: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("author"), 400);
+		Gui::DrawStringCentered(0, 40, 0.6f, this->returnTextColor(), Lang::get("AUTHOR") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("author"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 40, 0.6f, this->returnTextColor(), "Author: ?", 400);
+		Gui::DrawStringCentered(0, 40, 0.6f, this->returnTextColor(), Lang::get("AUTHOR") + "?", 400);
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("version")) {
-		Gui::DrawStringCentered(0, 60, 0.6f, this->returnTextColor(), "Version: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("version"), 400);
+		Gui::DrawStringCentered(0, 60, 0.6f, this->returnTextColor(), Lang::get("VERSION") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("version"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 60, 0.6f, this->returnTextColor(), "Version: ?", 400);
+		Gui::DrawStringCentered(0, 60, 0.6f, this->returnTextColor(), Lang::get("VERSION") + "?", 400);
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("category")) {
-		Gui::DrawStringCentered(0, 80, 0.6f, this->returnTextColor(), "Category: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("category"), 400);
+		Gui::DrawStringCentered(0, 80, 0.6f, this->returnTextColor(), Lang::get("CATEGORY") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("category"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 80, 0.6f, this->returnTextColor(), "Category: ?", 400);
+		Gui::DrawStringCentered(0, 80, 0.6f, this->returnTextColor(), Lang::get("CATEGORY") + "?", 400);
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("console")) {
-		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), "System: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("console"), 400);
+		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("SYSTEM") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("console"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), "System: ?", 400);
+		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("SYSTEM") + "?", 400);
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("last_updated")) {
-		Gui::DrawStringCentered(0, 120, 0.6f, this->returnTextColor(), "Last updated: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("last_updated"), 400);
+		Gui::DrawStringCentered(0, 120, 0.6f, this->returnTextColor(), Lang::get("LAST_UPDATED") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("last_updated"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 120, 0.6f, this->returnTextColor(), "Last updated: ?", 400);
+		Gui::DrawStringCentered(0, 120, 0.6f, this->returnTextColor(), Lang::get("LAST_UPDATED") + "?", 400);
 	}
 
 	if (this->DBJson.at("storeContent").at(selection).at("info").contains("description")) {
-		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), "Description: " + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("description"), 400);
+		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), Lang::get("DESC") + (std::string)this->DBJson.at("storeContent").at(selection).at("info").at("description"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), "Description: ?", 400);
+		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), Lang::get("DESC") + "?", 400);
 	}
 
 	this->DrawBaseBottom();
@@ -312,7 +312,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (this->objects.size() > 0) {
 				for (int i = 0, i2 = 0 + (this->downloadPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->downloadPage * DOWNLOAD_ENTRIES) && i2 < (int)this->objects.size(); i2++, i++) {
 					if (touching(touch, downloadBoxes[i])) {
-						if (Msg::promptMsg("Do you like to execute:\n" + this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]))	runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]);
+						if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]))	runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]);
 					}
 				}
 			}
@@ -321,7 +321,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (hDown & KEY_A) {
 			if (this->objects.size() > 0) {
 				if ((int)this->objects.size() >= this->subSelection) {
-					if (Msg::promptMsg("Do you like to execute:\n" + this->objects[this->subSelection]))	runFunctions(this->objects[this->subSelection]);
+					if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[this->subSelection]))	runFunctions(this->objects[this->subSelection]);
 				}
 			}
 		}

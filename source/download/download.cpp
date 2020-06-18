@@ -861,7 +861,7 @@ void displayProgressBar() {
 					formatBytes(downloadNow).c_str(),
 					formatBytes(downloadTotal).c_str(),
 					((float)downloadNow/(float)downloadTotal) * 100.0f, 
-					Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed), Lang::get("BYTES_PER_SECOND").c_str());
+					Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed / 1000), Lang::get("BYTES_PER_SECOND").c_str());
 					// Extracting.
 		} else if (progressBarType == 1) {
 			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",

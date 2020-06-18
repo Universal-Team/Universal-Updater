@@ -56,7 +56,7 @@
 
 	"CREDITS":							"Credits",
 	"DEVELOPED_BY":						"Developed by: Universal-Team.",
-	"MAIN_DEV":							"Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV":							"Main Developer: StackZ",
 	"CURRENT_VERSION":					"Current version: ",
 	"MANY_THANKS":						"Many Thanks to:",
 	"TRANSLATORS":						"All our Translators",
@@ -178,7 +178,10 @@
 	"ENABLED":							"Enabled!",
 	"DISABLED":							"Disabled!",
 	"DOWNLOAD_SPEED":					"Download Speed: ",
-	"BYTES_PER_SECOND":					" bytes per second",
+	"BYTES_PER_SECOND":					" KB per second",
 	"PROGRESS_BAR_ENABLE":				"Would you like to enable the progressbar?",
-	"PROGRESS_BAR_DISABLE":				"Would you like to disable the progressbar?"
+	"PROGRESS_BAR_DISABLE":				"Would you like to disable the progressbar?",
+	"CATEGORY":							"Category: ",
+	"SYSTEM":							"System: ",
+	"LAST_UPDATED":						"Last updated: "
 }
