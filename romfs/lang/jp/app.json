@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "スクリプトの作成",
 	"CREDITS": "クレジット",
 	"DEVELOPED_BY": "開発: Universal-Team",
-	"MAIN_DEV": "主な開発者：SuperSaiyajinStackie",
+	"MAIN_DEV": "Main Developer: StackZ",
 	"CURRENT_VERSION": "現在のバージョン: ",
 	"MANY_THANKS": "多くのおかげで:",
 	"TRANSLATORS": "すべての翻訳者",
@@ -153,7 +153,15 @@
 	"ENABLED": "有効！",
 	"DISABLED": "無効！",
 	"DOWNLOAD_SPEED": "ダウンロード速度：",
-	"BYTES_PER_SECOND": " バイト/秒",
+	"KB_PER_SECOND": " KB per second",
 	"PROGRESS_BAR_ENABLE": "プログレスバーを有効にしますか？",
-	"PROGRESS_BAR_DISABLE": "プログレスバーを無効にしますか？"
+	"PROGRESS_BAR_DISABLE": "プログレスバーを無効にしますか？",
+	"CATEGORY": "Category: ",
+	"SYSTEM": "System: ",
+	"LAST_UPDATED": "Last updated: ",
+	"CHANGE_THEME": "Change Theme",
+	"CHANGE_STYLE": "Change Style",
+	"NO_DOWNLOADS_AVAILABLE": "No downloads available.",
+	"UNISTORE_VERSION": "UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED": "This UniStore version is not supported!"
 }
