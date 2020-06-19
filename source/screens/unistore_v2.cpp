@@ -543,8 +543,10 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, iconPos[0]))) {
-			this->dropSelection = 0;
-			this->isDropDown = true;
+			if (this->mode != 2) {
+				this->dropSelection = 0;
+				this->isDropDown = true;
+			}
 		}
 	}
 }
