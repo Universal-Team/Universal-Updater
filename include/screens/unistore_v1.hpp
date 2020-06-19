@@ -24,15 +24,52 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef EXITING_HPP
-#define EXITING_HPP
+#ifndef UNIVERSAL_STORE_V1_HPP
+#define UNIVERSAL_STORE_V1_HPP
 
 #include "common.hpp"
+#include "json.hpp"
+#include "structs.hpp"
+#include <citro2d.h>
 
-class Exiting : public Screen {
+#include <vector>
+
+class UniStoreV1 : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	UniStoreV1(nlohmann::json &JSON, const std::string sheetPath, bool displayInf);
+	~UniStoreV1();
+private:
+	// Selections.
+	mutable int Selection = 0;
+	bool sheetHasLoaded = false;
+	int screenPos = 0;
+	mutable int screenPosList = 0;
+	bool dropDownMenu = false;
+	int dropSelection = 0;
+	int keyRepeatDelay = 0;
+	nlohmann::json storeJson;
+	C2D_SpriteSheet sheet;
+	std::vector<std::string> objects;
+	mutable bool displayInformations = true;
+	void drawBlend(int key, int x, int y) const;
+	void parseObjects();
+	Result execute();
+
+	// Icon | Button Structs.
+	const std::vector<Structs::ButtonPos> arrowPos = {
+		{295, 0, 25, 25}, // Arrow Up.
+		{295, 215, 25, 25}, // Arrow Down.
+		{0, 215, 25, 25}, // Back Arrow.
+		{5, 0, 25, 25}  // Dropdown Menu.
+	};
+	// DropDownMenu.
+	const std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 140, 30}, // Delete.
+		{5, 70, 140, 30}, // Update.
+		{5, 110, 140, 30} // ViewMode.
+	};
 };
 
 #endif

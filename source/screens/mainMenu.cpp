@@ -25,7 +25,6 @@
 */
 
 #include "config.hpp"
-#include "exiting.hpp"
 #include "ftpScreen.hpp"
 #include "mainMenu.hpp"
 #include "scriptHelper.hpp"
@@ -68,9 +67,9 @@ void MainMenu::Draw(void) const {
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, mainButtons[4]))) {
-		exiting = true;
-		Gui::setScreen(std::make_unique<Exiting>(), Config::fading, true);
+		fadeout = true;
 		fadecolor = 0;
+		exiting = true;
 	}
 
 	// Navigation.
@@ -87,7 +86,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				Gui::setScreen(std::make_unique<UniStore>(), Config::fading, true);
+				Gui::setScreen(std::make_unique<UniStore>(false, "NOT_USED"), Config::fading, true);
 				break;
 			case 1:
 				Gui::setScreen(std::make_unique<ScriptList>(), Config::fading, true);
@@ -103,7 +102,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Gui::setScreen(std::make_unique<UniStore>(), Config::fading, true);
+			Gui::setScreen(std::make_unique<UniStore>(false, "NOT_USED"), Config::fading, true);
 		} else if (touching(touch, mainButtons[1])) {
 			Gui::setScreen(std::make_unique<ScriptList>(), Config::fading, true);
 		} else if (touching(touch, mainButtons[2])) {

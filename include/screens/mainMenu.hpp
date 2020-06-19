@@ -39,7 +39,7 @@ public:
 private:
 	int Selection = 0;
 
-	std::vector<Structs::ButtonPos> mainButtons = {
+	const std::vector<Structs::ButtonPos> mainButtons = {
 		{0, 60, 149, 52}, // UniStore.
 		{162, 60, 149, 52}, // Scripts.
 		{0, 130, 149, 52}, // Settings.

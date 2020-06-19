@@ -58,20 +58,20 @@ private:
 	void colorChanging(u32 hDown, u32 hHeld, touchPosition touch);
 	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
-	std::vector<Structs::ButtonPos> mainButtons = {
+	const std::vector<Structs::ButtonPos> mainButtons = {
 		{80, 30, 149, 52}, // Language.
 		{80, 90, 149, 52}, // Colors.
 		{80, 150, 149, 52} // Credits.
 	};
 
-	std::vector<Structs::ButtonPos> mainButtons2 = {
+	const std::vector<Structs::ButtonPos> mainButtons2 = {
 		{0, 60, 149, 52}, // Change Music File.
 		{162, 60, 149, 52}, // Change bar style.
 		{0, 130, 149, 52}, // Change Key Delay.
 		{162, 130, 149, 52} // Toggle animation.
 	};
 
-	std::vector<Structs::ButtonPos> arrowPos = {
+	const std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 0, 25, 25}, // Previous Arrow.
 		{295, 0, 25, 25}, // Next Arrow.
 		{0, 215, 25, 25}, // Back Arrow.

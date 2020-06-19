@@ -77,13 +77,11 @@ void GFX::DrawBottom(void) {
 
 extern C2D_SpriteSheet sprites;
 
-void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY)
-{
+void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	Gui::DrawSprite(sprites, img, x, y, ScaleX, ScaleY);
 }
 
-void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY)
-{
+void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
 	C2D_ImageTint tint;
 	if (isScriptSelected) {
 		C2D_SetImageTint(&tint, C2D_TopLeft, TextColor, 0.5);
@@ -96,6 +94,7 @@ void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY)
 		C2D_SetImageTint(&tint, C2D_BotLeft, Config::TxtColor, 0.5);
 		C2D_SetImageTint(&tint, C2D_BotRight, Config::TxtColor, 0.5);	
 	}
+
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, img), x, y, 0.5f, &tint, ScaleX, ScaleY);
 }
 
@@ -119,6 +118,7 @@ void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 	} else {
 		C2D_SpriteFromSheet(&sprite, sprites, sprites_side_arrow_idx);
 	}
+	
 	C2D_SpriteRotateDegrees(&sprite, rotation);
 	C2D_SpriteSetPos(&sprite, x, y);
 	C2D_SpriteSetDepth(&sprite, 0.5);

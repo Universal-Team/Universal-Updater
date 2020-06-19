@@ -43,9 +43,9 @@ private:
 	int Selection = 0;
 	int keyRepeatDelay = 0;
 
-	std::vector<Structs::ButtonPos> arrowPos = {
+	const std::vector<Structs::ButtonPos> arrowPos = {
 		{0, 215, 25, 25}, // Back Arrow.
-		{295, 215, 25, 25}, // Next Page.
+		{295, 215, 25, 25} // Next Page.
 	};
 };
 

@@ -45,6 +45,7 @@ struct StoreInfo {
 	std::string file;
 	std::string storeSheet;
 	std::string sheetURL;
+	int version;
 };
 
 enum ScriptState {

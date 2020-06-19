@@ -119,7 +119,7 @@ Result Init::Initialize() {
 
 	if (Config::autoboot == 1) {
 		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<UniStore>(), false, true);
+			Gui::setScreen(std::make_unique<UniStore>(true, Config::AutobootFile), false, true);
 		} else {
 			AutobootWhat = 0;
 			Config::autoboot = 0;
@@ -179,8 +179,6 @@ Result Init::MainLoop() {
 	return 0;
 }
 
-extern void freeSheet();
-
 Result Init::Exit() {
 	if (songIsFound == true) {
 		stopMusic();
@@ -190,8 +188,6 @@ Result Init::Exit() {
 		ndspExit();
 	}
 
-	// Free UniStore spritesheet, just in case.
-	freeSheet();
 	// Only save config, if *any* changes are made. (To reduce SD Writes.)
 	if (changesMade) {
 		Config::save();
