@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Bruh Creator",
 	"CREDITS": "Bruhdits",
 	"DEVELOPED_BY": "Bruh by: Universal-Team.",
-	"MAIN_DEV": "Main Developer: SuperBruhStackie",
+	"MAIN_DEV": "Main Developer: StackZ",
 	"CURRENT_VERSION": "Current Bruh: ",
 	"MANY_THANKS": "Many Bruh to:",
 	"TRANSLATORS": "All our Bruh",
@@ -153,7 +153,15 @@
 	"ENABLED": "Bruhnabled!",
 	"DISABLED": "Bruhsabled!",
 	"DOWNLOAD_SPEED": "Bruwnload Speed: ",
-	"BYTES_PER_SECOND": " bruhytes per sec",
+	"KB_PER_SECOND": " KB per second",
 	"PROGRESS_BAR_ENABLE": "Would you like to bruhnable the bruhgressbar?",
-	"PROGRESS_BAR_DISABLE": "Would you like to bruhsable the bruhgressbar?"
+	"PROGRESS_BAR_DISABLE": "Would you like to bruhsable the bruhgressbar?",
+	"CATEGORY": "Category: ",
+	"SYSTEM": "System: ",
+	"LAST_UPDATED": "Last updated: ",
+	"CHANGE_THEME": "Change Theme",
+	"CHANGE_STYLE": "Change Style",
+	"NO_DOWNLOADS_AVAILABLE": "No downloads available.",
+	"UNISTORE_VERSION": "UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED": "This UniStore version is not supported!"
 }
