@@ -171,13 +171,13 @@
 	"LAST_UPDATED_BTN": "Dernière mise à jour",
 	"ENTER_SEARCH": "Entrez ce que vous voulez rechercher.",
 	"NO_RESULTS_FOUND": "Aucun résultat trouvé!",
-	"SEARCH": "Search Entry",
-	"INVALID_INPUT": "Invalid input!",
-	"RESET": "Reset",
-	"SEARCH_MENU": "Search Menu",
-	"TITLE_SEARCH": "Title search",
-	"AUTHOR_SEARCH": "Author search",
-	"CATEGORY_SEARCH": "Category search",
+	"SEARCH": "Chercher une entrée",
+	"INVALID_INPUT": "Valeur invalide!",
+	"RESET": "Réinitialiser",
+	"SEARCH_MENU": "Menu de recherche",
+	"TITLE_SEARCH": "Recherche de titre",
+	"AUTHOR_SEARCH": "Chercher un auteur",
+	"CATEGORY_SEARCH": "Recherche par catégorie",
 	"CONSOLE_SEARCH": "Console search",
-	"SEARCHING_FOR": "Searching for..."
+	"SEARCHING_FOR": "Recherche de..."
 }
