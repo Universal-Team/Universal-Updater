@@ -53,15 +53,15 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 	a = archive_read_new();
 	archive_read_support_format_all(a);
 
-	if(archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
+	if (archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
 		return EXTRACT_ERROR_OPENFILE;
 	}
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-		if(archive_entry_size(entry) > 0) { // Ignore folders
+		if (archive_entry_size(entry) > 0) { // Ignore folders
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
-			if(std::regex_search(entryName, match, std::regex(wantedFile))) {
+			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
 				extractingFile = outputPath + match.suffix().str();
 				
 				// make directories
@@ -75,12 +75,12 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 				extractSize = sizeLeft;
 				writeOffset = 0;
 				FILE *file = fopen(extractingFile.c_str(), "wb");
-				if(!file) {
+				if (!file) {
 					return EXTRACT_ERROR_WRITEFILE;
 				}
 
 				u8 *buf = new u8[0x30000];
-				if(buf == nullptr) {
+				if (buf == nullptr) {
 					return EXTRACT_ERROR_ALLOC;
 				}
 
@@ -91,6 +91,7 @@ Result extractArchive(std::string archivePath, std::string wantedFile, std::stri
 					sizeLeft -= size;
 					writeOffset += size;
 				}
+				
 				filesExtracted++;
 				fclose(file);
 				delete[] buf;

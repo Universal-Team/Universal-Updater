@@ -45,22 +45,22 @@ extern void downloadFailed();
 
 // Get String of the Script.
 std::string ScriptHelper::getString(nlohmann::json json, const std::string &key, const std::string &key2) {
-	if(!json.contains(key))	return "MISSING: " + key;
-	if(!json.at(key).is_object())	return "NOT OBJECT: " + key;
+	if (!json.contains(key))	return "MISSING: " + key;
+	if (!json.at(key).is_object())	return "NOT OBJECT: " + key;
 
-	if(!json.at(key).contains(key2))	return "MISSING: " + key + "." + key2;
-	if(!json.at(key).at(key2).is_string())	return "NOT STRING: " + key + "." + key2;
+	if (!json.at(key).contains(key2))	return "MISSING: " + key + "." + key2;
+	if (!json.at(key).at(key2).is_string())	return "NOT STRING: " + key + "." + key2;
 
 	return json.at(key).at(key2).get_ref<const std::string&>();
 }
 
 // Get int of the Script.
 int ScriptHelper::getNum(nlohmann::json json, const std::string &key, const std::string &key2) {
-	if(!json.contains(key))	return 0;
-	if(!json.at(key).is_object())	return 0;
+	if (!json.contains(key))	return 0;
+	if (!json.at(key).is_object())	return 0;
 
-	if(!json.at(key).contains(key2))	return 0;
-	if(!json.at(key).at(key2).is_number())	return 0;
+	if (!json.at(key).contains(key2))	return 0;
+	if (!json.at(key).at(key2).is_number())	return 0;
 	return json.at(key).at(key2).get_ref<const int64_t&>();
 }
 
@@ -73,6 +73,7 @@ Result ScriptHelper::downloadRelease(std::string repo, std::string file, std::st
 		ret = FAILED_DOWNLOAD;
 		return ret;
 	}
+
 	showProgressBar = false;
 	return ret;
 }
@@ -90,6 +91,7 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 		ret = FAILED_DOWNLOAD;
 		return ret;
 	}
+
 	showProgressBar = false;
 	return ret;
 }
@@ -97,9 +99,10 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 // Remove a File.
 Result ScriptHelper::removeFile(std::string file, std::string message) {
 	Result ret = NONE;
-	if(access(file.c_str(), F_OK) != 0 ) {
+	if (access(file.c_str(), F_OK) != 0 ) {
 		return DELETE_ERROR;
 	}
+
 	Msg::DisplayMsg(message);
 	deleteFile(file.c_str());
 	return ret;
@@ -144,10 +147,11 @@ void ScriptHelper::displayTimeMsg(std::string message, int seconds) {
 
 bool ScriptHelper::checkIfValid(std::string scriptFile, int mode) {
 	FILE* file = fopen(scriptFile.c_str(), "rt");
-	if(!file) {
+	if (!file) {
 		printf("File not found\n");
 		return false;
 	}
+
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
@@ -181,28 +185,32 @@ Result ScriptHelper::prompt(std::string message) {
 	if (!Msg::promptMsg(message)) {
 		ret = SCRIPT_CANCELED;
 	}
+
 	return ret;
 }
 
 Result ScriptHelper::copyFile(std::string source, std::string destination, std::string message) {
 	Result ret = NONE;
-	if(access(source.c_str(), F_OK) != 0 ) {
+	if (access(source.c_str(), F_OK) != 0 ) {
 		return COPY_ERROR;
 	}
+
 	Msg::DisplayMsg(message);
 	// If destination does not exist, create dirs.
-	if(access(destination.c_str(), F_OK) != 0 ) {
+	if (access(destination.c_str(), F_OK) != 0 ) {
 		makeDirs(destination.c_str());
 	}
+
 	fcopy(source.c_str(), destination.c_str());
 	return ret;
 }
 
 Result ScriptHelper::renameFile(std::string oldName, std::string newName, std::string message) {
 	Result ret = NONE;
-	if(access(oldName.c_str(), F_OK) != 0 ) {
+	if (access(oldName.c_str(), F_OK) != 0 ) {
 		return MOVE_ERROR;
 	}
+	
 	Msg::DisplayMsg(message);
 	// TODO: Kinda avoid that?
 	makeDirs(newName.c_str());

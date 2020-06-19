@@ -30,7 +30,7 @@
 #include "common.hpp"
 
 #define APP_TITLE "Universal-Updater"
-#define VERSION_STRING "2.3.0"
+#define VERSION_STRING "2.4.0"
 
 // The Release Fetch struct.
 struct ReleaseFetch {

@@ -65,6 +65,7 @@ void Msg::DisplayMsg(std::string text) {
 	} else if (isScriptSelected == true) {
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, TextColor, text, 395, 70);
 	}
+	
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -80,6 +81,7 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	} else if (isScriptSelected == true) {
 		Gui::DrawStringCentered(0, 1, 0.6f, TextColor, Text, 400);
 	}
+
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 	for (int i = 0; i < 60*3; i++) {

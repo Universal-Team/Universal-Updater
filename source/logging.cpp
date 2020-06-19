@@ -30,8 +30,7 @@
 
 #include <memory>
 
-std::string Logging::format(const std::string& fmt_str, ...)
-{
+std::string Logging::format(const std::string& fmt_str, ...) {
 	va_list ap;
 	char* fp = NULL;
 	va_start(ap, fmt_str);
@@ -41,8 +40,7 @@ std::string Logging::format(const std::string& fmt_str, ...)
 	return std::string(formatted.get());
 }
 
-std::string Logging::logDate(void)
-{
+std::string Logging::logDate(void) {
 	time_t unixTime;
 	struct tm timeStruct;
 	time(&unixTime);
@@ -51,7 +49,7 @@ std::string Logging::logDate(void)
 }
 
 void Logging::createLogFile(void) {
-	if((access("sdmc:/3ds/Universal-Updater/Log.log", F_OK) != 0)) {
+	if ((access("sdmc:/3ds/Universal-Updater/Log.log", F_OK) != 0)) {
 		FILE* logFile = fopen(("sdmc:/3ds/Universal-Updater/Log.log"), "w");
 		fclose(logFile);
 	}
@@ -59,7 +57,7 @@ void Logging::createLogFile(void) {
 
 // Only write to the Log, if it is enabled in the Settings File!
 void Logging::writeToLog(std::string debugText) {
-	if (Config::getBool("LOGGING") == true) {
+	if (Config::getBool("LOGGING")) {
 		std::ofstream logFile;
 		logFile.open(("sdmc:/3ds/Universal-Updater/Log.log"), std::ofstream::app);
 		std::string writeDebug = "[ ";

@@ -1,10 +1,10 @@
-#pragma once
+#ifndef SOUND_H
+#define SOUND_H
 
 #include <3ds.h>
 #include <string>
 
-class sound
-{
+class sound {
 public:
 	sound(const std::string& path, int channel = 1, bool toloop = true);
 	~sound();
@@ -17,3 +17,5 @@ private:
 	u8* data = NULL;
 	int chnl;
 };
+
+#endif

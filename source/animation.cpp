@@ -72,8 +72,7 @@ void Animation::DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, i
 	}
 }
 
-void Animation::Button(int x, int y, float speed)
-{
+void Animation::Button(int x, int y, float speed) {
 	static float timer	= 0.0f;
 	float highlight_multiplier = fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
 	u8 r, g, b;

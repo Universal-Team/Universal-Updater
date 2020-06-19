@@ -257,31 +257,27 @@ static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata) 
 	(void) userdata;
 	const size_t bsz = size*nmemb;
 
-	if (result_sz == 0 || !result_buf)
-	{
+	if (result_sz == 0 || !result_buf) {
 		result_sz = 0x1000;
 		result_buf = (char*)malloc(result_sz);
 	}
 
 	bool need_realloc = false;
-	while (result_written + bsz > result_sz)
-	{
+	while (result_written + bsz > result_sz) {
 		result_sz <<= 1;
 		need_realloc = true;
 	}
 
-	if (need_realloc)
-	{
+	if (need_realloc) {
 		char *new_buf = (char*)realloc(result_buf, result_sz);
-		if (!new_buf)
-		{
+		if (!new_buf) {
 			return 0;
 		}
+
 		result_buf = new_buf;
 	}
 
-	if (!result_buf)
-	{
+	if (!result_buf) {
 		return 0;
 	}
 
@@ -326,12 +322,13 @@ std::vector<ReleaseFetch> fetchReleases(nlohmann::json API) {
 		// Push to the Vector.
 		fetchVector.push_back(fetch[i]);
 	}
+
 	return fetchVector;
 }
 
 extern touchPosition touch;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-std::vector<Structs::ButtonPos> arrowPos = {
+const std::vector<Structs::ButtonPos> arrowPos = {
 	{295, 0, 25, 25}, // Arrow Up.
 	{295, 215, 25, 25} // Arrow Down.
 };
@@ -374,23 +371,25 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		GFX::DrawArrow(315, 240, 180.0);
 
 		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size();i++) {
+			for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)bruh.size(); i++) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 				line1 = bruh[screenPos + i].TagName;
 				line2 = bruh[screenPos + i].Published.substr(0, 10);
-				if(screenPos + i == selectedRelease) {
+				if (screenPos + i == selectedRelease) {
 					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
 				}
+
 				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, TextColor, line1, 320);
 				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, TextColor, line2, 320);
 			}
 		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size();i++) {
+			for(int i = 0; i < ENTRIES_PER_LIST && i < (int)bruh.size(); i++) {
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 				line1 = bruh[screenPosList + i].TagName;
-				if(screenPosList + i == selectedRelease) {
+				if (screenPosList + i == selectedRelease) {
 					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
 				}
+
 				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, TextColor, line1, 320);
 			}
 		}
@@ -504,14 +503,12 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	}
 
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf)
-	{
+	if (!socubuf) {
 		return -1;
 	}
 
 	ret = socInit((u32*)socubuf, 0x100000);
-	if (R_FAILED(ret))
-	{
+	if (R_FAILED(ret)) {
 		free(socubuf);
 		return ret;
 	}
@@ -562,20 +559,21 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	printf("Looking for asset with matching name:\n%s\n", asset.c_str());
 	std::string assetUrl;
 	json parsedAPI = json::parse(result_buf);
-	if(showVersions) {
-		if(!includePrereleases) {
+	if (showVersions) {
+		if (!includePrereleases) {
 			for(auto it = parsedAPI.begin(); it != parsedAPI.end();) {
-				if((*it)["prerelease"]) {
+				if ((*it)["prerelease"]) {
 					parsedAPI.erase(it);
 				} else {
 					it++;
 				}
 			}
 		}
-		if(parsedAPI.size() == 0) {
+		if (parsedAPI.size() == 0) {
 			// All were prereleases and those are being ignored
 			return -2; // TODO: Maybe change this? I'm note sure what good return values are -Pk11
 		}
+
 		std::vector<ReleaseFetch> fetchResult = fetchReleases(parsedAPI);
 		int release = SelectRelease(fetchResult);
 
@@ -590,9 +588,10 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 		}
 		
 		parsedAPI = parsedAPI[release];
-	} else if(includePrereleases) {
+	} else if (includePrereleases) {
 		parsedAPI = parsedAPI[0];
 	}
+
 	if (parsedAPI["assets"].is_array()) {
 		for (auto jsonAsset : parsedAPI["assets"]) {
 			if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
@@ -619,6 +618,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 		Threads::create((ThreadFunc)displayProgressBar);
 		ret = downloadToFile(assetUrl, path);
 	}
+
 	return ret;
 }
 
@@ -653,18 +653,15 @@ void notConnectedMsg(void) {
 	Msg::DisplayWarnMsg(Lang::get("CONNECT_WIFI"));
 }
 
-std::string getLatestRelease(std::string repo, std::string item)
-{
+std::string getLatestRelease(std::string repo, std::string item) {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf)
-	{
+	if (!socubuf) {
 		return "";
 	}
 
 	ret = socInit((u32*)socubuf, 0x100000);
-	if (R_FAILED(ret))
-	{
+	if (R_FAILED(ret)) {
 		free(socubuf);
 		return "";
 	}
@@ -707,6 +704,7 @@ std::string getLatestRelease(std::string repo, std::string item)
 	if (parsedAPI[item].is_string()) {
 		jsonItem = parsedAPI[item];
 	}
+
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -720,14 +718,12 @@ std::string getLatestRelease(std::string repo, std::string item)
 std::string getLatestCommit(std::string repo, std::string item) {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf)
-	{
+	if (!socubuf) {
 		return "";
 	}
 
 	ret = socInit((u32*)socubuf, 0x100000);
-	if (R_FAILED(ret))
-	{
+	if (R_FAILED(ret)) {
 		free(socubuf);
 		return "";
 	}
@@ -770,6 +766,7 @@ std::string getLatestCommit(std::string repo, std::string item) {
 	if (parsedAPI[item].is_string()) {
 		jsonItem = parsedAPI[item];
 	}
+
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -783,14 +780,12 @@ std::string getLatestCommit(std::string repo, std::string item) {
 std::string getLatestCommit(std::string repo, std::string array, std::string item) {
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf)
-	{
+	if (!socubuf) {
 		return "";
 	}
 
 	ret = socInit((u32*)socubuf, 0x100000);
-	if (R_FAILED(ret))
-	{
+	if (R_FAILED(ret)) {
 		free(socubuf);
 		return "";
 	}
@@ -833,6 +828,7 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 	if (parsedAPI[array][item].is_string()) {
 		jsonItem = parsedAPI[array][item];
 	}
+	
 	socExit();
 	free(result_buf);
 	free(socubuf);
