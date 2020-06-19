@@ -145,9 +145,9 @@
 	"COPY_ERROR": "Erreur de copie!",
 	"MOVE_ERROR": "Erreur de déplacement!",
 	"DELETE_ERROR": "Erreur d'effacement!",
-	"CHANGE_KEY_DELAY": "Changer le délai de la clé",
-	"ENTER_KEY_DELAY": "Entrez le délai de la clé pour scroller.",
-	"TOGGLE_FADE": "Activer/désactiver l'effet de fondu",
+	"CHANGE_KEY_DELAY": "Changer le délai du pad",
+	"ENTER_KEY_DELAY": "Entrez le délai du pad pour scroller.",
+	"TOGGLE_FADE": "Changer l'effet de fondu",
 	"TOGGLE_FADE_ENABLE": "Voulez-vous activer les transitions en fondu?",
 	"TOGGLE_FADE_DISABLE": "Voulez-vous désactiver les transitions en fondu?",
 	"ENABLED": "Activé!",
@@ -178,6 +178,6 @@
 	"TITLE_SEARCH": "Recherche de titre",
 	"AUTHOR_SEARCH": "Chercher un auteur",
 	"CATEGORY_SEARCH": "Recherche par catégorie",
-	"CONSOLE_SEARCH": "Console search",
+	"CONSOLE_SEARCH": "Recherche sur la console",
 	"SEARCHING_FOR": "Recherche de..."
 }
