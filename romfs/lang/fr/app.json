@@ -170,5 +170,8 @@
 	"AUTHOR_BTN": "Auteur",
 	"LAST_UPDATED_BTN": "Dernière mise à jour",
 	"ENTER_SEARCH": "Entrez ce que vous voulez rechercher.",
-	"NO_RESULTS_FOUND": "Aucun résultat trouvé!"
+	"NO_RESULTS_FOUND": "Aucun résultat trouvé!",
+	"SEARCH": "Search Entry",
+	"INVALID_INPUT": "Invalid input!",
+	"RESET": "Reset"
 }
