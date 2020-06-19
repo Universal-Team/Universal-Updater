@@ -82,6 +82,54 @@ UniStoreV2Struct Store::getData(const int index) {
 	return temp;
 }
 
+int Store::searchForCategory(const std::string searchResult) {
+	std::vector<UniStoreV2Struct> temp;
+
+	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
+		if (this->sortedStore[i].category.find(searchResult) != std::string::npos) {
+			temp.push_back({this->sortedStore[i]});
+		}
+	}
+
+	if (temp.size() != 0) {
+		this->sortedStore = temp;
+	}
+
+	return (int)temp.size();
+}
+
+int Store::searchForConsole(const std::string searchResult) {
+	std::vector<UniStoreV2Struct> temp;
+
+	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
+		if (this->sortedStore[i].console.find(searchResult) != std::string::npos) {
+			temp.push_back({this->sortedStore[i]});
+		}
+	}
+
+	if (temp.size() != 0) {
+		this->sortedStore = temp;
+	}
+
+	return (int)temp.size();
+}
+
+int Store::searchForAuthor(const std::string searchResult) {
+	std::vector<UniStoreV2Struct> temp;
+
+	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
+		if (this->sortedStore[i].author.find(searchResult) != std::string::npos) {
+			temp.push_back({this->sortedStore[i]});
+		}
+	}
+
+	if (temp.size() != 0) {
+		this->sortedStore = temp;
+	}
+
+	return (int)temp.size();
+}
+
 int Store::searchForEntries(const std::string searchResult) {
 	std::vector<UniStoreV2Struct> temp;
 

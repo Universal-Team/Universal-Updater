@@ -228,8 +228,25 @@ void UniStoreV2::parseObjects(int selection) {
 	}
 }
 
+void UniStoreV2::DrawSearchMenu(void) const {
+	this->DrawBaseTop();
+	if (Config::UseBars == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, this->returnTextColor(), Lang::get("SEARCH_MENU"), 400);
+	} else {
+		Gui::DrawStringCentered(0, 2, 0.7f, this->returnTextColor(), Lang::get("SEARCH_MENU"), 400);
+	}
+
+	this->DrawBaseBottom();
+	GFX::DrawButton(searchPos[0].x, searchPos[0].y,Lang::get("TITLE_SEARCH"));
+	GFX::DrawButton(searchPos[1].x, searchPos[1].y, Lang::get("AUTHOR_SEARCH"));
+	GFX::DrawButton(searchPos[2].x, searchPos[2].y, Lang::get("CATEGORY_SEARCH"));
+	GFX::DrawButton(searchPos[3].x, searchPos[3].y, Lang::get("CONSOLE_SEARCH"));
+
+	Animation::Button(searchPos[this->searchSelection].x, searchPos[this->searchSelection].y, .060);
+}
+
 void UniStoreV2::DropDownMenu(void) const {
-	if (this->mode != 2) {
+	if (this->mode != 2 || this->mode != 3) {
 		// DropDown Menu.
 		if (this->isDropDown) {
 			// Draw Operation Box.
@@ -250,7 +267,7 @@ void UniStoreV2::DropDownMenu(void) const {
 			// Dropdown Text.
 			Gui::DrawString(this->dropPos[0].x+30, this->dropPos[0].y+5, 0.4f, this->returnTextColor(), Lang::get("CHANGE_THEME"), 100);
 			Gui::DrawString(this->dropPos[1].x+30, this->dropPos[1].y+5, 0.4f, this->returnTextColor(), Lang::get("CHANGE_STYLE"), 100);
-			Gui::DrawString(this->dropPos[2].x+30, this->dropPos[2].y+5, 0.4f, this->returnTextColor(), Lang::get("SEARCH"), 100);
+			Gui::DrawString(this->dropPos[2].x+30, this->dropPos[2].y+5, 0.4f, this->returnTextColor(), Lang::get("SEARCHING_FOR"), 100);
 			Gui::DrawString(this->dropPos[3].x+30, this->dropPos[3].y+5, 0.4f, this->returnTextColor(), Lang::get("RESET"), 100);
 		}
 	}
@@ -366,9 +383,11 @@ void UniStoreV2::Draw(void) const {
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	} else if (this->mode == 2) {
 		this->displaySelectedEntry(this->selection);
+	} else if (this->mode == 3) {
+		this->DrawSearchMenu();
 	}
 
-	if (this->mode != 2)	GFX::DrawSpriteBlend(sprites_dropdown_idx, iconPos[0].x, iconPos[0].y);
+	if (this->mode < 2)	GFX::DrawSpriteBlend(sprites_dropdown_idx, iconPos[0].x, iconPos[0].y);
 	this->DropDownMenu();
 }
 
@@ -383,8 +402,6 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if (hDown & KEY_A) {
-			std::string temp;
-			int amount;
 			switch(this->dropSelection) {
 				case 0:
 					if (this->darkMode) this->darkMode = false;
@@ -395,20 +412,8 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					else this->mode = 0;
 				break;
 				case 2:
-					temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-					if (temp != "") {
-						if (this->mode == 0) {
-							this->selectedBox = 0;
-							this->storePage = 0;
-						} else if (this->mode == 1) {
-							this->selectedBoxList = 0;
-							this->storePageList = 0;
-						}
-						amount = this->sortedStore->searchForEntries(temp);
-						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-					} else {
-						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
-					}
+					this->lastViewMode = this->mode;
+					this->mode = 3;
 					break;
 				case 3:
 					if (this->mode == 0) {
@@ -439,20 +444,8 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				else this->mode = 0;
 				this->isDropDown = false;
 			} else if (touching(touch, this->dropPos[2])) {
-				std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-				if (temp != "") {
-					if (this->mode == 0) {
-						this->selectedBox = 0;
-						this->storePage = 0;
-					} else if (this->mode == 1) {
-						this->selectedBoxList = 0;
-						this->storePageList = 0;
-					}
-					int amount = this->sortedStore->searchForEntries(temp);
-					if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-				} else {
-					Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
-				}
+				this->lastViewMode = this->mode;
+				this->mode = 3;
 				this->isDropDown = false;
 			} else if (touching(touch, this->dropPos[3])) {
 				if (this->mode == 0) {
@@ -533,7 +526,6 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->storePage--;
 				}
 			}
-
 
 			if (hDown & KEY_A) {
 				if (this->sortedStore->returnJSONIndex(this->selectedBox + (this->storePage * STORE_ENTRIES)) < (int)this->storeJson.at("storeContent").size()) {
@@ -672,10 +664,158 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				this->subSelection = 0;
 				this->mode = this->lastViewMode;
 			}
+
+		} else if (this->mode == 3) {
+			if (hDown & KEY_B) {
+				this->mode = this->lastViewMode;
+			}
+
+			// Search menu.
+			if (hDown & KEY_TOUCH) {
+				if (touching(touch, searchPos[0])) {
+					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+					if (temp != "") {
+						this->selectedBox = 0;
+						this->storePage = 0;
+						this->selectedBoxList = 0;
+						this->storePageList = 0;
+						int amount = this->sortedStore->searchForEntries(temp);
+						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+					} else {
+						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+					}
+
+					this->mode = this->lastViewMode;
+
+				} else if (touching(touch, searchPos[1])) {
+					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+					if (temp != "") {
+						this->selectedBox = 0;
+						this->storePage = 0;
+						this->selectedBoxList = 0;
+						this->storePageList = 0;
+						int amount = this->sortedStore->searchForAuthor(temp);
+						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+					} else {
+						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+					}
+
+					this->mode = this->lastViewMode;
+
+				} else if (touching(touch, searchPos[2])) {
+					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+					if (temp != "") {
+						this->selectedBox = 0;
+						this->storePage = 0;
+						this->selectedBoxList = 0;
+						this->storePageList = 0;
+						int amount = this->sortedStore->searchForCategory(temp);
+						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+					} else {
+						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+					}
+
+					this->mode = this->lastViewMode;
+
+				} else if (touching(touch, searchPos[3])) {
+					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+					if (temp != "") {
+						this->selectedBox = 0;
+						this->storePage = 0;
+						this->selectedBoxList = 0;
+						this->storePageList = 0;
+						int amount = this->sortedStore->searchForConsole(temp);
+						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+					} else {
+						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+					}
+
+					this->mode = this->lastViewMode;
+				}
+			}
+
+			if (hDown & KEY_RIGHT || hDown & KEY_R) {
+				if (this->searchSelection == 0)	this->searchSelection = 1;
+				else if (this->searchSelection == 2) this->searchSelection = 3;
+			}
+
+			if (hDown & KEY_LEFT || hDown & KEY_L) {
+				if (this->searchSelection == 1)	this->searchSelection = 0;
+				else if (this->searchSelection == 3) this->searchSelection = 2;
+			}
+
+			if (hDown & KEY_DOWN) {
+				if (this->searchSelection == 0)	this->searchSelection = 2;
+				else if (this->searchSelection == 1) this->searchSelection = 3;
+			}
+
+			if (hDown & KEY_UP) {
+				if (this->searchSelection == 2)	this->searchSelection = 0;
+				else if (this->searchSelection == 3) this->searchSelection = 1;
+			}
+
+			if (hDown & KEY_A) {
+				std::string temp; int amount;
+				switch(this->searchSelection) {
+					case 0:
+						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+						if (temp != "") {
+							this->selectedBox = 0;
+							this->storePage = 0;
+							this->selectedBoxList = 0;
+							this->storePageList = 0;
+							amount = this->sortedStore->searchForEntries(temp);
+							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+						} else {
+							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						}
+						break;
+					case 1:
+						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+						if (temp != "") {
+							this->selectedBox = 0;
+							this->storePage = 0;
+							this->selectedBoxList = 0;
+							this->storePageList = 0;
+							amount = this->sortedStore->searchForAuthor(temp);
+							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+						} else {
+							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						}
+						break;
+					case 2:
+						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+						if (temp != "") {
+							this->selectedBox = 0;
+							this->storePage = 0;
+							this->selectedBoxList = 0;
+							this->storePageList = 0;
+							amount = this->sortedStore->searchForCategory(temp);
+							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+						} else {
+							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						}
+						break;
+					case 3:
+						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+						if (temp != "") {
+							this->selectedBox = 0;
+							this->storePage = 0;
+							this->selectedBoxList = 0;
+							this->storePageList = 0;
+							amount = this->sortedStore->searchForConsole(temp);
+							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+						} else {
+							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						}
+						break;
+				}
+				this->mode = this->lastViewMode;
+			}
 		}
 
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, iconPos[0]))) {
-			if (this->mode != 2) {
+			if (this->mode != 2 || this->mode != 3) {
 				this->dropSelection = 0;
 				this->isDropDown = true;
 			}

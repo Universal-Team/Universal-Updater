@@ -61,7 +61,13 @@ public:
 	int returnJSONIndex(const int index);
 	int getSize();
 	bool getAscending() { return this->ascending; }
+
+	// Searching stuff.
 	int searchForEntries(const std::string searchResult);
+	int searchForAuthor(const std::string searchResult);
+	int searchForCategory(const std::string searchResult);
+	int searchForConsole(const std::string searchResult);
+
 	void reset() { this->sortedStore = this->unsortedStore; }
 
 	const int getSortType() {

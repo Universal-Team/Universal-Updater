@@ -45,12 +45,13 @@ private:
 	std::unique_ptr<Store> sortedStore;
 
 	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false, isDropDown = false;
-	int selectedBox = 0, lastViewMode = 0, dropSelection = 0, iconAmount = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
+	int selectedBox = 0, lastViewMode = 0, dropSelection = 0, searchSelection = 0, iconAmount = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
 	nlohmann::json storeJson;
 	C2D_SpriteSheet sheet;
 	std::vector<std::string> objects;
 
 	void DrawSortingMenu(void) const;
+	void DrawSearchMenu(void) const;
 
 	// Base stuff.
 	void DrawBaseTop(void) const;
@@ -118,6 +119,13 @@ private:
 		{115, 90, 100, 30}, // Title.
 		{115, 130, 100, 30}, // Author.
 		{115, 170, 100, 30} // Last Updated.
+	};
+
+	const std::vector<Structs::ButtonPos> searchPos = {
+		{0, 60, 149, 52}, // Title.
+		{162, 60, 149, 52}, // Author.
+		{0, 130, 149, 52}, // Category.
+		{162, 130, 149, 52} // Console.
 	};
 
 	u32 barColorLight, barColorDark, bgColorLight, bgColorDark, textColorLight, textColorDark, boxColorLight, boxColorDark, outlineColorLight, outlineColorDark;
