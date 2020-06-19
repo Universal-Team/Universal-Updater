@@ -167,13 +167,15 @@ void UniStore::DrawStoreList(void) const {
 	GFX::DrawTop();
 	if (Config::UseBars == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, storeInfo[Selection].title, 400);
+		Gui::DrawString(5, 220, 0.6f, Config::TxtColor, Lang::get("UNISTORE_VERSION") + std::to_string(storeInfo[Selection].version + 1), 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 239-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, storeInfo[Selection].title, 400);
+		Gui::DrawString(5, 218, 0.6f, Config::TxtColor, Lang::get("UNISTORE_VERSION") + std::to_string(storeInfo[Selection].version + 1), 400);
 		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 237-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, Config::TxtColor, storeAmount);
 	}
 
-	for(uint i=0;i<descLines.size();i++) {
+	for(uint i = 0; i < descLines.size(); i++) {
 		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, Config::TxtColor, descLines[i], 400);
 	}
 

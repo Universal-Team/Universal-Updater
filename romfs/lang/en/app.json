@@ -186,5 +186,6 @@
 	"LAST_UPDATED":						"Last updated: ",
 	"CHANGE_THEME":						"Change Theme",
 	"CHANGE_STYLE":						"Change Style",
-	"NO_DOWNLOADS_AVAILABLE":			"No downloads available."
+	"NO_DOWNLOADS_AVAILABLE":			"No downloads available.",
+	"UNISTORE_VERSION":					"UniStore version: "
 }
