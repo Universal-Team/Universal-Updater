@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Создатель скриптов",
 	"CREDITS": "Благодарность",
 	"DEVELOPED_BY": "Разработан: Универсальная-Команда.",
-	"MAIN_DEV": "Главный разработчик: SuperSaiyajinStackie",
+	"MAIN_DEV": "Main Developer: StackZ",
 	"CURRENT_VERSION": "Текущая версия: ",
 	"MANY_THANKS": "Спасибо:",
 	"TRANSLATORS": "Переводчики",
@@ -153,7 +153,15 @@
 	"ENABLED": "Включено!",
 	"DISABLED": "Выключено!",
 	"DOWNLOAD_SPEED": "Скорость загрузки: ",
-	"BYTES_PER_SECOND": " байтов в секунду",
+	"KB_PER_SECOND": " KB per second",
 	"PROGRESS_BAR_ENABLE": "Хотите включить прогрессбар?",
-	"PROGRESS_BAR_DISABLE": "Хотите выключить прогрессбар?"
+	"PROGRESS_BAR_DISABLE": "Хотите выключить прогрессбар?",
+	"CATEGORY": "Category: ",
+	"SYSTEM": "System: ",
+	"LAST_UPDATED": "Last updated: ",
+	"CHANGE_THEME": "Change Theme",
+	"CHANGE_STYLE": "Change Style",
+	"NO_DOWNLOADS_AVAILABLE": "No downloads available.",
+	"UNISTORE_VERSION": "UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED": "This UniStore version is not supported!"
 }
