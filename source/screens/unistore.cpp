@@ -74,10 +74,12 @@ void UniStore::autobootLogic() {
 				JSON = openStoreFile();
 				displayInformations = handleIfDisplayText();
 				const std::string sheetURL = storeInfo[0].storeSheet;
-				if (storeInfo[0].version == 1) {
+				if (storeInfo[0].version == 0) {
+					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+				} else if (storeInfo[0].version == 1) {
 					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 				} else {
-					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+					Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 				}
 			} else {
 				specialHandling = true; // Special back handling.
@@ -587,10 +589,13 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					JSON = openStoreFile();
 					displayInformations = handleIfDisplayText();
 					const std::string sheetURL = storeInfo[Selection].storeSheet;
-					if (storeInfo[Selection].version == 1) {
+
+					if (storeInfo[Selection].version == 0) {
+						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+					} else if (storeInfo[Selection].version == 1) {
 						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 					} else {
-						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+						Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 					}
 				}
 			}
@@ -621,10 +626,12 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							JSON = openStoreFile();
 							displayInformations = handleIfDisplayText();
 							const std::string sheetURL = storeInfo[screenPos + i].storeSheet;
-							if (storeInfo[screenPos + i].version == 1) {
+							if (storeInfo[screenPos + i].version == 0) {
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+							} else if (storeInfo[screenPos + i].version == 1) {
 								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 							} else {
-								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+								Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 							}
 						}
 					}
@@ -640,10 +647,12 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							JSON = openStoreFile();
 							displayInformations = handleIfDisplayText();
 							const std::string sheetURL = storeInfo[screenPosList + i].storeSheet;
-							if (storeInfo[screenPosList + i].version == 1) {
+							if (storeInfo[screenPosList + i].version == 0) {
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+							} else if (storeInfo[screenPosList + i].version == 1) {
 								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 							} else {
-								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
+								Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 							}
 						}
 					}

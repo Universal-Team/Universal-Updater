@@ -187,5 +187,6 @@
 	"CHANGE_THEME":						"Change Theme",
 	"CHANGE_STYLE":						"Change Style",
 	"NO_DOWNLOADS_AVAILABLE":			"No downloads available.",
-	"UNISTORE_VERSION":					"UniStore version: "
+	"UNISTORE_VERSION":					"UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED":			"This UniStore version is not supported!"
 }
