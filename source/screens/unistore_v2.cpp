@@ -34,7 +34,7 @@
 
 extern u32 getColor(std::string colorString);
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-#define STORE_ENTRIES	 9
+#define STORE_ENTRIES	 15
 #define STORE_ENTRIES_LIST 3
 #define DOWNLOAD_ENTRIES 5
 extern bool didAutoboot;
@@ -126,9 +126,9 @@ void UniStoreV2::drawBox(float xPos, float yPos, float width, float height, bool
 void UniStoreV2::DrawGrid(void) const {
 	for (int i = 0, i2 = 0 + (this->storePage * STORE_ENTRIES); i2 < STORE_ENTRIES + (this->storePage * STORE_ENTRIES) && i2 < this->sortedStore->getSize(); i2++, i++) {
 		if (i == this->selectedBox) {
-			this->drawBox(this->StoreBoxesGrid[i].x, this->StoreBoxesGrid[i].y, 100, 50, true);
+			this->drawBox(this->StoreBoxesGrid[i].x, this->StoreBoxesGrid[i].y, 50, 50, true);
 		} else {
-			this->drawBox(this->StoreBoxesGrid[i].x, this->StoreBoxesGrid[i].y, 100, 50, false);
+			this->drawBox(this->StoreBoxesGrid[i].x, this->StoreBoxesGrid[i].y, 50, 50, false);
 		}
 
 		if (this->sheetLoaded) {
@@ -138,7 +138,7 @@ void UniStoreV2::DrawGrid(void) const {
 					if (temp.subtex->width < 49 && temp.subtex->height < 49) {
 						int offset = (48 - temp.subtex->width) / 2;
 						int offset2 = (48 - temp.subtex->height) / 2;
-						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+26 + offset, this->StoreBoxesGrid[i].y+1 + offset2);
+						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+1 + offset, this->StoreBoxesGrid[i].y+1 + offset2);
 					} else {
 						GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 					}
@@ -233,8 +233,10 @@ void UniStoreV2::DropDownMenu(void) const {
 		// DropDown Menu.
 		if (this->isDropDown) {
 			// Draw Operation Box.
+			Gui::Draw_Rect(5, 25, 140, 60, this->darkMode ? this->barColorDark : this->barColorLight);
+
 			for (int i = 0; i < 2; i++) {
-				Gui::Draw_Rect(dropPos[i].x, dropPos[i].y, dropPos[i].w, dropPos[i].h, this->darkMode ? this->barColorDark : this->barColorLight);
+				Gui::Draw_Rect(dropPos[i].x, dropPos[i].y, dropPos[i].w, dropPos[i].h, this->darkMode ? this->boxColorDark : this->boxColorLight);
 			}
 
 			Gui::drawAnimatedSelector(dropPos[dropSelection].x, dropPos[dropSelection].y, dropPos[dropSelection].w, dropPos[dropSelection].h, .090, this->darkMode ? this->barColorDark : this->barColorLight, TRANSPARENT);
@@ -390,7 +392,7 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			this->isDropDown = false;
 		}
 
-		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, this->iconPos[3]))) {
+		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, this->iconPos[0]))) {
 			this->isDropDown = false;
 		}
 
@@ -421,23 +423,22 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_RIGHT) {
 				// Try to go to next page.
-				if (this->selectedBox == 2 || this->selectedBox == 5 || this->selectedBox == 8) {
+				if (this->selectedBox == 4 || this->selectedBox == 9 || this->selectedBox == 14) {
 					if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->sortedStore->getSize()) {
 						this->selectedBox = 0;
 						this->storePage++;
 					}
 				} else {
 					if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 1 < (int)this->sortedStore->getSize()) {
-						if (this->selectedBox < 8 + (this->storePage * STORE_ENTRIES))	this->selectedBox++;
+						if (this->selectedBox < 14 + (this->storePage * STORE_ENTRIES))	this->selectedBox++;
 					}
 				}
 			}
 
 			if (hDown & KEY_LEFT) {
 				// Try to go to next page.
-				if (this->selectedBox == 0 || this->selectedBox == 3 || this->selectedBox == 6) {
+				if (this->selectedBox == 0 || this->selectedBox == 5 || this->selectedBox == 11) {
 					if (this->storePage > 0) {
-						this->selectedBox = 0;
 						this->storePage--;
 					}
 				} else {
@@ -446,19 +447,24 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_UP) {
-				if (this->selectedBox > 2 + (this->storePage * STORE_ENTRIES))	this->selectedBox -= 3;
+				if (this->selectedBox > 4 + (this->storePage * STORE_ENTRIES))	this->selectedBox -= 5;
 			}
 
 			if (hDown & KEY_DOWN) {
-				if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 3 < (int)this->sortedStore->getSize()) {
-					if (this->selectedBox < 6)	this->selectedBox += 3;
+				if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 5 < (int)this->sortedStore->getSize()) {
+					if (this->selectedBox < 11)	this->selectedBox += 5;
 				}
 			}
 
 			if (hDown & KEY_R) {
-				if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->sortedStore->getSize()) {
-					this->selectedBox = 0;
-					this->storePage++;
+				if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < this->sortedStore->getSize()) {
+					// Selected box is smaller.. so we can keep it on the same position.
+					if (this->selectedBox + STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < this->sortedStore->getSize()) {
+						this->storePage++;
+					} else {
+						this->selectedBox = 0;
+						this->storePage++;
+					}
 				}
 			}
 
@@ -480,7 +486,6 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_L) {
 				if (this->storePage > 0) {
-					this->selectedBox = 0;
 					this->storePage--;
 				}
 			}
@@ -529,14 +534,17 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_RIGHT || hDown & KEY_R) {
 				if (STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) < (int)this->sortedStore->getSize()) {
-					this->selectedBoxList = 0;
-					this->storePageList++;
+					if (this->selectedBoxList + STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) < this->sortedStore->getSize()) {
+						this->storePageList++;
+					} else {
+						this->selectedBoxList = 0;
+						this->storePageList++;
+					}
 				}
 			}
 
 			if (hDown & KEY_LEFT || hDown & KEY_L) {
 				if (this->storePageList > 0) {
-					this->selectedBoxList = 0;
 					this->storePageList--;
 				}
 			}

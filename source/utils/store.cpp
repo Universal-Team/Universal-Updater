@@ -100,38 +100,26 @@ int Store::searchForEntries(const std::string searchResult) {
 
 // Title.
 bool compareTitleDescending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = a.title.compare(b.title);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(a.title.c_str(), b.title.c_str()) > 0;
 }
 bool compareTitleAscending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = b.title.compare(a.title);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(b.title.c_str(), a.title.c_str()) > 0;
 }
 
 // Author.
 bool compareAuthorDescending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = a.author.compare(b.author);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(a.author.c_str(), b.author.c_str()) > 0;
 }
 bool compareAuthorAscending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = b.author.compare(a.author);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(b.author.c_str(), a.author.c_str()) > 0;
 }
 
 // Last updated.
 bool compareUpdateDescending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = a.last_updated.compare(b.last_updated);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(a.last_updated.c_str(), b.last_updated.c_str()) > 0;
 }
 bool compareUpdateAscending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
-	int result = b.last_updated.compare(a.last_updated);
-	if (result > 0)	return true;
-	else			return false;
+	return strcasecmp(b.last_updated.c_str(), a.last_updated.c_str()) > 0;
 }
 
 void Store::sorting(bool Ascending, SortType sorttype) {
