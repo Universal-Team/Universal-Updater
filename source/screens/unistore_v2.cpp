@@ -134,10 +134,12 @@ void UniStoreV2::DrawGrid(void) const {
 			if (this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)) != -1) {
 				if (this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)) < this->iconAmount) {
 					C2D_Image temp = C2D_SpriteSheetGetImage(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)));
-					if (temp.subtex->width == 32) {
-						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+34, this->StoreBoxesGrid[i].y+9);
+					if (temp.subtex->width < 49 && temp.subtex->height < 49) {
+						int offset = (48 - temp.subtex->width) / 2;
+						int offset2 = (48 - temp.subtex->height) / 2;
+						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+26 + offset, this->StoreBoxesGrid[i].y+1 + offset2);
 					} else {
-						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+						GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 					}
 					temp = {nullptr, nullptr};
 				} else {
@@ -164,10 +166,12 @@ void UniStoreV2::DrawList(void) const {
 			if (this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)) != -1) {
 				if (this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)) < this->iconAmount) {
 					C2D_Image temp = C2D_SpriteSheetGetImage(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)));
-					if (temp.subtex->width == 32) {
-						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)), this->StoreBoxesList[i].x+9, this->StoreBoxesList[i].y+9);
+					if (temp.subtex->width < 49 && temp.subtex->height < 49) {
+						int offset = (48 - temp.subtex->width) / 2;
+						int offset2 = (48 - temp.subtex->height) / 2;
+						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)), this->StoreBoxesList[i].x+1 + offset, this->StoreBoxesList[i].y+1 + offset2);
 					} else {
-						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)), this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+						GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 					}
 					temp = {nullptr, nullptr};
 				} else {
