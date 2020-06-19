@@ -170,5 +170,8 @@
 	"AUTHOR_BTN": "Author",
 	"LAST_UPDATED_BTN": "Last updated",
 	"ENTER_SEARCH": "Введите что вы хотите найти.",
-	"NO_RESULTS_FOUND": "Ничего не найдено!"
+	"NO_RESULTS_FOUND": "Ничего не найдено!",
+	"SEARCH": "Search Entry",
+	"INVALID_INPUT": "Invalid input!",
+	"RESET": "Reset"
 }
