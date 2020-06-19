@@ -106,7 +106,9 @@ private:
 
 	const std::vector<Structs::ButtonPos> dropPos = {
 		{5, 30, 140, 25}, // Theme.
-		{5, 70, 140, 25}  // Style.
+		{5, 70, 140, 25}, // Style.
+		{5, 110, 140, 25},// Search.
+		{5, 150, 140, 25} // Reset.
 	};
 
 	const std::vector<Structs::ButtonPos> sortingPos = {

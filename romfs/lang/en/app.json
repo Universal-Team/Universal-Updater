@@ -195,5 +195,8 @@
 	"AUTHOR_BTN":						"Author",
 	"LAST_UPDATED_BTN":					"Last updated",
 	"ENTER_SEARCH":						"Enter what you like to search.",
-	"NO_RESULTS_FOUND":					"No results found!"
+	"NO_RESULTS_FOUND":					"No results found!",
+	"SEARCH":							"Search Entry",
+	"INVALID_INPUT":					"Invalid input!",
+	"RESET":							"Reset"
 }

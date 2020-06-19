@@ -754,7 +754,7 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (Selection == 2) {
 			ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", Config::StorePath + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
 		} else if (Selection == 3) {
-			ScriptHelper::downloadFile("https://github.com/Universal-Team/db/raw/master/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
+			ScriptHelper::downloadFile("https://db.universal-team.net/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 		}
 	}
 
@@ -766,8 +766,8 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		mode = 4;
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[2])) {
 		ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", Config::StorePath + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
-	} else if (hDown & KEY_TOUCH & touching(touch, URLBtn[3])) {
-		ScriptHelper::downloadFile("https://github.com/Universal-Team/db/raw/master/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
+	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[3])) {
+		ScriptHelper::downloadFile("https://db.universal-team.net/unistore/universal-db.unistore", Config::StorePath + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 	}
 }
 
