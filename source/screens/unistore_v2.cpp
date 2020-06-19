@@ -42,10 +42,17 @@ UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath) {
 	this->storeJson = JSON;
 
 	if (access(sheetPath.c_str(), F_OK) != 0) {
+		this->iconAmount = 0;
 		this->sheetLoaded = false;
 	} else {
-		Gui::loadSheet(sheetPath.c_str(), this->sheet);
-		this->sheetLoaded = true;
+		if (C2D_SpriteSheetLoad(sheetPath.c_str()) != nullptr) {
+			this->sheet = C2D_SpriteSheetLoad(sheetPath.c_str());
+			this->iconAmount = (int)C2D_SpriteSheetCount(this->sheet);
+			this->sheetLoaded = true;
+		} else {
+			this->iconAmount = 0;
+			this->sheetLoaded = false;
+		}
 	}
 
 	// Get colors.
@@ -68,7 +75,7 @@ UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath) {
 UniStoreV2::~UniStoreV2() {
 	// Only unload if sheet has loaded.
 	if (this->sheetLoaded) {
-		Gui::unloadSheet(this->sheet);
+		C2D_SpriteSheetFree(this->sheet);
 	}
 }
 
@@ -124,8 +131,12 @@ void UniStoreV2::DrawGrid(void) const {
 		}
 
 		if (this->sheetLoaded) {
-			if (this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").contains("icon_index") || (int)this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index") < (int)C2D_SpriteSheetCount(this->sheet)) {
-				Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index"), this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+			if (this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").contains("icon_index")) {
+				if ((int)this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index") < this->iconAmount) {
+					Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index"), this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+				} else {
+					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+				}
 			} else {
 				GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
 			}
@@ -144,8 +155,12 @@ void UniStoreV2::DrawList(void) const {
 		}
 
 		if (this->sheetLoaded) {
-			if (this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").contains("icon_index") || (int)this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index") < (int)C2D_SpriteSheetCount(this->sheet)) {
-				Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index"), this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+			if (this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").contains("icon_index")) {
+				if ((int)this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index") < this->iconAmount) {
+					Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index"), this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+				} else {
+					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+				}
 			} else {
 				GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 			}
