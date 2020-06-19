@@ -26,6 +26,7 @@
 
 #include "download.hpp"
 #include "json.hpp"
+#include "keyboard.hpp"
 #include "scriptHelper.hpp"
 #include "unistore_v2.hpp"
 
@@ -334,7 +335,7 @@ void UniStoreV2::Draw(void) const {
 
 		this->DrawGrid();
 
-		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePage + 1) + " | " + std::to_string(1 + (this->storeJson.at("storeContent").size() / STORE_ENTRIES)));
+		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePage + 1) + " | " + std::to_string(1 + (this->sortedStore->getSize() / STORE_ENTRIES)));
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
@@ -351,7 +352,7 @@ void UniStoreV2::Draw(void) const {
 		}
 
 		this->DrawList();
-		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePageList + 1) + " | " + std::to_string(1 + (this->storeJson.at("storeContent").size() / STORE_ENTRIES_LIST)));
+		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePageList + 1) + " | " + std::to_string(1 + (this->sortedStore->getSize() / STORE_ENTRIES_LIST)));
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
@@ -461,6 +462,22 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 
+			if (hDown & KEY_X) {
+				std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+				if (temp != "") {
+					this->selectedBox = 0;
+					this->storePage = 0;
+					int amount = this->sortedStore->searchForEntries(temp);
+					if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+				}
+			}
+
+			if (hDown & KEY_Y) {
+				this->selectedBox = 0;
+				this->storePage = 0;
+				this->sortedStore->reset();
+			}
+
 			if (hDown & KEY_L) {
 				if (this->storePage > 0) {
 					this->selectedBox = 0;
@@ -546,6 +563,22 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				} else if (touching(touch, sortingPos[4])) {
 					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(2));
 				}
+			}
+
+			if (hDown & KEY_X) {
+				std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+				if (temp != "") {
+					this->selectedBoxList = 0;
+					this->storePageList = 0;
+					int amount = this->sortedStore->searchForEntries(temp);
+					if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
+				}
+			}
+
+			if (hDown & KEY_Y) {
+				this->selectedBoxList = 0;
+				this->storePageList = 0;
+				this->sortedStore->reset();
 			}
 
 		} else if (this->mode == 2) {

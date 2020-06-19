@@ -82,6 +82,22 @@ UniStoreV2Struct Store::getData(const int index) {
 	return temp;
 }
 
+int Store::searchForEntries(const std::string searchResult) {
+	std::vector<UniStoreV2Struct> temp;
+
+	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
+		if (this->sortedStore[i].title.find(searchResult) != std::string::npos) {
+			temp.push_back({this->sortedStore[i]});
+		}
+	}
+
+	if (temp.size() != 0) {
+		this->sortedStore = temp;
+	}
+
+	return (int)temp.size();
+}
+
 // Title.
 bool compareTitleDescending(const UniStoreV2Struct& a, const UniStoreV2Struct& b) {
 	int result = a.title.compare(b.title);
