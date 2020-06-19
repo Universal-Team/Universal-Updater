@@ -75,9 +75,9 @@ void UniStore::autobootLogic() {
 				displayInformations = handleIfDisplayText();
 				const std::string sheetURL = storeInfo[0].storeSheet;
 				if (storeInfo[0].version == 1) {
-					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 				} else {
-					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
 				}
 			} else {
 				specialHandling = true; // Special back handling.
@@ -586,9 +586,9 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					displayInformations = handleIfDisplayText();
 					const std::string sheetURL = storeInfo[Selection].storeSheet;
 					if (storeInfo[Selection].version == 1) {
-						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 					} else {
-						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
 					}
 				}
 			}
@@ -620,9 +620,9 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							displayInformations = handleIfDisplayText();
 							const std::string sheetURL = storeInfo[screenPos + i].storeSheet;
 							if (storeInfo[screenPos + i].version == 1) {
-								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 							} else {
-								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
 							}
 						}
 					}
@@ -639,9 +639,9 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							displayInformations = handleIfDisplayText();
 							const std::string sheetURL = storeInfo[screenPosList + i].storeSheet;
 							if (storeInfo[screenPosList + i].version == 1) {
-								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), true, true);
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), Config::fading, true);
 							} else {
-								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), true, true);
+								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), Config::fading, true);
 							}
 						}
 					}

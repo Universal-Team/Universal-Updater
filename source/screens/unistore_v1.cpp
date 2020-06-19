@@ -257,7 +257,7 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 			if (!didAutoboot) didAutoboot = true;
-			Gui::screenBack(true);
+			Gui::screenBack(Config::fading);
 			return;
 		}
 
