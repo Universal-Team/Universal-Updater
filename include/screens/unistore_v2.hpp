@@ -29,6 +29,7 @@
 
 #include "common.hpp"
 #include "json.hpp"
+#include "store.hpp"
 #include "structs.hpp"
 #include <citro2d.h>
 
@@ -41,11 +42,15 @@ public:
 	UniStoreV2(nlohmann::json &JSON, const std::string sheetPath);
 	~UniStoreV2();
 private:
+	std::unique_ptr<Store> sortedStore;
+
 	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false, isDropDown = false;
 	int selectedBox = 0, lastViewMode = 0, dropSelection = 0, iconAmount = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
 	nlohmann::json storeJson;
 	C2D_SpriteSheet sheet;
 	std::vector<std::string> objects;
+
+	void DrawSortingMenu(void) const;
 
 	// Base stuff.
 	void DrawBaseTop(void) const;
@@ -96,6 +101,15 @@ private:
 	const std::vector<Structs::ButtonPos> dropPos = {
 		{5, 30, 140, 25}, // Theme.
 		{5, 70, 140, 25}  // Style.
+	};
+
+	const std::vector<Structs::ButtonPos> sortingPos = {
+		{40, 40, 100, 40}, // Descending.
+		{180, 40, 100, 40}, // Ascending.
+		// Now the actual options.
+		{115, 90, 100, 30}, // Title.
+		{115, 130, 100, 30}, // Author.
+		{115, 170, 100, 30} // Last Updated.
 	};
 
 	u32 barColorLight, barColorDark, bgColorLight, bgColorDark, textColorLight, textColorDark, boxColorLight, boxColorDark, outlineColorLight, outlineColorDark;

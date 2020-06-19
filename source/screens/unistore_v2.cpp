@@ -40,6 +40,7 @@ extern bool didAutoboot;
 
 UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath) {
 	this->storeJson = JSON;
+	this->sortedStore = std::make_unique<Store>(this->storeJson);
 
 	if (access(sheetPath.c_str(), F_OK) != 0) {
 		this->iconAmount = 0;
@@ -84,7 +85,6 @@ u32 UniStoreV2::returnTextColor() const {
 	return this->darkMode ? this->textColorDark : this->textColorLight;
 }
 
-
 // Base draws.
 void UniStoreV2::DrawBaseTop(void) const {
 	Gui::ScreenDraw(Top);
@@ -123,7 +123,7 @@ void UniStoreV2::drawBox(float xPos, float yPos, float width, float height, bool
 }
 
 void UniStoreV2::DrawGrid(void) const {
-	for (int i = 0, i2 = 0 + (this->storePage * STORE_ENTRIES); i2 < STORE_ENTRIES + (this->storePage * STORE_ENTRIES) && i2 < (int)this->storeJson.at("storeContent").size(); i2++, i++) {
+	for (int i = 0, i2 = 0 + (this->storePage * STORE_ENTRIES); i2 < STORE_ENTRIES + (this->storePage * STORE_ENTRIES) && i2 < this->sortedStore->getSize(); i2++, i++) {
 		if (i == this->selectedBox) {
 			this->drawBox(this->StoreBoxesGrid[i].x, this->StoreBoxesGrid[i].y, 100, 50, true);
 		} else {
@@ -131,9 +131,9 @@ void UniStoreV2::DrawGrid(void) const {
 		}
 
 		if (this->sheetLoaded) {
-			if (this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").contains("icon_index")) {
-				if ((int)this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index") < this->iconAmount) {
-					Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePage * STORE_ENTRIES)).at("info").at("icon_index"), this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+			if (this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)) != -1) {
+				if (this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)) < this->iconAmount) {
+					Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
 				} else {
 					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
 				}
@@ -147,7 +147,7 @@ void UniStoreV2::DrawGrid(void) const {
 }
 
 void UniStoreV2::DrawList(void) const {
-	for (int i = 0, i2 = 0 + (this->storePageList * STORE_ENTRIES_LIST); i2 < STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) && i2 < (int)this->storeJson.at("storeContent").size(); i2++, i++) {
+	for (int i = 0, i2 = 0 + (this->storePageList * STORE_ENTRIES_LIST); i2 < STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) && i2 < this->sortedStore->getSize(); i2++, i++) {
 		if (i == this->selectedBoxList) {
 			this->drawBox(this->StoreBoxesList[i].x, this->StoreBoxesList[i].y, 360, 50, true);
 		} else {
@@ -155,9 +155,9 @@ void UniStoreV2::DrawList(void) const {
 		}
 
 		if (this->sheetLoaded) {
-			if (this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").contains("icon_index")) {
-				if ((int)this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index") < this->iconAmount) {
-					Gui::DrawSprite(this->sheet, this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("icon_index"), this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+			if (this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)) != -1) {
+				if (this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)) < this->iconAmount) {
+					Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePageList * STORE_ENTRIES_LIST)), this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 				} else {
 					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 				}
@@ -169,19 +169,37 @@ void UniStoreV2::DrawList(void) const {
 		}
 
 		// Display Author & App name.
-		if (this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").contains("title")) {
-			Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+12, 0.45f, this->returnTextColor(), (std::string)this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("title"), 300);
-		} else {
-			Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+12, 0.45f, this->returnTextColor(), "?", 300);
-		}
-
-		if (this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").contains("author")) {
-			Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+28, 0.45f, this->returnTextColor(), (std::string)this->storeJson.at("storeContent").at(i + (this->storePageList * STORE_ENTRIES_LIST)).at("info").at("author"), 300);
-		} else {
-			Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+28, 0.45f, this->returnTextColor(), "?", 300);
-		}
+		
+		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+12, 0.45f, this->returnTextColor(), this->sortedStore->returnTitle(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
+		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+28, 0.45f, this->returnTextColor(), this->sortedStore->returnAuthor(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
 	}
 }
+
+void UniStoreV2::DrawSortingMenu(void) const {
+	for (int i = 2; i < (int)sortingPos.size(); i++) {
+		if (i - 2 == this->sortedStore->getSortType()) {
+			this->drawBox(sortingPos[i].x, sortingPos[i].y, sortingPos[i].w, sortingPos[i].h, true);
+		} else {
+			this->drawBox(sortingPos[i].x, sortingPos[i].y, sortingPos[i].w, sortingPos[i].h, false);
+		}
+	}
+
+	Gui::DrawString(sortingPos[2].x+4, sortingPos[2].y+9, 0.55f, this->returnTextColor(), Lang::get("TITLE_BTN"));
+	Gui::DrawString(sortingPos[3].x+4, sortingPos[3].y+9, 0.55f, this->returnTextColor(), Lang::get("AUTHOR_BTN"));
+	Gui::DrawString(sortingPos[4].x+4, sortingPos[4].y+9, 0.55f, this->returnTextColor(), Lang::get("LAST_UPDATED_BTN"));
+
+	if (this->sortedStore->getAscending()) {
+		this->drawBox(sortingPos[0].x, sortingPos[0].y, sortingPos[0].w, sortingPos[0].h, false);
+		this->drawBox(sortingPos[1].x, sortingPos[1].y, sortingPos[1].w, sortingPos[1].h, true);
+	} else {
+		this->drawBox(sortingPos[0].x, sortingPos[0].y, sortingPos[0].w, sortingPos[0].h, true);
+		this->drawBox(sortingPos[1].x, sortingPos[1].y, sortingPos[1].w, sortingPos[1].h, false);
+	}
+
+	Gui::DrawString(sortingPos[0].x+4, sortingPos[0].y+9, 0.55f, this->returnTextColor(), Lang::get("DESCENDING"));
+	Gui::DrawString(sortingPos[1].x+4, sortingPos[1].y+9, 0.55f, this->returnTextColor(), Lang::get("ASCENDING"));
+}
+
 
 // Parse the objects from a script.
 void UniStoreV2::parseObjects(int selection) {
@@ -304,6 +322,7 @@ void UniStoreV2::Draw(void) const {
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
+		this->DrawSortingMenu();
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	} else if (this->mode == 1) {
@@ -320,7 +339,7 @@ void UniStoreV2::Draw(void) const {
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
-
+		this->DrawSortingMenu();
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	} else if (this->mode == 2) {
 		this->displaySelectedEntry(this->selection);
@@ -386,12 +405,12 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (hDown & KEY_RIGHT) {
 				// Try to go to next page.
 				if (this->selectedBox == 2 || this->selectedBox == 5 || this->selectedBox == 8) {
-					if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->storeJson.at("storeContent").size()) {
+					if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->sortedStore->getSize()) {
 						this->selectedBox = 0;
 						this->storePage++;
 					}
 				} else {
-					if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 1 < (int)this->storeJson.at("storeContent").size()) {
+					if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 1 < (int)this->sortedStore->getSize()) {
 						if (this->selectedBox < 8 + (this->storePage * STORE_ENTRIES))	this->selectedBox++;
 					}
 				}
@@ -414,13 +433,13 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_DOWN) {
-				if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 3 < (int)this->storeJson.at("storeContent").size()) {
+				if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 3 < (int)this->sortedStore->getSize()) {
 					if (this->selectedBox < 6)	this->selectedBox += 3;
 				}
 			}
 
 			if (hDown & KEY_R) {
-				if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->storeJson.at("storeContent").size()) {
+				if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->sortedStore->getSize()) {
 					this->selectedBox = 0;
 					this->storePage++;
 				}
@@ -435,12 +454,26 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 
 			if (hDown & KEY_A) {
-				if (this->selectedBox + (this->storePage * STORE_ENTRIES) < (int)this->storeJson.at("storeContent").size()) {
-					this->selection = this->selectedBox + (this->storePage * STORE_ENTRIES);
+				if (this->sortedStore->returnJSONIndex(this->selectedBox + (this->storePage * STORE_ENTRIES)) < (int)this->storeJson.at("storeContent").size()) {
+					this->selection = this->sortedStore->returnJSONIndex(this->selectedBox + (this->storePage * STORE_ENTRIES));
 					this->parseObjects(this->selection);
 					this->canDisplay = true;
 					this->lastViewMode = this->mode;
 					this->mode = 2;
+				}
+			}
+
+			if (hDown & KEY_TOUCH) {
+				if (touching(touch, sortingPos[0])) {
+					this->sortedStore->sorting(false, SortType(this->sortedStore->getSortType()));
+				} else if (touching(touch, sortingPos[1])) {
+					this->sortedStore->sorting(true, SortType(this->sortedStore->getSortType()));
+				} else if (touching(touch, sortingPos[2])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(0));
+				} else if (touching(touch, sortingPos[3])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(1));
+				} else if (touching(touch, sortingPos[4])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(2));
 				}
 			}
 
@@ -452,7 +485,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_DOWN) {
-				if ((this->storePageList * STORE_ENTRIES_LIST) + this->selectedBoxList + 1 < (int)this->storeJson.at("storeContent").size()) {
+				if ((this->storePageList * STORE_ENTRIES_LIST) + this->selectedBoxList + 1 < (int)this->sortedStore->getSize()) {
 					if (this->selectedBoxList < STORE_ENTRIES_LIST-1)	this->selectedBoxList++;
 				}
 			}
@@ -462,7 +495,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_RIGHT || hDown & KEY_R) {
-				if (STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) < (int)this->storeJson.at("storeContent").size()) {
+				if (STORE_ENTRIES_LIST + (this->storePageList * STORE_ENTRIES_LIST) < (int)this->sortedStore->getSize()) {
 					this->selectedBoxList = 0;
 					this->storePageList++;
 				}
@@ -476,12 +509,26 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_A) {
-				if (this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST) < (int)this->storeJson.at("storeContent").size()) {
-					this->selection = this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST);
+				if (this->sortedStore->returnJSONIndex(this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST)) < (int)this->storeJson.at("storeContent").size()) {
+					this->selection = this->sortedStore->returnJSONIndex(this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST));
 					this->parseObjects(this->selection);
 					this->canDisplay = true;
 					this->lastViewMode = this->mode;
 					this->mode = 2;
+				}
+			}
+
+			if (hDown & KEY_TOUCH) {
+				if (touching(touch, sortingPos[0])) {
+					this->sortedStore->sorting(false, SortType(this->sortedStore->getSortType()));
+				} else if (touching(touch, sortingPos[1])) {
+					this->sortedStore->sorting(true, SortType(this->sortedStore->getSortType()));
+				} else if (touching(touch, sortingPos[2])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(0));
+				} else if (touching(touch, sortingPos[3])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(1));
+				} else if (touching(touch, sortingPos[4])) {
+					this->sortedStore->sorting(this->sortedStore->getAscending(), SortType(2));
 				}
 			}
 

@@ -188,5 +188,10 @@
 	"CHANGE_STYLE":						"Change Style",
 	"NO_DOWNLOADS_AVAILABLE":			"No downloads available.",
 	"UNISTORE_VERSION":					"UniStore version: ",
-	"UNISTORE_NOT_SUPPORTED":			"This UniStore version is not supported!"
+	"UNISTORE_NOT_SUPPORTED":			"This UniStore version is not supported!",
+	"DESCENDING":						"Descending",
+	"ASCENDING":						"Ascending",
+	"TITLE_BTN":						"Title",
+	"AUTHOR_BTN":						"Author",
+	"LAST_UPDATED_BTN":					"Last updated"
 }
