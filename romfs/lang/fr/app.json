@@ -168,5 +168,7 @@
 	"ASCENDING": "Croissant",
 	"TITLE_BTN": "Titre",
 	"AUTHOR_BTN": "Auteur",
-	"LAST_UPDATED_BTN": "Dernière mise à jour"
+	"LAST_UPDATED_BTN": "Dernière mise à jour",
+	"ENTER_SEARCH": "Enter what you like to search.",
+	"NO_RESULTS_FOUND": "No results found!"
 }
