@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Script Skaber",
 	"CREDITS": "Medvirkende",
 	"DEVELOPED_BY": "Udviklet af: Universal-Team.",
-	"MAIN_DEV": "Main Developer: SuperSaiyajinStackie",
+	"MAIN_DEV": "Main Developer: StackZ",
 	"CURRENT_VERSION": "Nuværende version: ",
 	"MANY_THANKS": "Mange Tak Til:",
 	"TRANSLATORS": "Alle vores oversættere",
@@ -153,7 +153,15 @@
 	"ENABLED": "Enabled!",
 	"DISABLED": "Disabled!",
 	"DOWNLOAD_SPEED": "Download Speed: ",
-	"BYTES_PER_SECOND": " bytes per second",
+	"KB_PER_SECOND": " KB per second",
 	"PROGRESS_BAR_ENABLE": "Would you like to enable the progressbar?",
-	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?"
+	"PROGRESS_BAR_DISABLE": "Would you like to disable the progressbar?",
+	"CATEGORY": "Category: ",
+	"SYSTEM": "System: ",
+	"LAST_UPDATED": "Last updated: ",
+	"CHANGE_THEME": "Change Theme",
+	"CHANGE_STYLE": "Change Style",
+	"NO_DOWNLOADS_AVAILABLE": "No downloads available.",
+	"UNISTORE_VERSION": "UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED": "This UniStore version is not supported!"
 }
