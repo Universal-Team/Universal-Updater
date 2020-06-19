@@ -64,7 +64,7 @@ private:
 	void downloadAll();
 
 	// Button | Icon struct.
-	std::vector<Structs::ButtonPos> arrowPos = {
+	const std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
@@ -72,12 +72,12 @@ private:
 	};
 
 	// DropDownMenu.
-	std::vector<Structs::ButtonPos> dropPos = {
+	const std::vector<Structs::ButtonPos> dropPos = {
 		{5, 30, 25, 25}, // Download All.
 		{5, 70, 25, 25}, // Refresh.
 		{5, 110, 25, 25} // ViewMode.
 	};
-	std::vector<Structs::ButtonPos> dropPos2 = {
+	const std::vector<Structs::ButtonPos> dropPos2 = {
 		{0, 28, 140, 30}, // Download All.
 		{0, 68, 140, 30}, // Refresh.
 		{0, 108, 140, 30} // ViewMode.

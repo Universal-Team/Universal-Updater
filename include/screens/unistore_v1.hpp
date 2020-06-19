@@ -58,22 +58,17 @@ private:
 	Result execute();
 
 	// Icon | Button Structs.
-	std::vector<Structs::ButtonPos> arrowPos = {
+	const std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
 		{5, 0, 25, 25}  // Dropdown Menu.
 	};
 	// DropDownMenu.
-	std::vector<Structs::ButtonPos> dropPos = {
-		{5, 30, 25, 25}, // Delete.
-		{5, 70, 25, 25}, // Update.
-		{5, 110, 25, 25} // ViewMode.
-	};
-	std::vector<Structs::ButtonPos> dropPos2 = {
-		{0, 28, 140, 30}, // Delete.
-		{0, 68, 140, 30}, // Update.
-		{0, 108, 140, 30} // ViewMode.
+	const std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 140, 30}, // Delete.
+		{5, 70, 140, 30}, // Update.
+		{5, 110, 140, 30} // ViewMode.
 	};
 };
 

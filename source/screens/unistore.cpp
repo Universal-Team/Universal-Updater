@@ -276,8 +276,6 @@ void UniStore::updateStore(int selectedStore) {
 				loadStoreDesc();
 			}
 		}
-	} else {
-		notConnectedMsg();
 	}
 }
 

@@ -25,7 +25,6 @@
 */
 
 #include "config.hpp"
-#include "exiting.hpp"
 #include "ftpScreen.hpp"
 #include "mainMenu.hpp"
 #include "scriptHelper.hpp"
@@ -68,9 +67,9 @@ void MainMenu::Draw(void) const {
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, mainButtons[4]))) {
-		exiting = true;
-		Gui::setScreen(std::make_unique<Exiting>(), Config::fading, true);
+		fadeout = true;
 		fadecolor = 0;
+		exiting = true;
 	}
 
 	// Navigation.

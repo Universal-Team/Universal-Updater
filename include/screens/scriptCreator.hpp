@@ -83,19 +83,19 @@ private:
 
 	std::string jsonFileName;
 	// Main Pos.
-	std::vector<Structs::ButtonPos> mainButtons = {
+	const std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35}, // New Script.
-		{90, 100, 140, 35}, // Existing Script.
+		{90, 100, 140, 35}  // Existing Script.
 	};
 
 	// Creator Button Pos.
-	std::vector<Structs::ButtonPos> creatorButtons = {
+	const std::vector<Structs::ButtonPos> creatorButtons = {
 		{10, 40, 140, 35},
 		{170, 40, 140, 35},
 		{10, 100, 140, 35},
 		{170, 100, 140, 35},
 		{10, 160, 140, 35},
-		{170, 160, 140, 35},
+		{170, 160, 140, 35}
 	};
 
 };

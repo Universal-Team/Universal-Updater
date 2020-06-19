@@ -88,13 +88,13 @@ private:
 
 
 	// Button | Icon structs.
-	std::vector<Structs::ButtonPos> arrowPos = {
+	const std::vector<Structs::ButtonPos> arrowPos = {
 		{295, 0, 25, 25}, // Arrow Up.
 		{295, 215, 25, 25}, // Arrow Down.
 		{0, 215, 25, 25}, // Back Arrow.
 		{5, 0, 25, 25} // Dropdown Menu.
 	};
-	std::vector<Structs::ButtonPos> subPos = {
+	const std::vector<Structs::ButtonPos> subPos = {
 		{0, 60, 149, 52}, // Script list.
 		{162, 60, 149, 52}, // Get Scripts.
 		{0, 130, 149, 52}, // Script Creator.
@@ -102,11 +102,11 @@ private:
 	};
 
 	// DropDownMenu.
-	std::vector<Structs::ButtonPos> dropPos = {
+	const std::vector<Structs::ButtonPos> dropPos = {
 		{5, 30, 25, 25}, // Delete.
 		{5, 70, 25, 25} // ViewMode.
 	};
-	std::vector<Structs::ButtonPos> dropPos2 = {
+	const std::vector<Structs::ButtonPos> dropPos2 = {
 		{0, 28, 140, 30}, // Delete.
 		{0, 68, 140, 30} // ViewMode.
 	};

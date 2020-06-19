@@ -36,7 +36,7 @@ public:
 
 private:
 	int ftpEnabled = 1;
-	std::vector<Structs::ButtonPos> arrowPos = {
-		{0, 215, 25, 25}, // Back Arrow.
+	const std::vector<Structs::ButtonPos> arrowPos = {
+		{0, 215, 25, 25} // Back Arrow.
 	};
 };

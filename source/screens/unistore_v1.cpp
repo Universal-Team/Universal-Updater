@@ -181,7 +181,7 @@ void UniStoreV1::Draw(void) const {
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
 	} else if (Config::viewMode == 1) {
-		for(int i=0;i<ENTRIES_PER_LIST && i<(int)this->storeJson.at("storeContent").size();i++) {
+		for(int i = 0; i < ENTRIES_PER_LIST && i < (int)this->storeJson.at("storeContent").size(); i++) {
 			info = this->storeJson["storeContent"][screenPosList + i]["info"]["title"];
 			if(screenPosList + i == Selection) {
 				if (this->storeJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
@@ -206,7 +206,7 @@ void UniStoreV1::Draw(void) const {
 	if (dropDownMenu) {
 		// Draw Operation Box.
 		Gui::Draw_Rect(0, 25, 140, 44, barColor);
-		Gui::drawAnimatedSelector(dropPos2[0].x, dropPos2[0].y, dropPos2[0].w, dropPos2[0].h, .090, TRANSPARENT, Config::SelectedColor);
+		Gui::drawAnimatedSelector(dropPos[0].x, dropPos[0].y, dropPos[0].w, dropPos[0].h, .090, TRANSPARENT, Config::SelectedColor);
 		// Draw Dropdown Icons.
 		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[0].x, dropPos[0].y);
 		// Dropdown Text.
@@ -240,7 +240,7 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if (hDown & KEY_TOUCH) {
-			if (touching(touch, dropPos2[0])) {
+			if (touching(touch, dropPos[0])) {
 				if (Config::viewMode == 0) {
 					Config::viewMode = 1;
 				} else {

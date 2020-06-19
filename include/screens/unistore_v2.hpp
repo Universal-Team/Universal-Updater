@@ -41,9 +41,9 @@ public:
 	UniStoreV2(nlohmann::json &JSON, const std::string sheetPath);
 	~UniStoreV2();
 private:
-	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false;
-	int selectedBox = 0, lastViewMode = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
-	nlohmann::json DBJson;
+	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false, isDropDown = false;
+	int selectedBox = 0, lastViewMode = 0, dropSelection = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0;
+	nlohmann::json storeJson;
 	C2D_SpriteSheet sheet;
 	std::vector<std::string> objects;
 
@@ -58,8 +58,10 @@ private:
 	Result runFunctions(std::string entry);
 	void DrawList(void) const;
 	void displaySelectedEntry(int selection) const;
+	void DropLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void DropDownMenu(void) const;
 
-	const std::vector<Structs::ButtonPos> StoreBoxes = {
+	const std::vector<Structs::ButtonPos> StoreBoxesGrid = {
 		{20, 30, 100, 50},
 		{150, 30, 100, 50},
 		{280, 30, 100, 50},
@@ -80,11 +82,20 @@ private:
 	};
 
 	const std::vector<Structs::ButtonPos> downloadBoxes = {
-		{20, 40, 280, 25},
-		{20, 75, 280, 25},
-		{20, 110, 280, 25},
-		{20, 145, 280, 25},
-		{20, 180, 280, 25}
+		{10, 40, 300, 25},
+		{10, 75, 300, 25},
+		{10, 110, 300, 25},
+		{10, 145, 300, 25},
+		{10, 180, 300, 25}
+	};
+
+	const std::vector<Structs::ButtonPos> iconPos = {
+		{5, 0, 25, 25}  // Dropdown Menu.
+	};
+
+	const std::vector<Structs::ButtonPos> dropPos = {
+		{5, 30, 140, 25}, // Theme.
+		{5, 70, 140, 25}  // Style.
 	};
 
 	u32 barColorLight, barColorDark, bgColorLight, bgColorDark, textColorLight, textColorDark, boxColorLight, boxColorDark, outlineColorLight, outlineColorDark;
