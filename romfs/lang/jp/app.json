@@ -171,7 +171,7 @@
 	"LAST_UPDATED_BTN": "最後更新日",
 	"ENTER_SEARCH": "検索したいものを入力します。",
 	"NO_RESULTS_FOUND": "結果が見つかりませんでした！",
-	"SEARCH": "Search Entry",
+	"SEARCH": "検索のエントリー",
 	"INVALID_INPUT": "無効な入力！",
 	"RESET": "リセット",
 	"SEARCH_MENU": "検索メニュー",
@@ -179,5 +179,5 @@
 	"AUTHOR_SEARCH": "作者検索",
 	"CATEGORY_SEARCH": "カテゴリー検索",
 	"CONSOLE_SEARCH": "コンソール検索",
-	"SEARCHING_FOR": "Searching for..."
+	"SEARCHING_FOR": "検索しています…"
 }
