@@ -384,13 +384,29 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_RIGHT) {
-				if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 1 < (int)this->storeJson.at("storeContent").size()) {
-					if (this->selectedBox < 8 + (this->storePage * STORE_ENTRIES))	this->selectedBox++;
+				// Try to go to next page.
+				if (this->selectedBox == 2 || this->selectedBox == 5 || this->selectedBox == 8) {
+					if (STORE_ENTRIES + (this->storePage * STORE_ENTRIES) < (int)this->storeJson.at("storeContent").size()) {
+						this->selectedBox = 0;
+						this->storePage++;
+					}
+				} else {
+					if ((this->storePage * STORE_ENTRIES) + this->selectedBox + 1 < (int)this->storeJson.at("storeContent").size()) {
+						if (this->selectedBox < 8 + (this->storePage * STORE_ENTRIES))	this->selectedBox++;
+					}
 				}
 			}
 
 			if (hDown & KEY_LEFT) {
-				if (this->selectedBox > 0)	this->selectedBox--;
+				// Try to go to next page.
+				if (this->selectedBox == 0 || this->selectedBox == 3 || this->selectedBox == 6) {
+					if (this->storePage > 0) {
+						this->selectedBox = 0;
+						this->storePage--;
+					}
+				} else {
+					if (this->selectedBox > 0)	this->selectedBox--;
+				}
 			}
 
 			if (hDown & KEY_UP) {
