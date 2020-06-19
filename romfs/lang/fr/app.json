@@ -45,7 +45,7 @@
 	"SCRIPTCREATOR": "Créateur de script",
 	"CREDITS": "Crédits",
 	"DEVELOPED_BY": "Développé par : Universal-Team.",
-	"MAIN_DEV": "Développeur principal : SuperSaiyajinStackie",
+	"MAIN_DEV": "Main Developer: StackZ",
 	"CURRENT_VERSION": "Version actuelle: ",
 	"MANY_THANKS": "Merci beaucoup à :",
 	"TRANSLATORS": "Tous nos traducteurs",
@@ -153,7 +153,15 @@
 	"ENABLED": "Activé!",
 	"DISABLED": "Désactivé!",
 	"DOWNLOAD_SPEED": "Vitesse de téléchargement : ",
-	"BYTES_PER_SECOND": " bytes par seconde",
+	"KB_PER_SECOND": " KB per second",
 	"PROGRESS_BAR_ENABLE": "Voulez vous activer la barre de progression?",
-	"PROGRESS_BAR_DISABLE": "Voulez vous désactiver la barre de progression?"
+	"PROGRESS_BAR_DISABLE": "Voulez vous désactiver la barre de progression?",
+	"CATEGORY": "Category: ",
+	"SYSTEM": "System: ",
+	"LAST_UPDATED": "Last updated: ",
+	"CHANGE_THEME": "Change Theme",
+	"CHANGE_STYLE": "Change Style",
+	"NO_DOWNLOADS_AVAILABLE": "No downloads available.",
+	"UNISTORE_VERSION": "UniStore version: ",
+	"UNISTORE_NOT_SUPPORTED": "This UniStore version is not supported!"
 }
