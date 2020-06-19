@@ -173,5 +173,11 @@
 	"NO_RESULTS_FOUND": "Brak wyników!",
 	"SEARCH": "Szukana Dana",
 	"INVALID_INPUT": "Błędna wartość!",
-	"RESET": "Reset"
+	"RESET": "Reset",
+	"SEARCH_MENU": "Search Menu",
+	"TITLE_SEARCH": "Title search",
+	"AUTHOR_SEARCH": "Author search",
+	"CATEGORY_SEARCH": "Category search",
+	"CONSOLE_SEARCH": "Console search",
+	"SEARCHING_FOR": "Searching for..."
 }
