@@ -173,5 +173,11 @@
 	"NO_RESULTS_FOUND": "Aucun résultat trouvé!",
 	"SEARCH": "Search Entry",
 	"INVALID_INPUT": "Invalid input!",
-	"RESET": "Reset"
+	"RESET": "Reset",
+	"SEARCH_MENU": "Search Menu",
+	"TITLE_SEARCH": "Title search",
+	"AUTHOR_SEARCH": "Author search",
+	"CATEGORY_SEARCH": "Category search",
+	"CONSOLE_SEARCH": "Console search",
+	"SEARCHING_FOR": "Searching for..."
 }
