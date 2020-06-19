@@ -163,5 +163,10 @@
 	"CHANGE_STYLE": "Сменить Стиль",
 	"NO_DOWNLOADS_AVAILABLE": "Отсутствуют файлы для загрузки.",
 	"UNISTORE_VERSION": "Версия UniStore: ",
-	"UNISTORE_NOT_SUPPORTED": "Эта версия UniStore не поддерживается!"
+	"UNISTORE_NOT_SUPPORTED": "Эта версия UniStore не поддерживается!",
+	"DESCENDING": "Descending",
+	"ASCENDING": "Ascending",
+	"TITLE_BTN": "Title",
+	"AUTHOR_BTN": "Author",
+	"LAST_UPDATED_BTN": "Last updated"
 }
