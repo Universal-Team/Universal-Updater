@@ -55,20 +55,20 @@ Store::Store(nlohmann::json &JS, std::string JSONName) {
 	this->sortedStore = this->unsortedStore; // Put that to sorted store as well.
 
 	// If Categories available, push them to our vector.
-	if (this->storeJson.at("storeInfo").contains("categories")) {
+	if (this->storeJson["storeInfo"].contains("categories")) {
 		this->availableCategories = this->storeJson["storeInfo"]["categories"].get<std::vector<std::string>>();
 	}
 }
 
 bool Store::updateAvailable(int index) {
 	if (index > (int)this->storeJson.at("storeContent").size()) return false; // out of scope.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("last_updated")) {
-		const std::string updateEntry = this->storeJson.at("storeContent").at(index).at("info").at("last_updated");
-		const std::string entry = this->storeJson.at("storeContent").at(index).at("info").at("title");
+	if (this->storeJson["storeContent"][index]["info"].contains("last_updated")) {
+		const std::string updateEntry = this->storeJson["storeContent"][index]["info"]["last_updated"];
+		const std::string entry = this->storeJson["storeContent"][index]["info"]["title"];
 
 		if (this->updateJSON.contains(this->updateFile)) {
-			if (this->updateJSON.at(this->updateFile).contains(entry)) {
-				const std::string updateEntry2 = (std::string)this->updateJSON.at(this->updateFile).at(entry);
+			if (this->updateJSON[this->updateFile].contains(entry)) {
+				const std::string updateEntry2 = (std::string)this->updateJSON[this->updateFile][entry];
 				return strcasecmp(updateEntry.c_str(), updateEntry2.c_str()) > 0;  
 			} else {
 				return true; // Since we do not have this entry there yet.
@@ -97,41 +97,41 @@ void Store::writeToFile(int index) {
 UniStoreV2Struct Store::getData(const int index) {
 	UniStoreV2Struct temp = {"", "", "", "", "" ,"", -1, 0, false};
 
-	if (index > (int)this->storeJson.at("storeContent").size()) return temp; // Empty.
+	if (index > (int)this->storeJson["storeContent"].size()) return temp; // Empty.
 
 	// Here we check.
 	// Title.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("title")) {
-		temp.title = this->storeJson.at("storeContent").at(index).at("info").at("title");
+	if (this->storeJson["storeContent"][index]["info"].contains("title")) {
+		temp.title = this->storeJson["storeContent"][index]["info"]["title"];
 	}
 
 	// Author.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("author")) {
-		temp.author = this->storeJson.at("storeContent").at(index).at("info").at("author");
+	if (this->storeJson["storeContent"][index]["info"].contains("author")) {
+		temp.author = this->storeJson["storeContent"][index]["info"]["author"];
 	}
 
 	// Version.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("version")) {
-		temp.version = this->storeJson.at("storeContent").at(index).at("info").at("version");
+	if (this->storeJson["storeContent"][index]["info"].contains("version")) {
+		temp.version = this->storeJson["storeContent"][index]["info"]["version"];
 	}
 
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("category")) {
-		temp.category = this->storeJson.at("storeContent").at(index).at("info").at("category");
+	if (this->storeJson["storeContent"][index]["info"].contains("category")) {
+		temp.category = this->storeJson["storeContent"][index]["info"]["category"];
 	}
 
 	// Console.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("console")) {
-		temp.console = this->storeJson.at("storeContent").at(index).at("info").at("console");
+	if (this->storeJson["storeContent"][index]["info"].contains("console")) {
+		temp.console = this->storeJson["storeContent"][index]["info"]["console"];
 	}
 
 	// Last updated.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("last_updated")) {
-		temp.last_updated = this->storeJson.at("storeContent").at(index).at("info").at("last_updated");
+	if (this->storeJson["storeContent"][index]["info"].contains("last_updated")) {
+		temp.last_updated = this->storeJson["storeContent"][index]["info"]["last_updated"];
 	}
 
 	// Icon index.
-	if (this->storeJson.at("storeContent").at(index).at("info").contains("icon_index")) {
-		temp.icon_index = this->storeJson.at("storeContent").at(index).at("info").at("icon_index");
+	if (this->storeJson["storeContent"][index]["info"].contains("icon_index")) {
+		temp.icon_index = this->storeJson["storeContent"][index]["info"]["icon_index"];
 	}
 
 	// Update available(?).
