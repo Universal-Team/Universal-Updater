@@ -78,7 +78,7 @@ Config::Config() {
 
 	// Here we get the initial settings.
 
-	if (!this->json.contains("Bar_Color")) {
+	if (!this->json.contains("BARCOLOR")) {
 		this->barColor(BarColor);
 	} else {
 		this->barColor(this->getInt("BARCOLOR"));
