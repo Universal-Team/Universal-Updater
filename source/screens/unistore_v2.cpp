@@ -145,13 +145,13 @@ void UniStoreV2::DrawGrid(void) const {
 					}
 					temp = {nullptr, nullptr};
 				} else {
-					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+					GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+1, this->StoreBoxesGrid[i].y+1);
 				}
 			} else {
-				GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+				GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+1, this->StoreBoxesGrid[i].y+1);
 			}
 		} else {
-			GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+26, this->StoreBoxesGrid[i].y+1);
+			GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+1, this->StoreBoxesGrid[i].y+1);
 		}
 	}
 }
@@ -491,9 +491,11 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_LEFT) {
 				// Try to go to next page.
-				if (this->selectedBox == 0 || this->selectedBox == 5 || this->selectedBox == 11) {
+				if (this->selectedBox == 0 || this->selectedBox == 5 || this->selectedBox == 10) {
 					if (this->storePage > 0) {
 						this->storePage--;
+					} else {
+						if (this->selectedBox > 0)	this->selectedBox--;
 					}
 				} else {
 					if (this->selectedBox > 0)	this->selectedBox--;
@@ -501,7 +503,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 
 			if (hDown & KEY_UP) {
-				if (this->selectedBox > 4 + (this->storePage * STORE_ENTRIES))	this->selectedBox -= 5;
+				if (this->selectedBox > 4)	this->selectedBox -= 5;
 			}
 
 			if (hDown & KEY_DOWN) {
