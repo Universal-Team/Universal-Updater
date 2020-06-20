@@ -181,5 +181,8 @@
 	"CONSOLE_SEARCH": "Bruhsole bruhrch",
 	"SEARCHING_FOR": "Bruhching for...",
 	"SELECT_CATEGORY": "Select a catebruhry you like to view.",
-	"NO_CATEGORIES_AVAILABLE": "No catebruhries available."
+	"NO_CATEGORIES_AVAILABLE": "No catebruhries available.",
+	"UPDATE_AVAILABLE": "Update available!",
+	"UPDATE_NOT_AVAILABLE": "No updates available.",
+	"ENTRY_AMOUNT": "There are %i entries available."
 }
