@@ -30,44 +30,45 @@ extern bool isScriptSelected;
 extern u32 progressBar;
 extern u32 selected;
 
+extern std::unique_ptr<Config> config;
 extern C2D_SpriteSheet sprites;
 
 // Draws a Rectangle as the progressbar.
 void Animation::DrawProgressBar(float currentProgress, float totalProgress, int mode) {
-	if (Config::progress) {
+	if (config->progressDisplay()) {
 		// Outline of progressbar.
 		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 
 		if (mode == 1) {
 			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
 		} else {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, Config::progressbarColor);
+			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
 		}
 	}
 }
 
 void Animation::DrawProgressBarInstall(u64 currentProgress, u64 totalProgress, int mode) {
-	if (Config::progress) {
+	if (config->progressDisplay()) {
 		// Outline of progressbar.
 		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
 
 		if (mode == 1) {
 			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
 		} else {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, Config::progressbarColor);
+			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
 		}
 	}
 }
 
 void Animation::DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, int mode) {
-	if (Config::progress) {
+	if (config->progressDisplay()) {
 		// Outline of progressbar.
 		Gui::Draw_Rect(30, 140, 340, 30, BLACK);
 
 		if (mode == 1) {
 			Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
 		} else {
-			Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, Config::progressbarColor);
+			Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
 		}
 	}
 }
@@ -81,9 +82,9 @@ void Animation::Button(int x, int y, float speed) {
 		g	= (selected >> 8) & 0xFF;
 		b	= (selected >> 16) & 0xFF;
 	} else {
-		r	= Config::SelectedColor & 0xFF;
-		g	= (Config::SelectedColor >> 8) & 0xFF;
-		b	= (Config::SelectedColor >> 16) & 0xFF;
+		r	= config->selectedColor() & 0xFF;
+		g	= (config->selectedColor() >> 8) & 0xFF;
+		b	= (config->selectedColor() >> 16) & 0xFF;
 	}
 
 	u32 color = C2D_Color32(r + (255 - r) * highlight_multiplier, g + (255 - g) * highlight_multiplier, b + (255 - b) * highlight_multiplier, 255);

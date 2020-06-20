@@ -35,6 +35,7 @@
 #include <regex>
 #include <unistd.h>
 
+extern std::unique_ptr<Config> config;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool checkWifiStatus(void);
 extern void notImplemented(void);
@@ -45,10 +46,11 @@ extern bool changesMade;
 // Parse the script for the list.
 ScriptInfo parseInfo(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
-	if(!file) {
-		printf("File not found\n");
+	if (!file) {
+		printf("File not found.\n");
 		return {"", ""};
 	}
+
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
@@ -74,7 +76,7 @@ void ScriptList::checkForValidate(void) {
 nlohmann::json ScriptList::openScriptFile() {
 	FILE* file = fopen(currentFile.c_str(), "rt");
 	nlohmann::json jsonFile;
-	if(file)	jsonFile = nlohmann::json::parse(file, nullptr, false);
+	if (file)	jsonFile = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	return jsonFile;
 }
@@ -82,19 +84,21 @@ nlohmann::json ScriptList::openScriptFile() {
 // Parse the objects from a script.
 std::vector<std::string> parseObjects(std::string fileName) {
 	FILE* file = fopen(fileName.c_str(), "rt");
-	if(!file) {
-		printf("File not found\n");
+	if (!file) {
+		printf("File not found.\n");
 		return {{""}};
 	}
+
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
 	std::vector<std::string> objs;
-	for(auto it = json.begin();it != json.end(); it++) {
-		if(it.key() != "info") {
+	for(auto it = json.begin(); it != json.end(); it++) {
+		if (it.key() != "info") {
 			objs.push_back(it.key());
 		}
 	}
+
 	return objs;
 }
 
@@ -109,7 +113,7 @@ std::string Description(nlohmann::json &json) {
 
 // Return the color for the script.
 u32 getColor(std::string colorString) {
-	if(colorString.length() < 7 || std::regex_search(colorString.substr(1), std::regex("[^0-9a-f]"))) { // invalid color
+	if (colorString.length() < 7 || std::regex_search(colorString.substr(1), std::regex("[^0-9a-f]"))) { // invalid color
 		return 0;
 	}
 
@@ -132,34 +136,35 @@ u32 progressBar;
 void loadColors(nlohmann::json &json) {
 	u32 colorTemp;
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "barColor"));
-	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
+	barColor = colorTemp == 0 ? config->barColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgTopColor"));
-	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+	bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgBottomColor"));
-	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
+	bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "textColor"));
-	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
+	TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "selectedColor"));
-	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
+	selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "unselectedColor"));
-	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
+	unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(json, "info", "progressbarColor"));
-	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
+	progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
 }
 
 void ScriptList::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
+	if (config->useBars() == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SCRIPTS_SUBMENU"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTS_SUBMENU"), 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("SCRIPTS_SUBMENU"), 400);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
@@ -168,6 +173,7 @@ void ScriptList::DrawSubMenu(void) const {
 	GFX::DrawButton(subPos[1].x, subPos[1].y, Lang::get("GET_SCRIPTS"));
 	GFX::DrawButton(subPos[2].x, subPos[2].y, Lang::get("SCRIPTCREATOR"));
 	GFX::DrawButton(subPos[3].x, subPos[3].y, Lang::get("CHANGE_SCRIPTPATH"));
+
 	// Selector.
 	Animation::Button(subPos[Selection].x, subPos[Selection].y, .060);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
@@ -180,6 +186,7 @@ void ScriptList::loadDesc(void) {
 		lines.push_back(Desc.substr(0, Desc.find('\n')));
 		Desc = Desc.substr(Desc.find('\n')+1);
 	}
+
 	lines.push_back(Desc.substr(0, Desc.find('\n')));
 }
 
@@ -190,15 +197,15 @@ bool changeBackHandle = false;
 ScriptList::ScriptList() {
 	if (AutobootWhat == 2) {
 		// If Script isn't found, go to MainMenu.
-		if (access(Config::AutobootFile.c_str(), F_OK) != 0) {
+		if (access(config->autobootFile().c_str(), F_OK) != 0) {
 			AutobootWhat = 0;
 			changeBackHandle = true;
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
+			Gui::setScreen(std::make_unique<MainMenu>(), config->screenFade(), true);
 		}
 
-		if (ScriptHelper::checkIfValid(Config::AutobootFile) == true) {
-			ScriptInfo fI = parseInfo(Config::AutobootFile);
-			currentFile = Config::AutobootFile;
+		if (ScriptHelper::checkIfValid(config->autobootFile()) == true) {
+			ScriptInfo fI = parseInfo(config->autobootFile());
+			currentFile = config->autobootFile();
 			selectedTitle = fI.title;
 			jsonFile = openScriptFile();
 			Desc = Description(jsonFile);
@@ -214,7 +221,7 @@ ScriptList::ScriptList() {
 		} else {
 			AutobootWhat = 0;
 			changeBackHandle = true;
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
+			Gui::setScreen(std::make_unique<MainMenu>(), config->screenFade(), true);
 		}
 	}
 }
@@ -224,16 +231,17 @@ void ScriptList::DrawList(void) const {
 	std::string line2;
 	std::string scriptAmount = std::to_string(Selection +1) + " | " + std::to_string(fileInfo.size());
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
+	if (config->useBars() == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, config->textColor(), scriptAmount);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 237-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, Config::TxtColor, scriptAmount);
+		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 237-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, config->textColor(), scriptAmount);
 	}
-	Gui::DrawStringCentered(0, 80, 0.7f, Config::TxtColor, Lang::get("TITLE") + std::string(fileInfo[Selection].title), 400);
-	Gui::DrawStringCentered(0, 100, 0.7f, Config::TxtColor, Lang::get("AUTHOR") + std::string(fileInfo[Selection].author), 400);
-	Gui::DrawStringCentered(0, 120, 0.6f, Config::TxtColor, std::string(fileInfo[Selection].shortDesc), 400);
+
+	Gui::DrawStringCentered(0, 80, 0.7f, config->textColor(), Lang::get("TITLE") + std::string(fileInfo[Selection].title), 400);
+	Gui::DrawStringCentered(0, 100, 0.7f, config->textColor(), Lang::get("AUTHOR") + std::string(fileInfo[Selection].author), 400);
+	Gui::DrawStringCentered(0, 120, 0.6f, config->textColor(), std::string(fileInfo[Selection].shortDesc), 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
@@ -241,49 +249,49 @@ void ScriptList::DrawList(void) const {
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
 
-	if (Config::viewMode == 0) {
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size();i++) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+	if (config->viewMode() == 0) {
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)fileInfo.size(); i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = fileInfo[screenPos + i].title;
 			line2 = fileInfo[screenPos + i].author;
-			if(screenPos + i == Selection) {
+			if (screenPos + i == Selection) {
 				if (!dropDownMenu) {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 				}
 			}
-			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
-			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, config->textColor(), line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, config->textColor(), line2, 320);
 		}
-	} else if (Config::viewMode == 1) {
-		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size();i++) {
-			Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+	} else if (config->viewMode() == 1) {
+		for(int i = 0; i < ENTRIES_PER_LIST && i < (int)fileInfo.size();i++) {
+			Gui::Draw_Rect(0, (i+1)*27, 320, 25, config->unselectedColor());
 			line1 = fileInfo[screenPosList + i].title;
-			if(screenPosList + i == Selection) {
+			if (screenPosList + i == Selection) {
 				if (!dropDownMenu) {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, config->selectedColor());
 				}
 			}
-			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, line1, 320);
+			Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, config->textColor(), line1, 320);
 		}
 	}
 
 	// DropDown Menu.
 	if (dropDownMenu) {
 		// Draw Operation Box.
-		Gui::Draw_Rect(0, 25, 140, 87, Config::Color1);
+		Gui::Draw_Rect(0, 25, 140, 87, config->barColor());
 		for (int i = 0; i < 2; i++) {
 			if (dropSelection == i) {
-				Gui::drawAnimatedSelector(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, .090, TRANSPARENT, Config::SelectedColor);
+				Gui::drawAnimatedSelector(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, .090, TRANSPARENT, config->selectedColor());
 			} else {
-				Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, Config::UnselectedColor);
+				Gui::Draw_Rect(dropPos2[i].x, dropPos2[i].y, dropPos2[i].w, dropPos2[i].h, config->unselectedColor());
 			}
 		}
 		// Draw Dropdown Icons.
 		GFX::DrawSpriteBlend(sprites_delete_idx, dropPos[0].x, dropPos[0].y);
 		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[1].x, dropPos[1].y);
 		// Dropdown Text.
-		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("DELETE_DDM"), 100);
-		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
+		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, config->textColor(), Lang::get("DELETE_DDM"), 100);
+		Gui::DrawString(dropPos[1].x+30, dropPos[1].y+5, 0.4f, config->textColor(), Lang::get("VIEW_DDM"), 100);
 	}
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
@@ -304,16 +312,19 @@ void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	std::string entryAmount = std::to_string(Selection+1) + " | " + std::to_string(fileInfo2.size());
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
+
+	if (config->useBars() == true) {
 		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, selectedTitle, 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, selectedTitle, 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, Config::TxtColor, entryAmount);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 	}
-	for(uint i=0;i<lines.size();i++) {
+
+	for(uint i = 0; i < lines.size(); i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(295, -1);
@@ -321,11 +332,11 @@ void ScriptList::DrawSingleObject(void) const {
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
 
-	if (Config::viewMode == 0) {
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size();i++) {
+	if (config->viewMode() == 0) {
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)fileInfo2.size(); i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 			info = fileInfo2[screenPos + i];
-			if(screenPos + i == Selection) {
+			if (screenPos + i == Selection) {
 				if (!dropDownMenu) {
 					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, selected);
 				}
@@ -333,11 +344,11 @@ void ScriptList::DrawSingleObject(void) const {
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
 
-	} else if (Config::viewMode == 1) {
-		for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size();i++) {
+	} else if (config->viewMode() == 1) {
+		for(int i = 0; i < ENTRIES_PER_LIST && i < (int)fileInfo2.size(); i++) {
 			Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 			info = fileInfo2[screenPosList + i];
-			if(screenPosList + i == Selection) {
+			if (screenPosList + i == Selection) {
 				if (!dropDownMenu) {
 					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, selected);
 				}
@@ -350,25 +361,27 @@ void ScriptList::DrawSingleObject(void) const {
 	if (dropDownMenu) {
 		// Draw Operation Box.
 		Gui::Draw_Rect(0, 25, 140, 44, barColor);
-		Gui::drawAnimatedSelector(dropPos2[0].x, dropPos2[0].y, dropPos2[0].w, dropPos2[0].h, .090, TRANSPARENT, Config::SelectedColor);
+		Gui::drawAnimatedSelector(dropPos2[0].x, dropPos2[0].y, dropPos2[0].w, dropPos2[0].h, .090, TRANSPARENT, selected);
 		// Draw Dropdown Icons.
 		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[0].x, dropPos[0].y);
 		// Dropdown Text.
-		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
+		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, TextColor, Lang::get("VIEW_DDM"), 100);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void ScriptList::refreshList() {
-	if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+	if (returnIfExist(config->scriptPath(), {"json"}) == true) {
 		Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 		dirContents.clear();
 		fileInfo.clear();
-		chdir(Config::ScriptPath.c_str());
+		chdir(config->scriptPath().c_str());
 		getDirectoryContents(dirContents, {"json"});
-		for(uint i=0;i<dirContents.size();i++) {
+		for(uint i = 0; i < dirContents.size(); i++) {
 			fileInfo.push_back(parseInfo(dirContents[i].name));
 		}
+
 		Selection = 0;
 		mode = 1;
 	} else {
@@ -381,18 +394,18 @@ void ScriptList::refreshList() {
 void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 		if (changeBackHandle) {
-			Gui::setScreen(std::make_unique<MainMenu>(), Config::fading, true);
+			Gui::setScreen(std::make_unique<MainMenu>(), config->screenFade(), true);
 		} else {
-			Gui::screenBack(Config::fading);
+			Gui::screenBack(config->screenFade());
 			return;
 		}
 	}
 
 	// Navigation.
-	if(hDown & KEY_UP) {
-		if(Selection > 1)	Selection -= 2;
-	} else if(hDown & KEY_DOWN) {
-		if(Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
+	if (hDown & KEY_UP) {
+		if (Selection > 1)	Selection -= 2;
+	} else if (hDown & KEY_DOWN) {
+		if (Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
 	} else if (hDown & KEY_LEFT) {
 		if (Selection%2) Selection--;
 	} else if (hDown & KEY_RIGHT) {
@@ -402,10 +415,10 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+				if (returnIfExist(config->scriptPath(), {"json"}) == true) {
 					Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 					dirContents.clear();
-					chdir(Config::ScriptPath.c_str());
+					chdir(config->scriptPath().c_str());
 					getDirectoryContents(dirContents, {"json"});
 					for(uint i=0;i<dirContents.size();i++) {
 						fileInfo.push_back(parseInfo(dirContents[i].name));
@@ -417,22 +430,22 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 			case 1:
 				if (checkWifiStatus() == true) {
-					Gui::setScreen(std::make_unique<ScriptBrowse>(), Config::fading, true);
+					Gui::setScreen(std::make_unique<ScriptBrowse>(), config->screenFade(), true);
 				} else {
 					notConnectedMsg();
 				}
 				break;
 			case 2:
 				if (isTesting == true) {
-					Gui::setScreen(std::make_unique<ScriptCreator>(), Config::fading, true);
+					Gui::setScreen(std::make_unique<ScriptCreator>(), config->screenFade(), true);
 				} else {
 					notImplemented();
 				}
 				break;
 			case 3:
-				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), Config::ScriptPath, {});
+				std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), config->scriptPath(), {});
 				if (tempScript != "") {
-					Config::ScriptPath = tempScript;
+					config->scriptPath(tempScript);
 					changesMade = true;
 				}
 				break;
@@ -441,12 +454,12 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, subPos[0])) {
-			if (returnIfExist(Config::ScriptPath, {"json"}) == true) {
+			if (returnIfExist(config->scriptPath(), {"json"}) == true) {
 				Msg::DisplayMsg(Lang::get("REFRESHING_LIST"));
 				dirContents.clear();
-				chdir(Config::ScriptPath.c_str());
+				chdir(config->scriptPath().c_str());
 				getDirectoryContents(dirContents, {"json"});
-				for(uint i=0;i<dirContents.size();i++) {
+				for(uint i = 0; i < dirContents.size(); i++) {
 					fileInfo.push_back(parseInfo(dirContents[i].name));
 				}
 				mode = 1;
@@ -455,20 +468,20 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		} else if (touching(touch, subPos[1])) {
 			if (checkWifiStatus() == true) {
-				Gui::setScreen(std::make_unique<ScriptBrowse>(), Config::fading, true);
+				Gui::setScreen(std::make_unique<ScriptBrowse>(), config->screenFade(), true);
 			} else {
 				notConnectedMsg();
 			}
 		} else if (touching(touch, subPos[2])) {
 			if (isTesting == true) {
-				Gui::setScreen(std::make_unique<ScriptCreator>(), Config::fading, true);
+				Gui::setScreen(std::make_unique<ScriptCreator>(), config->screenFade(), true);
 			} else {
 				notImplemented();
 			}
 		} else if (touching(touch, subPos[3])) {
-			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), Config::ScriptPath, {});
+			std::string tempScript = selectFilePath(Lang::get("SELECT_SCRIPT_PATH"), config->scriptPath(), {});
 			if (tempScript != "") {
-				Config::ScriptPath = tempScript;
+				config->scriptPath(tempScript);
 				changesMade = true;
 			}
 		}
@@ -476,7 +489,7 @@ void ScriptList::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void ScriptList::deleteScript(int selectedScript) {
-	std::string path = Config::ScriptPath;
+	std::string path = config->scriptPath();
 	path += dirContents[selectedScript].name;
 	deleteFile(path.c_str());
 	// Refresh the list.
@@ -484,11 +497,12 @@ void ScriptList::deleteScript(int selectedScript) {
 	Selection = 0;
 	dirContents.clear();
 	fileInfo.clear();
-	chdir(Config::ScriptPath.c_str());
+	chdir(config->scriptPath().c_str());
 	getDirectoryContents(dirContents, {"json"});
-	for(uint i=0;i<dirContents.size();i++) {
+	for(uint i = 0; i < dirContents.size(); i++) {
 		fileInfo.push_back(parseInfo(dirContents[i].name));
 	}
+
 	if (dirContents.size() == 0) {
 		dirContents.clear();
 		fileInfo.clear();
@@ -518,10 +532,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 					break;
 				case 1:
-					if (Config::viewMode == 0) {
-						Config::viewMode = 1;
+					if (config->viewMode() == 0) {
+						config->viewMode(1);
 					} else {
-						Config::viewMode = 0;
+						config->viewMode(0);
 					}
 					break;
 			}
@@ -535,10 +549,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				dropDownMenu = false;
 			} else if (touching(touch, dropPos2[1])) {
-				if (Config::viewMode == 0) {
-					Config::viewMode = 1;
+				if (config->viewMode() == 0) {
+					config->viewMode(1);
 				} else {
-					Config::viewMode = 0;
+					config->viewMode(0);
 				}
 				dropDownMenu = false;
 			}
@@ -556,10 +570,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if (hDown & KEY_START) {
-			if (Config::autoboot == 2) {
+			if (config->autoboot() == 2) {
 				if (Msg::promptMsg(Lang::get("DISABLE_AUTOBOOT"))) {
-					Config::autoboot = 0;
-					Config::AutobootFile = "";
+					config->autoboot(0);
+					config->autobootFile("");
 					changesMade = true;
 				}
 			} else {
@@ -567,8 +581,8 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				} else if (fileInfo.size() != 0) {
 					if (ScriptHelper::checkIfValid(dirContents[Selection].name) == true) {
 						if (Msg::promptMsg(Lang::get("AUTOBOOT_SCRIPT"))) {
-							Config::AutobootFile = Config::ScriptPath + dirContents[Selection].name;
-							Config::autoboot = 2;
+							config->autobootFile(config->scriptPath() + dirContents[Selection].name);
+							config->autoboot(2);
 							changesMade = true;
 						}
 					}
@@ -583,7 +597,7 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
@@ -593,11 +607,11 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = (int)fileInfo.size()-1;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection < (int)fileInfo.size()-1-3) {
 					Selection += 3;
 				} else {
@@ -611,11 +625,11 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection > 2) {
 					Selection -= 3;
 				} else {
@@ -629,15 +643,14 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if (hDown & KEY_TOUCH) {
-			if (Config::viewMode == 0) {
-				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo.size(); i++) {
-					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
-						if (dirContents[screenPos + i].isDirectory) {
-						} else if (fileInfo.size() != 0) {
+			if (config->viewMode() == 0) {
+				for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)fileInfo.size(); i++) {
+					if (touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+						if (!dirContents[screenPos + i].isDirectory && fileInfo.size() != 0) {
 							if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name) == true) {
 								currentFile = dirContents[screenPos + i].name;
 								selectedTitle = fileInfo[screenPos + i].title;
@@ -654,11 +667,10 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 						}
 					}
 				}
-			} else if (Config::viewMode == 1) {
-				for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo.size(); i++) {
-					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
-						if (dirContents[screenPosList + i].isDirectory) {
-						} else if (fileInfo.size() != 0) {
+			} else if (config->viewMode() == 1) {
+				for(int i = 0; i < ENTRIES_PER_LIST && i < (int)fileInfo.size(); i++) {
+					if (touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+						if (!dirContents[screenPosList + i].isDirectory && fileInfo.size() != 0) {
 							if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name) == true) {
 								currentFile = dirContents[screenPosList + i].name;
 								selectedTitle = fileInfo[screenPosList + i].title;
@@ -697,14 +709,14 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		}
 
-		if (Config::viewMode == 0) {
-			if(Selection < screenPos) {
+		if (config->viewMode() == 0) {
+			if (Selection < screenPos) {
 				screenPos = Selection;
 			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 			}
-		} else if (Config::viewMode == 1) {
-			if(Selection < screenPosList) {
+		} else if (config->viewMode() == 1) {
+			if (Selection < screenPosList) {
 				screenPosList = Selection;
 			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
 				screenPosList = Selection - ENTRIES_PER_LIST + 1;
@@ -723,20 +735,20 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if (hDown & KEY_A) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
+			if (config->viewMode() == 0) {
+				config->viewMode(1);
 			} else {
-				Config::viewMode = 0;
+				config->viewMode(0);
 			}
 			dropDownMenu = false;
 		}
 
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, dropPos2[0])) {
-				if (Config::viewMode == 0) {
-					Config::viewMode = 1;
+				if (config->viewMode() == 0) {
+					config->viewMode(1);
 				} else {
-					Config::viewMode = 0;
+					config->viewMode(0);
 				}
 				dropDownMenu = false;
 			}
@@ -761,7 +773,7 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_UP && !keyRepeatDelay) || (hDown & KEY_TOUCH && touching(touch, arrowPos[0]))) {
@@ -771,12 +783,12 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = (int)fileInfo2.size()-1;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 
 		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection < (int)fileInfo2.size()-1-3) {
 					Selection += 3;
 				} else {
@@ -790,11 +802,11 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection > 2) {
 					Selection -= 3;
 				} else {
@@ -808,13 +820,13 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if (hDown & KEY_TOUCH) {
-			if (Config::viewMode == 0) {
-				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)fileInfo2.size(); i++) {
-					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+			if (config->viewMode() == 0) {
+				for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)fileInfo2.size(); i++) {
+					if (touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 						if (fileInfo2.size() != 0) {
 							choice = fileInfo2[screenPos + i];
 							if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n\n" + choice)) {
@@ -823,9 +835,9 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 						}
 					}
 				}
-			} else if (Config::viewMode == 1) {
-				for(int i=0;i<ENTRIES_PER_LIST && i<(int)fileInfo2.size(); i++) {
-					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+			} else if (config->viewMode() == 1) {
+				for(int i = 0; i < ENTRIES_PER_LIST && i < (int)fileInfo2.size(); i++) {
+					if (touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 						if (fileInfo2.size() != 0) {
 							choice = fileInfo2[screenPosList + i];
 							if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n\n" + choice)) {
@@ -847,23 +859,23 @@ void ScriptList::SelectFunction(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	
 		if (hDown & KEY_SELECT) {
-			Config::Color1 = barColor;
-			Config::Color2 = bgTopColor;
-			Config::Color3 = bgBottomColor;
-			Config::TxtColor = TextColor;
-			Config::SelectedColor = selected;
-			Config::UnselectedColor = unselected;
+			config->barColor(barColor);
+			config->topBG(bgTopColor);
+			config->bottomBG(bgBottomColor);
+			config->textColor(TextColor);
+			config->selectedColor(selected);
+			config->unselectedColor(unselected);
 			changesMade = true;
 		}
 
-		if (Config::viewMode == 0) {
-			if(Selection < screenPos) {
+		if (config->viewMode() == 0) {
+			if (Selection < screenPos) {
 				screenPos = Selection;
 			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 			}
-		} else if (Config::viewMode == 1) {
-			if(Selection < screenPosList) {
+		} else if (config->viewMode() == 1) {
+			if (Selection < screenPosList) {
 				screenPosList = Selection;
 			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
 				screenPosList = Selection - ENTRIES_PER_LIST + 1;
@@ -896,121 +908,122 @@ void ScriptList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void ScriptList::DrawGlossary(void) const {
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+	if (config->useBars() == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("GLOSSARY"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("GLOSSARY"), 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("GLOSSARY"), 400);
 	}
 
 	if (lastMode == 1) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection +1) + " | " + std::to_string(fileInfo.size()), 40);
-		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
+		Gui::DrawString(15, 35, 0.7f, config->textColor(), std::to_string(Selection +1) + " | " + std::to_string(fileInfo.size()), 40);
+		Gui::DrawString(65, 35, 0.7f, config->textColor(), Lang::get("ENTRY"), 300);
 	} else if (lastMode == 2) {
-		Gui::DrawString(15, 35, 0.7f, Config::TxtColor, std::to_string(Selection+1) + " | " + std::to_string(fileInfo2.size()), 40);
-		Gui::DrawString(65, 35, 0.7f, Config::TxtColor, Lang::get("ENTRY"), 300);
+		Gui::DrawString(15, 35, 0.7f, config->textColor(), std::to_string(Selection+1) + " | " + std::to_string(fileInfo2.size()), 40);
+		Gui::DrawString(65, 35, 0.7f, config->textColor(), Lang::get("ENTRY"), 300);
 	}
 	GFX::DrawBottom();
 
 	GFX::DrawSpriteBlend(sprites_view_idx, 20, 40);
-	Gui::DrawString(50, 42, 0.6f, Config::TxtColor, Lang::get("CHANGE_VIEW_MODE"), 260);
+	Gui::DrawString(50, 42, 0.6f, config->textColor(), Lang::get("CHANGE_VIEW_MODE"), 260);
 
 	GFX::DrawArrow(20, 70);
-	Gui::DrawString(50, 72, 0.6f, Config::TxtColor, Lang::get("ENTRY_UP"), 260);
+	Gui::DrawString(50, 72, 0.6f, config->textColor(), Lang::get("ENTRY_UP"), 260);
 	GFX::DrawArrow(42, 125, 180.0);
-	Gui::DrawString(50, 102, 0.6f, Config::TxtColor, Lang::get("ENTRY_DOWN"), 260);
+	Gui::DrawString(50, 102, 0.6f, config->textColor(), Lang::get("ENTRY_DOWN"), 260);
 	GFX::DrawArrow(20, 130, 0, 1);
-	Gui::DrawString(50, 132, 0.6f, Config::TxtColor, Lang::get("GO_BACK"), 260);
+	Gui::DrawString(50, 132, 0.6f, config->textColor(), Lang::get("GO_BACK"), 260);
 	if (lastMode == 1) {
 		GFX::DrawSpriteBlend(sprites_delete_idx, 20, 160);
-		Gui::DrawString(50, 162, 0.6f, Config::TxtColor, Lang::get("DELETE_SCRIPT2"), 260);
+		Gui::DrawString(50, 162, 0.6f, config->textColor(), Lang::get("DELETE_SCRIPT2"), 260);
 	}
+
 	GFX::DrawArrow(0, 218, 0, 1);
 }
 
 // Execute | run the script.
 Result ScriptList::runFunctions(nlohmann::json &json) {
 	Result ret = NONE; // No Error as of yet.
-	for(int i=0;i<(int)json.at(choice).size();i++) {
+	for(int i = 0; i < (int)json.at(choice).size(); i++) {
 		if (ret == NONE) {
 			std::string type = json.at(choice).at(i).at("type");
 
-			if(type == "deleteFile") {
+			if (type == "deleteFile") {
 				bool missing = false;
 				std::string file, message;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ret = ScriptHelper::removeFile(file, message);
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (!missing)	ret = ScriptHelper::removeFile(file, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "downloadFile") {
+			} else if (type == "downloadFile") {
 				bool missing = false;
 				std::string file, output, message;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				if (json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadFile(file, output, message);
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (!missing)	ret = ScriptHelper::downloadFile(file, output, message);
 				else	ret = SYNTAX_ERROR;
 		
-			} else if(type == "downloadRelease") {
+			} else if (type == "downloadRelease") {
 				bool missing = false, includePrereleases = false, showVersions = false;
 				std::string repo, file, output, message;
-				if(json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
+				if (json.at(choice).at(i).contains("repo"))	repo = json.at(choice).at(i).at("repo");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				if (json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
+				if (json.at(choice).at(i).contains("includePrereleases") && json.at(choice).at(i).at("includePrereleases").is_boolean())
 					includePrereleases = json.at(choice).at(i).at("includePrereleases");
-				if(json.at(choice).at(i).contains("showVersions") && json.at(choice).at(i).at("showVersions").is_boolean())
+				if (json.at(choice).at(i).contains("showVersions") && json.at(choice).at(i).at("showVersions").is_boolean())
 					showVersions = json.at(choice).at(i).at("showVersions");
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
 
-			} else if(type == "extractFile") {
+			} else if (type == "extractFile") {
 				bool missing = false;
 				std::string file, input, output, message;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("input"))	input = json.at(choice).at(i).at("input");
+				if (json.at(choice).at(i).contains("input"))	input = json.at(choice).at(i).at("input");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
+				if (json.at(choice).at(i).contains("output"))	output = json.at(choice).at(i).at("output");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ScriptHelper::extractFile(file, input, output, message);
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (!missing)	ScriptHelper::extractFile(file, input, output, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "installCia") {
+			} else if (type == "installCia") {
 				bool missing = false, updateSelf = false;
 				std::string file, message;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("updateSelf") && json.at(choice).at(i).at("updateSelf").is_boolean()) {
+				if (json.at(choice).at(i).contains("updateSelf") && json.at(choice).at(i).at("updateSelf").is_boolean()) {
 					updateSelf = json.at(choice).at(i).at("updateSelf");
 				}
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
-				if(!missing)	ScriptHelper::installFile(file, updateSelf, message);
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (!missing)	ScriptHelper::installFile(file, updateSelf, message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "mkdir") {
 				bool missing = false;
 				std::string directory, message;
-				if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+				if (json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
 				else	missing = true;
-				if(!missing)	makeDirs(directory.c_str());
+				if (!missing)	makeDirs(directory.c_str());
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "rmdir") {
 				bool missing = false;
 				std::string directory, message, promptmsg;
-				if(json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
+				if (json.at(choice).at(i).contains("directory"))	directory = json.at(choice).at(i).at("directory");
 				else	missing = true;
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-				if(!missing) {
-					if(access(directory.c_str(), F_OK) != 0 ) {
+				if (!missing) {
+					if (access(directory.c_str(), F_OK) != 0 ) {
 						ret = DELETE_ERROR;
 					} else {
 						if (Msg::promptMsg(promptmsg)) {
@@ -1023,63 +1036,63 @@ Result ScriptList::runFunctions(nlohmann::json &json) {
 			} else if (type == "mkfile") {
 				bool missing = false;
 				std::string file;
-				if(json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
+				if (json.at(choice).at(i).contains("file"))	file = json.at(choice).at(i).at("file");
 				else	missing = true;
-				if(!missing)	ScriptHelper::createFile(file.c_str());
+				if (!missing)	ScriptHelper::createFile(file.c_str());
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "timeMsg") {
 				bool missing = false;
 				std::string message;
 				int seconds;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
+				if (json.at(choice).at(i).contains("seconds") && json.at(choice).at(i).at("seconds").is_number())
 				seconds = json.at(choice).at(i).at("seconds");
 				else	missing = true;
-				if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
+				if (!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "saveConfig") {
-				Config::save();
+				config->save();
 
 			} else if (type == "bootTitle") {
 				std::string TitleID = "";
 				std::string message = "";
 				bool isNAND = false, missing = false;
-				if(json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
+				if (json.at(choice).at(i).contains("TitleID"))	TitleID = json.at(choice).at(i).at("TitleID");
 				else	missing = true;
 				if (json.at(choice).at(i).contains("NAND") && json.at(choice).at(i).at("NAND").is_boolean())	isNAND = json.at(choice).at(i).at("NAND");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
+				if (json.at(choice).at(i).contains("message"))	message = json.at(choice).at(i).at("message");
 				else	missing = true;
-				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
+				if (!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "promptMessage") {
 				std::string Message = "";
-				if(json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
+				if (json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
 				ret = ScriptHelper::prompt(Message);
 				
 			} else if (type == "copy") {
 				std::string Message = "", source = "", destination = "";
 				bool missing = false;
-				if(json.at(choice).at(i).contains("source"))	source = json.at(choice).at(i).at("source");
+				if (json.at(choice).at(i).contains("source"))	source = json.at(choice).at(i).at("source");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("destination"))	destination = json.at(choice).at(i).at("destination");
+				if (json.at(choice).at(i).contains("destination"))	destination = json.at(choice).at(i).at("destination");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
+				if (json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
 				if (!missing)	ret = ScriptHelper::copyFile(source, destination, Message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "move") {
 				std::string Message = "", oldFile = "", newFile = "";
 				bool missing = false;
-				if(json.at(choice).at(i).contains("old"))	oldFile = json.at(choice).at(i).at("old");
+				if (json.at(choice).at(i).contains("old"))	oldFile = json.at(choice).at(i).at("old");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("new"))	newFile = json.at(choice).at(i).at("new");
+				if (json.at(choice).at(i).contains("new"))	newFile = json.at(choice).at(i).at("new");
 				else	missing = true;
-				if(json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
+				if (json.at(choice).at(i).contains("message"))	Message = json.at(choice).at(i).at("message");
 				if (!missing)	ret = ScriptHelper::renameFile(oldFile, newFile, Message);
 				else	ret = SYNTAX_ERROR;
 			}

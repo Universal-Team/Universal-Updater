@@ -31,6 +31,7 @@
 #include "unistore_v1.hpp"
 #include <unistd.h>
 
+extern std::unique_ptr<Config> config;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern u32 getColor(std::string colorString);
 extern bool isScriptSelected;
@@ -57,25 +58,25 @@ UniStoreV1::UniStoreV1(nlohmann::json &JSON, const std::string sheetPath, bool d
 
 	u32 colorTemp;
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "barColor"));
-	barColor = colorTemp == 0 ? Config::Color1 : colorTemp;
+	barColor = colorTemp == 0 ? config->barColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgTopColor"));
-	bgTopColor = colorTemp == 0 ? Config::Color2 : colorTemp;
+	bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgBottomColor"));
-	bgBottomColor = colorTemp == 0 ? Config::Color3 : colorTemp;
+	bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "textColor"));
-	TextColor = colorTemp == 0 ? Config::TxtColor : colorTemp;
+	TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "selectedColor"));
-	selected = colorTemp == 0 ? Config::SelectedColor : colorTemp;
+	selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "unselectedColor"));
-	unselected = colorTemp == 0 ? Config::UnselectedColor : colorTemp;
+	unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
 
 	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "progressbarColor"));
-	progressBar = colorTemp == 0 ? Config::progressbarColor : colorTemp;
+	progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
 }
 
 void UniStoreV1::drawBlend(int key, int x, int y) const {
@@ -122,7 +123,7 @@ void UniStoreV1::Draw(void) const {
 	}
 
 	if (displayInformations != false) {
-		if (Config::UseBars == true) {
+		if (config->useBars() == true) {
 			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(this->storeJson["storeInfo"]["title"]), 400);
 			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 		} else {
@@ -160,7 +161,7 @@ void UniStoreV1::Draw(void) const {
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawSpriteBlend(sprites_dropdown_idx, arrowPos[3].x, arrowPos[3].y);
 
-	if (Config::viewMode == 0) {
+	if (config->viewMode() == 0) {
 		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)this->storeJson.at("storeContent").size(); i++) {
 			info = this->storeJson["storeContent"][screenPos + i]["info"]["title"];
 			if (screenPos + i == Selection) {
@@ -180,10 +181,10 @@ void UniStoreV1::Draw(void) const {
 			}
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, TextColor, info, 320);
 		}
-	} else if (Config::viewMode == 1) {
+	} else if (config->viewMode() == 1) {
 		for(int i = 0; i < ENTRIES_PER_LIST && i < (int)this->storeJson.at("storeContent").size(); i++) {
 			info = this->storeJson["storeContent"][screenPosList + i]["info"]["title"];
-			if(screenPosList + i == Selection) {
+			if (screenPosList + i == Selection) {
 				if (this->storeJson.at("storeInfo").contains("buttonSmall") && sheetHasLoaded == true) {
 					Gui::DrawSprite(this->sheet, this->storeJson["storeInfo"]["buttonSmall"], 0, (i+1)*27);
 				} else {
@@ -206,11 +207,11 @@ void UniStoreV1::Draw(void) const {
 	if (dropDownMenu) {
 		// Draw Operation Box.
 		Gui::Draw_Rect(0, 25, 140, 44, barColor);
-		Gui::drawAnimatedSelector(dropPos[0].x, dropPos[0].y, dropPos[0].w, dropPos[0].h, .090, TRANSPARENT, Config::SelectedColor);
+		Gui::drawAnimatedSelector(dropPos[0].x, dropPos[0].y, dropPos[0].w, dropPos[0].h, .090, TRANSPARENT, selected);
 		// Draw Dropdown Icons.
 		GFX::DrawSpriteBlend(sprites_view_idx, dropPos[0].x, dropPos[0].y);
 		// Dropdown Text.
-		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, Config::TxtColor, Lang::get("VIEW_DDM"), 100);
+		Gui::DrawString(dropPos[0].x+30, dropPos[0].y+5, 0.4f, TextColor, Lang::get("VIEW_DDM"), 100);
 	}
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
@@ -230,21 +231,22 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (hDown & KEY_UP) {
 			if (dropSelection > 0)	dropSelection--;
 		}
+
 		if (hDown & KEY_A) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
+			if (config->viewMode() == 0) {
+				config->viewMode(1);
 			} else {
-				Config::viewMode = 0;
+				config->viewMode(0);
 			}
 			dropDownMenu = false;
 		}
 
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, dropPos[0])) {
-				if (Config::viewMode == 0) {
-					Config::viewMode = 1;
+				if (config->viewMode() == 0) {
+					config->viewMode(1);
 				} else {
-					Config::viewMode = 0;
+					config->viewMode(0);
 				}
 				dropDownMenu = false;
 			}
@@ -257,7 +259,7 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
 			if (!didAutoboot) didAutoboot = true;
-			Gui::screenBack(Config::fading);
+			Gui::screenBack(config->screenFade());
 			return;
 		}
 
@@ -269,7 +271,7 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = (int)this->storeJson.at("storeContent").size()-1;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		// Go one entry down.
@@ -280,11 +282,11 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_RIGHT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection < (int)this->storeJson.at("storeContent").size()-1-3) {
 					Selection += 3;
 				} else {
@@ -298,11 +300,11 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		if ((hHeld & KEY_LEFT && !keyRepeatDelay)) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				if (Selection > 2) {
 					Selection -= 3;
 				} else {
@@ -316,13 +318,13 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 			
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 
 		// Execute touched Entry.
 		if (hDown & KEY_TOUCH) {
-			if (Config::viewMode == 0) {
-				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)this->storeJson.at("storeContent").size();i++) {
+			if (config->viewMode() == 0) {
+				for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)this->storeJson.at("storeContent").size(); i++) {
 					if (touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 						Selection = screenPos + i;
 						std::string info = this->storeJson["storeContent"][Selection]["info"]["title"];
@@ -331,8 +333,8 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						}
 					}
 				}
-			} else if (Config::viewMode == 1) {
-				for(int i=0;i<ENTRIES_PER_LIST && i<(int)this->storeJson.at("storeContent").size();i++) {
+			} else if (config->viewMode() == 1) {
+				for(int i = 0; i < ENTRIES_PER_LIST && i < (int)this->storeJson.at("storeContent").size(); i++) {
 					if (touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 						Selection = screenPosList + i;
 						std::string info = this->storeJson["storeContent"][Selection]["info"]["title"];
@@ -351,14 +353,14 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 		}
 
-		if (Config::viewMode == 0) {
-			if(Selection < screenPos) {
+		if (config->viewMode() == 0) {
+			if (Selection < screenPos) {
 				screenPos = Selection;
 			} else if (Selection > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = Selection - ENTRIES_PER_SCREEN + 1;
 			}
-		} else if (Config::viewMode == 1) {
-			if(Selection < screenPosList) {
+		} else if (config->viewMode() == 1) {
+			if (Selection < screenPosList) {
 				screenPosList = Selection;
 			} else if (Selection > screenPosList + ENTRIES_PER_LIST - 1) {
 				screenPosList = Selection - ENTRIES_PER_LIST + 1;
@@ -371,87 +373,87 @@ void UniStoreV1::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 // Execute Entry.
 Result UniStoreV1::execute() {
 	Result ret = NONE; // No Error has been occured now.
-	for(int i=0;i<(int)this->storeJson.at("storeContent").at(Selection).at("script").size();i++) {
+	for(int i = 0; i < (int)this->storeJson.at("storeContent").at(Selection).at("script").size(); i++) {
 		if (ret == NONE) {
 			std::string type = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("type");
-			if(type == "deleteFile") {
+			if (type == "deleteFile") {
 				bool missing = false;
 				std::string file, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::removeFile(file, message);
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ret = ScriptHelper::removeFile(file, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "downloadFile") {
+			} else if (type == "downloadFile") {
 				bool missing = false;
 				std::string file, output, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadFile(file, output, message);
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ret = ScriptHelper::downloadFile(file, output, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "downloadRelease") {
+			} else if (type == "downloadRelease") {
 				bool missing = false, includePrereleases = false, showVersions = false;
 				std::string repo, file, output, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("repo"))	repo = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("repo");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("repo"))	repo = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("repo");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("includePrereleases") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("includePrereleases").is_boolean())
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("includePrereleases") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("includePrereleases").is_boolean())
 					includePrereleases = this->storeJson.at(Selection).at("script").at(i).at("includePrereleases");
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("showVersions") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("showVersions").is_boolean())
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("showVersions") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("showVersions").is_boolean())
 					showVersions = this->storeJson.at(Selection).at("script").at(i).at("showVersions");
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ret = ScriptHelper::downloadRelease(repo, file, output, includePrereleases, showVersions, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "extractFile") {
+			} else if (type == "extractFile") {
 				bool missing = false;
 				std::string file, input, output, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("input"))	input = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("input");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("input"))	input = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("input");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("output"))	output = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("output");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::extractFile(file, input, output, message);
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ScriptHelper::extractFile(file, input, output, message);
 				else	ret = SYNTAX_ERROR;
 
-			} else if(type == "installCia") {
+			} else if (type == "installCia") {
 				bool missing = false, updateSelf = false;
 				std::string file, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("updateSelf") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf").is_boolean()) {
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("updateSelf") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf").is_boolean()) {
 					updateSelf = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("updateSelf");
 				}
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
-				if(!missing)	ScriptHelper::installFile(file, updateSelf, message);
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (!missing)	ScriptHelper::installFile(file, updateSelf, message);
 				else	ret = SYNTAX_ERROR;
 	
 			} else if (type == "mkdir") {
 				bool missing = false;
 				std::string directory, message;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
 				else	missing = true;
-				if(!missing)	makeDirs(directory.c_str());
+				if (!missing)	makeDirs(directory.c_str());
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "rmdir") {
 				bool missing = false;
 				std::string directory, message, promptmsg;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("directory"))	directory = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("directory");
 				else	missing = true;
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-				if(!missing) {
-					if(access(directory.c_str(), F_OK) != 0 ) {
+				if (!missing) {
+					if (access(directory.c_str(), F_OK) != 0 ) {
 						ret = DELETE_ERROR;
 					} else {
 						if (Msg::promptMsg(promptmsg)) {
@@ -464,25 +466,25 @@ Result UniStoreV1::execute() {
 			} else if (type == "mkfile") {
 				bool missing = false;
 				std::string file;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("file"))	file = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("file");
 				else	missing = true;
-				if(!missing)	ScriptHelper::createFile(file.c_str());
+				if (!missing)	ScriptHelper::createFile(file.c_str());
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "timeMsg") {
 				bool missing = false;
 				std::string message;
 				int seconds;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("seconds") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("seconds").is_number())
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("seconds") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("seconds").is_number())
 				seconds = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("seconds");
 				else	missing = true;
-				if(!missing)	ScriptHelper::displayTimeMsg(message, seconds);
+				if (!missing)	ScriptHelper::displayTimeMsg(message, seconds);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "saveConfig") {
-				Config::save();
+				config->save();
 
 			} else if (type == "notImplemented") {
 				notImplemented();
@@ -491,39 +493,39 @@ Result UniStoreV1::execute() {
 				std::string TitleID = "";
 				std::string message = "";
 				bool isNAND = false, missing = false;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("TitleID"))	TitleID = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("TitleID");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("TitleID"))	TitleID = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("TitleID");
 				else	missing = true;
 				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("NAND") && this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("NAND").is_boolean())	isNAND = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("NAND");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				else	missing = true;
-				if(!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
+				if (!missing)	ScriptHelper::bootTitle(TitleID, isNAND, message);
 				else	ret = SYNTAX_ERROR;
 				
 			} else if (type == "promptMessage") {
 				std::string Message = "";
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				ret = ScriptHelper::prompt(Message);
 
 			} else if (type == "copy") {
 				std::string Message = "", source = "", destination = "";
 				bool missing = false;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("source"))	source = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("source");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("source"))	source = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("source");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("destination"))	destination = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("destination");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("destination"))	destination = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("destination");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				if (!missing)	ret = ScriptHelper::copyFile(source, destination, Message);
 				else	ret = SYNTAX_ERROR;
 
 			} else if (type == "move") {
 				std::string Message = "", oldFile = "", newFile = "";
 				bool missing = false;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("old"))	oldFile = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("old");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("old"))	oldFile = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("old");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("new"))	newFile = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("new");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("new"))	newFile = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("new");
 				else	missing = true;
-				if(this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
+				if (this->storeJson.at("storeContent").at(Selection).at("script").at(i).contains("message"))	Message = this->storeJson.at("storeContent").at(Selection).at("script").at(i).at("message");
 				if (!missing)	ret = ScriptHelper::renameFile(oldFile, newFile, Message);
 				else	ret = SYNTAX_ERROR;
 			}

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+extern std::unique_ptr<Config> config;
 extern C3D_RenderTarget* Top;
 extern C3D_RenderTarget* Bottom;
 
@@ -80,21 +81,21 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void Input::DrawNumpad() {
 	for(uint i=0;i<(sizeof(NumpadStruct)/sizeof(NumpadStruct[0]));i++) {
-		Gui::Draw_Rect(NumpadStruct[i].x, NumpadStruct[i].y, 60, 50, Config::Color1);
+		Gui::Draw_Rect(NumpadStruct[i].x, NumpadStruct[i].y, 60, 50, config->barColor());
 		char c[2] = {NumpadStruct[i].character[0]};
-		Gui::DrawString(NumpadStruct[i].x+25, NumpadStruct[i].y+15, 0.72f, Config::TxtColor, c, 50);
+		Gui::DrawString(NumpadStruct[i].x+25, NumpadStruct[i].y+15, 0.72f, config->textColor(), c, 50);
 	}
 }
 
 void Input::drawKeyboard() {
 	for(uint i=0;i<(sizeof(keysQWERTY)/sizeof(keysQWERTY[0]));i++) {
-		C2D_DrawRectSolid(keysQWERTY[i].x, keysQWERTY[i].y+103, 0.5f, 20, 20, Config::Color1 & C2D_Color32(255, 255, 255, 200));
+		C2D_DrawRectSolid(keysQWERTY[i].x, keysQWERTY[i].y+103, 0.5f, 20, 20, config->barColor() & C2D_Color32(255, 255, 255, 200));
 		if (shift) {
 			char c[2] = {caps ? (char)toupper(keysQWERTYShift[i].character[0]) : keysQWERTYShift[i].character[0]};
-			Gui::DrawString(keysQWERTYShift[i].x+(10-(Gui::GetStringWidth(0.50, c)/2)), keysQWERTYShift[i].y+103+(10-(Gui::GetStringHeight(0.50, c)/2)), 0.50, Config::TxtColor, c);
+			Gui::DrawString(keysQWERTYShift[i].x+(10-(Gui::GetStringWidth(0.50, c)/2)), keysQWERTYShift[i].y+103+(10-(Gui::GetStringHeight(0.50, c)/2)), 0.50, config->textColor(), c);
 		} else {
 			char c[2] = {caps ? (char)toupper(keysQWERTY[i].character[0]) : keysQWERTY[i].character[0]};
-			Gui::DrawString(keysQWERTY[i].x+(10-(Gui::GetStringWidth(0.50, c)/2)), keysQWERTY[i].y+103+(10-(Gui::GetStringHeight(0.50, c)/2)), 0.50, Config::TxtColor, c);
+			Gui::DrawString(keysQWERTY[i].x+(10-(Gui::GetStringWidth(0.50, c)/2)), keysQWERTY[i].y+103+(10-(Gui::GetStringHeight(0.50, c)/2)), 0.50, config->textColor(), c);
 		}
 	}
 
@@ -104,13 +105,13 @@ void Input::drawKeyboard() {
 		std::string backSpace = modifierKeys[0].character;
 		std::string caps = modifierKeys[1].character;
 
-		C2D_DrawRectSolid(modifierKeys[i].x, modifierKeys[i].y+103, 0.5f, modifierKeys[i].w, 20, Config::Color1 & C2D_Color32(255, 255, 255, 200));
-		Gui::DrawString(modifierKeys[2].x+5, modifierKeys[2].y+105, 0.50, Config::TxtColor, enter);
-		Gui::DrawString(modifierKeys[3].x+7, modifierKeys[3].y+105, 0.45, Config::TxtColor, arrowUp);
-		Gui::DrawString(modifierKeys[4].x+10, modifierKeys[4].y+105, 0.45, Config::TxtColor, arrowUp);
+		C2D_DrawRectSolid(modifierKeys[i].x, modifierKeys[i].y+103, 0.5f, modifierKeys[i].w, 20, config->barColor() & C2D_Color32(255, 255, 255, 200));
+		Gui::DrawString(modifierKeys[2].x+5, modifierKeys[2].y+105, 0.50, config->textColor(), enter);
+		Gui::DrawString(modifierKeys[3].x+7, modifierKeys[3].y+105, 0.45, config->textColor(), arrowUp);
+		Gui::DrawString(modifierKeys[4].x+10, modifierKeys[4].y+105, 0.45, config->textColor(), arrowUp);
 
-		Gui::DrawString(modifierKeys[0].x+5, modifierKeys[0].y+105, 0.45, Config::TxtColor, backSpace);
-		Gui::DrawString(modifierKeys[1].x+5, modifierKeys[1].y+105, 0.45, Config::TxtColor, caps);
+		Gui::DrawString(modifierKeys[0].x+5, modifierKeys[0].y+105, 0.45, config->textColor(), backSpace);
+		Gui::DrawString(modifierKeys[1].x+5, modifierKeys[1].y+105, 0.45, config->textColor(), caps);
 	}
 }
 
@@ -130,11 +131,11 @@ std::string Input::Numpad(uint maxLength, std::string Text) {
 			C2D_TargetClear(Top, BLACK);
 			C2D_TargetClear(Bottom, BLACK);
 			GFX::DrawTop();
-			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, Config::TxtColor, Text, 400);
-			Gui::DrawString(180, 217, 0.8, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 400);
+			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, config->textColor(), Text, 400);
+			Gui::DrawString(180, 217, 0.8, config->textColor(), (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 400);
 			if (cursorBlink < -20)	cursorBlink = 20;
 			Gui::ScreenDraw(Bottom);
-			Gui::Draw_Rect(0, 0, 320, 240, Config::Color3);
+			Gui::Draw_Rect(0, 0, 320, 240, config->bottomBG());
 			DrawNumpad();
 			scanKeys();
 			hDown = keysDown();
@@ -211,11 +212,11 @@ std::string Input::getString(uint maxLength, std::string Text, float inputTextSi
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			GFX::DrawTop();
-			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, Config::TxtColor, Text, 400);
+			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, config->textColor(), Text, 400);
 			GFX::DrawBottom();
 			drawKeyboard();
-			C2D_DrawRectSolid(0, 81, 0.5f, 320, 20, Config::Color1 & C2D_Color32(200, 200, 200, 200));
-			Gui::DrawString(2, 82, inputTextSize, Config::TxtColor, (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 316);
+			C2D_DrawRectSolid(0, 81, 0.5f, 320, 20, config->barColor() & C2D_Color32(200, 200, 200, 200));
+			Gui::DrawString(2, 82, inputTextSize, config->textColor(), (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 316);
 			if (cursorBlink < -20)	cursorBlink = 20;
 			scanKeys();
 			hDown = keysDown();

@@ -24,7 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "utils/fileBrowse.hpp"
+#include "fileBrowse.hpp"
 #include "keyboard.hpp"
 #include "logging.hpp"
 #include "scriptCreator.hpp"
@@ -32,14 +32,15 @@
 #include <fstream>
 #include <unistd.h>
 
+extern std::unique_ptr<Config> config;
 // The to editing script.
 nlohmann::json editScript;
 std::string entryName = ""; // So we can set to *that* entry.
 
 void ScriptCreator::openJson(std::string fileName) {
-	std::string scriptFile = Config::ScriptPath + fileName;
+	std::string scriptFile = config->scriptPath() + fileName;
 	FILE* file = fopen(scriptFile.c_str(), "r");
-	if(file) editScript = nlohmann::json::parse(file, nullptr, false);
+	if (file) editScript = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 }
 
@@ -78,71 +79,73 @@ void ScriptCreator::Draw(void) const {
 
 void ScriptCreator::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+	if (config->useBars() == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SCRIPTCREATOR"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATOR"), 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("SCRIPTCREATOR"), 400);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 
 	for (int i = 0; i < 2; i++) {
 		if (Selection == i) {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::SelectedColor);
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->selectedColor());
 		} else {
-			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, Config::UnselectedColor);
+			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->unselectedColor());
 		}
 	}
 
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "New script"))/2, mainButtons[0].y+10, 0.6f, Config::TxtColor, "New script", 140);
-	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "Existing script"))/2, mainButtons[1].y+10, 0.6f, Config::TxtColor, "Existing script", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "New script"))/2, mainButtons[0].y+10, 0.6f, config->textColor(), "New script", 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, "Existing script"))/2, mainButtons[1].y+10, 0.6f, config->textColor(), "Existing script", 140);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
 void ScriptCreator::DrawScriptScreen(void) const {
 	GFX::DrawTop();
-	if (Config::UseBars == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
+	if (config->useBars() == true) {
+		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Selected Entry: " + entryName, 400);
 	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Selected Entry: " + entryName, 400);
+		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Selected Entry: " + entryName, 400);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 
 	// Draw Page.
 	for (int i = 0; i < 2; i++) {
 		if (i == page) {
-			Gui::DrawString(260, 3, 0.6f, Config::TxtColor, std::to_string(i+1) + " / 2", 140);
+			Gui::DrawString(260, 3, 0.6f, config->textColor(), std::to_string(i+1) + " / 2", 140);
 		}
 	}
 
 	if (page == 0) {
 		for (int i = 0; i < 6; i++) {
 			if (Selection == i) {
-				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::SelectedColor);
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
 			} else {
-				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::UnselectedColor);
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->unselectedColor());
 			}
 		}
 
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadRelease"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "downloadRelease", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadFile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "downloadFile", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "deleteFile"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "deleteFile", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "extractFile"))/2+150-70, creatorButtons[3].y+10, 0.6f, Config::TxtColor, "extractFile", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, Config::TxtColor, "installCia", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, Config::TxtColor, "mkdir", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadRelease"))/2-150+70, creatorButtons[0].y+10, 0.6f, config->textColor(), "downloadRelease", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "downloadFile"))/2+150-70, creatorButtons[1].y+10, 0.6f, config->textColor(), "downloadFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "deleteFile"))/2-150+70, creatorButtons[2].y+10, 0.6f, config->textColor(), "deleteFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "extractFile"))/2+150-70, creatorButtons[3].y+10, 0.6f, config->textColor(), "extractFile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, config->textColor(), "installCia", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, config->textColor(), "mkdir", 140);
 	} else if (page == 1) {
 		for (int i = 0; i < 3; i++) {
 			if (Selection == i) {
-				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::SelectedColor);
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
 			} else {
-				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, Config::UnselectedColor);
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->unselectedColor());
 			}
 		}
 
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "rmdir"))/2-150+70, creatorButtons[0].y+10, 0.6f, Config::TxtColor, "rmdir", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkfile"))/2+150-70, creatorButtons[1].y+10, 0.6f, Config::TxtColor, "mkfile", 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TimeMsg"))/2-150+70, creatorButtons[2].y+10, 0.6f, Config::TxtColor, "TimeMsg", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "rmdir"))/2-150+70, creatorButtons[0].y+10, 0.6f, config->textColor(), "rmdir", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkfile"))/2+150-70, creatorButtons[1].y+10, 0.6f, config->textColor(), "mkfile", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TimeMsg"))/2-150+70, creatorButtons[2].y+10, 0.6f, config->textColor(), "TimeMsg", 140);
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	}
 }
@@ -286,14 +289,14 @@ void ScriptCreator::setInfoStuff(void) {
 
 void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		Gui::screenBack(Config::fading);
+		Gui::screenBack(config->screenFade());
 		return;
 	}
 
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				jsonFileName = Config::ScriptPath;
+				jsonFileName = config->scriptPath();
 				jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
 				if (jsonFileName != "") {
 					jsonFileName += ".json";
@@ -305,7 +308,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 				break;
 			case 1:
-				std::string tempScript = selectFilePath("Select the Script file.", Config::ScriptPath, {"json"}, 2);
+				std::string tempScript = selectFilePath("Select the Script file.", config->scriptPath(), {"json"}, 2);
 				if (tempScript != "") {
 					jsonFileName = tempScript;
 					if(access(jsonFileName.c_str(), F_OK) != -1 ) {
@@ -339,27 +342,34 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	// Page 1.
 	if (page == 0) {
 		if (hDown & KEY_UP) {
-			if(Selection > 1)	Selection -= 2;
+			if (Selection > 1)	Selection -= 2;
 		}
+
 		if (hDown & KEY_DOWN) {
-			if(Selection < 4)	Selection += 2;
+			if (Selection < 4)	Selection += 2;
 		}
+
 		if (hDown & KEY_LEFT) {
 			if (Selection%2) Selection--;
 		}
+
 		if (hDown & KEY_RIGHT) {
 			if (!(Selection%2)) Selection++;
 		}
+
 	} else if (page == 1) {
 		if (hDown & KEY_UP) {
 			if (Selection == 2)	Selection = 0;
 		}
+
 		if (hDown & KEY_RIGHT) {
 			if (Selection == 0)	Selection = 1;
 		}
+
 		if (hDown & KEY_LEFT) {
 			if (Selection == 1)	Selection = 0;
 		}
+
 		if (hDown & KEY_DOWN) {
 			if (Selection == 0)	Selection = 2;
 		}

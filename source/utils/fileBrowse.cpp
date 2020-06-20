@@ -20,7 +20,7 @@
 
 int file_count = 0;
 
-extern bool continueNdsScan;
+extern std::unique_ptr<Config> config;
 extern uint selectedFile;
 extern int keyRepeatDelay;
 extern bool dirChanged;
@@ -36,11 +36,10 @@ std::vector<Structs::ButtonPos> buttonPositions = {
 	{80, 220, 50, 15}, // Select.
 	{145, 220, 50, 15}, // Refresh.
 	{210, 220, 50, 15}, // Back.
-	{0, 0, 25, 25}, // ViewMode Change.
+	{0, 0, 25, 25}  // ViewMode Change.
 };
 
-off_t getFileSize(const char *fileName)
-{
+off_t getFileSize(const char *fileName) {
 	FILE* fp = fopen(fileName, "rb");
 	off_t fsize = 0;
 	if (fp) {
@@ -48,32 +47,36 @@ off_t getFileSize(const char *fileName)
 		fsize = ftell(fp);			// Get source file's size
 		fseek(fp, 0, SEEK_SET);
 	}
+
 	fclose(fp);
 
 	return fsize;
 }
 
 bool nameEndsWith(const std::string& name, const std::vector<std::string> extensionList) {
-	if(name.substr(0, 2) == "._") return false;
+	if (name.substr(0, 2) == "._") return false;
 
-	if(name.size() == 0) return false;
+	if (name.size() == 0) return false;
 
-	if(extensionList.size() == 0) return true;
+	if (extensionList.size() == 0) return true;
 
-	for(int i = 0; i <(int)extensionList.size(); i++) {
+	for(int i = 0; i < (int)extensionList.size(); i++) {
 		const std::string ext = extensionList.at(i);
-		if(strcasecmp(name.c_str() + name.size() - ext.size(), ext.c_str()) == 0) return true;
+		if (strcasecmp(name.c_str() + name.size() - ext.size(), ext.c_str()) == 0) return true;
 	}
+
 	return false;
 }
 
 bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs) {
-	if(!lhs.isDirectory && rhs.isDirectory) {
+	if (!lhs.isDirectory && rhs.isDirectory) {
 		return false;
 	}
-	if(lhs.isDirectory && !rhs.isDirectory) {
+
+	if (lhs.isDirectory && !rhs.isDirectory) {
 		return true;
 	}
+
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
 
@@ -84,26 +87,28 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 
 	DIR *pdir = opendir(".");
 
-	if(pdir == NULL) {
+	if (pdir == NULL) {
 		Msg::DisplayMsg("Unable to open the directory.");
-		for(int i=0;i<120;i++)	gspWaitForVBlank();
+		for(int i = 0; i < 120; i++) gspWaitForVBlank();
 	} else {
 		while(true) {
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
-			if(pent == NULL) break;
+			if (pent == NULL) break;
 
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+			if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 				dirContents.push_back(dirEntry);
 			}
 		}
+
 		closedir(pdir);
 	}
+
 	sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 }
 
@@ -116,9 +121,10 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	DIR* pdir = opendir(name.c_str());
 	struct dirent *pent;
 	while ((pent = readdir(pdir)) != NULL) {
-		if(nameEndsWith(pent->d_name, extensionList))
+		if (nameEndsWith(pent->d_name, extensionList))
 			dirContents.push_back(pent->d_name);
 	}
+
 	closedir(pdir);
 	return dirContents;
 }
@@ -129,12 +135,14 @@ bool returnIfExist(const std::string &path, const std::vector<std::string> &exte
 	chdir(path.c_str());
 	std::vector<DirEntry> dirContentsTemp;
 	getDirectoryContents(dirContentsTemp, extensionList);
-	for(uint i=0;i<dirContentsTemp.size();i++) {
+	for(uint i = 0; i < dirContentsTemp.size(); i++) {
 		dirContents.push_back(dirContentsTemp[i]);
 	}
+
 	if (dirContents.size() == 0) {
 		return false;
 	}
+
 	return true;
 }
 
@@ -157,7 +165,7 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 	chdir(initialPath.c_str());
 	std::vector<DirEntry> dirContentsTemp;
 	getDirectoryContents(dirContentsTemp, extensionList);
-	for(uint i=0;i<dirContentsTemp.size();i++) {
+	for(uint i = 0; i < dirContentsTemp.size(); i++) {
 		dirContents.push_back(dirContentsTemp[i]);
 	}
 	selectedFile = 0;
@@ -170,38 +178,38 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 		GFX::DrawTop();
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
-		if (Config::UseBars == true) {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, Config::TxtColor, path, 390);
-			Gui::DrawStringCentered(0, 220, 0.60f, Config::TxtColor, selectText, 390);
+		if (config->useBars() == true) {
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, config->textColor(), path, 390);
+			Gui::DrawStringCentered(0, 220, 0.60f, config->textColor(), selectText, 390);
 		} else {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path, 390);
-			Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, selectText, 390);
+			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, config->textColor(), path, 390);
+			Gui::DrawStringCentered(0, 218, 0.60f, config->textColor(), selectText, 390);
 		}
 		GFX::DrawBottom();
-		if (Config::viewMode == 0) {
-			for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)dirContents.size();i++) {
-				Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+		if (config->viewMode() == 0) {
+			for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)dirContents.size(); i++) {
+				Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 				dirs = dirContents[screenPos + i].name;
-				if(screenPos + i == selectedFile) {
-					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				if (screenPos + i == selectedFile) {
+					Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 				}
-				Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, dirs, 320);
+				Gui::DrawStringCentered(0, 50+(i*57), 0.7f, config->textColor(), dirs, 320);
 			}
-		} else if (Config::viewMode == 1) {
-			for(int i=0;i<ENTRIES_PER_LIST && i<(int)dirContents.size();i++) {
-				Gui::Draw_Rect(0, (i+1)*27, 320, 25, Config::UnselectedColor);
+		} else if (config->viewMode() == 1) {
+			for(int i = 0; i < ENTRIES_PER_LIST && i < (int)dirContents.size(); i++) {
+				Gui::Draw_Rect(0, (i+1)*27, 320, 25, config->unselectedColor());
 				dirs = dirContents[screenPosList + i].name;
-				if(screenPosList + i == selectedFile) {
-					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, Config::SelectedColor);
+				if (screenPosList + i == selectedFile) {
+					Gui::drawAnimatedSelector(0, (i+1)*27, 320, 25, .060, TRANSPARENT, config->selectedColor());
 				}
-				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, Config::TxtColor, dirs, 320);
+				Gui::DrawStringCentered(0, ((i+1)*27)+1, 0.7f, config->textColor(), dirs, 320);
 			}
 		}
 
-		if (Config::UseBars == true) {
-			Gui::DrawStringCentered(0, 0, 0.45f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 260);
+		if (config->useBars() == true) {
+			Gui::DrawStringCentered(0, 0, 0.45f, config->textColor(), Lang::get("FILEBROWSE_MSG"), 260);
 		} else {
-			Gui::DrawStringCentered(0, 2, 0.45f, Config::TxtColor, Lang::get("FILEBROWSE_MSG"), 260);
+			Gui::DrawStringCentered(0, 2, 0.45f, config->textColor(), Lang::get("FILEBROWSE_MSG"), 260);
 		}
 		GFX::DrawArrow(295, -1);
 		GFX::DrawArrow(315, 240, 180.0);
@@ -212,10 +220,10 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 		Gui::Draw_Rect(buttonPositions[4].x, buttonPositions[4].y, buttonPositions[4].w, buttonPositions[4].h, C2D_Color32(0, 0, 0, 190));
 		Gui::Draw_Rect(buttonPositions[5].x, buttonPositions[5].y, buttonPositions[5].w, buttonPositions[5].h, C2D_Color32(0, 0, 0, 190));
 
-		Gui::DrawStringCentered(-120, 222, 0.4, Config::TxtColor, Lang::get("OPEN"), 40);
-		Gui::DrawStringCentered(-55, 222, 0.4, Config::TxtColor, Lang::get("SELECT"), 40);
-		Gui::DrawStringCentered(10, 222, 0.4, Config::TxtColor, Lang::get("REFRESH"), 40);
-		Gui::DrawStringCentered(75, 222, 0.4, Config::TxtColor, Lang::get("BACK"), 40);
+		Gui::DrawStringCentered(-120, 222, 0.4, config->textColor(), Lang::get("OPEN"), 40);
+		Gui::DrawStringCentered(-55, 222, 0.4, config->textColor(), Lang::get("SELECT"), 40);
+		Gui::DrawStringCentered(10, 222, 0.4, config->textColor(), Lang::get("REFRESH"), 40);
+		Gui::DrawStringCentered(75, 222, 0.4, config->textColor(), Lang::get("BACK"), 40);
 		C3D_FrameEnd(0);
 
 		// The input part.
@@ -228,7 +236,7 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 			dirContents.clear();
 			std::vector<DirEntry> dirContentsTemp;
 			getDirectoryContents(dirContentsTemp, extensionList);
-			for(uint i=0;i<dirContentsTemp.size();i++) {
+			for(uint i = 0; i < dirContentsTemp.size(); i++) {
 				dirContents.push_back(dirContentsTemp[i]);
 			}
 			dirChanged = false;
@@ -280,7 +288,7 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 		if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[5]))) {
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
-			if(strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
+			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
 				return "";
 			} else {
 				chdir("..");
@@ -308,21 +316,21 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 		}
 		// Switch ViewMode.
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, buttonPositions[6]))) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
+			if (config->viewMode() == 0) {
+				config->viewMode(1);
 			} else {
-				Config::viewMode = 0;
+				config->viewMode(0);
 			}
 		}
 
-		if (Config::viewMode == 0) {
-			if(selectedFile < screenPos) {
+		if (config->viewMode() == 0) {
+			if (selectedFile < screenPos) {
 				screenPos = selectedFile;
 			} else if (selectedFile > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = selectedFile - ENTRIES_PER_SCREEN + 1;
 			}
-		} else if (Config::viewMode == 1) {
-			if(selectedFile < screenPosList) {
+		} else if (config->viewMode() == 1) {
+			if (selectedFile < screenPosList) {
 				screenPosList = selectedFile;
 			} else if (selectedFile > screenPosList + ENTRIES_PER_LIST - 1) {
 				screenPosList = selectedFile - ENTRIES_PER_LIST + 1;
@@ -338,16 +346,16 @@ u32 copyBuf[copyBufSize];
 void dirCopy(DirEntry* entry, int i, const char *destinationPath, const char *sourcePath) {
 	std::vector<DirEntry> dirContents;
 	dirContents.clear();
-	if(entry->isDirectory)	chdir((sourcePath + ("/" + entry->name)).c_str());
+	if (entry->isDirectory)	chdir((sourcePath + ("/" + entry->name)).c_str());
 	getDirectoryContents(dirContents);
-	if(((int)dirContents.size()) == 1)	mkdir((destinationPath + ("/" + entry->name)).c_str(), 0777);
-	if(((int)dirContents.size()) != 1)	fcopy((sourcePath + ("/" + entry->name)).c_str(), (destinationPath + ("/" + entry->name)).c_str());
+	if (((int)dirContents.size()) == 1)	mkdir((destinationPath + ("/" + entry->name)).c_str(), 0777);
+	if (((int)dirContents.size()) != 1)	fcopy((sourcePath + ("/" + entry->name)).c_str(), (destinationPath + ("/" + entry->name)).c_str());
 }
 
 int fcopy(const char *sourcePath, const char *destinationPath) {
 	DIR *isDir = opendir(sourcePath);
 
-	if(isDir != NULL) {
+	if (isDir != NULL) {
 		closedir(isDir);
 
 		// Source path is a directory
@@ -372,7 +380,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		// Source path is a file
 		FILE* sourceFile = fopen(sourcePath, "rb");
 		off_t fsize = 0;
-		if(sourceFile) {
+		if (sourceFile) {
 			fseek(sourceFile, 0, SEEK_END);
 			fsize = ftell(sourceFile);			// Get source file's size
 			fseek(sourceFile, 0, SEEK_SET);
@@ -382,7 +390,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		}
 
 		FILE* destinationFile = fopen(destinationPath, "wb");
-		//if(destinationFile) {
+		//if (destinationFile) {
 			fseek(destinationFile, 0, SEEK_SET);
 		/*} else {
 			fclose(sourceFile);
@@ -392,16 +400,16 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 		off_t offset = 0;
 		int numr;
-		while(1)
-		{
+		while(1) {
 			scanKeys();
-			if(keysHeld() & KEY_B) {
+			if (keysHeld() & KEY_B) {
 				// Cancel copying
 				fclose(sourceFile);
 				fclose(destinationFile);
 				return -1;
 				break;
 			}
+			
 			printf("\x1b[16;0H");
 			printf("Progress:\n");
 			printf("%i/%i Bytes					   ", (int)offset, (int)fsize);
@@ -411,7 +419,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			fwrite(copyBuf, 2, numr, destinationFile);
 			offset += copyBufSize;
 
-			if(offset > fsize) {
+			if (offset > fsize) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 

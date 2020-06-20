@@ -24,11 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "config.hpp"
 #include "logging.hpp"
 
-#include "utils/config.hpp"
-
 #include <memory>
+
+extern std::unique_ptr<Config> config;
 
 std::string Logging::format(const std::string& fmt_str, ...) {
 	va_list ap;
@@ -57,7 +58,7 @@ void Logging::createLogFile(void) {
 
 // Only write to the Log, if it is enabled in the Settings File!
 void Logging::writeToLog(std::string debugText) {
-	if (Config::getBool("LOGGING")) {
+	if (config->logging()) {
 		std::ofstream logFile;
 		logFile.open(("sdmc:/3ds/Universal-Updater/Log.log"), std::ofstream::app);
 		std::string writeDebug = "[ ";

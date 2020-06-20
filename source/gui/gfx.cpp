@@ -27,6 +27,7 @@
 #include "common.hpp"
 #include "gfx.hpp"
 
+extern std::unique_ptr<Config> config;
 extern bool isScriptSelected;
 extern u32 barColor;
 extern u32 bgTopColor;
@@ -36,10 +37,10 @@ extern u32 TextColor;
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
 	if (isScriptSelected == false) {
-		Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
-		Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
-		Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
-		if (Config::UseBars == true) {
+		Gui::Draw_Rect(0, 0, 400, 25, config->barColor());
+		Gui::Draw_Rect(0, 25, 400, 190, config->topBG());
+		Gui::Draw_Rect(0, 215, 400, 25, config->barColor());
+		if (config->useBars() == true) {
 			DrawSprite(sprites_top_screen_top_idx, 0, 0);
 			DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 		}
@@ -47,7 +48,7 @@ void GFX::DrawTop(void) {
 		Gui::Draw_Rect(0, 0, 400, 30, barColor);
 		Gui::Draw_Rect(0, 25, 400, 190, bgBottomColor);
 		Gui::Draw_Rect(0, 215, 400, 25, barColor);
-		if (Config::UseBars == true) {
+		if (config->useBars() == true) {
 			DrawSprite(sprites_top_screen_top_idx, 0, 0);
 			DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 		}
@@ -57,10 +58,10 @@ void GFX::DrawTop(void) {
 void GFX::DrawBottom(void) {
 	Gui::ScreenDraw(Bottom);
 	if (isScriptSelected == false) {
-		Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
-		Gui::Draw_Rect(0, 25, 320, 190, Config::Color3);
-		Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
-		if (Config::UseBars == true) {
+		Gui::Draw_Rect(0, 0, 320, 25, config->barColor());
+		Gui::Draw_Rect(0, 25, 320, 190, config->bottomBG());
+		Gui::Draw_Rect(0, 215, 320, 25, config->barColor());
+		if (config->useBars() == true) {
 			DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
 			DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
 		}
@@ -68,7 +69,7 @@ void GFX::DrawBottom(void) {
 		Gui::Draw_Rect(0, 0, 320, 30, barColor);
 		Gui::Draw_Rect(0, 25, 320, 190, bgBottomColor);
 		Gui::Draw_Rect(0, 215, 320, 25, barColor);
-		if (Config::UseBars == true) {
+		if (config->useBars() == true) {
 			DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
 			DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
 		}
@@ -89,10 +90,10 @@ void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
 		C2D_SetImageTint(&tint, C2D_BotLeft, TextColor, 0.5);
 		C2D_SetImageTint(&tint, C2D_BotRight, TextColor, 0.5);
 	} else {
-		C2D_SetImageTint(&tint, C2D_TopLeft, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, Config::TxtColor, 0.5);	
+		C2D_SetImageTint(&tint, C2D_TopLeft, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_TopRight, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_BotLeft, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_BotRight, config->textColor(), 0.5);	
 	}
 
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, img), x, y, 0.5f, &tint, ScaleX, ScaleY);
@@ -107,10 +108,10 @@ void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 		C2D_SetImageTint(&tint, C2D_BotLeft, TextColor, 0.5);
 		C2D_SetImageTint(&tint, C2D_BotRight, TextColor, 0.5);
 	} else {
-		C2D_SetImageTint(&tint, C2D_TopLeft, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, Config::TxtColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, Config::TxtColor, 0.5);
+		C2D_SetImageTint(&tint, C2D_TopLeft, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_TopRight, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_BotLeft, config->textColor(), 0.5);
+		C2D_SetImageTint(&tint, C2D_BotRight, config->textColor(), 0.5);
 	}
 
 	if (arrowSprite == 0) {
@@ -138,6 +139,6 @@ void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
 	if (isScriptSelected) {
 		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, TextColor, ButtonText, 145, 30);
 	} else {
-		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, Config::TxtColor, ButtonText, 145, 30);
+		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, config->textColor(), ButtonText, 145, 30);
 	}
 }

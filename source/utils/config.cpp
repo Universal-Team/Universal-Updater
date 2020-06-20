@@ -26,323 +26,277 @@
 
 #include "common.hpp"
 #include "config.hpp"
-#include "gui.hpp"
-#include "json.hpp"
-
-#include <string>
+#include "colorHelper.hpp"
+#include <citro2d.h>
 #include <unistd.h>
 
-std::string Config::lang; // Current Language.
-int Config::Color1;
-int Config::Color2;
-int Config::Color3;
-int Config::TxtColor;
-int Config::SelectedColor;
-int Config::UnselectedColor;
-int Config::viewMode;
-int Config::progressbarColor;
-std::string Config::ScriptPath;
-std::string Config::MusicPath;
-bool Config::Logging;
-bool Config::UseBars;
-std::string Config::StorePath;
-int Config::LangPath;
-int Config::autoboot = 0;
-std::string Config::AutobootFile = "";
-int Config::outdated;
-int Config::uptodate;
-int Config::notFound;
-int Config::future;
-int Config::Button;
-int Config::keyDelay = 5;
-bool Config::fading = false;
-bool Config::progress = true;
-nlohmann::json configJson;
-extern bool changesMade;
+// In case it doesn't exist.
+void Config::initialize() {
+	// Create through fopen "Write".
+	FILE *file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 
-void Config::load() {
+	// Set default values.
+	this->setInt("BARCOLOR", BarColor);
+	this->setInt("TOPBGCOLOR", TopBGColor);
+	this->setInt("BOTTOMBGCOLOR", BottomBGColor);
+	this->setInt("TEXTCOLOR", WHITE);
+	this->setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
+	this->setInt("SELECTEDCOLOR", SelectedColordefault);
+	this->setInt("UNSELECTEDCOLOR", UnselectedColordefault);
+	this->setString("SCRIPTPATH", SCRIPTS_PATH);
+	this->setInt("LANGPATH", 0);
+	this->setInt("VIEWMODE", 0);
+	this->setInt("PROGRESSBARCOLOR", WHITE);
+	this->setString("MUSICPATH", MUSIC_PATH);
+	this->setBool("LOGGING", false);
+	this->setBool("BARS", true);
+	this->setInt("AUTOBOOT", 0);
+	this->setString("STOREPATH", STORE_PATH);
+	this->setString("AUTOBOOT_FILE", "");
+	this->setInt("OUTDATED", C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+	this->setInt("UPTODATE", C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	this->setInt("NOTFOUND", C2D_Color32(255, 128, 0, 255));
+	this->setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
+	this->setInt("KEY_DELAY", 5);
+	this->setBool("SCREEN_FADE", false);
+	this->setBool("PROGRESS_DISPLAY", true);
+	this->setString("LANGUAGE", "en");
+
+	// Write to file.
+	fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
+	fclose(file); // Now we have the file and can properly access it.
+}
+
+Config::Config() {
+	if (access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) != 0 ) {
+		this->initialize();
+	}
+
 	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
-	if(file) {
-		configJson = nlohmann::json::parse(file, nullptr, false);
+	this->json = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
 
-		if(!configJson.contains("BARCOLOR")) {
-			Color1 = BarColor;
-		} else {
-			Color1 = getInt("BARCOLOR");
-		}
+	// Here we get the initial settings.
 
-		if(!configJson.contains("TOPBGCOLOR")) {
-			Color2 = TopBGColor;
-		} else {
-			Color2 = getInt("TOPBGCOLOR");
-		}
-
-		if(!configJson.contains("BOTTOMBGCOLOR")) {
-			Color3 = BottomBGColor;
-		} else {
-			Color3 = getInt("BOTTOMBGCOLOR");
-		}
-
-		if(!configJson.contains("TEXTCOLOR")) {
-			TxtColor = WHITE;
-		} else {
-			TxtColor = getInt("TEXTCOLOR");
-		}
-
-		if(!configJson.contains("UNSELECTEDCOLOR")) {
-			UnselectedColor = UnselectedColordefault;
-		} else {
-			UnselectedColor = getInt("UNSELECTEDCOLOR");
-		}
-
-		if(!configJson.contains("SELECTEDCOLOR")) {
-			SelectedColor = SelectedColordefault;
-		} else {
-			SelectedColor = getInt("SELECTEDCOLOR");
-		}
-
-		if(!configJson.contains("SCRIPTPATH")) {
-			ScriptPath = SCRIPTS_PATH;
-		} else {
-			ScriptPath = getString("SCRIPTPATH");
-		}
-
-		if(!configJson.contains("LANGPATH")) {
-			LangPath = 0;
-		} else {
-			LangPath = getInt("LANGPATH");
-		}
-
-		// Conversion to string.
-		if (configJson.contains("LANGUAGE") && configJson.at("LANGUAGE").is_number()) {
-			setString("LANGUAGE", "en");
-			changesMade = true;
-		}
-
-		if(!configJson.contains("LANGUAGE")) {
-			lang = "en";
-		} else {
-			lang = getString("LANGUAGE");
-		}
-
-		if(!configJson.contains("VIEWMODE")) {
-			viewMode = 0;
-		} else {
-			viewMode = getInt("VIEWMODE");
-		}
-
-		if(!configJson.contains("PROGRESSBARCOLOR")) {
-			progressbarColor = WHITE;
-		} else {
-			progressbarColor = getInt("PROGRESSBARCOLOR");
-		}
-
-		if(!configJson.contains("MUSICPATH")) {
-			MusicPath = MUSIC_PATH;
-		} else {
-			MusicPath = getString("MUSICPATH");
-		}
-
-		if(!configJson.contains("LOGGING")) {
-			Logging = false;
-		} else {
-			Logging = getBool("LOGGING");
-		}
-
-		if(!configJson.contains("BARS")) {
-			UseBars = true;
-		} else {
-			UseBars = getBool("BARS");
-		}
-
-		if(!configJson.contains("STOREPATH")) {
-			StorePath = STORE_PATH;
-		} else {
-			StorePath = getString("STOREPATH");
-		}
-
-		if(!configJson.contains("AUTOBOOT")) {
-			autoboot = 0;
-		} else {
-			autoboot = getInt("AUTOBOOT");
-		}
-
-		if(!configJson.contains("AUTOBOOT_FILE")) {
-			AutobootFile = "";
-		} else {
-			AutobootFile = getString("AUTOBOOT_FILE");
-		}
-
-		if(!configJson.contains("OUTDATED")) {
-			outdated = C2D_Color32(0xfb, 0x5b, 0x5b, 255);
-		} else {
-			outdated = getInt("OUTDATED");
-		}
-
-		if(!configJson.contains("UPTODATE")) {
-			uptodate = C2D_Color32(0xa5, 0xdd, 0x81, 255);
-		} else {
-			uptodate = getInt("UPTODATE");
-		}
-
-		if(!configJson.contains("NOTFOUND")) {
-			notFound = C2D_Color32(255, 128, 0, 255);
-		} else {
-			notFound = getInt("NOTFOUND");
-		}
-
-		if(!configJson.contains("FUTURE")) {
-			future = C2D_Color32(255, 255, 0, 255);
-		} else {
-			future = getInt("FUTURE");
-		}
-
-		if(!configJson.contains("BUTTON")) {
-			Button = C2D_Color32(0, 0, 50, 255);
-		} else {
-			Button = getInt("BUTTON");
-		}
-
-		if(!configJson.contains("KEY_DELAY")) {
-			keyDelay = 5;
-		} else {
-			keyDelay = getInt("KEY_DELAY");
-		}
-
-		if(!configJson.contains("SCREEN_FADE")) {
-			fading = false;
-		} else {
-			fading = getBool("SCREEN_FADE");
-		}
-
-		if(!configJson.contains("PROGRESS_DISPLAY")) {
-			progress = true;
-		} else {
-			progress = getBool("PROGRESS_DISPLAY");
-		}
-
-		fclose(file);
+	if (!this->json.contains("Bar_Color")) {
+		this->barColor(BarColor);
 	} else {
-		Color1 = BarColor;
-		Color2 = TopBGColor;
-		Color3 = BottomBGColor;
-		TxtColor = WHITE;
-		SelectedColor = SelectedColordefault;
-		UnselectedColor = UnselectedColordefault;
-		ScriptPath = SCRIPTS_PATH;
-		LangPath = 0;
-		lang = "en";
-		viewMode = 0;
-		progressbarColor = WHITE;
-		MusicPath = MUSIC_PATH;
-		Logging = false;
-		UseBars = true;
-		StorePath = STORE_PATH;
-		autoboot = 0;
-		AutobootFile = "";
-		outdated = C2D_Color32(0xfb, 0x5b, 0x5b, 255);
-		uptodate = C2D_Color32(0xa5, 0xdd, 0x81, 255);
-		notFound = C2D_Color32(255, 128, 0, 255);
-		future	 = C2D_Color32(255, 255, 0, 255);
-		Button	 = C2D_Color32(0, 0, 50, 255);
-		keyDelay = 5;
-		fading = false;
-		progress = true;
+		this->barColor(this->getInt("BARCOLOR"));
+	}
+
+	if (!this->json.contains("TOPBGCOLOR")) {
+		this->topBG(TopBGColor);
+	} else {
+		this->topBG(this->getInt("TOPBGCOLOR"));
+	}
+
+	if (!this->json.contains("BOTTOMBGCOLOR")) {
+		this->bottomBG(BottomBGColor);
+	} else {
+		this->bottomBG(this->getInt("BOTTOMBGCOLOR"));
+	}
+
+	if (!this->json.contains("TEXTCOLOR")) {
+		this->textColor(WHITE);
+	} else {
+		this->textColor(this->getInt("TEXTCOLOR"));
+	}
+
+	if (!this->json.contains("BUTTON")) {
+		this->buttonColor(C2D_Color32(0, 0, 50, 255));
+	} else {
+		this->buttonColor(this->getInt("BUTTON"));
+	}
+
+	if (!this->json.contains("SELECTEDCOLOR")) {
+		this->selectedColor(SelectedColordefault);
+	} else {
+		this->selectedColor(this->getInt("SELECTEDCOLOR"));
+	}
+
+	if (!this->json.contains("UNSELECTEDCOLOR")) {
+		this->unselectedColor(UnselectedColordefault);
+	} else {
+		this->unselectedColor(this->getInt("UNSELECTEDCOLOR"));
+	}
+
+	if (!this->json.contains("SCRIPTPATH")) {
+		this->scriptPath(SCRIPTS_PATH);
+	} else {
+		this->scriptPath(this->getString("SCRIPTPATH"));
+	}
+
+	if (!this->json.contains("LANGPATH")) {
+		this->langPath(0);
+	} else {
+		this->langPath(this->getInt("LANGPATH"));
+	}
+
+	if (!this->json.contains("VIEWMODE")) {
+		this->viewMode(0);
+	} else {
+		this->viewMode(this->getInt("VIEWMODE"));
+	}
+
+	if (!this->json.contains("PROGRESSBARCOLOR")) {
+		this->progressbarColor(WHITE);
+	} else {
+		this->progressbarColor(this->getInt("PROGRESSBARCOLOR"));
+	}
+
+	if (!this->json.contains("MUSICPATH")) {
+		this->musicPath(MUSIC_PATH);
+	} else {
+		this->musicPath(this->getString("MUSICPATH"));
+	}
+
+	if (!this->json.contains("LOGGING")) {
+		this->logging(false);
+	} else {
+		this->logging(this->getBool("LOGGING"));
+	}
+
+	if (!this->json.contains("BARS")) {
+		this->useBars(true);
+	} else {
+		this->useBars(this->getBool("BARS"));
+	}
+
+	if (!this->json.contains("AUTOBOOT")) {
+		this->autoboot(0);
+	} else {
+		this->viewMode(this->getInt("AUTOBOOT"));
+	}
+
+	if (!this->json.contains("STOREPATH")) {
+		this->storePath(STORE_PATH);
+	} else {
+		this->storePath(this->getString("STOREPATH"));
+	}
+
+	if (!this->json.contains("AUTOBOOT_FILE")) {
+		this->autobootFile("");
+	} else {
+		this->autobootFile(this->getString("AUTOBOOT_FILE"));
+	}
+
+	if (!this->json.contains("OUTDATED")) {
+		this->outdatedColor(C2D_Color32(0xfb, 0x5b, 0x5b, 255));
+	} else {
+		this->outdatedColor(this->getInt("OUTDATED"));
+	}
+
+	if (!this->json.contains("UPTODATE")) {
+		this->uptodateColor(C2D_Color32(0xa5, 0xdd, 0x81, 255));
+	} else {
+		this->uptodateColor(this->getInt("UPTODATE"));
+	}
+
+	if (!this->json.contains("NOTFOUND")) {
+		this->notfoundColor(C2D_Color32(255, 128, 0, 255));
+	} else {
+		this->notfoundColor(this->getInt("NOTFOUND"));
+	}
+
+	if (!this->json.contains("FUTURE")) {
+		this->futureColor(C2D_Color32(255, 255, 0, 255));
+	} else {
+		this->futureColor(this->getInt("FUTURE"));
+	}
+
+	if (!this->json.contains("KEY_DELAY")) {
+		this->keyDelay(5);
+	} else {
+		this->keyDelay(this->getInt("KEY_DELAY"));
+	}
+
+	if (!this->json.contains("SCREEN_FADE")) {
+		this->screenFade(false);
+	} else {
+		this->screenFade(this->getBool("SCREEN_FADE"));
+	}
+
+	if (!this->json.contains("PROGRESS_DISPLAY")) {
+		this->progressDisplay(true);
+	} else {
+		this->progressDisplay(this->getBool("PROGRESS_DISPLAY"));
+	}
+
+	if (!this->json.contains("LANGUAGE")) {
+		this->language("en");
+	} else {
+		this->language(this->getString("LANGUAGE"));
+	}
+
+	this->changesMade = false; // No changes made yet.
+}
+
+// Write to config if changesMade.
+void Config::save() {
+	if (this->changesMade) {
+		FILE *file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
+		// Set values.
+		this->setInt("BARCOLOR", this->barColor());
+		this->setInt("TOPBGCOLOR", this->topBG());
+		this->setInt("BOTTOMBGCOLOR", this->bottomBG());
+		this->setInt("TEXTCOLOR", this->textColor());
+		this->setInt("BUTTON", this->buttonColor());
+		this->setInt("SELECTEDCOLOR", this->selectedColor());
+		this->setInt("UNSELECTEDCOLOR", this->unselectedColor());
+		this->setString("SCRIPTPATH", this->scriptPath());
+		this->setInt("LANGPATH", this->langPath());
+		this->setInt("VIEWMODE", this->viewMode());
+		this->setInt("PROGRESSBARCOLOR", this->progressbarColor());
+		this->setString("MUSICPATH", this->musicPath());
+		this->setBool("LOGGING", this->logging());
+		this->setBool("BARS", this->useBars());
+		this->setInt("AUTOBOOT", this->autoboot());
+		this->setString("STOREPATH", this->storePath());
+		this->setString("AUTOBOOT_FILE", this->autobootFile());
+		this->setInt("OUTDATED", this->outdatedColor());
+		this->setInt("UPTODATE", this->uptodateColor());
+		this->setInt("NOTFOUND", this->notfoundColor());
+		this->setInt("FUTURE", this->futureColor());
+		this->setInt("KEY_DELAY", this->keyDelay());
+		this->setBool("SCREEN_FADE", this->screenFade());
+		this->setBool("PROGRESS_DISPLAY", this->progressDisplay());
+		this->setString("LANGUAGE", this->language());
+		// Write changes to file.
+		fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
+		fclose(file);
 	}
 }
 
-void Config::save() {
-	setInt("BARCOLOR", Color1);
-	setInt("TOPBGCOLOR", Color2);
-	setInt("BOTTOMBGCOLOR", Color3);
-	setInt("TEXTCOLOR", TxtColor);
-	setInt("SELECTEDCOLOR", SelectedColor);
-	setInt("UNSELECTEDCOLOR", UnselectedColor);
-	setString("SCRIPTPATH", ScriptPath);
-	setInt("LANGPATH", LangPath);
-	setString("LANGUAGE", lang);
-	setInt("VIEWMODE", viewMode);
-	setInt("PROGRESSBARCOLOR", progressbarColor);
-	setString("MUSICPATH", MusicPath);
-	setBool("LOGGING", Logging);
-	setBool("BARS", UseBars);
-	setString("STOREPATH", StorePath);
-	setInt("AUTOBOOT", autoboot);
-	setString("AUTOBOOT_FILE", AutobootFile);
-	setInt("OUTDATED", outdated);
-	setInt("UPTODATE", uptodate);
-	setInt("NOTFOUND", notFound);
-	setInt("FUTURE", future);
-	setInt("BUTTON", Button);
-	setInt("KEY_DELAY", keyDelay);
-	setBool("SCREEN_FADE", fading);
-	setBool("PROGRESS_DISPLAY", progress);
-
-	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
-	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
-	fclose(file);
-}
-
-void Config::initializeNewConfig() {
-	FILE* file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "r");
-	if(file) configJson = nlohmann::json::parse(file, nullptr, false);
-
-	setInt("BARCOLOR", BarColor);
-	setInt("TOPBGCOLOR", TopBGColor);
-	setInt("BOTTOMBGCOLOR", BottomBGColor);
-	setInt("TEXTCOLOR", WHITE);
-	setInt("SELECTEDCOLOR", SelectedColordefault);
-	setInt("UNSELECTEDCOLOR", UnselectedColordefault);
-	setString("SCRIPTPATH", SCRIPTS_PATH);
-	setInt("LANGPATH", 0);
-	setString("LANGUAGE", "en");
-	setInt("VIEWMODE", 0);
-	setInt("PROGRESSBARCOLOR", WHITE);
-	setString("MUSICPATH", MUSIC_PATH);
-	setBool("LOGGING", false);
-	setBool("BARS", true);
-	setString("STOREPATH", STORE_PATH);
-	setInt("AUTOBOOT", 0);
-	setString("AUTOBOOT_FILE", "");
-	setInt("OUTDATED", C2D_Color32(0xfb, 0x5b, 0x5b, 255));
-	setInt("UPTODATE", C2D_Color32(0xa5, 0xdd, 0x81, 255));
-	setInt("NOTFOUND", C2D_Color32(255, 128, 0, 255));
-	setInt("FUTURE", C2D_Color32(255, 255, 0, 255));
-	setInt("BUTTON", C2D_Color32(0, 0, 50, 255));
-	setInt("KEY_DELAY", 5);
-	setBool("SCREEN_FADE", false);
-	setBool("PROGRESS_DISPLAY", true);
-
-	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
-	fclose(file);
-}
-
+// Helper functions.
 bool Config::getBool(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if (!this->json.contains(key)) {
 		return false;
 	}
-	return configJson.at(key).get_ref<const bool&>();
+
+	return this->json.at(key).get_ref<const bool&>();
 }
 void Config::setBool(const std::string &key, bool v) {
-	configJson[key] = v;
+	this->json[key] = v;
 }
 
 int Config::getInt(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if (!this->json.contains(key)) {
 		return 0;
 	}
-	return configJson.at(key).get_ref<const int64_t&>();
+
+	return this->json.at(key).get_ref<const int64_t&>();
 }
 void Config::setInt(const std::string &key, int v) {
-	configJson[key] = v;
+	this->json[key] = v;
 }
 
 std::string Config::getString(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if (!this->json.contains(key)) {
 		return "";
 	}
-	return configJson.at(key).get_ref<const std::string&>();
+	
+	return this->json.at(key).get_ref<const std::string&>();
 }
 void Config::setString(const std::string &key, const std::string &v) {
-	configJson[key] = v;
+	this->json[key] = v;
 }

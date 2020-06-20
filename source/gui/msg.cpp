@@ -27,6 +27,7 @@
 #include "common.hpp"
 #include "msg.hpp"
 
+extern std::unique_ptr<Config> config;
 extern bool isScriptSelected;
 
 extern u32 barColor;
@@ -41,15 +42,15 @@ void Msg::DisplayStartMSG() {
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
-	Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
-	Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
-	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, Lang::get("STARTING_UNIVERSAL_UPDATER"));
+	Gui::Draw_Rect(0, 0, 400, 25, config->barColor());
+	Gui::Draw_Rect(0, 25, 400, 190, config->topBG());
+	Gui::Draw_Rect(0, 215, 400, 25, config->barColor());
+	Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("STARTING_UNIVERSAL_UPDATER"));
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
-	Gui::Draw_Rect(0, 25, 320, 190, Config::Color2);
-	Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
+	Gui::Draw_Rect(0, 0, 320, 25, config->barColor());
+	Gui::Draw_Rect(0, 25, 320, 190, config->topBG());
+	Gui::Draw_Rect(0, 215, 320, 25, config->barColor());
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	C3D_FrameEnd(0);
 }
@@ -61,7 +62,7 @@ void Msg::DisplayMsg(std::string text) {
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, Config::TxtColor, text, 395, 70);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, config->textColor(), text, 395, 70);
 	} else if (isScriptSelected == true) {
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, TextColor, text, 395, 70);
 	}
@@ -77,7 +78,7 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, 1, 0.6f, Config::TxtColor, Text, 400);
+		Gui::DrawStringCentered(0, 1, 0.6f, config->textColor(), Text, 400);
 	} else if (isScriptSelected == true) {
 		Gui::DrawStringCentered(0, 1, 0.6f, TextColor, Text, 400);
 	}
@@ -106,8 +107,8 @@ bool Msg::promptMsg(std::string promptMsg) {
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, Config::TxtColor, promptMsg, 395, 70);
-		Gui::DrawStringCentered(0, 217, 0.72f, Config::TxtColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, config->textColor(), promptMsg, 395, 70);
+		Gui::DrawStringCentered(0, 217, 0.72f, config->textColor(), Lang::get("CONFIRM_OR_CANCEL"), 400);
 	} else if (isScriptSelected == true) {
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, TextColor, promptMsg, 395, 70);
 		Gui::DrawStringCentered(0, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
@@ -115,10 +116,10 @@ bool Msg::promptMsg(std::string promptMsg) {
 
 	GFX::DrawBottom();
 	if (isScriptSelected == false) {
-		Gui::Draw_Rect(10, 100, 140, 35, Config::Color1);
-		Gui::Draw_Rect(170, 100, 140, 35, Config::Color1);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, Config::TxtColor, Lang::get("YES"), 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, Config::TxtColor, Lang::get("NO"), 140);
+		Gui::Draw_Rect(10, 100, 140, 35, config->barColor());
+		Gui::Draw_Rect(170, 100, 140, 35, config->barColor());
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, config->textColor(), Lang::get("YES"), 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, config->textColor(), Lang::get("NO"), 140);
 	} else if (isScriptSelected == true) {
 		Gui::Draw_Rect(10, 100, 140, 35, barColor);
 		Gui::Draw_Rect(170, 100, 140, 35, barColor);

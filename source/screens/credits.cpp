@@ -26,6 +26,7 @@
 
 #include "credits.hpp"
 
+extern std::unique_ptr<Config> config;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 // Language Page 1.
 const std::vector<std::string> Translators = {
@@ -83,22 +84,23 @@ void Credits::Draw(void) const {
 	title += Lang::get("CREDITS");
 	GFX::DrawTop();
 	if (creditsPage != 3) {
-		if (Config::UseBars == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, Config::TxtColor, title, 400);
+		if (config->useBars() == true) {
+			Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), title, 400);
 		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, title, 400);
+			Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), title, 400);
 		}
-		Gui::DrawStringCentered(0, 30, 0.7f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 390);
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
+		Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
+		Gui::DrawStringCentered(0, 60, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
 		GFX::DrawSprite(sprites_stackie_idx, 5, 85);
 		GFX::DrawSprite(sprites_universal_core_idx, 200, 110);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
-		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, Config::TxtColor, currentVersion, 400);
+		Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 219, 0.70f, config->textColor(), currentVersion, 400);
 	} else {
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		GFX::DrawSprite(sprites_discord_idx, 115, 35);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	DrawBottom();
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
@@ -110,41 +112,41 @@ void Credits::DrawBottom(void) const {
 
 	GFX::DrawBottom();
 	if (creditsPage == 0) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
+		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), Lang::get("TRANSLATORS"), 320);
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)Translators.size();i++) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = Translators[screenPos + i];
 			line2 = Languages[screenPos + i];
 			if (screenPos + i == Selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 			}
-			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
-			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, config->textColor(), line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, config->textColor(), line2, 320);
 		}
 	} else if (creditsPage == 1) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, "Universal-Team", 320);
+		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), "Universal-Team", 320);
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)UniversalTeam.size();i++) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = UniversalTeam[screenPos + i];
 			if (screenPos + i == Selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 			}
-			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, WHITE, line1, 320);
+			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, config->textColor(), line1, 320);
 		}
 	} else if (creditsPage == 2) {
-		Gui::DrawStringCentered(0, -2, 0.7f, Config::TxtColor, Lang::get("SCRIPTCREATORS"), 320);
+		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), Lang::get("SCRIPTCREATORS"), 320);
 		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)ScriptCreators.size();i++) {
-			Gui::Draw_Rect(0, 40+(i*57), 320, 45, Config::UnselectedColor);
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = ScriptCreators[screenPos + i];
 			line2 = ScriptAmount[screenPos + i];
 			if (screenPos + i == Selection) {
-				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, Config::SelectedColor);
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 			}
-			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, Config::TxtColor, line1, 320);
-			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, Config::TxtColor, line2, 320);
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, config->textColor(), line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, config->textColor(), line2, 320);
 		}
 	} else {
-		Gui::DrawStringCentered(0, -2, 0.55f, Config::TxtColor, Lang::get("LINK"), 320);
+		Gui::DrawStringCentered(0, -2, 0.55f, config->textColor(), Lang::get("LINK"), 320);
 	}
 }
 
@@ -160,7 +162,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 	} else if (creditsPage == 1) {
 		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
@@ -170,7 +172,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 	} else if (creditsPage == 2) {
 		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
@@ -180,7 +182,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = 0;
 			}
 
-			keyRepeatDelay = Config::keyDelay;
+			keyRepeatDelay = config->keyDelay();
 		}
 	}
 
@@ -196,7 +198,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = (int)ScriptCreators.size()-1;
 			}
 		}
-		keyRepeatDelay = Config::keyDelay;
+		keyRepeatDelay = config->keyDelay();
 	}
 	
 		
@@ -215,7 +217,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack(Config::fading);
+		Gui::screenBack(config->screenFade());
 		return;
 	}
 

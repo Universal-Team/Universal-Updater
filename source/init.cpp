@@ -51,6 +51,7 @@ bool changesMade = false;
 
 // Include all spritesheet's.
 C2D_SpriteSheet sprites;
+std::unique_ptr<Config> config;
 
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -62,8 +63,8 @@ bool touching(touchPosition touch, Structs::ButtonPos button) {
 
 void Init::loadSoundEffects(void) {
 	if (dspFound == true) {
-		if( access( Config::MusicPath.c_str(), F_OK ) != -1 ) {
-			bgm = new sound(Config::MusicPath, 1, true);
+		if (access(config->musicPath().c_str(), F_OK ) != -1) {
+			bgm = new sound(config->musicPath(), 1, true);
 			songIsFound = true;
 		}
 	}
@@ -96,52 +97,50 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
 
 	// We need to make sure, the file exist.
-	if (access("sdmc:/3ds/Universal-Updater/Settings.json", F_OK) == -1 ) {
-		Config::initializeNewConfig();
-	}
+	config = std::make_unique<Config>();
 
-	Config::load();
-	Lang::load(Config::lang);
+	Lang::load(config->language());
 
-	if (Config::fading) {
+	if (config->screenFade()) {
 		fadein = true;
 		fadealpha = 255;
 	}
 
 	// In case it takes a bit longer to autoboot a script or so.
 	Msg::DisplayStartMSG();
-	if (Config::Logging == true) {
+	if (config->logging() == true) {
 		Logging::createLogFile();
 	}
+
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 
-	AutobootWhat = Config::autoboot;
+	AutobootWhat = config->autoboot();
 
-	if (Config::autoboot == 1) {
-		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<UniStore>(true, Config::AutobootFile), false, true);
+	if (config->autoboot() == 1) {
+		if (access(config->autobootFile().c_str(), F_OK) == 0) {
+			Gui::setScreen(std::make_unique<UniStore>(true, config->autobootFile()), false, true);
 		} else {
 			AutobootWhat = 0;
-			Config::autoboot = 0;
+			config->autoboot(0);
 			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 		}
-	} else if (Config::autoboot == 2) {
-		if (access(Config::AutobootFile.c_str(), F_OK) == 0) {
+	} else if (config->autoboot() == 2) {
+		if (access(config->autobootFile().c_str(), F_OK) == 0) {
 			Gui::setScreen(std::make_unique<ScriptList>(), false, true);
 		} else {
 			AutobootWhat = 0;
-			Config::autoboot = 0;
+			config->autoboot(0);
 			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 		}
 	} else {
 		AutobootWhat = 0;
-		Config::autoboot = 0;
+		config->autoboot(0);
 		Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 	}
 
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
- 	if( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
+ 	if ( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
 		ndspInit();
 		dspFound = true;
 		loadSoundEffects();
@@ -188,10 +187,7 @@ Result Init::Exit() {
 		ndspExit();
 	}
 
-	// Only save config, if *any* changes are made. (To reduce SD Writes.)
-	if (changesMade) {
-		Config::save();
-	}
+	config->save();
 
 	Gui::exit();
 	Gui::unloadSheet(sprites);

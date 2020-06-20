@@ -44,6 +44,7 @@ static size_t result_written = 0;
 std::vector<std::string> _topText;
 std::string jsonName;
 
+extern std::unique_ptr<Config> config;
 extern bool downloadNightlies;
 extern int filesExtracted;
 extern std::string extractingFile;
@@ -350,7 +351,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		if (Config::UseBars == true) {
+		if (config->useBars() == true) {
 			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
 			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 239-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
 		} else {
@@ -370,7 +371,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		GFX::DrawArrow(295, -1);
 		GFX::DrawArrow(315, 240, 180.0);
 
-		if (Config::viewMode == 0) {
+		if (config->viewMode() == 0) {
 			for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)bruh.size(); i++) {
 				Gui::Draw_Rect(0, 40+(i*57), 320, 45, unselected);
 				line1 = bruh[screenPos + i].TagName;
@@ -382,7 +383,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 				Gui::DrawStringCentered(0, 38+(i*57), 0.7f, TextColor, line1, 320);
 				Gui::DrawStringCentered(0, 62+(i*57), 0.7f, TextColor, line2, 320);
 			}
-		} else if (Config::viewMode == 1) {
+		} else if (config->viewMode() == 1) {
 			for(int i = 0; i < ENTRIES_PER_LIST && i < (int)bruh.size(); i++) {
 				Gui::Draw_Rect(0, (i+1)*27, 320, 25, unselected);
 				line1 = bruh[screenPosList + i].TagName;
@@ -403,10 +404,10 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		if (keyRepeatDelay)	keyRepeatDelay--;
 
 		if (hidKeysDown() & KEY_Y) {
-			if (Config::viewMode == 0) {
-				Config::viewMode = 1;
+			if (config->viewMode() == 0) {
+				config->viewMode(1);
 			} else {
-				Config::viewMode = 0;
+				config->viewMode(0);
 			}
 		}
 
@@ -459,7 +460,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		}
 
 		if (hDown & KEY_TOUCH) {
-			if (Config::viewMode == 0) {
+			if (config->viewMode() == 0) {
 				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size(); i++) {
 					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 						if (bruh.size() != 0) {
@@ -467,7 +468,7 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 						}
 					}
 				}
-			} else if (Config::viewMode == 1) {
+			} else if (config->viewMode() == 1) {
 				for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size(); i++) {
 					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 						if (bruh.size() != 0) {
@@ -478,13 +479,13 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 			}
 		}
 
-		if (Config::viewMode == 0) {
+		if (config->viewMode() == 0) {
 			if(selectedRelease < screenPos) {
 				screenPos = selectedRelease;
 			} else if (selectedRelease > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = selectedRelease - ENTRIES_PER_SCREEN + 1;
 			}
-		} else if (Config::viewMode == 1) {
+		} else if (config->viewMode() == 1) {
 			if(selectedRelease < screenPosList) {
 				screenPosList = selectedRelease;
 			} else if (selectedRelease > screenPosList + ENTRIES_PER_LIST - 1) {
@@ -881,7 +882,7 @@ void displayProgressBar() {
 		if (isScriptSelected == true) {
 			Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
 		} else {
-			Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, progressBarMsg, 400);
+			Gui::DrawStringCentered(0, 1, 0.7f, config->textColor(), progressBarMsg, 400);
 		}
 
 		// Only display this by downloading.
@@ -889,7 +890,7 @@ void displayProgressBar() {
 			if (isScriptSelected == true) {
 				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
 			} else {
-				Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+				Gui::DrawStringCentered(0, 80, 0.6f, config->textColor(), str, 400);
 			}
 
 			if (isScriptSelected == true) {
@@ -907,9 +908,9 @@ void displayProgressBar() {
 				Gui::DrawStringCentered(0, 100, 0.6f, TextColor, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
 				Gui::DrawStringCentered(0, 40, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
 			} else {
-				Gui::DrawStringCentered(0, 180, 0.6f, Config::TxtColor, str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, Config::TxtColor, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, Config::TxtColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+				Gui::DrawStringCentered(0, 180, 0.6f, config->textColor(), str, 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, config->textColor(), std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, config->textColor(), Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
 			}
 			// Progressbar.
 			if (isScriptSelected == true) {
@@ -924,7 +925,7 @@ void displayProgressBar() {
 			if (isScriptSelected == true) {
 				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
 			} else {
-				Gui::DrawStringCentered(0, 80, 0.6f, Config::TxtColor, str, 400);
+				Gui::DrawStringCentered(0, 80, 0.6f, config->textColor(), str, 400);
 			}
 
 			if (isScriptSelected == true) {

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+extern std::unique_ptr<Config> config;
 nlohmann::json appJson;
 
 std::string Lang::get(const std::string &key) {
@@ -17,9 +18,9 @@ std::string langs[] = {"br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt
 
 void Lang::load(const std::string lang) {
 	FILE* values;
-	if (Config::LangPath == 1) {
+	if (config->langPath() == 1) {
 		// Check if exist.
-		if(access("sdmc:/3ds/Universal-Updater/app.json", F_OK) == 0 ) {
+		if (access("sdmc:/3ds/Universal-Updater/app.json", F_OK) == 0 ) {
 			values = fopen(("sdmc:/3ds/Universal-Updater/app.json"), "rt");
 			appJson = nlohmann::json::parse(values, nullptr, false);
 			fclose(values);
@@ -34,7 +35,7 @@ void Lang::load(const std::string lang) {
 
 	} else {
 		// Check if exist.
-		if(access(("romfs:/lang/" + lang + "/app.json").c_str(), F_OK) == 0 ) {
+		if (access(("romfs:/lang/" + lang + "/app.json").c_str(), F_OK) == 0 ) {
 			values = fopen(std::string(("romfs:/lang/" + lang + "/app.json")).c_str(), "rt");
 			appJson = nlohmann::json::parse(values, nullptr, false);
 			fclose(values);
