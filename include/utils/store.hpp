@@ -77,8 +77,11 @@ public:
 		else return -1; // Should not happen.
 	}
 
+	const std::vector<std::string> getCategories() { return this->availableCategories; }
+
 private:
 	std::vector<UniStoreV2Struct> sortedStore, unsortedStore;
+	std::vector<std::string> availableCategories;
 	bool ascending = false;
 	nlohmann::json storeJson;
 	SortType sorttype = SortType::TITLE;

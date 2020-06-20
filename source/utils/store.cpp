@@ -33,6 +33,9 @@ Store::Store(nlohmann::json &JS) {
 	}
 
 	this->sortedStore = this->unsortedStore; // Put that to sorted store as well.
+	if (this->storeJson.at("storeInfo").contains("categories")) {
+		this->availableCategories = this->storeJson["storeInfo"]["categories"].get<std::vector<std::string>>();
+	}
 }
 
 // Here we get the data of the UniStore!

@@ -386,11 +386,40 @@ void UniStoreV2::Draw(void) const {
 		this->displaySelectedEntry(this->selection);
 	} else if (this->mode == 3) {
 		this->DrawSearchMenu();
+	} else if (this->mode == 4) {
+		this->DrawCategoryMenu();
 	}
 
 	if (this->mode < 2)	GFX::DrawSpriteBlend(sprites_dropdown_idx, iconPos[0].x, iconPos[0].y);
 	this->DropDownMenu();
 }
+
+void UniStoreV2::DrawCategoryMenu(void) const {
+		this->DrawBaseTop();
+
+		if (config->useBars() == true) {
+			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
+		}
+
+		this->DrawBaseBottom();
+
+	if (this->sortedStore->getCategories().size() > 0) {
+		for (int i = 0, i2 = (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)this->sortedStore->getCategories().size(); i2++, i++) {
+			if (i + (this->categoryPage * DOWNLOAD_ENTRIES) == this->categorySelection) {
+				this->drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, true);
+			} else {
+				this->drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
+			}
+			
+			Gui::DrawStringCentered(0, downloadBoxes[i].y+4, 0.5f, this->returnTextColor(), this->sortedStore->getCategories()[i + (this->downloadPage * DOWNLOAD_ENTRIES)], 280);
+		}
+	} else {
+		Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CATEGORIES_AVAILABLE"), 280);
+	}
+}
+
 
 void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (this->mode != 2) {
@@ -706,20 +735,17 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->mode = this->lastViewMode;
 
 				} else if (touching(touch, searchPos[2])) {
-					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-					if (temp != "") {
+					if (this->lastViewMode == 0) {
 						this->selectedBox = 0;
 						this->storePage = 0;
+						this->sortedStore->reset();
+					} else if (this->lastViewMode == 1) {
 						this->selectedBoxList = 0;
 						this->storePageList = 0;
-						int amount = this->sortedStore->searchForCategory(temp);
-						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-					} else {
-						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						this->sortedStore->reset();
 					}
 
-					this->mode = this->lastViewMode;
-
+					this->mode = 4;
 				} else if (touching(touch, searchPos[3])) {
 					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
 					if (temp != "") {
@@ -772,6 +798,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						} else {
 							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
 						}
+						this->mode = this->lastViewMode;
 						break;
 					case 1:
 						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
@@ -785,19 +812,19 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						} else {
 							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
 						}
+						this->mode = this->lastViewMode;
 						break;
 					case 2:
-						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-						if (temp != "") {
+						if (this->lastViewMode == 0) {
 							this->selectedBox = 0;
 							this->storePage = 0;
+							this->sortedStore->reset();
+						} else if (this->lastViewMode == 1) {
 							this->selectedBoxList = 0;
 							this->storePageList = 0;
-							amount = this->sortedStore->searchForCategory(temp);
-							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-						} else {
-							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+							this->sortedStore->reset();
 						}
+						this->mode = 4;
 						break;
 					case 3:
 						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
@@ -811,14 +838,72 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						} else {
 							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
 						}
+						this->mode = this->lastViewMode;
 						break;
 				}
-				this->mode = this->lastViewMode;
 			}
+		} else if (this->mode == 4) {
+			if (hDown & KEY_TOUCH) {
+				if (this->sortedStore->getCategories().size() > 0) {
+					for (int i = 0, i2 = 0 + (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)this->sortedStore->getCategories().size(); i2++, i++) {
+						if (touching(touch, downloadBoxes[i])) {
+							this->sortedStore->searchForCategory(this->objects[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
+							this->mode = this->lastViewMode;
+						}
+					}
+				}
+			}
+
+			if (hDown & KEY_A) {
+				if ((int)this->sortedStore->getCategories().size() > 0) {
+					if ((int)this->sortedStore->getCategories().size() >= this->categorySelection) {
+						this->sortedStore->searchForCategory(this->sortedStore->getCategories()[this->categorySelection]);
+						this->mode = this->lastViewMode;
+					}
+				}
+			}
+
+			if (hDown & KEY_DOWN) {
+				if (this->categorySelection < (int)this->sortedStore->getCategories().size()-1) {
+					if (this->categorySelection < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES)-1) {
+						this->categorySelection++;
+					}
+				}
+			}
+
+			if (hDown & KEY_UP) {
+				if (this->categorySelection > 0) {
+					if (this->categorySelection > this->categoryPage * DOWNLOAD_ENTRIES) {
+						this->categorySelection--;
+					}
+				}
+			}
+
+
+			if (hDown & KEY_R || hDown & KEY_RIGHT) {
+				if (DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) < (int)this->sortedStore->getCategories().size()-1) {
+					this->categoryPage++;
+					this->categorySelection = this->categoryPage * DOWNLOAD_ENTRIES;
+				}
+			}
+
+			if (hDown & KEY_L || hDown & KEY_LEFT) {
+				if (this->categoryPage > 0) {
+					this->categoryPage--;
+					this->categorySelection = this->categoryPage * DOWNLOAD_ENTRIES;
+				}
+			}
+
+			if (hDown & KEY_B) {
+				this->categoryPage = 0; // Reset page to 0.
+				this->categorySelection = 0;
+				this->mode = 3;
+			}
+
 		}
 
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, iconPos[0]))) {
-			if (this->mode != 2 || this->mode != 3) {
+			if (this->mode < 2) {
 				this->dropSelection = 0;
 				this->isDropDown = true;
 			}
