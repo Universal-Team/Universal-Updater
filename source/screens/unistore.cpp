@@ -78,7 +78,7 @@ void UniStore::autobootLogic() {
 				if (storeInfo[0].version == 0 || storeInfo[0].version == 1) {
 					Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), config->screenFade(), true);
 				} else if (storeInfo[0].version == 2) {
-					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), config->screenFade(), true);
+					Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL, currentStoreFile), config->screenFade(), true);
 				} else {
 					Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 				}
@@ -596,7 +596,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (storeInfo[Selection].version == 0 || storeInfo[Selection].version == 1) {
 						Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), config->screenFade(), true);
 					} else if (storeInfo[Selection].version == 2) {
-						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), config->screenFade(), true);
+						Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL, currentStoreFile), config->screenFade(), true);
 					} else {
 						Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 					}
@@ -632,7 +632,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							if (storeInfo[screenPos + i].version == 0 || storeInfo[screenPos + i].version == 1) {
 								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), config->screenFade(), true);
 							} else if (storeInfo[screenPos + i].version == 2) {
-								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), config->screenFade(), true);
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL, currentStoreFile), config->screenFade(), true);
 							} else {
 								Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 							}
@@ -653,7 +653,7 @@ void UniStore::StoreSelectionLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 							if (storeInfo[screenPosList + i].version == 0 || storeInfo[screenPosList + i].version == 1) {
 								Gui::setScreen(std::make_unique<UniStoreV1>(JSON, sheetURL, displayInformations), config->screenFade(), true);
 							} else if (storeInfo[screenPosList + i].version == 2) {
-								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL), config->screenFade(), true);
+								Gui::setScreen(std::make_unique<UniStoreV2>(JSON, sheetURL, currentStoreFile), config->screenFade(), true);
 							} else {
 								Msg::DisplayWarnMsg(Lang::get("UNISTORE_NOT_SUPPORTED"));
 							}

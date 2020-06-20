@@ -40,9 +40,9 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 #define DOWNLOAD_ENTRIES 5
 extern bool didAutoboot;
 
-UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath) {
+UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath, const std::string fileName) {
 	this->storeJson = JSON;
-	this->sortedStore = std::make_unique<Store>(this->storeJson);
+	this->sortedStore = std::make_unique<Store>(this->storeJson, fileName);
 
 	if (access(sheetPath.c_str(), F_OK) != 0) {
 		this->iconAmount = 0;
@@ -141,7 +141,7 @@ void UniStoreV2::DrawGrid(void) const {
 						int offset2 = (48 - temp.subtex->height) / 2;
 						Gui::DrawSprite(this->sheet, this->sortedStore->returnIconIndex(i + (this->storePage * STORE_ENTRIES)), this->StoreBoxesGrid[i].x+1 + offset, this->StoreBoxesGrid[i].y+1 + offset2);
 					} else {
-						GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
+						GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+1, this->StoreBoxesGrid[i].y+1);
 					}
 					temp = {nullptr, nullptr};
 				} else {
@@ -152,6 +152,10 @@ void UniStoreV2::DrawGrid(void) const {
 			}
 		} else {
 			GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesGrid[i].x+1, this->StoreBoxesGrid[i].y+1);
+		}
+
+		if (this->sortedStore->isUpdateAvailable(i + (this->storePage * STORE_ENTRIES))) {
+			GFX::DrawSprite(sprites_updateStore_idx, this->StoreBoxesGrid[i].x+35, this->StoreBoxesGrid[i].y+35);
 		}
 	}
 }
@@ -186,8 +190,11 @@ void UniStoreV2::DrawList(void) const {
 			GFX::DrawSprite(sprites_noIcon_idx, this->StoreBoxesList[i].x+1, this->StoreBoxesList[i].y+1);
 		}
 
+		if (this->sortedStore->isUpdateAvailable(i + (this->storePageList * STORE_ENTRIES_LIST))) {
+			GFX::DrawSprite(sprites_updateStore_idx, this->StoreBoxesList[i].x+340, this->StoreBoxesList[i].y+30);
+		}
+
 		// Display Author & App name.
-		
 		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+12, 0.45f, this->returnTextColor(), this->sortedStore->returnTitle(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
 		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+28, 0.45f, this->returnTextColor(), this->sortedStore->returnAuthor(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
 	}
@@ -274,7 +281,7 @@ void UniStoreV2::DropDownMenu(void) const {
 	}
 }
 
-void UniStoreV2::displaySelectedEntry(int selection) const {
+void UniStoreV2::displaySelectedEntry(int selection, int storeIndex) const {
 	this->DrawBaseTop();
 
 	Gui::DrawStringCentered(0, 218, 0.7f, this->returnTextColor(), std::to_string(this->downloadPage + 1) + " | " + std::to_string(1 + (this->objects.size() / DOWNLOAD_ENTRIES)));
@@ -329,6 +336,8 @@ void UniStoreV2::displaySelectedEntry(int selection) const {
 		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), Lang::get("DESC") + "?", 400);
 	}
 
+	Gui::DrawStringCentered(0, 170, 0.5f, this->returnTextColor(), this->sortedStore->isUpdateAvailable(storeIndex) ? Lang::get("UPDATE_AVAILABLE") : Lang::get("UPDATE_NOT_AVAILABLE"), 400);
+
 	this->DrawBaseBottom();
 
 	if (this->objects.size() > 0) {
@@ -363,6 +372,9 @@ void UniStoreV2::Draw(void) const {
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
+		char entryAmount [150];
+		snprintf(entryAmount, sizeof(entryAmount), Lang::get("ENTRY_AMOUNT").c_str(), this->sortedStore->getSize());
+		Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), entryAmount, 300);
 		this->DrawSortingMenu();
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
@@ -381,9 +393,12 @@ void UniStoreV2::Draw(void) const {
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
 		this->DrawSortingMenu();
+		char entryAmount [150];
+		snprintf(entryAmount, sizeof(entryAmount), Lang::get("ENTRY_AMOUNT").c_str(), this->sortedStore->getSize());
+		Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), entryAmount, 300);
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	} else if (this->mode == 2) {
-		this->displaySelectedEntry(this->selection);
+		this->displaySelectedEntry(this->selection, this->selectedObject);
 	} else if (this->mode == 3) {
 		this->DrawSearchMenu();
 	} else if (this->mode == 4) {
@@ -561,6 +576,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_A) {
 				if (this->sortedStore->returnJSONIndex(this->selectedBox + (this->storePage * STORE_ENTRIES)) < (int)this->storeJson.at("storeContent").size()) {
+					this->selectedObject = this->selectedBox + (this->storePage * STORE_ENTRIES);
 					this->selection = this->sortedStore->returnJSONIndex(this->selectedBox + (this->storePage * STORE_ENTRIES));
 					this->parseObjects(this->selection);
 					this->canDisplay = true;
@@ -619,6 +635,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			if (hDown & KEY_A) {
 				if (this->sortedStore->returnJSONIndex(this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST)) < (int)this->storeJson.at("storeContent").size()) {
+					this->selectedObject = this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST);
 					this->selection = this->sortedStore->returnJSONIndex(this->selectedBoxList + (this->storePageList * STORE_ENTRIES_LIST));
 					this->parseObjects(this->selection);
 					this->canDisplay = true;
@@ -646,7 +663,10 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if (this->objects.size() > 0) {
 					for (int i = 0, i2 = 0 + (this->downloadPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->downloadPage * DOWNLOAD_ENTRIES) && i2 < (int)this->objects.size(); i2++, i++) {
 						if (touching(touch, downloadBoxes[i])) {
-							if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]))	runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]);
+							if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)])) {
+								runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]);
+								this->sortedStore->writeToFile(this->selectedObject);
+							}
 						}
 					}
 				}
@@ -655,7 +675,10 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (hDown & KEY_A) {
 				if (this->objects.size() > 0) {
 					if ((int)this->objects.size() >= this->subSelection) {
-						if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[this->subSelection]))	runFunctions(this->objects[this->subSelection]);
+						if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[this->subSelection])) {
+							runFunctions(this->objects[this->subSelection]);
+							this->sortedStore->writeToFile(this->selectedObject);
+						}
 					}
 				}
 			}

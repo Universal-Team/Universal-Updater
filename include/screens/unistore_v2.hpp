@@ -39,13 +39,13 @@ class UniStoreV2 : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	UniStoreV2(nlohmann::json &JSON, const std::string sheetPath);
+	UniStoreV2(nlohmann::json &JSON, const std::string sheetPath, const std::string fileName);
 	~UniStoreV2();
 private:
 	std::unique_ptr<Store> sortedStore;
 
 	bool darkMode = true, sheetLoaded = false, canDisplay = false, hasLoaded = false, isDropDown = false;
-	int selectedBox = 0, lastViewMode = 0, dropSelection = 0, searchSelection = 0, iconAmount = 0, categorySelection = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0, categoryPage = 0;
+	int selectedObject = 0, selectedBox = 0, lastViewMode = 0, dropSelection = 0, searchSelection = 0, iconAmount = 0, categorySelection = 0, selectedBoxList = 0, selection = -1, storePage = 0, downloadPage = 0, storePageList = 0, mode = 0, subSelection = 0, categoryPage = 0;
 	nlohmann::json storeJson;
 	C2D_SpriteSheet sheet;
 	std::vector<std::string> objects;
@@ -64,7 +64,7 @@ private:
 	void parseObjects(int selection);
 	Result runFunctions(std::string entry);
 	void DrawList(void) const;
-	void displaySelectedEntry(int selection) const;
+	void displaySelectedEntry(int selection, int storeIndex) const;
 	void DropLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void DropDownMenu(void) const;
 

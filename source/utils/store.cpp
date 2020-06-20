@@ -25,22 +25,88 @@
 */
 
 #include "store.hpp"
+#include <time.h>
+#include <unistd.h>
 
-Store::Store(nlohmann::json &JS) {
+Store::Store(nlohmann::json &JS, std::string JSONName) {
 	this->storeJson = JS;
+	this->updateFile = JSONName;
+
+	if (access("sdmc:/3ds/Universal-Updater/updates.json", F_OK) != 0) {
+		// We'd create the file here.
+		FILE *file = fopen("sdmc:/3ds/Universal-Updater/updates.json", "w");
+		this->updateJSON = nlohmann::json::parse("{}"); // So we have a valid JSON at the end.
+		fwrite(this->updateJSON.dump(1, '\t').c_str(), 1, this->updateJSON.dump(1, '\t').size(), file);
+		fclose(file);
+
+		FILE *file2 = fopen("sdmc:/3ds/Universal-Updater/updates.json", "r");
+		this->updateJSON = nlohmann::json::parse(file2, nullptr, false);
+		fclose(file2);
+	} else {
+		FILE *file = fopen("sdmc:/3ds/Universal-Updater/updates.json", "r");
+		this->updateJSON = nlohmann::json::parse(file, nullptr, false);
+		fclose(file);
+	}
+
+
 	for (int i = 0; i < (int)this->storeJson.at("storeContent").size(); i++) {
 		this->unsortedStore.push_back(this->getData(i));
 	}
 
 	this->sortedStore = this->unsortedStore; // Put that to sorted store as well.
+
+	// If Categories available, push them to our vector.
 	if (this->storeJson.at("storeInfo").contains("categories")) {
 		this->availableCategories = this->storeJson["storeInfo"]["categories"].get<std::vector<std::string>>();
 	}
 }
 
+bool Store::updateAvailable(int index) {
+	if (index > (int)this->storeJson.at("storeContent").size()) return false; // out of scope.
+	if (this->storeJson.at("storeContent").at(index).at("info").contains("last_updated")) {
+		const std::string updateEntry = this->storeJson.at("storeContent").at(index).at("info").at("last_updated");
+		const std::string entry = this->storeJson.at("storeContent").at(index).at("info").at("title");
+
+		if (this->updateJSON.contains(this->updateFile)) {
+			if (this->updateJSON.at(this->updateFile).contains(entry)) {
+				const std::string updateEntry2 = (std::string)this->updateJSON.at(this->updateFile).at(entry);
+				return strcasecmp(updateEntry.c_str(), updateEntry2.c_str()) > 0;  
+			} else {
+				return true; // Since we do not have this entry there yet.
+			}
+		} else { // Our update json don't have that yet.. so display available.
+			return true;
+		}
+	} else { // Since the Store doesn't have that feature.
+		return false;
+	}
+
+	return false;
+}
+
+// Here we write that to our file.
+void Store::writeToFile(int index) {
+	std::string timeString;
+
+	time_t rawtime;
+	struct tm * ptm;
+	time (&rawtime);
+	ptm = gmtime (&rawtime);
+
+	timeString = std::to_string(ptm->tm_year + 1900) + "-" + std::to_string(ptm->tm_mon + 1) + "-" + std::to_string(ptm->tm_mday) + " at " + std::to_string(ptm->tm_hour) + ":"
+				+ std::to_string(ptm->tm_min) + " (UTC)";
+
+	FILE *file = fopen("sdmc:/3ds/Universal-Updater/updates.json", "w");
+	this->updateJSON[this->updateFile][this->sortedStore[index].title] = timeString;
+	fwrite(this->updateJSON.dump(1, '\t').c_str(), 1, this->updateJSON.dump(1, '\t').size(), file);
+	fclose(file);
+
+	this->sortedStore[index].updateAvailable = false;
+}
+
 // Here we get the data of the UniStore!
 UniStoreV2Struct Store::getData(const int index) {
-	UniStoreV2Struct temp = {"", "", "", "", "" ,"", -1, 0};
+	UniStoreV2Struct temp = {"", "", "", "", "" ,"", -1, 0, false};
 
 	if (index > (int)this->storeJson.at("storeContent").size()) return temp; // Empty.
 
@@ -78,6 +144,9 @@ UniStoreV2Struct Store::getData(const int index) {
 	if (this->storeJson.at("storeContent").at(index).at("info").contains("icon_index")) {
 		temp.icon_index = this->storeJson.at("storeContent").at(index).at("info").at("icon_index");
 	}
+
+	// Update available(?).
+	temp.updateAvailable = this->updateAvailable(index);
 
 	// JSON index.
 	temp.JSONIndex = index;

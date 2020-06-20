@@ -41,6 +41,7 @@ struct UniStoreV2Struct {
 	std::string last_updated;
 	int icon_index;
 	int JSONIndex;
+	bool updateAvailable;
 };
 
 enum class SortType {
@@ -51,8 +52,9 @@ enum class SortType {
 
 class Store {
 public:
-	Store(nlohmann::json &JS);
+	Store(nlohmann::json &JS, std::string updateJSON = "NOT_FOUND");
 
+	void writeToFile(int index);
 	void sorting(bool Ascending, SortType sorttype);
 
 	std::string returnTitle(const int index);
@@ -61,13 +63,14 @@ public:
 	int returnJSONIndex(const int index);
 	int getSize();
 	bool getAscending() { return this->ascending; }
+	bool isUpdateAvailable(int index) { return this->sortedStore[index].updateAvailable; }
 
 	// Searching stuff.
 	int searchForEntries(const std::string searchResult);
 	int searchForAuthor(const std::string searchResult);
 	int searchForCategory(const std::string searchResult);
 	int searchForConsole(const std::string searchResult);
-
+	bool updateAvailable(int index);
 	void reset() { this->sortedStore = this->unsortedStore; }
 
 	const int getSortType() {
@@ -82,8 +85,9 @@ public:
 private:
 	std::vector<UniStoreV2Struct> sortedStore, unsortedStore;
 	std::vector<std::string> availableCategories;
+	std::string updateFile;
 	bool ascending = false;
-	nlohmann::json storeJson;
+	nlohmann::json storeJson, updateJSON;
 	SortType sorttype = SortType::TITLE;
 
 	UniStoreV2Struct getData(const int index);
