@@ -179,5 +179,7 @@
 	"AUTHOR_SEARCH": "作者検索",
 	"CATEGORY_SEARCH": "カテゴリー検索",
 	"CONSOLE_SEARCH": "コンソール検索",
-	"SEARCHING_FOR": "検索しています…"
+	"SEARCHING_FOR": "検索しています…",
+	"SELECT_CATEGORY": "Select a category you like to view.",
+	"NO_CATEGORIES_AVAILABLE": "No categories available."
 }
