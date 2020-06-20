@@ -179,5 +179,7 @@
 	"AUTHOR_SEARCH": "Author search",
 	"CATEGORY_SEARCH": "Category search",
 	"CONSOLE_SEARCH": "Console search",
-	"SEARCHING_FOR": "Searching for..."
+	"SEARCHING_FOR": "Searching for...",
+	"SELECT_CATEGORY": "Select a category you like to view.",
+	"NO_CATEGORIES_AVAILABLE": "No categories available."
 }
