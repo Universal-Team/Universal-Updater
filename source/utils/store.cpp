@@ -25,7 +25,6 @@
 */
 
 #include "store.hpp"
-#include <time.h>
 #include <unistd.h>
 
 Store::Store(nlohmann::json &JS, std::string JSONName) {
@@ -86,18 +85,8 @@ bool Store::updateAvailable(int index) {
 
 // Here we write that to our file.
 void Store::writeToFile(int index) {
-	std::string timeString;
-
-	time_t rawtime;
-	struct tm * ptm;
-	time (&rawtime);
-	ptm = gmtime (&rawtime);
-
-	timeString = std::to_string(ptm->tm_year + 1900) + "-" + std::to_string(ptm->tm_mon + 1) + "-" + std::to_string(ptm->tm_mday) + " at " + std::to_string(ptm->tm_hour) + ":"
-				+ std::to_string(ptm->tm_min) + " (UTC)";
-
 	FILE *file = fopen("sdmc:/3ds/Universal-Updater/updates.json", "w");
-	this->updateJSON[this->updateFile][this->sortedStore[index].title] = timeString;
+	this->updateJSON[this->updateFile][this->sortedStore[index].title] = this->sortedStore[index].last_updated;
 	fwrite(this->updateJSON.dump(1, '\t').c_str(), 1, this->updateJSON.dump(1, '\t').size(), file);
 	fclose(file);
 
