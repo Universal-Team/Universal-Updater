@@ -181,5 +181,8 @@
 	"CONSOLE_SEARCH": "Recherche sur la console",
 	"SEARCHING_FOR": "Recherche de...",
 	"SELECT_CATEGORY": "Sélectionnez une catégorie que vous voulez voir.",
-	"NO_CATEGORIES_AVAILABLE": "Aucune catégorie disponible."
+	"NO_CATEGORIES_AVAILABLE": "Aucune catégorie disponible.",
+	"UPDATE_AVAILABLE": "Update available!",
+	"UPDATE_NOT_AVAILABLE": "No updates available.",
+	"ENTRY_AMOUNT": "There are %i entries available."
 }
