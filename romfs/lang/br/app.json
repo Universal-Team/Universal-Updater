@@ -157,7 +157,7 @@
 	"PROGRESS_BAR_ENABLE": "Would you like to bruhnable the bruhgressbar?",
 	"PROGRESS_BAR_DISABLE": "Would you like to bruhsable the bruhgressbar?",
 	"CATEGORY": "Catebruhry: ",
-	"CONSOLE": "Console: ",
+	"CONSOLE": "Bruhsole: ",
 	"LAST_UPDATED": "Last upbruhted: ",
 	"CHANGE_THEME": "Change Bruhme",
 	"CHANGE_STYLE": "Change Bruhle",
@@ -182,11 +182,11 @@
 	"SEARCHING_FOR": "Bruhching for...",
 	"SELECT_CATEGORY": "Select a catebruhry you like to view.",
 	"NO_CATEGORIES_AVAILABLE": "No catebruhries available.",
-	"UPDATE_AVAILABLE": "Update available!",
-	"UPDATE_NOT_AVAILABLE": "No updates available.",
-	"ENTRY_AMOUNT": "There are %i entries available.",
-	"SELECT_AUTHOR": "Select an author you like to view.",
-	"SELECT_CONSOLE": "Select a console you like to view.",
-	"NO_AUTHORS_AVAILABLE": "No authors available.",
-	"NO_CONSOLES_AVAILABLE": "No consoles available."
+	"UPDATE_AVAILABLE": "Bruhpdate available!",
+	"UPDATE_NOT_AVAILABLE": "No bruhpdates available.",
+	"ENTRY_AMOUNT": "There are %i bruhtries available.",
+	"SELECT_AUTHOR": "Select an bruhthor you like to bruh.",
+	"SELECT_CONSOLE": "Select a bruhsole you like to bruh.",
+	"NO_AUTHORS_AVAILABLE": "No bruhthors available.",
+	"NO_CONSOLES_AVAILABLE": "No bruhsoles available."
 }
