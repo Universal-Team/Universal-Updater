@@ -1076,7 +1076,7 @@ Result UniStoreV2::runFunctions(std::string entry) {
 			} else if (type == "extractFile") {
 				bool missing = false;
 				std::string file, input, output, message;
-				if (this->storeJson.at("storeContent").at("storeContent").at(this->selection).at(entry).at(i).contains("file"))	file = this->storeJson.at("storeContent").at(this->selection).at(entry).at(i).at("file");
+				if (this->storeJson.at("storeContent").at(this->selection).at(entry).at(i).contains("file"))	file = this->storeJson.at("storeContent").at(this->selection).at(entry).at(i).at("file");
 				else	missing = true;
 				if (this->storeJson.at("storeContent").at(this->selection).at(entry).at(i).contains("input"))	input = this->storeJson.at("storeContent").at(this->selection).at(entry).at(i).at("input");
 				else	missing = true;
