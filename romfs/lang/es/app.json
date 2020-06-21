@@ -157,7 +157,7 @@
 	"PROGRESS_BAR_ENABLE": "¿Quiere activar la barra de progreso?",
 	"PROGRESS_BAR_DISABLE": "¿Le gustaría desactivar la barra de progreso?",
 	"CATEGORY": "Category: ",
-	"SYSTEM": "System: ",
+	"CONSOLE": "Console: ",
 	"LAST_UPDATED": "Last updated: ",
 	"CHANGE_THEME": "Change Theme",
 	"CHANGE_STYLE": "Change Style",
@@ -184,5 +184,9 @@
 	"NO_CATEGORIES_AVAILABLE": "No categories available.",
 	"UPDATE_AVAILABLE": "Update available!",
 	"UPDATE_NOT_AVAILABLE": "No updates available.",
-	"ENTRY_AMOUNT": "There are %i entries available."
+	"ENTRY_AMOUNT": "There are %i entries available.",
+	"SELECT_AUTHOR": "Select an author you like to view.",
+	"SELECT_CONSOLE": "Select a console you like to view.",
+	"NO_AUTHORS_AVAILABLE": "No authors available.",
+	"NO_CONSOLES_AVAILABLE": "No consoles available."
 }
