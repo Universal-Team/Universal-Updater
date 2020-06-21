@@ -33,47 +33,50 @@
 #include <unistd.h>
 
 extern std::unique_ptr<Config> config;
-// The to editing script.
-nlohmann::json editScript;
-std::string entryName = ""; // So we can set to *that* entry.
 
 void ScriptCreator::openJson(std::string fileName) {
-	std::string scriptFile = config->scriptPath() + fileName;
+	std::string scriptFile = fileName;
 	FILE* file = fopen(scriptFile.c_str(), "r");
-	if (file) editScript = nlohmann::json::parse(file, nullptr, false);
+	fseek(file, 0, SEEK_END);
+	size_t size = ftell(file);
+	fseek (file, 0, SEEK_SET);
+	char data[size + 1];
+	fread(data, 1, size, file);
+	data[size] = '\0';
 	fclose(file);
+	this->editScript = nlohmann::json::parse((char*)data, nullptr, false);
 }
 
 // BOOL.
 void ScriptCreator::setBool(const std::string &object, const std::string &key, bool v) {
-	editScript[object][key] = v;
+	this->editScript[object][key] = v;
 }
 void ScriptCreator::setBool2(const std::string &object, const std::string &key, const std::string &key2, bool v) {
-	editScript[object][key][key2] = v;
+	this->editScript[object][key][key2] = v;
 }
 
 
 // INT.
 void ScriptCreator::setInt(const std::string &object, const std::string &key, int v) {
-	editScript[object][key] = v;
+	this->editScript[object][key] = v;
 }
 void ScriptCreator::setInt2(const std::string &object, const std::string &key, const std::string &key2, int v) {
-	editScript[object][key][key2] = v;
+	this->editScript[object][key][key2] = v;
 }
 
 // STRING
 void ScriptCreator::setString(const std::string &object, const std::string &key, const std::string &v) {
-	editScript[object][key] = v;
+	this->editScript[object][key] = v;
 }
 void ScriptCreator::setString2(const std::string &object, const std::string &key, const std::string &key2, const std::string &v) {
-	editScript[object][key][key2] = v;
+	this->editScript[object][key][key2] = v;
 }
 
 void ScriptCreator::Draw(void) const {
-	if (mode == 0) {
-		DrawSubMenu();
-	} else if (mode == 1) {
-		DrawScriptScreen();
+	if (this->mode == 0) {
+		this->DrawSubMenu();
+	} else if (this->mode == 1) {
+		this->DrawScriptScreen();
 	}
 }
 
@@ -89,7 +92,7 @@ void ScriptCreator::DrawSubMenu(void) const {
 	GFX::DrawBottom();
 
 	for (int i = 0; i < 2; i++) {
-		if (Selection == i) {
+		if (this->Selection == i) {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->selectedColor());
 		} else {
 			Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->unselectedColor());
@@ -114,14 +117,14 @@ void ScriptCreator::DrawScriptScreen(void) const {
 
 	// Draw Page.
 	for (int i = 0; i < 2; i++) {
-		if (i == page) {
-			Gui::DrawString(260, 3, 0.6f, config->textColor(), std::to_string(i+1) + " / 2", 140);
+		if (i == this->page) {
+			Gui::DrawStringCentered(0, 3, 0.6f, config->textColor(), std::to_string(i+1) + " | 2", 140);
 		}
 	}
 
-	if (page == 0) {
+	if (this->page == 0) {
 		for (int i = 0; i < 6; i++) {
-			if (Selection == i) {
+			if (this->Selection == i) {
 				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
 			} else {
 				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->unselectedColor());
@@ -134,9 +137,9 @@ void ScriptCreator::DrawScriptScreen(void) const {
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "extractFile"))/2+150-70, creatorButtons[3].y+10, 0.6f, config->textColor(), "extractFile", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, config->textColor(), "installCia", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, config->textColor(), "mkdir", 140);
-	} else if (page == 1) {
+	} else if (this->page == 1) {
 		for (int i = 0; i < 3; i++) {
-			if (Selection == i) {
+			if (this->Selection == i) {
 				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
 			} else {
 				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->unselectedColor());
@@ -171,7 +174,7 @@ void ScriptCreator::createDownloadRelease() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryName] = { {{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}} };
+	this->editScript[this->entryName].push_back({{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadRelease();'.");
 }
 
@@ -185,7 +188,7 @@ void ScriptCreator::createDownloadFile() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryName] = { {{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}} };
+	this->editScript[this->entryName].push_back({{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadFile();'.");
 }
 
@@ -196,7 +199,7 @@ void ScriptCreator::createDeleteFile() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryName] = { {{"type", "deleteFile"}, {"file", file}, {"message", message}} };
+	this->editScript[this->entryName].push_back({{"type", "deleteFile"}, {"file", file}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDeleteFile();'.");
 }
 
@@ -211,7 +214,7 @@ void ScriptCreator::createExtractFile() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryName] = { {{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}} };
+	this->editScript[this->entryName].push_back({{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createExtractFile();'.");
 }
 
@@ -222,7 +225,7 @@ void ScriptCreator::createInstallCia() {
 	// Message.
 	std::string message = Input::getString(50, "Enter the Message.");
 
-	editScript[entryName] = { {{"type", "installCia"}, {"file", file}, {"message", message}} };
+	this->editScript[this->entryName].push_back({{"type", "installCia"}, {"file", file}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createInstallCia();'.");
 }
 
@@ -231,7 +234,7 @@ void ScriptCreator::createMkDir() {
 	// Directory path.
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
-	editScript[entryName] = { {{"type", "mkdir"}, {"directory", directory}} };
+	this->editScript[this->entryName].push_back({{"type", "mkdir"}, {"directory", directory}});
 	Logging::writeToLog("Execute 'ScriptCreator::createMkDir();'.");
 }
 
@@ -239,7 +242,7 @@ void ScriptCreator::createRmDir() {
 	// Directory path.
 	std::string directory = Input::getString(50, "Enter the directory path.");
 
-	editScript[entryName] = { {{"type", "rmdir"}, {"directory", directory}} };
+	this->editScript[this->entryName].push_back({{"type", "rmdir"}, {"directory", directory}});
 	Logging::writeToLog("Execute 'ScriptCreator::createRmDir();'.");
 }
 
@@ -247,7 +250,7 @@ void ScriptCreator::createMkFile() {
 	// File path.
 	std::string file = Input::getString(50, "Enter the path to the new File.");
 
-	editScript[entryName] = { {{"type", "mkfile"}, {"file", file}} };
+	this->editScript[this->entryName].push_back({{"type", "mkfile"}, {"file", file}});
 	Logging::writeToLog("Execute 'ScriptCreator::createMkFile();'.");
 }
 
@@ -257,14 +260,15 @@ void ScriptCreator::createTimeMsg() {
 	// Seconds.
 	int seconds = Input::getUint(999, "Enter the Seconds for the Message to display.");
 
-	editScript[entryName] = { {{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}} };
+	this->editScript[this->entryName].push_back({{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}});
 	Logging::writeToLog("Execute 'ScriptCreator::createTimeMsg();'.");
 }
 
 
 void ScriptCreator::save() {
-	FILE* file = fopen(jsonFileName.c_str(), "w");
-	if(file)	fwrite(editScript.dump(1, '\t').c_str(), 1, editScript.dump(1, '\t').size(), file);
+	FILE* file = fopen(this->jsonFileName.c_str(), "w");
+	std::string result = this->editScript.dump(1, '\t');
+	if (file)	fwrite(result.c_str(), 1, this->editScript.dump(1, '\t').size(), file);
 	fclose(file);
 	Logging::writeToLog("Execute 'ScriptCreator::save();'.");
 }
@@ -272,18 +276,18 @@ void ScriptCreator::save() {
 // Important to make Scripts valid.
 void ScriptCreator::setInfoStuff(void) {
 	// Get needed things.
-	const std::string &test = Input::getString(50, "Enter the Title of the script.");
-	const std::string &test2 = Input::getString(50, "Enter the Author name of the script.");
-	const std::string &test3 = Input::getString(80, "Enter the short description of the script.");
-	const std::string &test4 = Input::getString(300, "Enter the long description of the script.");
+	const std::string test = Input::getString(50, "Enter the Title of the script.");
+	const std::string test2 = Input::getString(50, "Enter the Author name of the script.");
+	const std::string test3 = Input::getString(80, "Enter the short description of the script.");
+	const std::string test4 = Input::getString(300, "Enter the long description of the script.");
 	int scriptRevision = Input::getUint(99, "Enter the script revision.");
 	// Set the real JSON stuff.
-	setString("info", "title", test);
-	setString("info", "author", test2);
-	setString("info", "shortDesc", test3);
-	setString("info", "description", test4);
-	setInt("info", "version", 2);
-	setInt("info", "revision", scriptRevision);
+	this->setString("info", "title", test);
+	this->setString("info", "author", test2);
+	this->setString("info", "shortDesc", test3);
+	this->setString("info", "description", test4);
+	this->setInt("info", "version", 3);
+	this->setInt("info", "revision", scriptRevision);
 }
 
 
@@ -296,26 +300,31 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		switch(Selection) {
 			case 0:
-				jsonFileName = config->scriptPath();
-				jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
-				if (jsonFileName != "") {
-					jsonFileName += ".json";
-					createNewJson(jsonFileName);
-					openJson(jsonFileName);
-					entryName = Input::getString(50, "Enter the EntryName.");
-					Selection = 0;
-					mode = 1;
+				this->jsonFileName = config->scriptPath();
+				this->jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
+				if (this->jsonFileName != "") {
+					this->jsonFileName += ".json";
+					this->createNewJson(this->jsonFileName);
+					this->openJson(this->jsonFileName);
+					// If not included, create.
+					if (!this->editScript.contains("info")) {
+						this->setInfoStuff();
+					}
+
+					this->entryName = Input::getString(50, "Enter the EntryName.");
+					this->Selection = 0;
+					this->mode = 1;
 				}
 				break;
 			case 1:
 				std::string tempScript = selectFilePath("Select the Script file.", config->scriptPath(), {"json"}, 2);
 				if (tempScript != "") {
-					jsonFileName = tempScript;
-					if(access(jsonFileName.c_str(), F_OK) != -1 ) {
-						openJson(jsonFileName);
-						entryName = Input::getString(50, "Enter the EntryName.");
-						Selection = 0;
-						mode = 1;
+					this->jsonFileName = tempScript;
+					if (access(this->jsonFileName.c_str(), F_OK) == 0) {
+						this->openJson(this->jsonFileName);
+						this->entryName = Input::getString(50, "Enter the EntryName.");
+						this->Selection = 0;
+						this->mode = 1;
 					}
 				}
 				break;
@@ -324,118 +333,118 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 
 	if (hDown & KEY_UP) {
-		if(Selection == 1)	Selection = 0;
+		if (this->Selection == 1)	this->Selection = 0;
 	}
 
 	if (hDown & KEY_DOWN) {
-		if (Selection == 0)	Selection = 1;
+		if (this->Selection == 0)	this->Selection = 1;
 	}
 }
 
 void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_B) {
-		save();
-		Selection = 0;
-		mode = 0;
+		this->save();
+		this->Selection = 0;
+		this->mode = 0;
 	}
 
 	// Page 1.
-	if (page == 0) {
+	if (this->page == 0) {
 		if (hDown & KEY_UP) {
-			if (Selection > 1)	Selection -= 2;
+			if (this->Selection > 1)	this->Selection -= 2;
 		}
 
 		if (hDown & KEY_DOWN) {
-			if (Selection < 4)	Selection += 2;
+			if (this->Selection < 4)	this->Selection += 2;
 		}
 
 		if (hDown & KEY_LEFT) {
-			if (Selection%2) Selection--;
+			if (this->Selection%2) this->Selection--;
 		}
 
 		if (hDown & KEY_RIGHT) {
-			if (!(Selection%2)) Selection++;
+			if (!(this->Selection%2)) this->Selection++;
 		}
 
-	} else if (page == 1) {
+	} else if (this->page == 1) {
 		if (hDown & KEY_UP) {
-			if (Selection == 2)	Selection = 0;
+			if (this->Selection == 2)	this->Selection = 0;
 		}
 
 		if (hDown & KEY_RIGHT) {
-			if (Selection == 0)	Selection = 1;
+			if (this->Selection == 0)	this->Selection = 1;
 		}
 
 		if (hDown & KEY_LEFT) {
-			if (Selection == 1)	Selection = 0;
+			if (this->Selection == 1)	this->Selection = 0;
 		}
 
 		if (hDown & KEY_DOWN) {
-			if (Selection == 0)	Selection = 2;
+			if (this->Selection == 0)	this->Selection = 2;
 		}
 	}
 
 	// Page 2.
 	if (hDown & KEY_R) {
-		if (page == 0) {
-			page = 1;
-			Selection = 0;
+		if (this->page == 0) {
+			this->page = 1;
+			this->Selection = 0;
 		}
 	}
 
 	if (hDown & KEY_L) {
-		if (page == 1) {
-			page = 0;
-			Selection = 0;
+		if (this->page == 1) {
+			this->page = 0;
+			this->Selection = 0;
 		}
 	}
 
 	if (hDown & KEY_A) {
-		if (page == 0) {
-			switch(Selection) {
+		if (this->page == 0) {
+			switch(this->Selection) {
 				case 0:
-					createDownloadRelease();
+					this->createDownloadRelease();
 					break;
 				case 1:
-					createDownloadFile();
+					this->createDownloadFile();
 					break;
 				case 2:
-					createDeleteFile();
+					this->createDeleteFile();
 					break;
 				case 3:
-					createExtractFile();
+					this->createExtractFile();
 					break;
 				case 4:
-					createInstallCia();
+					this->createInstallCia();
 					break;
 				case 5:
-					createMkDir();
+					this->createMkDir();
 					break;
 			}
-		} else if (page == 1) {
-			switch(Selection) {
+		} else if (this->page == 1) {
+			switch(this->Selection) {
 				case 0:
-					createRmDir();
+					this->createRmDir();
 					break;
 				case 1:
-					createMkFile();
+					this->createMkFile();
 					break;
 				case 2:
-					createTimeMsg();
+					this->createTimeMsg();
 					break;
 			}
 		}
 	}
 
 	if (hDown & KEY_X) {
-		setInfoStuff();
+		this->setInfoStuff(); // Probably not needed at all.
 	}
 }
 
 void ScriptCreator::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (mode == 0) {
-		SubMenuLogic(hDown, hHeld, touch);
-	} else if (mode == 1) {
-		scriptLogic(hDown, hHeld, touch);
+	if (this->mode == 0) {
+		this->SubMenuLogic(hDown, hHeld, touch);
+	} else if (this->mode == 1) {
+		this->scriptLogic(hDown, hHeld, touch);
 	}
 }

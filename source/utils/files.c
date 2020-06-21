@@ -1,33 +1,11 @@
 #include "files.h"
 
-// Blacklist!
-#define BLACKLIST_CTRNAND	"ctrnand:/"
-#define BLACKLIST_TWLP		"twlp:/"
-#define BLACKLIST_TWLN		"twln:/"
-#define BLACKLIST_SDROOT	"sdmc:/"
-#define BLACKLIST_ROOT		"/"
-#define BLACKLIST_NINTENDO3DS "sdmc:/Nintendo 3DS"
-#define BLACKLIST_NINTENDO3DS2	"/Nintendo"
 
-
-FS_Path getPathInfo(const char * path, FS_ArchiveID * archive)
-{
+FS_Path getPathInfo(const char * path, FS_ArchiveID * archive) {
 	*archive = ARCHIVE_SDMC;
 	FS_Path filePath = {0};
 	unsigned int prefixlen = 0;
 
-/*	if (!strncmp(path, "ctrnand:/", 9)) {
-		*archive = ARCHIVE_NAND_CTR_FS;
-		prefixlen = 8;
-	}
-	else if (!strncmp(path, "twlp:/", 6)) {
-		*archive = ARCHIVE_TWL_PHOTO;
-		prefixlen = 5;
-	}
-	else if (!strncmp(path, "twln:/", 6)) {
-		*archive = ARCHIVE_NAND_TWL_FS;
-		prefixlen = 5;
-	}*/
 	if (!strncmp(path, "sdmc:/", 6)) {
 		prefixlen = 5;
 	}
@@ -46,8 +24,7 @@ FS_Path getPathInfo(const char * path, FS_ArchiveID * archive)
 	return filePath;
 }
 
-Result makeDirs(const char * path)
-{
+Result makeDirs(const char * path) {
 	Result ret = 0;
 	FS_ArchiveID archiveID;
 	FS_Path filePath = getPathInfo(path, &archiveID);
@@ -61,10 +38,8 @@ Result makeDirs(const char * path)
 		Handle dirHandle;
 
 		ret = FSUSER_OpenDirectory(&dirHandle, archive, filePath);
-		if (R_SUCCEEDED(ret))
-			FSDIR_Close(dirHandle);
-		else
-			ret = FSUSER_CreateDirectory(archive, filePath, FS_ATTRIBUTE_DIRECTORY);
+		if (R_SUCCEEDED(ret))	FSDIR_Close(dirHandle);
+		else	ret = FSUSER_CreateDirectory(archive, filePath, FS_ATTRIBUTE_DIRECTORY);
 
 		*(slashpos) = bak;
 	}
@@ -74,8 +49,7 @@ Result makeDirs(const char * path)
 	return ret;
 }
 
-Result openFile(Handle* fileHandle, const char * path, bool write)
-{
+Result openFile(Handle* fileHandle, const char * path, bool write) {
 	FS_ArchiveID archive;
 	FS_Path filePath = getPathInfo(path, &archive);
 	u32 flags = (write ? (FS_OPEN_CREATE | FS_OPEN_WRITE) : FS_OPEN_READ);
@@ -83,14 +57,12 @@ Result openFile(Handle* fileHandle, const char * path, bool write)
 	Result ret = 0;
 	ret = makeDirs(strdup(path));
 	ret = FSUSER_OpenFileDirectly(fileHandle, archive, fsMakePath(PATH_EMPTY, ""), filePath, flags, 0);
-	if (write)
-		ret = FSFILE_SetSize(*fileHandle, 0); //truncate the file to remove previous contents before writing
+	if (write)	ret = FSFILE_SetSize(*fileHandle, 0); //truncate the file to remove previous contents before writing
 
 	return ret;
 }
 
-Result deleteFile(const char * path)
-{
+Result deleteFile(const char * path) {
 	FS_ArchiveID archiveID;
 	FS_Path filePath = getPathInfo(path, &archiveID);
 

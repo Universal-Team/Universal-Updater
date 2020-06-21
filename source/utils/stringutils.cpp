@@ -1,13 +1,11 @@
 #include "stringutils.hpp"
 
-bool matchPattern(std::string pattern, std::string tested)
-{
+bool matchPattern(std::string pattern, std::string tested) {
 	std::regex patternRegex(pattern);
 	return regex_match(tested, patternRegex);
 }
 
-std::string StringUtils::format(const std::string& fmt_str, ...)
-{
+std::string StringUtils::format(const std::string& fmt_str, ...) {
 	va_list ap;
 	char* fp = NULL;
 	va_start(ap, fmt_str);

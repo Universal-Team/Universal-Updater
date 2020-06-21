@@ -64,7 +64,7 @@ private:
 	void SelectFunction(u32 hDown, u32 hHeld, touchPosition touch);
 
 	// This is for the Script Creator, so no one can access it for now, until it is stable or so.
-	bool isTesting = false;
+	bool isTesting = true;
 
 	// Other includes which get destructed automatically.
 	std::string choice;

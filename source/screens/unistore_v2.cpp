@@ -258,7 +258,7 @@ void UniStoreV2::DropDownMenu(void) const {
 		// DropDown Menu.
 		if (this->isDropDown) {
 			// Draw Operation Box.
-			Gui::Draw_Rect(5, 25, 140, 140, this->darkMode ? this->barColorDark : this->barColorLight);
+			Gui::Draw_Rect(5, 25, 140, 165, this->darkMode ? this->barColorDark : this->barColorLight);
 
 			for (int i = 0; i < 4; i++) {
 				Gui::Draw_Rect(dropPos[i].x, dropPos[i].y, dropPos[i].w, dropPos[i].h, this->darkMode ? this->boxColorDark : this->boxColorLight);

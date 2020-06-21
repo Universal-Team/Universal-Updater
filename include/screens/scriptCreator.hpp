@@ -28,6 +28,7 @@
 #define SCRIPTCREATOR_HPP
 
 #include "common.hpp"
+#include "json.hpp"
 #include "structs.hpp"
 
 #include <vector>
@@ -38,6 +39,8 @@ public:
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 
 private:
+	std::string entryName = "";
+	
 	// Screen draws.
 	void DrawSubMenu(void) const;
 	void DrawScriptScreen(void) const;
@@ -82,6 +85,7 @@ private:
 	void createEntry(const std::string &Entryname);
 
 	std::string jsonFileName;
+	nlohmann::json editScript;
 	// Main Pos.
 	const std::vector<Structs::ButtonPos> mainButtons = {
 		{90, 40, 140, 35}, // New Script.
