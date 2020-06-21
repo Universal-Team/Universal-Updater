@@ -185,8 +185,8 @@
 	"UPDATE_AVAILABLE": "Dostępna aktualizacja!",
 	"UPDATE_NOT_AVAILABLE": "Brak dostępnych aktualizacji.",
 	"ENTRY_AMOUNT": "Jest %i dostępnych wpisów.",
-	"SELECT_AUTHOR": "Select an author you like to view.",
-	"SELECT_CONSOLE": "Select a console you like to view.",
-	"NO_AUTHORS_AVAILABLE": "No authors available.",
-	"NO_CONSOLES_AVAILABLE": "No consoles available."
+	"SELECT_AUTHOR": "Wybierz autora którego chcesz wyświetlić.",
+	"SELECT_CONSOLE": "Wybierz konsolę którą chcesz wyświetlić.",
+	"NO_AUTHORS_AVAILABLE": "Brak dostępnych autorów.",
+	"NO_CONSOLES_AVAILABLE": "Brak dostępnych konsol."
 }
