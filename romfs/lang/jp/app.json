@@ -180,9 +180,9 @@
 	"CATEGORY_SEARCH": "カテゴリー検索",
 	"CONSOLE_SEARCH": "コンソール検索",
 	"SEARCHING_FOR": "検索しています…",
-	"SELECT_CATEGORY": "Select a category you like to view.",
-	"NO_CATEGORIES_AVAILABLE": "No categories available.",
-	"UPDATE_AVAILABLE": "Update available!",
-	"UPDATE_NOT_AVAILABLE": "No updates available.",
-	"ENTRY_AMOUNT": "There are %i entries available."
+	"SELECT_CATEGORY": "表示したカテゴリーを選択します。",
+	"NO_CATEGORIES_AVAILABLE": "カテゴリーがありません。",
+	"UPDATE_AVAILABLE": "更新があります！",
+	"UPDATE_NOT_AVAILABLE": "更新はありません。",
+	"ENTRY_AMOUNT": "%i件のエントリーがあります。"
 }
