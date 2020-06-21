@@ -368,7 +368,7 @@ void UniStoreV2::Draw(void) const {
 
 		this->DrawGrid();
 
-		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePage + 1) + " | " + std::to_string(1 + (this->sortedStore->getSize() / STORE_ENTRIES)));
+		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePage + 1) + " | " + std::to_string((this->sortedStore->getSize() / STORE_ENTRIES)+1));
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
@@ -388,7 +388,7 @@ void UniStoreV2::Draw(void) const {
 		}
 
 		this->DrawList();
-		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePageList + 1) + " | " + std::to_string(1 + (this->sortedStore->getSize() / STORE_ENTRIES_LIST)));
+		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePageList + 1) + " | " + std::to_string((this->sortedStore->getSize() / STORE_ENTRIES_LIST)+1));
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 		this->DrawBaseBottom();
@@ -870,7 +870,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if (this->sortedStore->getCategories().size() > 0) {
 					for (int i = 0, i2 = 0 + (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)this->sortedStore->getCategories().size(); i2++, i++) {
 						if (touching(touch, downloadBoxes[i])) {
-							this->sortedStore->searchForCategory(this->objects[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
+							this->sortedStore->searchForCategory(this->sortedStore->getCategories()[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
 							this->mode = this->lastViewMode;
 						}
 					}
