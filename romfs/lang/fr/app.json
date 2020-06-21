@@ -157,7 +157,7 @@
 	"PROGRESS_BAR_ENABLE": "Voulez vous activer la barre de progression?",
 	"PROGRESS_BAR_DISABLE": "Voulez vous désactiver la barre de progression?",
 	"CATEGORY": "Catégorie: ",
-	"SYSTEM": "Système: ",
+	"CONSOLE": "Console: ",
 	"LAST_UPDATED": "Dernière mise à jour: ",
 	"CHANGE_THEME": "Changer de Thème",
 	"CHANGE_STYLE": "Changer le Style",
@@ -184,5 +184,9 @@
 	"NO_CATEGORIES_AVAILABLE": "Aucune catégorie disponible.",
 	"UPDATE_AVAILABLE": "Update available!",
 	"UPDATE_NOT_AVAILABLE": "No updates available.",
-	"ENTRY_AMOUNT": "There are %i entries available."
+	"ENTRY_AMOUNT": "There are %i entries available.",
+	"SELECT_AUTHOR": "Select an author you like to view.",
+	"SELECT_CONSOLE": "Select a console you like to view.",
+	"NO_AUTHORS_AVAILABLE": "No authors available.",
+	"NO_CONSOLES_AVAILABLE": "No consoles available."
 }
