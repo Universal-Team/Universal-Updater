@@ -71,6 +71,13 @@ private:
 	void createRmDir();
 	void createMkFile();
 	void createTimeMsg();
+	void createSaveConfig();
+	void createBootTitle();
+	void createPromptMessage();
+
+	// Creating Functions. -> Page 3.
+	void createCopy();
+	void createMove();
 
 	// 
 	void setBool(const std::string &object, const std::string &key, bool v);

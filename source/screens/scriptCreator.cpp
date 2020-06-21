@@ -32,6 +32,7 @@
 #include <fstream>
 #include <unistd.h>
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern std::unique_ptr<Config> config;
 
 void ScriptCreator::openJson(std::string fileName) {
@@ -116,9 +117,9 @@ void ScriptCreator::DrawScriptScreen(void) const {
 	GFX::DrawBottom();
 
 	// Draw Page.
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		if (i == this->page) {
-			Gui::DrawStringCentered(0, 3, 0.6f, config->textColor(), std::to_string(i+1) + " | 2", 140);
+			Gui::DrawStringCentered(0, 3, 0.6f, config->textColor(), std::to_string(i+1) + " | 3", 140);
 		}
 	}
 
@@ -138,7 +139,7 @@ void ScriptCreator::DrawScriptScreen(void) const {
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "installCia"))/2-150+70, creatorButtons[4].y+10, 0.6f, config->textColor(), "installCia", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkdir"))/2+150-70, creatorButtons[5].y+10, 0.6f, config->textColor(), "mkdir", 140);
 	} else if (this->page == 1) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 6; i++) {
 			if (this->Selection == i) {
 				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
 			} else {
@@ -149,6 +150,22 @@ void ScriptCreator::DrawScriptScreen(void) const {
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "rmdir"))/2-150+70, creatorButtons[0].y+10, 0.6f, config->textColor(), "rmdir", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "mkfile"))/2+150-70, creatorButtons[1].y+10, 0.6f, config->textColor(), "mkfile", 140);
 		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "TimeMsg"))/2-150+70, creatorButtons[2].y+10, 0.6f, config->textColor(), "TimeMsg", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "saveConfig"))/2+150-70, creatorButtons[3].y+10, 0.6f, config->textColor(), "saveConfig", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "bootTitle"))/2-150+70, creatorButtons[4].y+10, 0.6f, config->textColor(), "bootTitle", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "promptMsg"))/2+150-70, creatorButtons[5].y+10, 0.6f, config->textColor(), "promptMsg", 140);
+
+	} else if (this->page == 2) {
+		for (int i = 0; i < 3; i++) {
+			if (this->Selection == i) {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->selectedColor());
+			} else {
+				Gui::Draw_Rect(creatorButtons[i].x, creatorButtons[i].y, creatorButtons[i].w, creatorButtons[i].h, config->unselectedColor());
+			}
+		}
+
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "copy"))/2-150+70, creatorButtons[0].y+10, 0.6f, config->textColor(), "copy", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "move"))/2+150-70, creatorButtons[1].y+10, 0.6f, config->textColor(), "move", 140);
+		Gui::DrawString((320-Gui::GetStringWidth(0.6f, "change Entry"))/2-150+70, creatorButtons[2].y+10, 0.6f, config->textColor(), "change Entry", 140);
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	}
 }
@@ -156,6 +173,7 @@ void ScriptCreator::DrawScriptScreen(void) const {
 void ScriptCreator::createNewJson(std::string fileName) {
 	std::ofstream ofstream;
 	ofstream.open(fileName.c_str(), std::ofstream::out | std::ofstream::app);
+	ofstream << "{ }";
 	ofstream.close();
 }
 
@@ -264,6 +282,40 @@ void ScriptCreator::createTimeMsg() {
 	Logging::writeToLog("Execute 'ScriptCreator::createTimeMsg();'.");
 }
 
+void ScriptCreator::createSaveConfig() {
+	this->editScript[this->entryName].push_back({{"type", "saveConfig"}});
+	Logging::writeToLog("Execute 'ScriptCreator::createSaveConfig();'.");
+}
+
+void ScriptCreator::createBootTitle() {
+	std::string titleID = Input::getString(50, "Enter the TitleID.");
+	bool isNAND = Msg::promptMsg("Is the current title a NAND title?");
+	std::string message = Input::getString(50, "Enter the Message.");
+	this->editScript[this->entryName].push_back({{"type", "bootTitle"}, {"TitleID", titleID}, {"NAND", isNAND}, {"message", message}});
+	Logging::writeToLog("Execute 'ScriptCreator::createBootTitle();'.");
+}
+
+void ScriptCreator::createPromptMessage() {
+	std::string message = Input::getString(50, "Enter the Message.");
+	this->editScript[this->entryName].push_back({{"type", "promptMessage"}, {"message", message}});
+	Logging::writeToLog("Execute 'ScriptCreator::createPromptMessage();'.");
+}
+
+void ScriptCreator::createCopy() {
+	std::string source = Input::getString(50, "Enter the source location.");
+	std::string destination = Input::getString(50, "Enter the destination location.");
+	std::string message = Input::getString(50, "Enter the Message.");
+	this->editScript[this->entryName].push_back({{"type", "copy"}, {"source", source}, {"destination", destination}, {"message", message}});
+	Logging::writeToLog("Execute 'ScriptCreator::createCopy();'.");
+}
+
+void ScriptCreator::createMove() {
+	std::string oldLocation = Input::getString(50, "Enter the old location.");
+	std::string newLocation = Input::getString(50, "Enter the new location.");
+	std::string message = Input::getString(50, "Enter the Message.");
+	this->editScript[this->entryName].push_back({{"type", "move"}, {"old", oldLocation}, {"new", newLocation}, {"message", message}});
+	Logging::writeToLog("Execute 'ScriptCreator::createMove();'.");
+}
 
 void ScriptCreator::save() {
 	FILE* file = fopen(this->jsonFileName.c_str(), "w");
@@ -286,7 +338,7 @@ void ScriptCreator::setInfoStuff(void) {
 	this->setString("info", "author", test2);
 	this->setString("info", "shortDesc", test3);
 	this->setString("info", "description", test4);
-	this->setInt("info", "version", 3);
+	this->setInt("info", "version", SCRIPT_VERSION);
 	this->setInt("info", "revision", scriptRevision);
 }
 
@@ -339,6 +391,37 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_DOWN) {
 		if (this->Selection == 0)	this->Selection = 1;
 	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			this->jsonFileName = config->scriptPath();
+			this->jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
+			if (this->jsonFileName != "") {
+				this->jsonFileName += ".json";
+				this->createNewJson(this->jsonFileName);
+				this->openJson(this->jsonFileName);
+				// If not included, create.
+				if (!this->editScript.contains("info")) {
+					this->setInfoStuff();
+				}
+
+				this->entryName = Input::getString(50, "Enter the EntryName.");
+				this->Selection = 0;
+				this->mode = 1;
+			}
+		} else if (touching(touch, mainButtons[1])) {
+			std::string tempScript = selectFilePath("Select the Script file.", config->scriptPath(), {"json"}, 2);
+			if (tempScript != "") {
+				this->jsonFileName = tempScript;
+				if (access(this->jsonFileName.c_str(), F_OK) == 0) {
+					this->openJson(this->jsonFileName);
+					this->entryName = Input::getString(50, "Enter the EntryName.");
+					this->Selection = 0;
+					this->mode = 1;
+				}
+			}
+		}
+	}
 }
 
 void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -349,7 +432,7 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Page 1.
-	if (this->page == 0) {
+	if (this->page == 0 || this->page == 1) {
 		if (hDown & KEY_UP) {
 			if (this->Selection > 1)	this->Selection -= 2;
 		}
@@ -366,35 +449,35 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (!(this->Selection%2)) this->Selection++;
 		}
 
-	} else if (this->page == 1) {
-		if (hDown & KEY_UP) {
-			if (this->Selection == 2)	this->Selection = 0;
-		}
-
+	} else if (this->page == 2) {
 		if (hDown & KEY_RIGHT) {
 			if (this->Selection == 0)	this->Selection = 1;
-		}
-
-		if (hDown & KEY_LEFT) {
-			if (this->Selection == 1)	this->Selection = 0;
 		}
 
 		if (hDown & KEY_DOWN) {
 			if (this->Selection == 0)	this->Selection = 2;
 		}
+
+		if (hDown & KEY_UP) {
+			if (this->Selection == 2)	this->Selection = 0;
+		}
+
+		if (hDown & KEY_LEFT) {
+			if (this->Selection == 1)	this->Selection = 0;
+		}
 	}
 
-	// Page 2.
+	
 	if (hDown & KEY_R) {
-		if (this->page == 0) {
-			this->page = 1;
+		if (this->page < 2) {
+			this->page++;
 			this->Selection = 0;
 		}
 	}
 
 	if (hDown & KEY_L) {
-		if (this->page == 1) {
-			this->page = 0;
+		if (this->page > 0) {
+			this->page--;
 			this->Selection = 0;
 		}
 	}
@@ -432,6 +515,67 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				case 2:
 					this->createTimeMsg();
 					break;
+				case 3:
+					this->createSaveConfig();
+					break;
+				case 4:
+					this->createBootTitle();
+					break;
+				case 5:
+					this->createPromptMessage();
+					break;
+			}
+		} else if (this->page == 2) {
+			switch(this->Selection) {
+				case 0:
+					this->createCopy();
+					break;
+				case 1:
+					this->createMove();
+					break;
+				case 2:
+					this->entryName = Input::getString(50, "Enter the new entry.");
+					break;
+			}
+		}
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (this->page == 0) {
+			if (touching(touch, creatorButtons[0])) {
+				this->createDownloadRelease();
+			} else if (touching(touch, creatorButtons[1])) {
+				this->createDownloadFile();
+			} else if (touching(touch, creatorButtons[2])) {
+				this->createDeleteFile();
+			} else if (touching(touch, creatorButtons[3])) {
+				this->createExtractFile();
+			} else if (touching(touch, creatorButtons[4])) {
+				this->createInstallCia();
+			} else if (touching(touch, creatorButtons[5])) {
+				this->createMkDir();
+			}
+		} else if (this->page == 1) {
+			if (touching(touch, creatorButtons[0])) {
+				this->createRmDir();
+			} else if (touching(touch, creatorButtons[1])) {
+				this->createMkFile();
+			} else if (touching(touch, creatorButtons[2])) {
+				this->createTimeMsg();
+			} else if (touching(touch, creatorButtons[3])) {
+				this->createSaveConfig();
+			} else if (touching(touch, creatorButtons[4])) {
+				this->createBootTitle();
+			} else if (touching(touch, creatorButtons[5])) {
+				this->createPromptMessage();
+			}
+		} else if (this->page == 2) {
+			if (touching(touch, creatorButtons[0])) {
+				this->createCopy();
+			} else if (touching(touch, creatorButtons[1])) {
+				this->createMove();
+			} else if (touching(touch, creatorButtons[2])) {
+				this->entryName = Input::getString(50, "Enter the new entry.");
 			}
 		}
 	}
