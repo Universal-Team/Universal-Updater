@@ -209,9 +209,9 @@ void UniStoreV2::DrawSortingMenu(void) const {
 		}
 	}
 
-	Gui::DrawString(sortingPos[2].x+4, sortingPos[2].y+9, 0.55f, this->returnTextColor(), Lang::get("TITLE_BTN"));
-	Gui::DrawString(sortingPos[3].x+4, sortingPos[3].y+9, 0.55f, this->returnTextColor(), Lang::get("AUTHOR_BTN"));
-	Gui::DrawString(sortingPos[4].x+4, sortingPos[4].y+9, 0.55f, this->returnTextColor(), Lang::get("LAST_UPDATED_BTN"));
+	Gui::DrawStringCentered(sortingPos[2].x + (sortingPos[2].w/2) - 160, sortingPos[2].y+7, 0.55f, this->returnTextColor(), Lang::get("TITLE_BTN"), sortingPos[2].w - 10, sortingPos[2].h - 5);
+	Gui::DrawStringCentered(sortingPos[3].x + (sortingPos[3].w/2) - 160, sortingPos[3].y+7, 0.55f, this->returnTextColor(), Lang::get("AUTHOR_BTN"), sortingPos[3].w - 10, sortingPos[3].h - 5);
+	Gui::DrawStringCentered(sortingPos[4].x + (sortingPos[4].w/2) - 160, sortingPos[4].y+7, 0.55f, this->returnTextColor(), Lang::get("LAST_UPDATED_BTN"), sortingPos[4].w - 10, sortingPos[4].h - 5);
 
 	if (this->sortedStore->getAscending()) {
 		this->drawBox(sortingPos[0].x, sortingPos[0].y, sortingPos[0].w, sortingPos[0].h, false);
@@ -221,8 +221,8 @@ void UniStoreV2::DrawSortingMenu(void) const {
 		this->drawBox(sortingPos[1].x, sortingPos[1].y, sortingPos[1].w, sortingPos[1].h, false);
 	}
 
-	Gui::DrawString(sortingPos[0].x+4, sortingPos[0].y+9, 0.55f, this->returnTextColor(), Lang::get("DESCENDING"));
-	Gui::DrawString(sortingPos[1].x+4, sortingPos[1].y+9, 0.55f, this->returnTextColor(), Lang::get("ASCENDING"));
+	Gui::DrawStringCentered(sortingPos[0].x + (sortingPos[0].w/2) - 160, sortingPos[0].y+10, 0.55f, this->returnTextColor(), Lang::get("DESCENDING"), sortingPos[0].w - 10, sortingPos[0].h - 5);
+	Gui::DrawStringCentered(sortingPos[1].x + (sortingPos[1].w/2) - 160, sortingPos[1].y+10, 0.55f, this->returnTextColor(), Lang::get("ASCENDING"), sortingPos[1].w - 10, sortingPos[1].h - 5);
 }
 
 
@@ -319,9 +319,9 @@ void UniStoreV2::displaySelectedEntry(int selection, int storeIndex) const {
 	}
 
 	if (this->storeJson.at("storeContent").at(selection).at("info").contains("console")) {
-		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("SYSTEM") + (std::string)this->storeJson.at("storeContent").at(selection).at("info").at("console"), 400);
+		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("CONSOLE") + (std::string)this->storeJson.at("storeContent").at(selection).at("info").at("console"), 400);
 	} else {
-		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("SYSTEM") + "?", 400);
+		Gui::DrawStringCentered(0, 100, 0.6f, this->returnTextColor(), Lang::get("CONSOLE") + "?", 400);
 	}
 
 	if (this->storeJson.at("storeContent").at(selection).at("info").contains("last_updated")) {
@@ -336,7 +336,7 @@ void UniStoreV2::displaySelectedEntry(int selection, int storeIndex) const {
 		Gui::DrawStringCentered(0, 140, 0.5f, this->returnTextColor(), Lang::get("DESC") + "?", 400);
 	}
 
-	Gui::DrawStringCentered(0, 170, 0.5f, this->returnTextColor(), this->sortedStore->isUpdateAvailable(storeIndex) ? Lang::get("UPDATE_AVAILABLE") : Lang::get("UPDATE_NOT_AVAILABLE"), 400);
+	Gui::DrawStringCentered(0, 170, 0.6f, this->returnTextColor(), this->sortedStore->isUpdateAvailable(storeIndex) ? Lang::get("UPDATE_AVAILABLE") : Lang::get("UPDATE_NOT_AVAILABLE"), 400);
 
 	this->DrawBaseBottom();
 
@@ -402,36 +402,66 @@ void UniStoreV2::Draw(void) const {
 	} else if (this->mode == 3) {
 		this->DrawSearchMenu();
 	} else if (this->mode == 4) {
-		this->DrawCategoryMenu();
+		this->DrawSelectMenu(this->selectMenu);
 	}
 
 	if (this->mode < 2)	GFX::DrawSpriteBlend(sprites_dropdown_idx, iconPos[0].x, iconPos[0].y);
 	this->DropDownMenu();
 }
 
-void UniStoreV2::DrawCategoryMenu(void) const {
-		this->DrawBaseTop();
+void UniStoreV2::DrawSelectMenu(int option) const {
+	std::vector<std::string> options;
+	if (option == 0) {
+		options = this->sortedStore->getAuthors();
+	} else if (option == 1) {
+		options = this->sortedStore->getCategories();
+	} else if (option == 2) {
+		options = this->sortedStore->getSystems();
+	}
 
+	this->DrawBaseTop();
+
+	if (option == 0) {
+		if (config->useBars() == true) {
+			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_AUTHOR"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_AUTHOR"), 400);
+		}
+	} else if (option == 1) {
 		if (config->useBars() == true) {
 			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
 		} else {
 			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
 		}
+	} else if (option == 2) {
+		if (config->useBars() == true) {
+			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_CONSOLE"), 400);
+		} else {
+			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CONSOLE"), 400);
+		}
+	}
 
-		this->DrawBaseBottom();
+	Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->categoryPage + 1) + " | " + std::to_string((options.size() / DOWNLOAD_ENTRIES)+1));
+	this->DrawBaseBottom();
 
-	if (this->sortedStore->getCategories().size() > 0) {
-		for (int i = 0, i2 = (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)this->sortedStore->getCategories().size(); i2++, i++) {
+	if (options.size() > 0) {
+		for (int i = 0, i2 = (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)options.size(); i2++, i++) {
 			if (i + (this->categoryPage * DOWNLOAD_ENTRIES) == this->categorySelection) {
 				this->drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, true);
 			} else {
 				this->drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
 			}
 			
-			Gui::DrawStringCentered(0, downloadBoxes[i].y+4, 0.5f, this->returnTextColor(), this->sortedStore->getCategories()[i + (this->downloadPage * DOWNLOAD_ENTRIES)], 280);
+			Gui::DrawStringCentered(0, downloadBoxes[i].y+4, 0.5f, this->returnTextColor(), options[i + (this->categoryPage * DOWNLOAD_ENTRIES)], 280);
 		}
 	} else {
-		Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CATEGORIES_AVAILABLE"), 280);
+		if (option == 0) {
+			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_AUTHORS_AVAILABLE"), 280);
+		} else if (option == 1) {
+			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CATEGORIES_AVAILABLE"), 280);
+		} else if (option == 2) {
+			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CONSOLES_AVAILABLE"), 280);
+		}
 	}
 }
 
@@ -664,8 +694,9 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					for (int i = 0, i2 = 0 + (this->downloadPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->downloadPage * DOWNLOAD_ENTRIES) && i2 < (int)this->objects.size(); i2++, i++) {
 						if (touching(touch, downloadBoxes[i])) {
 							if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)])) {
-								runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]);
-								this->sortedStore->writeToFile(this->selectedObject);
+								if (runFunctions(this->objects[i + (this->downloadPage * DOWNLOAD_ENTRIES)]) == NONE) {
+									this->sortedStore->writeToFile(this->selectedObject);
+								}
 							}
 						}
 					}
@@ -676,8 +707,9 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if (this->objects.size() > 0) {
 					if ((int)this->objects.size() >= this->subSelection) {
 						if (Msg::promptMsg(Lang::get("EXECUTE_SCRIPT") + "\n" + this->objects[this->subSelection])) {
-							runFunctions(this->objects[this->subSelection]);
-							this->sortedStore->writeToFile(this->selectedObject);
+							if (runFunctions(this->objects[this->subSelection]) == NONE) {
+								this->sortedStore->writeToFile(this->selectedObject);
+							}
 						}
 					}
 				}
@@ -743,19 +775,18 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->mode = this->lastViewMode;
 
 				} else if (touching(touch, searchPos[1])) {
-					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-					if (temp != "") {
+					if (this->lastViewMode == 0) {
 						this->selectedBox = 0;
 						this->storePage = 0;
+						this->sortedStore->reset();
+					} else if (this->lastViewMode == 1) {
 						this->selectedBoxList = 0;
 						this->storePageList = 0;
-						int amount = this->sortedStore->searchForAuthor(temp);
-						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-					} else {
-						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						this->sortedStore->reset();
 					}
 
-					this->mode = this->lastViewMode;
+					this->selectMenu = 0;
+					this->mode = 4;
 
 				} else if (touching(touch, searchPos[2])) {
 					if (this->lastViewMode == 0) {
@@ -768,21 +799,21 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						this->sortedStore->reset();
 					}
 
+					this->selectMenu = 1;
 					this->mode = 4;
 				} else if (touching(touch, searchPos[3])) {
-					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-					if (temp != "") {
+					if (this->lastViewMode == 0) {
 						this->selectedBox = 0;
 						this->storePage = 0;
+						this->sortedStore->reset();
+					} else if (this->lastViewMode == 1) {
 						this->selectedBoxList = 0;
 						this->storePageList = 0;
-						int amount = this->sortedStore->searchForConsole(temp);
-						if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-					} else {
-						Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+						this->sortedStore->reset();
 					}
 
-					this->mode = this->lastViewMode;
+					this->selectMenu = 2;
+					this->mode = 4;
 				}
 			}
 
@@ -824,18 +855,17 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 						this->mode = this->lastViewMode;
 						break;
 					case 1:
-						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-						if (temp != "") {
+						if (this->lastViewMode == 0) {
 							this->selectedBox = 0;
 							this->storePage = 0;
+							this->sortedStore->reset();
+						} else if (this->lastViewMode == 1) {
 							this->selectedBoxList = 0;
 							this->storePageList = 0;
-							amount = this->sortedStore->searchForAuthor(temp);
-							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-						} else {
-							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+							this->sortedStore->reset();
 						}
-						this->mode = this->lastViewMode;
+						this->selectMenu = 0;
+						this->mode = 4;
 						break;
 					case 2:
 						if (this->lastViewMode == 0) {
@@ -847,47 +877,103 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 							this->storePageList = 0;
 							this->sortedStore->reset();
 						}
+						this->selectMenu = 1;
 						this->mode = 4;
 						break;
 					case 3:
-						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
-						if (temp != "") {
+						if (this->lastViewMode == 0) {
 							this->selectedBox = 0;
 							this->storePage = 0;
+							this->sortedStore->reset();
+						} else if (this->lastViewMode == 1) {
 							this->selectedBoxList = 0;
 							this->storePageList = 0;
-							amount = this->sortedStore->searchForConsole(temp);
-							if (amount == 0) Msg::DisplayWarnMsg(Lang::get("NO_RESULTS_FOUND"));
-						} else {
-							Msg::DisplayWarnMsg(Lang::get("INVALID_INPUT"));
+							this->sortedStore->reset();
 						}
-						this->mode = this->lastViewMode;
+						this->selectMenu = 2;
+						this->mode = 4;
 						break;
 				}
 			}
 		} else if (this->mode == 4) {
 			if (hDown & KEY_TOUCH) {
-				if (this->sortedStore->getCategories().size() > 0) {
-					for (int i = 0, i2 = 0 + (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)this->sortedStore->getCategories().size(); i2++, i++) {
+
+				std::vector<std::string> options;
+				if (this->selectMenu == 0) {
+					options = this->sortedStore->getAuthors();
+				} else if (this->selectMenu == 1) {
+					options = this->sortedStore->getCategories();
+				} else if (this->selectMenu == 2) {
+					options = this->sortedStore->getSystems();
+				}
+
+				if (options.size() > 0) {
+					for (int i = 0, i2 = 0 + (this->categoryPage * DOWNLOAD_ENTRIES); i2 < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) && i2 < (int)options.size(); i2++, i++) {
 						if (touching(touch, downloadBoxes[i])) {
-							this->sortedStore->searchForCategory(this->sortedStore->getCategories()[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
-							this->mode = this->lastViewMode;
+							if (this->selectMenu == 0) {
+								this->sortedStore->searchForAuthor(options[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
+								this->categoryPage = 0;
+								this->categorySelection = 0;
+								this->mode = this->lastViewMode;
+							} else if (this->selectMenu == 1) {
+								this->sortedStore->searchForCategory(options[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
+								this->categoryPage = 0;
+								this->categorySelection = 0;
+								this->mode = this->lastViewMode;
+							} else if (this->selectMenu == 2) {
+								this->sortedStore->searchForConsole(options[i + (this->categoryPage * DOWNLOAD_ENTRIES)]);
+								this->categoryPage = 0;
+								this->categorySelection = 0;
+								this->mode = this->lastViewMode;
+							}
 						}
 					}
 				}
 			}
 
 			if (hDown & KEY_A) {
-				if ((int)this->sortedStore->getCategories().size() > 0) {
-					if ((int)this->sortedStore->getCategories().size() >= this->categorySelection) {
-						this->sortedStore->searchForCategory(this->sortedStore->getCategories()[this->categorySelection]);
-						this->mode = this->lastViewMode;
+				std::vector<std::string> options;
+				if (this->selectMenu == 0) {
+					options = this->sortedStore->getAuthors();
+				} else if (this->selectMenu == 1) {
+					options = this->sortedStore->getCategories();
+				} else if (this->selectMenu == 2) {
+					options = this->sortedStore->getSystems();
+				}
+
+				if ((int)options.size() > 0) {
+					if ((int)options.size() >= this->categorySelection) {
+						if (this->selectMenu == 0) {
+							this->sortedStore->searchForAuthor(options[this->categorySelection]);
+							this->categoryPage = 0;
+							this->categorySelection = 0;
+							this->mode = this->lastViewMode;
+						} else if (this->selectMenu == 1) {
+							this->sortedStore->searchForCategory(options[this->categorySelection]);
+							this->categoryPage = 0;
+							this->categorySelection = 0;
+							this->mode = this->lastViewMode;
+						} else if (this->selectMenu == 2) {
+							this->sortedStore->searchForConsole(options[this->categorySelection]);
+							this->categoryPage = 0;
+							this->categorySelection = 0;
+							this->mode = this->lastViewMode;
+						}
 					}
 				}
 			}
 
 			if (hDown & KEY_DOWN) {
-				if (this->categorySelection < (int)this->sortedStore->getCategories().size()-1) {
+				std::vector<std::string> options;
+				if (this->selectMenu == 0) {
+					options = this->sortedStore->getAuthors();
+				} else if (this->selectMenu == 1) {
+					options = this->sortedStore->getCategories();
+				} else if (this->selectMenu == 2) {
+					options = this->sortedStore->getSystems();
+				}
+
+				if (this->categorySelection < (int)options.size()-1) {
 					if (this->categorySelection < DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES)-1) {
 						this->categorySelection++;
 					}
@@ -904,7 +990,16 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 
 			if (hDown & KEY_R || hDown & KEY_RIGHT) {
-				if (DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) < (int)this->sortedStore->getCategories().size()-1) {
+				std::vector<std::string> options;
+				if (this->selectMenu == 0) {
+					options = this->sortedStore->getAuthors();
+				} else if (this->selectMenu == 1) {
+					options = this->sortedStore->getCategories();
+				} else if (this->selectMenu == 2) {
+					options = this->sortedStore->getSystems();
+				}
+
+				if (DOWNLOAD_ENTRIES + (this->categoryPage * DOWNLOAD_ENTRIES) < (int)options.size()-1) {
 					this->categoryPage++;
 					this->categorySelection = this->categoryPage * DOWNLOAD_ENTRIES;
 				}

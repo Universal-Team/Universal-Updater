@@ -58,6 +58,16 @@ Store::Store(nlohmann::json &JS, std::string JSONName) {
 	if (this->storeJson["storeInfo"].contains("categories")) {
 		this->availableCategories = this->storeJson["storeInfo"]["categories"].get<std::vector<std::string>>();
 	}
+
+	// If Authors available, push them to our vector.
+	if (this->storeJson["storeInfo"].contains("authors")) {
+		this->availableAuthors = this->storeJson["storeInfo"]["authors"].get<std::vector<std::string>>();
+	}
+
+	// If Systems available, push them to our vector.
+	if (this->storeJson["storeInfo"].contains("consoles")) {
+		this->availableSystems = this->storeJson["storeInfo"]["consoles"].get<std::vector<std::string>>();
+	}
 }
 
 bool Store::updateAvailable(int index) {
@@ -147,7 +157,7 @@ int Store::searchForCategory(const std::string searchResult) {
 	std::vector<UniStoreV2Struct> temp;
 
 	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
-		if (this->sortedStore[i].category.find(searchResult) != std::string::npos) {
+		if (this->sortedStore[i].category == searchResult) {
 			temp.push_back({this->sortedStore[i]});
 		}
 	}
@@ -163,7 +173,7 @@ int Store::searchForConsole(const std::string searchResult) {
 	std::vector<UniStoreV2Struct> temp;
 
 	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
-		if (this->sortedStore[i].console.find(searchResult) != std::string::npos) {
+		if (this->sortedStore[i].console == searchResult) {
 			temp.push_back({this->sortedStore[i]});
 		}
 	}
@@ -179,7 +189,7 @@ int Store::searchForAuthor(const std::string searchResult) {
 	std::vector<UniStoreV2Struct> temp;
 
 	for (int i = 0; i < (int)this->sortedStore.size(); i++) {
-		if (this->sortedStore[i].author.find(searchResult) != std::string::npos) {
+		if (this->sortedStore[i].author == searchResult) {
 			temp.push_back({this->sortedStore[i]});
 		}
 	}

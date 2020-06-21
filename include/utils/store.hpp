@@ -81,10 +81,11 @@ public:
 	}
 
 	const std::vector<std::string> getCategories() { return this->availableCategories; }
-
+	const std::vector<std::string> getAuthors() { return this->availableAuthors; }
+	const std::vector<std::string> getSystems() { return this->availableSystems; }
 private:
 	std::vector<UniStoreV2Struct> sortedStore, unsortedStore;
-	std::vector<std::string> availableCategories;
+	std::vector<std::string> availableCategories, availableAuthors, availableSystems;
 	std::string updateFile;
 	bool ascending = false;
 	nlohmann::json storeJson, updateJSON;
