@@ -33,6 +33,7 @@
 #include "mainMenu.hpp"
 #include "screenCommon.hpp"
 #include "scriptlist.hpp"
+#include "startup.hpp"
 #include "sound.h"
 #include "unistore.hpp"
 
@@ -95,7 +96,7 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
-
+	
 	// We need to make sure, the file exist.
 	config = std::make_unique<Config>();
 
@@ -116,26 +117,32 @@ Result Init::Initialize() {
 
 	AutobootWhat = config->autoboot();
 
-	if (config->autoboot() == 1) {
-		if (access(config->autobootFile().c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<UniStore>(true, config->autobootFile()), false, true);
+	if (!config->firstStartup()) {
+		if (AutobootWhat == 1) {
+			if (access(config->autobootFile().c_str(), F_OK) == 0) {
+				Gui::setScreen(std::make_unique<UniStore>(true, config->autobootFile()), false, true);
+			} else {
+				AutobootWhat = 0;
+				config->autoboot(0);
+				Gui::setScreen(std::make_unique<MainMenu>(), false, true);
+			}
+		} else if (AutobootWhat == 2) {
+			if (access(config->autobootFile().c_str(), F_OK) == 0) {
+				Gui::setScreen(std::make_unique<ScriptList>(), false, true);
+			} else {
+				AutobootWhat = 0;
+				config->autoboot(0);
+				Gui::setScreen(std::make_unique<MainMenu>(), false, true);
+			}
 		} else {
 			AutobootWhat = 0;
 			config->autoboot(0);
 			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 		}
-	} else if (config->autoboot() == 2) {
-		if (access(config->autobootFile().c_str(), F_OK) == 0) {
-			Gui::setScreen(std::make_unique<ScriptList>(), false, true);
-		} else {
-			AutobootWhat = 0;
-			config->autoboot(0);
-			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
-		}
-	} else {
-		AutobootWhat = 0;
-		config->autoboot(0);
-		Gui::setScreen(std::make_unique<MainMenu>(), false, true);
+	}
+
+	if (config->firstStartup()) {
+		Gui::setScreen(std::make_unique<Startup>(AutobootWhat, config->autobootFile()), false, true);
 	}
 
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users

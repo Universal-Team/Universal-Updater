@@ -61,6 +61,7 @@ void Config::initialize() {
 	this->setBool("SCREEN_FADE", false);
 	this->setBool("PROGRESS_DISPLAY", true);
 	this->setString("LANGUAGE", "en");
+	this->setBool("FIRST_STARTUP", true);
 
 	// Write to file.
 	fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
@@ -165,7 +166,7 @@ Config::Config() {
 	if (!this->json.contains("AUTOBOOT")) {
 		this->autoboot(0);
 	} else {
-		this->viewMode(this->getInt("AUTOBOOT"));
+		this->autoboot(this->getInt("AUTOBOOT"));
 	}
 
 	if (!this->json.contains("STOREPATH")) {
@@ -228,6 +229,12 @@ Config::Config() {
 		this->language(this->getString("LANGUAGE"));
 	}
 
+	if (!this->json.contains("FIRST_STARTUP")) {
+		this->firstStartup(true);
+	} else {
+		this->firstStartup(this->getBool("FIRST_STARTUP"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -261,6 +268,7 @@ void Config::save() {
 		this->setBool("SCREEN_FADE", this->screenFade());
 		this->setBool("PROGRESS_DISPLAY", this->progressDisplay());
 		this->setString("LANGUAGE", this->language());
+		this->setBool("FIRST_STARTUP", this->firstStartup());
 		// Write changes to file.
 		fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
 		fclose(file);

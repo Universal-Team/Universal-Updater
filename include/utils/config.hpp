@@ -113,6 +113,9 @@ public:
 	// Language.
 	std::string language() { return this->v_language; }
 	void language(std::string v) { this->v_language = v; if (!this->changesMade)	this->changesMade = true; }
+	// First startup.
+	bool firstStartup() { return this->v_firstStartup; }
+	void firstStartup(bool v) { this->v_firstStartup = v; if (!this->changesMade)	this->changesMade = true; }
 
 	// Mainly helper.
 	bool getBool(const std::string &key);
@@ -130,7 +133,7 @@ private:
 		v_outdatedColor, v_uptodateColor, v_notfoundColor, v_futureColor;
 	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
 	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
-	bool v_logging, v_useBars, v_screenFade, v_progressDisplay;
+	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup;
 };
 
 #endif

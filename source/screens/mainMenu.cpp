@@ -50,6 +50,7 @@ void MainMenu::Draw(void) const {
 		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, config->textColor(), V_STRING);
 	}
 
+	GFX::DrawSprite(sprites_universal_updater_idx, 110, 30);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
