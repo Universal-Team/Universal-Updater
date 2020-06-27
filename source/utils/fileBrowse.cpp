@@ -1,3 +1,29 @@
+/*
+*   This file is part of Universal-Updater
+*   Copyright (C) 2019-2020 Universal-Team
+*
+*   This program is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*   Additional Terms 7.b and 7.c of GPLv3 apply to this file:
+*       * Requiring preservation of specified reasonable legal notices or
+*         author attributions in that material or in the Appropriate Legal
+*         Notices displayed by works containing it.
+*       * Prohibiting misrepresentation of the origin of that material,
+*         or requiring that modified versions of such material be marked in
+*         reasonable ways as different from the original version.
+*/
+
 #include "common.hpp"
 #include "config.hpp"
 #include "fileBrowse.hpp"
@@ -29,7 +55,7 @@ std::vector<DirEntry> dirContents;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern touchPosition touch;
 
-std::vector<Structs::ButtonPos> buttonPositions = {
+const std::vector<Structs::ButtonPos> buttonPositions = {
 	{295, 0, 25, 25}, // Arrow Up.
 	{295, 215, 25, 25}, // Arrow Down.
 	{15, 220, 50, 15}, // Open.
@@ -178,13 +204,8 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 		GFX::DrawTop();
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
-		if (config->useBars() == true) {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 2, 0.60f, config->textColor(), path, 390);
-			Gui::DrawStringCentered(0, 220, 0.60f, config->textColor(), selectText, 390);
-		} else {
-			Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, config->textColor(), path, 390);
-			Gui::DrawStringCentered(0, 218, 0.60f, config->textColor(), selectText, 390);
-		}
+		Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, config->useBars() ? 0 : 2, 0.60f, config->textColor(), path, 390);
+		Gui::DrawStringCentered(0, config->useBars() ? 220 : 218, 0.60f, config->textColor(), selectText, 390);
 		GFX::DrawBottom();
 		if (config->viewMode() == 0) {
 			for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)dirContents.size(); i++) {
@@ -206,11 +227,7 @@ std::string selectFilePath(std::string selectText, std::string initialPath, cons
 			}
 		}
 
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.45f, config->textColor(), Lang::get("FILEBROWSE_MSG"), 260);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.45f, config->textColor(), Lang::get("FILEBROWSE_MSG"), 260);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.45f, config->textColor(), Lang::get("FILEBROWSE_MSG"), 260);
 		GFX::DrawArrow(295, -1);
 		GFX::DrawArrow(315, 240, 180.0);
 		GFX::DrawSpriteBlend(sprites_view_idx, buttonPositions[6].x, buttonPositions[6].y);

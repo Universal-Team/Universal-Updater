@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -287,17 +287,9 @@ void UniStoreV2::displaySelectedEntry(int selection, int storeIndex) const {
 	Gui::DrawStringCentered(0, 218, 0.7f, this->returnTextColor(), std::to_string(this->downloadPage + 1) + " | " + std::to_string(1 + (this->objects.size() / DOWNLOAD_ENTRIES)));
 
 	if (this->storeJson.at("storeContent").at(selection).at("info").contains("title")) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, this->returnTextColor(), (std::string)this->storeJson.at("storeContent").at(selection).at("info").at("title"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, this->returnTextColor(), (std::string)this->storeJson.at("storeContent").at(selection).at("info").at("title"), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, this->returnTextColor(), (std::string)this->storeJson.at("storeContent").at(selection).at("info").at("title"), 400);
 	} else {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, this->returnTextColor(), "?", 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, this->returnTextColor(), "?", 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, this->returnTextColor(), "?", 400);
 	}
 
 	if (this->storeJson.at("storeContent").at(selection).at("info").contains("author")) {
@@ -359,12 +351,7 @@ void UniStoreV2::displaySelectedEntry(int selection, int storeIndex) const {
 void UniStoreV2::Draw(void) const {
 	if (this->mode == 0) {
 		this->DrawBaseTop();
-
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
 
 		this->DrawGrid();
 
@@ -380,12 +367,7 @@ void UniStoreV2::Draw(void) const {
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	} else if (this->mode == 1) {
 		this->DrawBaseTop();
-
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.6f, this->returnTextColor(), (std::string)this->storeJson.at("storeInfo").at("title"), 400);
 
 		this->DrawList();
 		Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->storePageList + 1) + " | " + std::to_string((this->sortedStore->getSize() / STORE_ENTRIES_LIST)+1));
@@ -421,24 +403,16 @@ void UniStoreV2::DrawSelectMenu(int option) const {
 
 	this->DrawBaseTop();
 
-	if (option == 0) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_AUTHOR"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_AUTHOR"), 400);
-		}
-	} else if (option == 1) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
-		}
-	} else if (option == 2) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.6f, this->returnTextColor(), Lang::get("SELECT_CONSOLE"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CONSOLE"), 400);
-		}
+	switch(option) {
+		case 0:
+			Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_AUTHOR"), 400);
+			break;
+		case 1:
+			Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CATEGORY"), 400);
+			break;
+		case 2:
+			Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.6f, this->returnTextColor(), Lang::get("SELECT_CONSOLE"), 400);
+			break;
 	}
 
 	Gui::DrawStringCentered(0, 218, 0.6f, this->returnTextColor(), std::to_string(this->categoryPage + 1) + " | " + std::to_string((options.size() / DOWNLOAD_ENTRIES)+1));
@@ -455,12 +429,16 @@ void UniStoreV2::DrawSelectMenu(int option) const {
 			Gui::DrawStringCentered(0, downloadBoxes[i].y+4, 0.5f, this->returnTextColor(), options[i + (this->categoryPage * DOWNLOAD_ENTRIES)], 280);
 		}
 	} else {
-		if (option == 0) {
-			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_AUTHORS_AVAILABLE"), 280);
-		} else if (option == 1) {
-			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CATEGORIES_AVAILABLE"), 280);
-		} else if (option == 2) {
-			Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CONSOLES_AVAILABLE"), 280);
+		switch(option) {
+			case 0:
+				Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_AUTHORS_AVAILABLE"), 280);
+				break;
+			case 1:
+				Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CATEGORIES_AVAILABLE"), 280);
+				break;
+			case 2:
+				Gui::DrawStringCentered(0, downloadBoxes[0].y+4, 0.5f, this->returnTextColor(), Lang::get("NO_CONSOLES_AVAILABLE"), 280);
+				break;
 		}
 	}
 }

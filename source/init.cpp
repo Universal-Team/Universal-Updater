@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ bool touching(touchPosition touch, Structs::ButtonPos button) {
 }
 
 void Init::loadSoundEffects(void) {
-	if (dspFound == true) {
+	if (dspFound) {
 		if (access(config->musicPath().c_str(), F_OK ) != -1) {
 			bgm = new sound(config->musicPath(), 1, true);
 			songIsFound = true;
@@ -72,13 +72,13 @@ void Init::loadSoundEffects(void) {
 }
 
 void Init::playMusic(void) {
-	if (songIsFound == true) {
+	if (songIsFound) {
 		bgm->play();
 	}
 }
 
 void Init::stopMusic(void) {
-	if (songIsFound == true) {
+	if (songIsFound) {
 		bgm->stop();
 	}
 }
@@ -109,7 +109,7 @@ Result Init::Initialize() {
 
 	// In case it takes a bit longer to autoboot a script or so.
 	Msg::DisplayStartMSG();
-	if (config->logging() == true) {
+	if (config->logging()) {
 		Logging::createLogFile();
 	}
 
@@ -186,11 +186,11 @@ Result Init::MainLoop() {
 }
 
 Result Init::Exit() {
-	if (songIsFound == true) {
+	if (songIsFound) {
 		stopMusic();
 	}
 	delete bgm;
-	if (dspFound == true) {
+	if (dspFound) {
 		ndspExit();
 	}
 

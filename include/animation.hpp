@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,19 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef ANIMATION_HPP
-#define ANIMATION_HPP
+#ifndef _UNIVERSAL_UPDATER_ANIMATION_HPP
+#define _UNIVERSAL_UPDATER_ANIMATION_HPP
 
 #include <3ds.h>
 #include <string>
 
+enum class ProgressBar {
+	Downloading,
+	Extracting,
+	Installing
+};
+
 namespace Animation {
-	// Downloading Progressbar.
-	void DrawProgressBar(float currentProgress, float totalProgress, int mode);
-	// Extracting progressbar.
-	void DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, int mode);
-	// Installing progressbar.
-	void DrawProgressBarInstall(u64 currentProgress, u64 totalProgress, int mode);
+	// Progressbar.
+	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
 	// Draw Button.
 	void Button(int x, int y, float speed = .030);
 }

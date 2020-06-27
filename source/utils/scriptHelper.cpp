@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 extern bool showProgressBar;
-extern int progressBarType;
+extern ProgressBar progressbarType;
 extern char progressBarMsg[128];
 extern int filesExtracted;
 
@@ -61,6 +61,7 @@ int ScriptHelper::getNum(nlohmann::json json, const std::string &key, const std:
 
 	if (!json.at(key).contains(key2))	return 0;
 	if (!json.at(key).at(key2).is_number())	return 0;
+
 	return json.at(key).at(key2).get_ref<const int64_t&>();
 }
 
@@ -83,7 +84,7 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 	Result ret = NONE;
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
-	progressBarType = 0;
+	progressbarType = ProgressBar::Downloading;
 	Threads::create((ThreadFunc)displayProgressBar);
 	if (downloadToFile(file, output) != 0) {
 		showProgressBar = false;
@@ -112,7 +113,7 @@ Result ScriptHelper::removeFile(std::string file, std::string message) {
 void ScriptHelper::installFile(std::string file, bool updatingSelf, std::string message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
-	progressBarType = 2;
+	progressbarType = ProgressBar::Installing;
 	Threads::create((ThreadFunc)displayProgressBar);
 	installCia(file.c_str(), updatingSelf);
 	showProgressBar = false;
@@ -123,7 +124,7 @@ void ScriptHelper::extractFile(std::string file, std::string input, std::string 
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	filesExtracted = 0;
-	progressBarType = 1;
+	progressbarType = ProgressBar::Extracting;
 	Threads::create((ThreadFunc)displayProgressBar);
 	extractArchive(file, input, output);
 	showProgressBar = false;
@@ -170,13 +171,8 @@ void ScriptHelper::bootTitle(const std::string TitleID, bool isNAND, std::string
 	else		MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
 	u64 ID = std::stoull(TitleID, 0, 16);
 	if (Msg::promptMsg(MSG)) {
-		if (isNAND == true) {
-			Msg::DisplayMsg(message);
-			CIA_LaunchTitle(ID, MEDIATYPE_NAND);
-		} else {
-			Msg::DisplayMsg(message);
-			CIA_LaunchTitle(ID, MEDIATYPE_SD);
-		}
+		Msg::DisplayMsg(message);
+		CIA_LaunchTitle(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
 	}
 }
 
@@ -191,13 +187,13 @@ Result ScriptHelper::prompt(std::string message) {
 
 Result ScriptHelper::copyFile(std::string source, std::string destination, std::string message) {
 	Result ret = NONE;
-	if (access(source.c_str(), F_OK) != 0 ) {
+	if (access(source.c_str(), F_OK) != 0) {
 		return COPY_ERROR;
 	}
 
 	Msg::DisplayMsg(message);
 	// If destination does not exist, create dirs.
-	if (access(destination.c_str(), F_OK) != 0 ) {
+	if (access(destination.c_str(), F_OK) != 0) {
 		makeDirs(destination.c_str());
 	}
 
@@ -207,7 +203,7 @@ Result ScriptHelper::copyFile(std::string source, std::string destination, std::
 
 Result ScriptHelper::renameFile(std::string oldName, std::string newName, std::string message) {
 	Result ret = NONE;
-	if (access(oldName.c_str(), F_OK) != 0 ) {
+	if (access(oldName.c_str(), F_OK) != 0) {
 		return MOVE_ERROR;
 	}
 	

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef SCRIPTCREATOR_HPP
-#define SCRIPTCREATOR_HPP
+#ifndef _UNIVERSAL_UPDATER_SCRIPT_CREATOR_HPP
+#define _UNIVERSAL_UPDATER_SCRIPT_CREATOR_HPP
 
 #include "common.hpp"
 #include "json.hpp"
@@ -37,7 +37,6 @@ class ScriptCreator : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-
 private:
 	std::string entryName = "";
 	

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "colorHelper.hpp"
 #include "common.hpp"
 #include "config.hpp"
-#include "colorHelper.hpp"
 #include <citro2d.h>
 #include <unistd.h>
 

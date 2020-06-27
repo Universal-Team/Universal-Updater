@@ -25,7 +25,6 @@ typedef struct _WavHeader {
 static_assert(sizeof(WavHeader) == 44, "WavHeader size is not 44 bytes.");
 
 sound::sound(const string& path, int channel, bool toloop) {
-
 	ndspSetOutputMode(NDSP_OUTPUT_STEREO);
 	ndspSetOutputCount(2); // Num of buffers
 

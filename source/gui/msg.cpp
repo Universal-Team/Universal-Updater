@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -30,10 +30,7 @@
 extern std::unique_ptr<Config> config;
 extern bool isScriptSelected;
 
-extern u32 barColor;
-extern u32 bgTopColor;
-extern u32 bgBottomColor;
-extern u32 TextColor;
+extern u32 barColor, bgTopColor, bgBottomColor, TextColor;
 
 // I do not think we need that at all.
 void Msg::DisplayStartMSG() {
@@ -61,12 +58,7 @@ void Msg::DisplayMsg(std::string text) {
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
-	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, config->textColor(), text, 395, 70);
-	} else if (isScriptSelected == true) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, TextColor, text, 395, 70);
-	}
-	
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, text))/2, 0.6f, isScriptSelected ? TextColor : config->textColor(), text, 395, 70);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -77,12 +69,7 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
-	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, 1, 0.6f, config->textColor(), Text, 400);
-	} else if (isScriptSelected == true) {
-		Gui::DrawStringCentered(0, 1, 0.6f, TextColor, Text, 400);
-	}
-
+	Gui::DrawStringCentered(0, 1, 0.6f, isScriptSelected ? TextColor : config->textColor(), Text, 400);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 	for (int i = 0; i < 60*3; i++) {
@@ -91,9 +78,9 @@ void Msg::DisplayWarnMsg(std::string Text) {
 }
 
 
-std::vector<Structs::ButtonPos> promptBtn = {
+const std::vector<Structs::ButtonPos> promptBtn = {
 	{10, 100, 140, 35}, // Yes.
-	{170, 100, 140, 35}, // No.
+	{170, 100, 140, 35} // No.
 };
 
 extern touchPosition touch;
@@ -106,26 +93,14 @@ bool Msg::promptMsg(std::string promptMsg) {
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
-	if (isScriptSelected == false) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, config->textColor(), promptMsg, 395, 70);
-		Gui::DrawStringCentered(0, 217, 0.72f, config->textColor(), Lang::get("CONFIRM_OR_CANCEL"), 400);
-	} else if (isScriptSelected == true) {
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, TextColor, promptMsg, 395, 70);
-		Gui::DrawStringCentered(0, 217, 0.72f, TextColor, Lang::get("CONFIRM_OR_CANCEL"), 400);
-	}
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.6f, promptMsg))/2, 0.6f, isScriptSelected ? TextColor : config->textColor(), promptMsg, 395, 70);
+	Gui::DrawStringCentered(0, 217, 0.72f, isScriptSelected ? TextColor : config->textColor(), Lang::get("CONFIRM_OR_CANCEL"), 400);
 
 	GFX::DrawBottom();
-	if (isScriptSelected == false) {
-		Gui::Draw_Rect(10, 100, 140, 35, config->barColor());
-		Gui::Draw_Rect(170, 100, 140, 35, config->barColor());
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, config->textColor(), Lang::get("YES"), 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, config->textColor(), Lang::get("NO"), 140);
-	} else if (isScriptSelected == true) {
-		Gui::Draw_Rect(10, 100, 140, 35, barColor);
-		Gui::Draw_Rect(170, 100, 140, 35, barColor);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, TextColor, Lang::get("YES"), 140);
-		Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, TextColor, Lang::get("NO"), 140);
-	}
+	Gui::Draw_Rect(10, 100, 140, 35, isScriptSelected ? barColor : config->barColor());
+	Gui::Draw_Rect(170, 100, 140, 35, isScriptSelected ? barColor : config->barColor());
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("YES")))/2-150+70, 110, 0.6f, isScriptSelected ? TextColor : config->textColor(), Lang::get("YES"), 140);
+	Gui::DrawString((320-Gui::GetStringWidth(0.6f, Lang::get("NO")))/2+150-70, 110, 0.6f, isScriptSelected ? TextColor : config->textColor(), Lang::get("NO"), 140);
 
 	C3D_FrameEnd(0);
 	while(1) {

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -50,11 +50,7 @@ void FTPScreen::Draw(void) const {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		GFX::DrawTop();
-		if (config->useBars() == true) {
-			Gui::DrawString((400-Gui::GetStringWidth(0.7f, Lang::get("FTP_MODE")))/2, 0, 0.7f, config->textColor(), Lang::get("FTP_MODE"), 400);
-		} else {
-			Gui::DrawString((400-Gui::GetStringWidth(0.7f, Lang::get("FTP_MODE")))/2, 2, 0.7f, config->textColor(), Lang::get("FTP_MODE"), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("FTP_MODE"), 400);
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 		GFX::DrawBottom();
 		GFX::DrawArrow(0, 218, 0, 1);
@@ -64,13 +60,15 @@ void FTPScreen::Draw(void) const {
 			Gui::DrawStringCentered(0, 40, 0.48f, config->textColor(), Lang::get("FTP_INITIALIZED"), 320);
 			snprintf(buf, 137, "IP: %s:5000", R_FAILED(ret)? Lang::get("FAILED_GET_IP").c_str() : hostname);
 
-			if (strlen(ftp_accepted_connection) != 0)
+			if (strlen(ftp_accepted_connection) != 0) {
 				Gui::DrawStringCentered(0, 80, 0.45f, config->textColor(), ftp_accepted_connection, 320);
+			}
 
-			if (strlen(ftp_file_transfer) != 0)
+			if (strlen(ftp_file_transfer) != 0) {
 				Gui::DrawStringCentered(0, 150, 0.45f, config->textColor(), ftp_file_transfer, 320);
-		}
-		else {
+			}
+
+		} else {
 			Gui::DrawStringCentered(0, 40, 0.48f, config->textColor(), Lang::get("FAILED_INITIALIZE_FTP"), 320);
 			snprintf(buf, 18, Lang::get("WIFI_NOT_ENABLED").c_str());
 		}

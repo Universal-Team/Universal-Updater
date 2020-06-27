@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -41,15 +41,8 @@ extern u32 TextColor;
 
 void MainMenu::Draw(void) const {
 	GFX::DrawTop();
-
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 239-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, config->textColor(), V_STRING);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, config->textColor(), V_STRING);
-	}
-
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, config->textColor(), V_STRING);
 	GFX::DrawSprite(sprites_universal_updater_idx, 110, 30);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
@@ -76,7 +69,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	// Navigation.
 	if (hDown & KEY_UP) {
-		if(Selection > 1)	Selection -= 2;
+		if (Selection > 1)	Selection -= 2;
 	} else if (hDown & KEY_DOWN) {
 		if (Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
 	} else if (hDown & KEY_LEFT) {

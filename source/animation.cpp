@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -27,49 +27,18 @@
 #include "common.hpp"
 
 extern bool isScriptSelected;
-extern u32 progressBar;
-extern u32 selected;
+extern u32 progressBar, selected;
+extern ProgressBar progressbarType;
 
 extern std::unique_ptr<Config> config;
 extern C2D_SpriteSheet sprites;
 
 // Draws a Rectangle as the progressbar.
-void Animation::DrawProgressBar(float currentProgress, float totalProgress, int mode) {
+void Animation::DrawProgressBar(u64 currentProgress, u64 totalProgress) {
 	if (config->progressDisplay()) {
 		// Outline of progressbar.
 		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
-
-		if (mode == 1) {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
-		} else {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
-		}
-	}
-}
-
-void Animation::DrawProgressBarInstall(u64 currentProgress, u64 totalProgress, int mode) {
-	if (config->progressDisplay()) {
-		// Outline of progressbar.
-		Gui::Draw_Rect(30, 120, 340, 30, BLACK);
-
-		if (mode == 1) {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
-		} else {
-			Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
-		}
-	}
-}
-
-void Animation::DrawProgressBarExtract(u64 currentProgress, u64 totalProgress, int mode) {
-	if (config->progressDisplay()) {
-		// Outline of progressbar.
-		Gui::Draw_Rect(30, 140, 340, 30, BLACK);
-
-		if (mode == 1) {
-			Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, progressBar);
-		} else {
-			Gui::Draw_Rect(31, 141, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, config->progressbarColor());
-		}
+		Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, isScriptSelected ? progressBar : config->progressbarColor());
 	}
 }
 
@@ -77,15 +46,9 @@ void Animation::Button(int x, int y, float speed) {
 	static float timer	= 0.0f;
 	float highlight_multiplier = fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
 	u8 r, g, b;
-	if (isScriptSelected) {
-		r	= selected & 0xFF;
-		g	= (selected >> 8) & 0xFF;
-		b	= (selected >> 16) & 0xFF;
-	} else {
-		r	= config->selectedColor() & 0xFF;
-		g	= (config->selectedColor() >> 8) & 0xFF;
-		b	= (config->selectedColor() >> 16) & 0xFF;
-	}
+	r	= (isScriptSelected ? selected : config->selectedColor()) & 0xFF;
+	g	= ((isScriptSelected ? selected : config->selectedColor()) >> 8) & 0xFF;
+	b	= ((isScriptSelected ? selected : config->selectedColor()) >> 16) & 0xFF;
 
 	u32 color = C2D_Color32(r + (255 - r) * highlight_multiplier, g + (255 - g) * highlight_multiplier, b + (255 - b) * highlight_multiplier, 255);
 

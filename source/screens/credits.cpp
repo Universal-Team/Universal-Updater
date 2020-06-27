@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -84,11 +84,7 @@ void Credits::Draw(void) const {
 	title += Lang::get("CREDITS");
 	GFX::DrawTop();
 	if (creditsPage != 3) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), title, 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), title, 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), title, 400);
 		Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
 		Gui::DrawStringCentered(0, 60, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
 		GFX::DrawSprite(sprites_stackie_idx, 5, 85);
@@ -113,7 +109,7 @@ void Credits::DrawBottom(void) const {
 	GFX::DrawBottom();
 	if (creditsPage == 0) {
 		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), Lang::get("TRANSLATORS"), 320);
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)Translators.size();i++) {
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)Translators.size(); i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = Translators[screenPos + i];
 			line2 = Languages[screenPos + i];
@@ -125,7 +121,7 @@ void Credits::DrawBottom(void) const {
 		}
 	} else if (creditsPage == 1) {
 		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), "Universal-Team", 320);
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)UniversalTeam.size();i++) {
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)UniversalTeam.size(); i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = UniversalTeam[screenPos + i];
 			if (screenPos + i == Selection) {
@@ -135,7 +131,7 @@ void Credits::DrawBottom(void) const {
 		}
 	} else if (creditsPage == 2) {
 		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), Lang::get("SCRIPTCREATORS"), 320);
-		for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)ScriptCreators.size();i++) {
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)ScriptCreators.size(); i++) {
 			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
 			line1 = ScriptCreators[screenPos + i];
 			line2 = ScriptAmount[screenPos + i];

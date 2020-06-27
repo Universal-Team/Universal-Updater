@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -83,11 +83,7 @@ void ScriptCreator::Draw(void) const {
 
 void ScriptCreator::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SCRIPTCREATOR"), 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("SCRIPTCREATOR"), 400);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("SCRIPTCREATOR"), 400);
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
@@ -107,11 +103,7 @@ void ScriptCreator::DrawSubMenu(void) const {
 
 void ScriptCreator::DrawScriptScreen(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Selected Entry: " + entryName, 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Selected Entry: " + entryName, 400);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Selected Entry: " + entryName, 400);
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();

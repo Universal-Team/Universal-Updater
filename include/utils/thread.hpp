@@ -1,5 +1,5 @@
-#ifndef THREAD_HPP
-#define THREAD_HPP
+#ifndef _UNIVERSAL_UPDATER_THREAD_HPP
+#define _UNIVERSAL_UPDATER_THREAD_HPP
 
 #include <3ds.h>
 #include <vector>

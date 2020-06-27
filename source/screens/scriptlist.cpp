@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -124,13 +124,7 @@ u32 getColor(std::string colorString) {
 }
 
 // Color listing!
-u32 barColor;
-u32 bgTopColor;
-u32 bgBottomColor;
-u32 TextColor;
-u32 selected;
-u32 unselected;
-u32 progressBar;
+u32 barColor, bgTopColor, bgBottomColor, TextColor, selected, unselected, progressBar;
 
 // Load the colors from the script.
 void loadColors(nlohmann::json &json) {
@@ -159,11 +153,7 @@ void loadColors(nlohmann::json &json) {
 
 void ScriptList::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SCRIPTS_SUBMENU"), 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("SCRIPTS_SUBMENU"), 400);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("SCRIPTS_SUBMENU"), 400);
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
@@ -231,13 +221,8 @@ void ScriptList::DrawList(void) const {
 	std::string line2;
 	std::string scriptAmount = std::to_string(Selection +1) + " | " + std::to_string(fileInfo.size());
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 239-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, config->textColor(), scriptAmount);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), 237-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, config->textColor(), scriptAmount);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, scriptAmount), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, scriptAmount), 0.6f, config->textColor(), scriptAmount);
 
 	Gui::DrawStringCentered(0, 80, 0.7f, config->textColor(), Lang::get("TITLE") + std::string(fileInfo[Selection].title), 400);
 	Gui::DrawStringCentered(0, 100, 0.7f, config->textColor(), Lang::get("AUTHOR") + std::string(fileInfo[Selection].author), 400);
@@ -312,14 +297,8 @@ void ScriptList::DrawSingleObject(void) const {
 	std::string info;
 	std::string entryAmount = std::to_string(Selection+1) + " | " + std::to_string(fileInfo2.size());
 	GFX::DrawTop();
-
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, TextColor, selectedTitle, 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, TextColor, selectedTitle, 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, TextColor, selectedTitle, 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 
 	for(uint i = 0; i < lines.size(); i++) {
 		Gui::DrawStringCentered(0, 120-((lines.size()*20)/2)+i*20, 0.6f, TextColor, lines[i], 400);

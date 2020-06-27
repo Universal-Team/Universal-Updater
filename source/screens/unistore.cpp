@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -142,12 +142,7 @@ void UniStore::loadStoreDesc(void) {
 
 void UniStore::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("UNISTORE_SUBMENU"), 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("UNISTORE_SUBMENU"), 400);
-	}
-
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("UNISTORE_SUBMENU"), 400);
 	GFX::DrawSprite(sprites_uniStore_HD_idx, 140, 50, 0.2, 0.2);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
@@ -169,15 +164,9 @@ void UniStore::DrawStoreList(void) const {
 	std::string line2;
 	std::string storeAmount = std::to_string(Selection +1) + " | " + std::to_string(storeInfo.size());
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), storeInfo[Selection].title, 400);
-		Gui::DrawString(5, 220, 0.6f, config->textColor(), Lang::get("UNISTORE_VERSION") + std::to_string(storeInfo[Selection].version), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 239-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, config->textColor(), storeAmount);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), storeInfo[Selection].title, 400);
-		Gui::DrawString(5, 218, 0.6f, config->textColor(), Lang::get("UNISTORE_VERSION") + std::to_string(storeInfo[Selection].version), 400);
-		Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), 237-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, config->textColor(), storeAmount);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), storeInfo[Selection].title, 400);
+	Gui::DrawString(5, config->useBars() ? 220 : 218, 0.6f, config->textColor(), Lang::get("UNISTORE_VERSION") + std::to_string(storeInfo[Selection].version), 400);
+	Gui::DrawString(397-Gui::GetStringWidth(0.6f, storeAmount), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, storeAmount), 0.6f, config->textColor(), storeAmount);
 
 	for(uint i = 0; i < descLines.size(); i++) {
 		Gui::DrawStringCentered(0, 120-((descLines.size()*20)/2)+i*20, 0.6f, config->textColor(), descLines[i], 400);
@@ -755,7 +744,9 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Selection = 0;
 			mode = 4;
 		} else if (Selection == 2) {
-			ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", config->storePath() + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+			if (Msg::promptMsg("TinyDB might be down. This would lead to Download Failed!\nDo you still like to continue?")) {
+				ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", config->storePath() + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+			}
 		} else if (Selection == 3) {
 			ScriptHelper::downloadFile("https://db.universal-team.net/unistore/universal-db.unistore", config->storePath() + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 		}
@@ -768,7 +759,9 @@ void UniStore::SearchLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		Selection = 0;
 		mode = 4;
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[2])) {
-		ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", config->storePath() + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+		if (Msg::promptMsg("TinyDB might be down. This would lead to Download Failed!\nDo you still like to continue?")) {
+			ScriptHelper::downloadFile("https://tinydb.eiphax.tech/api/tinydb.unistore", config->storePath() + "TinyDB.unistore", Lang::get("DOWNLOADING") + "TinyDB");
+		}
 	} else if (hDown & KEY_TOUCH && touching(touch, URLBtn[3])) {
 		ScriptHelper::downloadFile("https://db.universal-team.net/unistore/universal-db.unistore", config->storePath() + "Universal-DB.unistore", Lang::get("DOWNLOADING") + "Universal DB");
 	}

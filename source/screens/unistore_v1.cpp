@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -34,16 +34,9 @@
 extern std::unique_ptr<Config> config;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern u32 getColor(std::string colorString);
-extern bool isScriptSelected;
 
-extern u32 barColor;
-extern u32 bgTopColor;
-extern u32 bgBottomColor;
-extern u32 TextColor;
-extern u32 progressBar;
-extern u32 selected;
-extern u32 unselected;
-extern bool didAutoboot;
+extern u32 barColor, bgTopColor, bgBottomColor, TextColor, progressBar, selected, unselected;
+extern bool didAutoboot, isScriptSelected;
 
 UniStoreV1::UniStoreV1(nlohmann::json &JSON, const std::string sheetPath, bool displayInf) {
 	this->storeJson = JSON;
@@ -123,13 +116,8 @@ void UniStoreV1::Draw(void) const {
 	}
 
 	if (displayInformations != false) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, std::string(this->storeJson["storeInfo"]["title"]), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 239-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, std::string(this->storeJson["storeInfo"]["title"]), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), 237-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, TextColor, std::string(this->storeJson["storeInfo"]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, entryAmount), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, entryAmount), 0.6f, TextColor, entryAmount);
 
 		Gui::DrawStringCentered(0, 32, 0.6f, TextColor, Lang::get("TITLE") + std::string(this->storeJson["storeContent"][Selection]["info"]["title"]), 400);
 		Gui::DrawStringCentered(0, 57, 0.6f, TextColor, Lang::get("AUTHOR") + std::string(this->storeJson["storeContent"][Selection]["info"]["author"]), 400);

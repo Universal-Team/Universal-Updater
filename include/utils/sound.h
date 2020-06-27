@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef _UNIVERSAL_UPDATER_SOUND_H
+#define _UNIVERSAL_UPDATER_SOUND_H
 
 #include <3ds.h>
 #include <string>

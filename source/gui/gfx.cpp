@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,50 +29,27 @@
 
 extern std::unique_ptr<Config> config;
 extern bool isScriptSelected;
-extern u32 barColor;
-extern u32 bgTopColor;
-extern u32 bgBottomColor;
-extern u32 TextColor;
+extern u32 barColor, bgTopColor, bgBottomColor, TextColor;
 
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	if (isScriptSelected == false) {
-		Gui::Draw_Rect(0, 0, 400, 25, config->barColor());
-		Gui::Draw_Rect(0, 25, 400, 190, config->topBG());
-		Gui::Draw_Rect(0, 215, 400, 25, config->barColor());
-		if (config->useBars() == true) {
-			DrawSprite(sprites_top_screen_top_idx, 0, 0);
-			DrawSprite(sprites_top_screen_bot_idx, 0, 215);
-		}
-	} else if (isScriptSelected == true) {
-		Gui::Draw_Rect(0, 0, 400, 30, barColor);
-		Gui::Draw_Rect(0, 25, 400, 190, bgBottomColor);
-		Gui::Draw_Rect(0, 215, 400, 25, barColor);
-		if (config->useBars() == true) {
-			DrawSprite(sprites_top_screen_top_idx, 0, 0);
-			DrawSprite(sprites_top_screen_bot_idx, 0, 215);
-		}
+	Gui::Draw_Rect(0, 0, 400, 25, isScriptSelected ? barColor : config->barColor());
+	Gui::Draw_Rect(0, 25, 400, 190, isScriptSelected ? bgTopColor : config->topBG());
+	Gui::Draw_Rect(0, 215, 400, 25, isScriptSelected ? barColor : config->barColor());
+	if (config->useBars()) {
+		DrawSprite(sprites_top_screen_top_idx, 0, 0);
+		DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 	}
 }
 
 void GFX::DrawBottom(void) {
 	Gui::ScreenDraw(Bottom);
-	if (isScriptSelected == false) {
-		Gui::Draw_Rect(0, 0, 320, 25, config->barColor());
-		Gui::Draw_Rect(0, 25, 320, 190, config->bottomBG());
-		Gui::Draw_Rect(0, 215, 320, 25, config->barColor());
-		if (config->useBars() == true) {
-			DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
-			DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
-		}
-	} else if (isScriptSelected == true) {
-		Gui::Draw_Rect(0, 0, 320, 30, barColor);
-		Gui::Draw_Rect(0, 25, 320, 190, bgBottomColor);
-		Gui::Draw_Rect(0, 215, 320, 25, barColor);
-		if (config->useBars() == true) {
-			DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
-			DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
-		}
+	Gui::Draw_Rect(0, 0, 320, 25, isScriptSelected ? barColor : config->barColor());
+	Gui::Draw_Rect(0, 25, 320, 190, isScriptSelected ? bgBottomColor : config->bottomBG());
+	Gui::Draw_Rect(0, 215, 320, 25, isScriptSelected ? barColor : config->barColor());
+	if (config->useBars()) {
+		DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
+		DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
 	}
 }
 
@@ -84,17 +61,10 @@ void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 
 void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
 	C2D_ImageTint tint;
-	if (isScriptSelected) {
-		C2D_SetImageTint(&tint, C2D_TopLeft, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, TextColor, 0.5);
-	} else {
-		C2D_SetImageTint(&tint, C2D_TopLeft, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, config->textColor(), 0.5);	
-	}
+	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);	
 
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, img), x, y, 0.5f, &tint, ScaleX, ScaleY);
 }
@@ -102,17 +72,10 @@ void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
 void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
 	C2D_Sprite sprite;
 	C2D_ImageTint tint;
-	if (isScriptSelected) {
-		C2D_SetImageTint(&tint, C2D_TopLeft, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, TextColor, 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, TextColor, 0.5);
-	} else {
-		C2D_SetImageTint(&tint, C2D_TopLeft, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_TopRight, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_BotLeft, config->textColor(), 0.5);
-		C2D_SetImageTint(&tint, C2D_BotRight, config->textColor(), 0.5);
-	}
+	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
+	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
 
 	if (arrowSprite == 0) {
 		C2D_SpriteFromSheet(&sprite, sprites, sprites_arrow_idx);
@@ -134,11 +97,5 @@ void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
 	C2D_SetImageTint(&tint, C2D_BotLeft, color, 0.5);
 	C2D_SetImageTint(&tint, C2D_BotRight, color, 0.5);
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_button_idx), x, y, 0.5f, &tint);
-
-	// Draw String. TODO: Center.
-	if (isScriptSelected) {
-		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, TextColor, ButtonText, 145, 30);
-	} else {
-		Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, config->textColor(), ButtonText, 145, 30);
-	}
+	Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, isScriptSelected ? TextColor : config->textColor(), ButtonText, 145, 30);
 }

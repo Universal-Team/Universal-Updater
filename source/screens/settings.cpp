@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -51,12 +51,7 @@ void Settings::Draw(void) const {
 
 void Settings::DrawSubMenu(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-	}
-
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);
@@ -88,11 +83,7 @@ const std::vector<std::string> languages = {
 void Settings::DrawLanguageSelection(void) const {
 	std::string line1;
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
 
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
@@ -128,11 +119,7 @@ const std::vector<std::string> colorList = {
 void Settings::DrawColorChanging(void) const {
 	std::string line1;
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-	}
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
 
 	if (!dropDownMenu) {
 		if (colorMode == 3) {
@@ -233,12 +220,7 @@ void Settings::DrawColorChanging(void) const {
 
 void Settings::DrawMiscSettings(void) const {
 	GFX::DrawTop();
-	if (config->useBars() == true) {
-		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), "Universal-Updater", 400);
-	} else {
-		Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-	}
-
+	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 	GFX::DrawBottom();
 	GFX::DrawArrow(0, 218, 0, 1);

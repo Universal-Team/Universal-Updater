@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ extern int filesExtracted;
 extern std::string extractingFile;
 char progressBarMsg[128] = "";
 bool showProgressBar = false;
-int progressBarType = 0; // 0 = Download | 1 = Extract | 2 = Install
+ProgressBar progressbarType = ProgressBar::Downloading;
 
 // That are our extract Progressbar variables.
 extern u64 extractSize, writeOffset;
@@ -351,13 +351,8 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 239-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), 237-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, TextColor, Lang::get("VERSION_SELECT"), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, releaseAmount), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, releaseAmount), 0.6f, TextColor, releaseAmount);
 		// Display Informations.
 		Gui::DrawStringCentered(0, 35, 0.7f, TextColor, Lang::get("TAG_NAME") + std::string(bruh[selectedRelease].TagName), 400);
 		Gui::DrawStringCentered(0, 65, 0.7f, TextColor, Lang::get("TARGET") + std::string(bruh[selectedRelease].Target), 400);
@@ -570,6 +565,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 				}
 			}
 		}
+
 		if (parsedAPI.size() == 0) {
 			// All were prereleases and those are being ignored
 			return -2; // TODO: Maybe change this? I'm note sure what good return values are -Pk11
@@ -615,7 +611,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	} else {
 		snprintf(progressBarMsg, sizeof(progressBarMsg), Message.c_str());
 		showProgressBar = true;
-		progressBarType = 0;
+		progressbarType = ProgressBar::Downloading;
 		Threads::create((ThreadFunc)displayProgressBar);
 		ret = downloadToFile(assetUrl, path);
 	}
@@ -850,89 +846,53 @@ void displayProgressBar() {
 			downloadTotal = downloadNow;
 		}
 
-		if (progressBarType == 0)	curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed); // Get download speed.
+		if (progressbarType == ProgressBar::Downloading)	curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed); // Get download speed.
 
-		// Downloading.
-		if (progressBarType == 0){
-			snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
-					formatBytes(downloadNow).c_str(),
-					formatBytes(downloadTotal).c_str(),
-					((float)downloadNow/(float)downloadTotal) * 100.0f, 
-					Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed / 1000), Lang::get("KB_PER_SECOND").c_str());
-					// Extracting.
-		} else if (progressBarType == 1) {
-			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-					formatBytes(writeOffset).c_str(),
-					formatBytes(extractSize).c_str(),
-					((float)writeOffset/(float)extractSize) * 100.0f);
-			// Installing.
-		} else if (progressBarType == 2){
-			snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-					formatBytes(installOffset).c_str(),
-					formatBytes(installSize).c_str(),
-					((float)installOffset/(float)installSize) * 100.0f);
-		};
+		switch(progressbarType) {
+			case ProgressBar::Downloading:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
+						formatBytes(downloadNow).c_str(),
+						formatBytes(downloadTotal).c_str(),
+						((float)downloadNow/(float)downloadTotal) * 100.0f, 
+						Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed / 1000), Lang::get("KB_PER_SECOND").c_str());
+				break;
+			case ProgressBar::Extracting:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						formatBytes(writeOffset).c_str(),
+						formatBytes(extractSize).c_str(),
+						((float)writeOffset/(float)extractSize) * 100.0f);
+				break;
+			case ProgressBar::Installing:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						formatBytes(installOffset).c_str(),
+						formatBytes(installSize).c_str(),
+						((float)installOffset/(float)installSize) * 100.0f);
+				break;
+		}
 
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		// Display this by all.
-		if (isScriptSelected == true) {
-			Gui::DrawStringCentered(0, 1, 0.7f, TextColor, progressBarMsg, 400);
-		} else {
-			Gui::DrawStringCentered(0, 1, 0.7f, config->textColor(), progressBarMsg, 400);
-		}
+		Gui::DrawStringCentered(0, 1, 0.7f, isScriptSelected ? TextColor : config->textColor(), progressBarMsg, 400);
 
 		// Only display this by downloading.
-		if (progressBarType == 0) {
-			if (isScriptSelected == true) {
-				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
-			} else {
-				Gui::DrawStringCentered(0, 80, 0.6f, config->textColor(), str, 400);
-			}
-
-			if (isScriptSelected == true) {
-				Animation::DrawProgressBar(downloadNow, downloadTotal, 1);
-			} else {
-				Animation::DrawProgressBar(downloadNow, downloadTotal, 2);
-			}
-		}
-
-		// Only Display this by extracting.
-		if (progressBarType == 1) {
-			// Text.
-			if (isScriptSelected == true) {
-				Gui::DrawStringCentered(0, 180, 0.6f, TextColor, str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, TextColor, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, TextColor, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
-			} else {
-				Gui::DrawStringCentered(0, 180, 0.6f, config->textColor(), str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, config->textColor(), std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, config->textColor(), Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
-			}
-			// Progressbar.
-			if (isScriptSelected == true) {
-				Animation::DrawProgressBarExtract(writeOffset, extractSize, 1);
-			} else {
-				Animation::DrawProgressBarExtract(writeOffset, extractSize, 2);
-			}
-		}
-
-		// Only display this by installing.
-		if (progressBarType == 2) {
-			if (isScriptSelected == true) {
-				Gui::DrawStringCentered(0, 80, 0.6f, TextColor, str, 400);
-			} else {
-				Gui::DrawStringCentered(0, 80, 0.6f, config->textColor(), str, 400);
-			}
-
-			if (isScriptSelected == true) {
-				Animation::DrawProgressBarInstall(installOffset, installSize, 1);
-			} else {
-				Animation::DrawProgressBarInstall(installOffset, installSize, 2);
-			}
+		switch(progressbarType) {
+			case ProgressBar::Downloading:
+				Gui::DrawStringCentered(0, 80, 0.6f, isScriptSelected ? TextColor : config->textColor(), str, 400);
+				Animation::DrawProgressBar(downloadNow, downloadTotal);
+				break;
+			case ProgressBar::Extracting:
+				Gui::DrawStringCentered(0, 180, 0.6f, isScriptSelected ? TextColor : config->textColor(), str, 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, isScriptSelected ? TextColor : config->textColor(), std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, isScriptSelected ? TextColor : config->textColor(), Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+				Animation::DrawProgressBar(writeOffset, extractSize);
+				break;
+			case ProgressBar::Installing:
+				Gui::DrawStringCentered(0, 80, 0.6f, isScriptSelected ? TextColor : config->textColor(), str, 400);
+				Animation::DrawProgressBar(installOffset, installSize);
+				break;
 		}
 		GFX::DrawBottom();
 		C3D_FrameEnd(0);

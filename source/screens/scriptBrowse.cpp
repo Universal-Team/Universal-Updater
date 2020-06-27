@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -152,14 +152,8 @@ void ScriptBrowse::DrawBrowse(void) const {
 		std::string revision = std::to_string(int64_t(infoJson[Selection]["curRevision"]));
 		revision += " | ";
 		revision += std::to_string(int64_t(infoJson[Selection]["revision"]));
-
-		if (config->useBars() == true) {
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 239-Gui::GetStringHeight(0.6f, revision), 0.6f, config->textColor(), revision);
-			Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), std::string(infoJson[Selection]["title"]), 400);
-		} else {
-			Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), 237-Gui::GetStringHeight(0.6f, revision), 0.6f, config->textColor(), revision);
-			Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), std::string(infoJson[Selection]["title"]), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), std::string(infoJson[Selection]["title"]), 400);
+		Gui::DrawString(397-Gui::GetStringWidth(0.6f, revision), (config->useBars() ? 239 : 237)-Gui::GetStringHeight(0.6f, revision), 0.6f, config->textColor(), revision);
 
 		Gui::DrawStringCentered(0, 120, 0.6f, config->textColor(), std::string(infoJson[Selection]["shortDesc"]), 400);
 		if (infoJson[Selection]["curRevision"] == -1) {
@@ -262,11 +256,7 @@ void ScriptBrowse::DrawBrowse(void) const {
 void ScriptBrowse::DrawGlossary(void) const {
 	GFX::DrawTop();
 	if (loaded) {
-		if (config->useBars() == true) {
-			Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("GLOSSARY"), 400);
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.7f, config->textColor(), Lang::get("GLOSSARY"), 400);
-		}
+		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("GLOSSARY"), 400);
 
 		Gui::Draw_Rect(20, 30, 30, 30, config->notfoundColor());
 		Gui::DrawString(65, 35, 0.7f, config->textColor(), Lang::get("SCRIPT_NOT_FOUND"), 300);
@@ -360,7 +350,7 @@ void ScriptBrowse::DropDownLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void ScriptBrowse::downloadAll() {
-	if (infoJson.size() != 0) {
+	if (infoJson.size() > 0) {
 		for (int i = 0; i < (int)infoJson.size(); i++) {
 			int current = i+1;
 			int total = infoJson.size();

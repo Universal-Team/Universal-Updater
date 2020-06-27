@@ -1,6 +1,5 @@
 #include "files.h"
 
-
 FS_Path getPathInfo(const char * path, FS_ArchiveID * archive) {
 	*archive = ARCHIVE_SDMC;
 	FS_Path filePath = {0};
@@ -8,8 +7,7 @@ FS_Path getPathInfo(const char * path, FS_ArchiveID * archive) {
 
 	if (!strncmp(path, "sdmc:/", 6)) {
 		prefixlen = 5;
-	}
-	else if (*path != '/') {
+	} else if (*path != '/') {
 		//if the path is local (doesnt start with a slash), it needs to be appended to the working dir to be valid
 		char * actualPath = NULL;
 		asprintf(&actualPath, "%s%s", WORKING_DIR, path);
@@ -18,8 +16,9 @@ FS_Path getPathInfo(const char * path, FS_ArchiveID * archive) {
 	}
 
 	//if the filePath wasnt set above, set it
-	if (filePath.size == 0)
+	if (filePath.size == 0) {
 		filePath = fsMakePath(PATH_ASCII, path+prefixlen);
+	}
 
 	return filePath;
 }
