@@ -38,9 +38,11 @@ const std::vector<std::string> Translators = {
 	"David Pires",
 	"FlameKat53",
 	"lemonnade0",
+	"LinuxCat",
+	"Pavel",
 	"Pk11",
 	"Roby Spia",
-	"SuperSaiyajinStackie",
+	"SuperSaiyajinStackZ",
 	"XDgierman",
 	"YoSoy",
 	"XxPhoenix1996xX"
@@ -55,12 +57,14 @@ const std::vector<std::string> Languages = {
 	"Português",
 	"Bruh",
 	"Lietuvių",
+	"Français",
+	"Русский",
 	"日本語",
 	"Italiano",
 	"Deutsch, English",
 	"Polski",
 	"Español",
-	"Español"
+	"Español, Italian, Portuguese"
 };
 
 // Universal-Team Page 2.
@@ -69,13 +73,13 @@ const std::vector<std::string> UniversalTeam = {
 	"FlameKat53",
 	"Pk11",
 	"RocketRobz",
-	"SuperSaiyajinStackie",
+	"SuperSaiyajinStackZ",
 	"TotallyNotGuy"
 };
 
 // Script Page 3.
 const std::vector<std::string> ScriptCreators = {
-	"cooolgamer", "DualBladedKirito", "Glazed_Belmont", "Pk11", "SuperSaiyajinStackie", "The Conceptionist", "YoSoy"
+	"cooolgamer", "DualBladedKirito", "Glazed_Belmont", "Pk11", "SuperSaiyajinStackZ", "The Conceptionist", "YoSoy"
 };
 const std::vector<std::string> ScriptAmount = {"1", "1", "1", "1", "5", "10", "1 | 2"};
 
@@ -87,7 +91,7 @@ void Credits::Draw(void) const {
 		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), title, 400);
 		Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
 		Gui::DrawStringCentered(0, 60, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
-		GFX::DrawSprite(sprites_stackie_idx, 5, 85);
+		GFX::DrawSprite(sprites_stackZ_idx, 5, 85);
 		GFX::DrawSprite(sprites_universal_core_idx, 200, 110);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
