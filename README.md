@@ -4,15 +4,16 @@
 </p>
 
 <p align="center">
-	<a href="https://dev.azure.com/universal-team/Builds/_build?definitionId=13" style="padding-right: 5px;">
-		<img src="https://dev.azure.com/Universal-Team/Builds/_apis/build/status/Universal-Team.Universal-Updater%20(1)?branchName=master" height="20">
-	</a>
 	<a href="https://discord.gg/KDJCfGF" style="padding-left: 5px; padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord-Server-blue.svg" height="20">
 	</a>
 	<a href="https://gbatemp.net/threads/release-universal-updater-a-universally-good-updater.551824/" style="padding-left: 5px;">
 		<img src="https://img.shields.io/badge/GBATemp-thread-blue.svg" height="20">
 	</a>
+	<a href="https://dev.azure.com/universal-team/Builds/_build?definitionId=13" style="padding-right: 5px;">
+		<img src="https://dev.azure.com/Universal-Team/Builds/_apis/build/status/Universal-Team.Universal-Updater%20(1)?branchName=master" height="20">
+	</a>
+	<a title="Crowdin" target="_blank" href="https://crowdin.com/project/universal-updater"><img src="https://badges.crowdin.net/universal-updater/localized.svg" alt="Translation status on Crowdin"></a>
 </p>
 
 ## Features
