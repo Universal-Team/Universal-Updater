@@ -24,7 +24,6 @@ Universal-Updater is packed with features! Some include the JSON script updater,
 - JSON Script Downloader
 - An App Store, the UniStore
 - A Settings page, for configuring Universal-Updater Settings
-- An FTP Server
 
 
 ## Compilation
