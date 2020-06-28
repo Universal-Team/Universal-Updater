@@ -25,7 +25,7 @@
 */
 
 #include "config.hpp"
-#include "ftpScreen.hpp"
+#include "credits.hpp"
 #include "mainMenu.hpp"
 #include "scriptHelper.hpp"
 #include "scriptlist.hpp"
@@ -51,7 +51,7 @@ void MainMenu::Draw(void) const {
 	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, "UniStore");
 	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("SCRIPTS"));
 	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("SETTINGS"));
-	GFX::DrawButton(mainButtons[3].x, mainButtons[3].y, "FTP");
+	GFX::DrawButton(mainButtons[3].x, mainButtons[3].y, Lang::get("CREDITS"));
 	// Selector.
 	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
 
@@ -90,7 +90,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<Settings>(), config->screenFade(), true);
 				break;
 			case 3:
-				Gui::setScreen(std::make_unique<FTPScreen>(), false, true);
+				Gui::setScreen(std::make_unique<Credits>(), config->screenFade(), true);
 				break;
 		}
 	}
@@ -103,7 +103,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		} else if (touching(touch, mainButtons[2])) {
 			Gui::setScreen(std::make_unique<Settings>(), config->screenFade(), true);
 		} else if (touching(touch, mainButtons[3])) {
-			Gui::setScreen(std::make_unique<FTPScreen>(), false, true);
+			Gui::setScreen(std::make_unique<Credits>(), config->screenFade(), true);
 		}
 	}
 }

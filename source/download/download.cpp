@@ -69,9 +69,10 @@ extern u32 selected;
 extern u32 unselected;
 
 CURL *hnd; // Needed to display download speed properly?
+CURLcode curlResult;
+
 curl_off_t downloadTotal = 1; //Dont initialize with 0 to avoid division by zero later
 curl_off_t downloadNow = 0;
-curl_off_t downloadSpeed = 0;
 
 static FILE *downfile = NULL;
 static size_t file_buffer_pos = 0;
@@ -152,12 +153,9 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 }
 
 Result downloadToFile(std::string url, std::string path) {
-
 	Result retcode = 0;
 	downloadTotal = 1;
-	downloadNow = 0;
 	int res;
-	CURLcode cres;
 
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
 	const char* filepath = path.c_str();
@@ -197,12 +195,11 @@ Result downloadToFile(std::string url, std::string path) {
 	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
 
-	cres = curl_easy_perform(hnd);
-	downloadSpeed = 0;
+	curlResult = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	
-	if (cres != CURLE_OK) {
-		retcode = -cres;
+	if (curlResult != CURLE_OK) {
+		retcode = -curlResult;
 		goto exit;
 	}
 
@@ -216,6 +213,7 @@ Result downloadToFile(std::string url, std::string path) {
 		retcode = -3;
 		goto exit;
 	}
+
 	fflush(downfile);
 	
 exit:
@@ -232,23 +230,26 @@ exit:
 	if (socubuf) {
 		free(socubuf);
 	}
+
 	if (downfile) {
 		fclose(downfile);
 		downfile = NULL;
 	}
+
 	if (g_buffers[0]) {
 		free(g_buffers[0]);
 		g_buffers[0] = NULL;
 	}
+
 	if (g_buffers[1]) {
 		free(g_buffers[1]);
 		g_buffers[1] = NULL;
 	}
+
 	g_index = 0;
 	file_buffer_pos = 0;
 	file_toCommit_size = 0;
 	writeError = false;
-	
 	return retcode;
 }
 
@@ -456,16 +457,16 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 
 		if (hDown & KEY_TOUCH) {
 			if (config->viewMode() == 0) {
-				for(int i=0;i<ENTRIES_PER_SCREEN && i<(int)bruh.size(); i++) {
-					if(touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
+				for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)bruh.size(); i++) {
+					if (touch.py > 40+(i*57) && touch.py < 40+(i*57)+45) {
 						if (bruh.size() != 0) {
 							return screenPos + i;
 						}
 					}
 				}
 			} else if (config->viewMode() == 1) {
-				for(int i=0;i<ENTRIES_PER_LIST && i<(int)bruh.size(); i++) {
-					if(touch.py > (i+1)*27 && touch.py < (i+2)*27) {
+				for(int i = 0; i < ENTRIES_PER_LIST && i < (int)bruh.size(); i++) {
+					if (touch.py > (i+1)*27 && touch.py < (i+2)*27) {
 						if (bruh.size() != 0) {
 							return screenPosList + i;
 						}
@@ -475,13 +476,13 @@ int SelectRelease(std::vector<ReleaseFetch> bruh) {
 		}
 
 		if (config->viewMode() == 0) {
-			if(selectedRelease < screenPos) {
+			if (selectedRelease < screenPos) {
 				screenPos = selectedRelease;
 			} else if (selectedRelease > screenPos + ENTRIES_PER_SCREEN - 1) {
 				screenPos = selectedRelease - ENTRIES_PER_SCREEN + 1;
 			}
 		} else if (config->viewMode() == 1) {
-			if(selectedRelease < screenPosList) {
+			if (selectedRelease < screenPosList) {
 				screenPosList = selectedRelease;
 			} else if (selectedRelease > screenPosList + ENTRIES_PER_LIST - 1) {
 				screenPosList = selectedRelease - ENTRIES_PER_LIST + 1;
@@ -606,6 +607,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	result_buf = NULL;
 	result_sz = 0;
 	result_written = 0;
+
 	if (assetUrl.empty()) {
 		ret = DL_ERROR_GIT;
 	} else {
@@ -839,22 +841,32 @@ std::string getLatestCommit(std::string repo, std::string array, std::string ite
 void displayProgressBar() {
 	char str[256];
 	while(showProgressBar) {
-		if (downloadTotal < 1.0f) {
-			downloadTotal = 1.0f;
-		}
-		if (downloadTotal < downloadNow) {
-			downloadTotal = downloadNow;
-		}
-
-		if (progressbarType == ProgressBar::Downloading)	curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed); // Get download speed.
-
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
-				snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
-						formatBytes(downloadNow).c_str(),
-						formatBytes(downloadTotal).c_str(),
-						((float)downloadNow/(float)downloadTotal) * 100.0f, 
-						Lang::get("DOWNLOAD_SPEED").c_str(), (downloadSpeed / 1000), Lang::get("KB_PER_SECOND").c_str());
+				if (downloadTotal < 1.0f) {
+					downloadTotal = 1.0f;
+				}
+
+				if (downloadTotal < downloadNow) {
+					downloadTotal = downloadNow;
+				}
+
+				if (!curlResult) {
+					curl_off_t speed;
+					curlResult = curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &speed);
+					if (!curlResult) {
+						snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
+								formatBytes(downloadNow).c_str(),
+								formatBytes(downloadTotal).c_str(),
+								((float)downloadNow/(float)downloadTotal) * 100.0f,
+								Lang::get("DOWNLOAD_SPEED").c_str(), (speed / 1000), Lang::get("KB_PER_SECOND").c_str());
+					} else {
+						snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s",
+								formatBytes(downloadNow).c_str(),
+								formatBytes(downloadTotal).c_str(),
+								((float)downloadNow/(float)downloadTotal) * 100.0f);
+					}
+				}
 				break;
 			case ProgressBar::Extracting:
 				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",

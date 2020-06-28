@@ -24,7 +24,6 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "credits.hpp"
 #include "keyboard.hpp"
 #include "settings.hpp"
 
@@ -59,7 +58,7 @@ void Settings::DrawSubMenu(void) const {
 
 	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("LANGUAGE"));
 	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("COLORS"));
-	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CREDITS"));
+	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_BAR_STYLE"));
 	// Selector.
 	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
@@ -97,6 +96,7 @@ void Settings::DrawLanguageSelection(void) const {
 
 		Gui::DrawStringCentered(0, 50+(i*57), 0.7f, config->textColor(), line1, 320);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
@@ -215,6 +215,7 @@ void Settings::DrawColorChanging(void) const {
 			GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, ColorHelper::getColorName(config->buttonColor(), 0).c_str(), C2D_Color32(0, 0, 255, 255));
 		}
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
@@ -226,9 +227,8 @@ void Settings::DrawMiscSettings(void) const {
 	GFX::DrawArrow(0, 218, 0, 1);
 
 	GFX::DrawButton(mainButtons2[0].x, mainButtons2[0].y, Lang::get("CHANGE_MUSICFILE"));
-	GFX::DrawButton(mainButtons2[1].x, mainButtons2[1].y, Lang::get("CHANGE_BAR_STYLE"));
-	GFX::DrawButton(mainButtons2[2].x, mainButtons2[2].y, Lang::get("CHANGE_KEY_DELAY"));
-	GFX::DrawButton(mainButtons2[3].x, mainButtons2[3].y, Lang::get("TOGGLE_FADE"));
+	GFX::DrawButton(mainButtons2[1].x, mainButtons2[1].y, Lang::get("CHANGE_KEY_DELAY"));
+	GFX::DrawButton(mainButtons2[2].x, mainButtons2[2].y, Lang::get("TOGGLE_FADE"));
 
 	// Selector.
 	Animation::Button(mainButtons2[Selection].x, mainButtons2[Selection].y, .060);
@@ -241,27 +241,19 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
 			if (tempMusic != "") {
 				config->musicPath(tempMusic);
-				changesMade = true;
 			}
 		} else if (Selection == 1) {
-			if (config->useBars() == true)	config->useBars(false);
-			else if (config->useBars() == false)	config->useBars(true);
-			changesMade = true;
-		} else if (Selection == 2) {
 			config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
-			changesMade = true;
-		} else if (Selection == 3) {
+		} else if (Selection == 2) {
 			if (config->screenFade()) {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
 					config->screenFade(false);
 					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-					changesMade = true;
 				}
 			} else {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
 					config->screenFade(true);
 					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-					changesMade = true;
 				}
 			}
 		}
@@ -272,27 +264,19 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
 			if (tempMusic != "") {
 				config->musicPath(tempMusic);
-				changesMade = true;
 			}
 		} else if (touching(touch, mainButtons2[1])) {
-			if (config->useBars() == true)	config->useBars(false);
-			else if (config->useBars() == false)	config->useBars(true);
-			changesMade = true;
-		} else if (touching(touch, mainButtons2[2])) {
 			config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
-			changesMade = true;
-		} else if (touching(touch, mainButtons2[3])) {
+		} else if (touching(touch, mainButtons2[2])) {
 			if (config->screenFade()) {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
 					config->screenFade(false);
 					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-					changesMade = true;
 				}
 			} else {
 				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
 					config->screenFade(true);
 					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-					changesMade = true;
 				}
 			}
 		}
@@ -307,15 +291,13 @@ void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_SELECT) {
 		if (config->progressDisplay()) {
 			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_DISABLE"))) {
-					config->progressDisplay(false);
-					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-					changesMade = true;
+				config->progressDisplay(false);
+				Msg::DisplayWarnMsg(Lang::get("DISABLED"));
 			}
 		} else {
 			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_ENABLE"))) {
 				config->progressDisplay(true);
 				Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-				changesMade = true;
 			}
 		}
 	}
@@ -354,7 +336,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				mode = 2;
 				break;
 			case 2:
-				Gui::setScreen(std::make_unique<Credits>(), config->screenFade(), true);
+				if (config->useBars())	config->useBars(false);
+				else	config->useBars(true);
 				break;
 		}
 	}
@@ -368,7 +351,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			screenPos = 0;
 			mode = 2;
 		} else if (touching(touch, mainButtons[2])) {
-			Gui::setScreen(std::make_unique<Credits>(), config->screenFade(), true);
+			if (config->useBars())	config->useBars(false);
+			else	config->useBars(true);
 		}
 	}
 
@@ -410,7 +394,6 @@ void Settings::LanguageSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_A) {
 		config->language(langsTemp[selectedLang]);
 		Lang::load(config->language());
-		changesMade = true;
 		mode = 0;
 	}
 
@@ -459,7 +442,6 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 	} else {
-
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 			colorSelection = colorMode;
 			dropDownMenu = true;
@@ -507,7 +489,6 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					} else if (colorMode == 11) {
 						config->buttonColor(RGBA8(red, ColorHelper::getColorValue(config->buttonColor(), 1), ColorHelper::getColorValue(config->buttonColor(), 0), 255));
 					}
-					changesMade = true;
 				}
 			} else if (touching(touch, mainButtons[1])) {
 				int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
@@ -538,7 +519,6 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					} else if (colorMode == 11) {
 						config->buttonColor(RGBA8(ColorHelper::getColorValue(config->buttonColor(), 2), green, ColorHelper::getColorValue(config->buttonColor(), 0), 255));
 					}
-					changesMade = true;
 				}
 			} else if (touching(touch, mainButtons[2])) {
 				int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
@@ -569,11 +549,11 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					} else if (colorMode == 11) {
 						config->buttonColor(RGBA8(ColorHelper::getColorValue(config->buttonColor(), 2), ColorHelper::getColorValue(config->buttonColor(), 1), blue, 255));
 					}
-					changesMade = true;
 				}
 			}
 		}
 	}
+
 	if (colorSelection < screenPos) {
 		screenPos = colorSelection;
 	} else if (colorSelection > screenPos + ENTRIES_PER_SCREEN - 1) {
