@@ -71,6 +71,7 @@ const std::vector<std::string> Languages = {
 const std::vector<std::string> UniversalTeam = {
 	"DeadPhoenix",
 	"FlameKat53",
+	"NightScript",
 	"Pk11",
 	"RocketRobz",
 	"SuperSaiyajinStackZ",
@@ -83,11 +84,19 @@ const std::vector<std::string> ScriptCreators = {
 };
 const std::vector<std::string> ScriptAmount = {"1", "1", "1", "1", "5", "10", "1 | 2"};
 
+const std::vector<std::string> specialNames = {
+	"devkitPro", "NightScript"
+};
+const std::vector<std::string> specialDescriptions = {
+	"For devkitARM, Libctru, Citro2D, Citro3D and the portlibs.",
+	"For posting updates on Reddit."
+};
+
 void Credits::Draw(void) const {
 	std::string title = "Universal-Updater - ";
 	title += Lang::get("CREDITS");
 	GFX::DrawTop();
-	if (creditsPage != 3) {
+	if (creditsPage != 4) {
 		Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), title, 400);
 		Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
 		Gui::DrawStringCentered(0, 60, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
@@ -145,6 +154,18 @@ void Credits::DrawBottom(void) const {
 			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, config->textColor(), line1, 320);
 			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, config->textColor(), line2, 320);
 		}
+	} else if (creditsPage == 3) {
+		Gui::DrawStringCentered(0, -2, 0.7f, config->textColor(), "Special Thanks", 320);
+		for(int i = 0; i < ENTRIES_PER_SCREEN && i < (int)specialNames.size(); i++) {
+			Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->unselectedColor());
+			line1 = specialNames[screenPos + i];
+			line2 = specialDescriptions[screenPos + i];
+			if (screenPos + i == Selection) {
+				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
+			}
+			Gui::DrawStringCentered(0, 38+(i*57), 0.7f, config->textColor(), line1, 320);
+			Gui::DrawStringCentered(0, 62+(i*57), 0.7f, config->textColor(), line2, 320);
+		}
 	} else {
 		Gui::DrawStringCentered(0, -2, 0.55f, config->textColor(), Lang::get("LINK"), 320);
 	}
@@ -184,6 +205,16 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 			keyRepeatDelay = config->keyDelay();
 		}
+	} else if (creditsPage == 3) {
+		if ((hHeld & KEY_DOWN && !keyRepeatDelay)) {
+			if (Selection < (int)specialNames.size()-1) {
+				Selection++;
+			} else {
+				Selection = 0;
+			}
+
+			keyRepeatDelay = config->keyDelay();
+		}
 	}
 
 	if ((hHeld & KEY_UP && !keyRepeatDelay)) {
@@ -196,8 +227,11 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Selection = (int)UniversalTeam.size()-1;
 			} else if (creditsPage == 2) {
 				Selection = (int)ScriptCreators.size()-1;
+			} else if (creditsPage == 3) {
+				Selection = (int)specialNames.size()-1;
 			}
 		}
+
 		keyRepeatDelay = config->keyDelay();
 	}
 	
@@ -210,7 +244,7 @@ void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if ((hDown & KEY_R || hDown & KEY_RIGHT)) {
-		if (creditsPage < 3) {
+		if (creditsPage < 4) {
 			Selection = 0;
 			creditsPage++;
 		}

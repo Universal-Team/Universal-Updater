@@ -37,6 +37,7 @@ public:
 	Config();
 	void save();
 	void initialize();
+	void addMissingThings();
 
 	// Bar Color.
 	u32 barColor() { return this->v_barColor; }
@@ -116,7 +117,10 @@ public:
 	// First startup.
 	bool firstStartup() { return this->v_firstStartup; }
 	void firstStartup(bool v) { this->v_firstStartup = v; if (!this->changesMade)	this->changesMade = true; }
-
+	// Use ScriptColors.
+	bool useScriptColor() { return this->v_useScriptColor; }
+	void useScriptColor(bool v) { this->v_useScriptColor = v; if (!this->changesMade)	this->changesMade = true; }
+	
 	// Mainly helper.
 	bool getBool(const std::string &key);
 	void setBool(const std::string &key, bool v);
@@ -126,14 +130,15 @@ public:
 	void setString(const std::string &key, const std::string &v);
 private:
 	nlohmann::json json; // Our private JSON file.
-	bool changesMade = false;
+	bool changesMade = false, initialChanges = false;
+	int configVersion = 1;
 
 	// Color variables and more.
 	u32 v_barColor, v_topBG, v_bottomBG, v_textColor, v_buttonColor, v_selectedColor, v_unselectedColor, v_progressbarColor,
 		v_outdatedColor, v_uptodateColor, v_notfoundColor, v_futureColor;
 	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
 	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
-	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup;
+	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor;
 };
 
 #endif

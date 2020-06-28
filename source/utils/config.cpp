@@ -30,6 +30,11 @@
 #include <citro2d.h>
 #include <unistd.h>
 
+// Used to add missing stuff for the JSON. No new things for now.
+void Config::addMissingThings() {
+
+}
+
 // In case it doesn't exist.
 void Config::initialize() {
 	// Create through fopen "Write".
@@ -62,6 +67,8 @@ void Config::initialize() {
 	this->setBool("PROGRESS_DISPLAY", true);
 	this->setString("LANGUAGE", "en");
 	this->setBool("FIRST_STARTUP", true);
+	this->setBool("USE_SCRIPT_COLORS", true);
+	this->setInt("VERSION", this->configVersion);
 
 	// Write to file.
 	fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
@@ -77,7 +84,16 @@ Config::Config() {
 	this->json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 
-	// Here we get the initial settings.
+	if (!this->json.contains("VERSION")) {
+		// Let us create a new one.
+		this->initialize();
+	}
+
+	// Here we add the missing things.
+	if (this->json["VERSION"] < this->configVersion) {
+		this->addMissingThings();
+		this->save();
+	}
 
 	if (!this->json.contains("BARCOLOR")) {
 		this->barColor(BarColor);
@@ -223,8 +239,9 @@ Config::Config() {
 		this->progressDisplay(this->getBool("PROGRESS_DISPLAY"));
 	}
 
-	if (!this->json.contains("LANGUAGE")) {
+	if (!this->json.contains("LANGUAGE") || this->json.at("LANGUAGE").is_number()) {
 		this->language("en");
+		this->initialChanges = true;
 	} else {
 		this->language(this->getString("LANGUAGE"));
 	}
@@ -235,12 +252,19 @@ Config::Config() {
 		this->firstStartup(this->getBool("FIRST_STARTUP"));
 	}
 
+	if (!this->json.contains("USE_SCRIPT_COLORS")) {
+		this->useScriptColor(true);
+	} else {
+		this->useScriptColor(this->getBool("USE_SCRIPT_COLORS"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
 // Write to config if changesMade.
 void Config::save() {
 	if (this->changesMade) {
+		this->changesMade = false;
 		FILE *file = fopen("sdmc:/3ds/Universal-Updater/Settings.json", "w");
 		// Set values.
 		this->setInt("BARCOLOR", this->barColor());
@@ -269,6 +293,7 @@ void Config::save() {
 		this->setBool("PROGRESS_DISPLAY", this->progressDisplay());
 		this->setString("LANGUAGE", this->language());
 		this->setBool("FIRST_STARTUP", this->firstStartup());
+		this->setBool("USE_SCRIPT_COLORS", this->useScriptColor());
 		// Write changes to file.
 		fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
 		fclose(file);

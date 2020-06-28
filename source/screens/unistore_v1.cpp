@@ -50,26 +50,36 @@ UniStoreV1::UniStoreV1(nlohmann::json &JSON, const std::string sheetPath, bool d
 	}
 
 	u32 colorTemp;
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "barColor"));
-	barColor = colorTemp == 0 ? config->barColor() : colorTemp;
+	if (config->useScriptColor()) {
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "barColor"));
+		barColor = colorTemp == 0 ? config->barColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgTopColor"));
-	bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgTopColor"));
+		bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgBottomColor"));
-	bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "bgBottomColor"));
+		bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "textColor"));
-	TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "textColor"));
+		TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "selectedColor"));
-	selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "selectedColor"));
+		selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "unselectedColor"));
-	unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "unselectedColor"));
+		unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "progressbarColor"));
-	progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "progressbarColor"));
+		progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
+	} else {
+		barColor = config->barColor();
+		bgTopColor = config->topBG();
+		bgBottomColor = config->bottomBG();
+		TextColor = config->textColor();
+		selected = config->selectedColor();
+		unselected = config->unselectedColor();
+		progressBar = config->progressbarColor();
+	}
 }
 
 void UniStoreV1::drawBlend(int key, int x, int y) const {

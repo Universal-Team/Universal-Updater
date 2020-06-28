@@ -128,27 +128,37 @@ u32 barColor, bgTopColor, bgBottomColor, TextColor, selected, unselected, progre
 
 // Load the colors from the script.
 void loadColors(nlohmann::json &json) {
-	u32 colorTemp;
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "barColor"));
-	barColor = colorTemp == 0 ? config->barColor() : colorTemp;
+	if (config->useScriptColor()) {
+		u32 colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "barColor"));
+		barColor = colorTemp == 0 ? config->barColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgTopColor"));
-	bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "bgTopColor"));
+		bgTopColor = colorTemp == 0 ? config->topBG() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "bgBottomColor"));
-	bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "bgBottomColor"));
+		bgBottomColor = colorTemp == 0 ? config->bottomBG() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "textColor"));
-	TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "textColor"));
+		TextColor = colorTemp == 0 ? config->textColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "selectedColor"));
-	selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "selectedColor"));
+		selected = colorTemp == 0 ? config->selectedColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "unselectedColor"));
-	unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "unselectedColor"));
+		unselected = colorTemp == 0 ? config->unselectedColor() : colorTemp;
 
-	colorTemp = getColor(ScriptHelper::getString(json, "info", "progressbarColor"));
-	progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
+		colorTemp = getColor(ScriptHelper::getString(json, "info", "progressbarColor"));
+		progressBar = colorTemp == 0 ? config->progressbarColor() : colorTemp;
+	} else {
+		barColor = config->barColor();
+		bgTopColor = config->topBG();
+		bgBottomColor = config->bottomBG();
+		TextColor = config->textColor();
+		selected = config->selectedColor();
+		unselected = config->unselectedColor();
+		progressBar = config->progressbarColor();
+	}
 }
 
 void ScriptList::DrawSubMenu(void) const {
