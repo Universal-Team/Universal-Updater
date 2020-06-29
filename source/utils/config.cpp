@@ -68,6 +68,7 @@ void Config::initialize() {
 	this->setString("LANGUAGE", "en");
 	this->setBool("FIRST_STARTUP", true);
 	this->setBool("USE_SCRIPT_COLORS", true);
+	this->setBool("SHOW_SPEED", false);
 	this->setInt("VERSION", this->configVersion);
 
 	// Write to file.
@@ -258,6 +259,12 @@ Config::Config() {
 		this->useScriptColor(this->getBool("USE_SCRIPT_COLORS"));
 	}
 
+	if (!this->json.contains("SHOW_SPEED")) {
+		this->showSpeed(false);
+	} else {
+		this->showSpeed(this->getBool("SHOW_SPEED"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -294,6 +301,7 @@ void Config::save() {
 		this->setString("LANGUAGE", this->language());
 		this->setBool("FIRST_STARTUP", this->firstStartup());
 		this->setBool("USE_SCRIPT_COLORS", this->useScriptColor());
+		this->setBool("SHOW_SPEED", this->showSpeed());
 		// Write changes to file.
 		fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
 		fclose(file);

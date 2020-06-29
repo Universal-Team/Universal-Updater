@@ -851,22 +851,10 @@ void displayProgressBar() {
 					downloadTotal = downloadNow;
 				}
 
-				if (!curlResult) {
-					curl_off_t speed;
-					curlResult = curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &speed);
-					if (!curlResult) {
-						snprintf(str, sizeof(str), "%s / %s (%.2f%%) \n\n\n\n\n %s %lld %s",
-								formatBytes(downloadNow).c_str(),
-								formatBytes(downloadTotal).c_str(),
-								((float)downloadNow/(float)downloadTotal) * 100.0f,
-								Lang::get("DOWNLOAD_SPEED").c_str(), (speed / 1000), Lang::get("KB_PER_SECOND").c_str());
-					} else {
-						snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-								formatBytes(downloadNow).c_str(),
-								formatBytes(downloadTotal).c_str(),
-								((float)downloadNow/(float)downloadTotal) * 100.0f);
-					}
-				}
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						formatBytes(downloadNow).c_str(),
+						formatBytes(downloadTotal).c_str(),
+						((float)downloadNow/(float)downloadTotal) * 100.0f);
 				break;
 			case ProgressBar::Extracting:
 				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
@@ -893,6 +881,16 @@ void displayProgressBar() {
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
 				Gui::DrawStringCentered(0, 80, 0.6f, isScriptSelected ? TextColor : config->textColor(), str, 400);
+
+				if (!curlResult && hnd != nullptr && config->showSpeed()) {
+					curl_off_t speed = 0;
+					curlResult = curl_easy_getinfo(hnd, CURLINFO_SPEED_DOWNLOAD_T, &speed);
+					if (!curlResult) {
+						GFX::TextFormatted(0, 170, 0.6f, "%s %lld %s", Lang::get("DOWNLOAD_SPEED").c_str(), (speed / 1000), Lang::get("KB_PER_SECOND").c_str());
+					} else {
+						Gui::DrawStringCentered(0, 170, 0.6f, isScriptSelected ? TextColor : config->textColor(), Lang::get("DOWNLOAD_SPEED") + "?");
+					}
+				}
 				Animation::DrawProgressBar(downloadNow, downloadTotal);
 				break;
 			case ProgressBar::Extracting:

@@ -44,6 +44,7 @@ namespace GFX {
 	void DrawSpriteBlend(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
 
 	void DrawButton(int x, int y, std::string ButtonText = "", u32 color = config->buttonColor());
+	void TextFormatted(float x, float y, float size, const char *format, ...);
 }
 
 #endif

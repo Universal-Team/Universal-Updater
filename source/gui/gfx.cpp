@@ -99,3 +99,13 @@ void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_button_idx), x, y, 0.5f, &tint);
 	Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, isScriptSelected ? TextColor : config->textColor(), ButtonText, 145, 30);
 }
+
+void GFX::TextFormatted(float x, float y, float size, const char *format, ...) {
+	char str[512];
+	va_list va;
+	va_start(va, format);
+	vsnprintf(str, 512, format, va);
+	va_end(va);
+	char * Text = strtok(str, "\n");
+	Gui::DrawStringCentered(x, y, size, isScriptSelected ? TextColor : config->textColor(), Text);
+}

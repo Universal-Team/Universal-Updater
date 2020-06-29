@@ -120,7 +120,10 @@ public:
 	// Use ScriptColors.
 	bool useScriptColor() { return this->v_useScriptColor; }
 	void useScriptColor(bool v) { this->v_useScriptColor = v; if (!this->changesMade)	this->changesMade = true; }
-	
+	// Show Downloadspeed.
+	bool showSpeed() { return this->v_showSpeed; }
+	void showSpeed(bool v) { this->v_showSpeed = v; if (!this->changesMade)	this->changesMade = true; }
+
 	// Mainly helper.
 	bool getBool(const std::string &key);
 	void setBool(const std::string &key, bool v);
@@ -138,7 +141,7 @@ private:
 		v_outdatedColor, v_uptodateColor, v_notfoundColor, v_futureColor;
 	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
 	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
-	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor;
+	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed;
 };
 
 #endif
