@@ -129,7 +129,9 @@ public:
 	void _3dsxpath(std::string v) { this->v_3dsx_install_path = v; if (!this->changesMade)	this->changesMade = true; }
 	std::string ndspath() { return this->v_nds_install_path; }
 	void ndspath(std::string v) { this->v_nds_install_path = v; if (!this->changesMade)	this->changesMade = true; }
-
+	std::string archivepath() { return this->v_archive_path; }
+	void archivepath(std::string v) { this->v_archive_path = v; if (!this->changesMade)	this->changesMade = true; }
+	
 	// Mainly helper.
 	bool getBool(const std::string &key);
 	void setBool(const std::string &key, bool v);
@@ -150,7 +152,7 @@ private:
 	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed;
 
 	// Some variables.
-	std::string v_3dsx_install_path, v_nds_install_path;
+	std::string v_3dsx_install_path, v_nds_install_path, v_archive_path;
 };
 
 #endif

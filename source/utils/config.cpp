@@ -35,6 +35,7 @@ void Config::addMissingThings() {
 	if (this->json["VERSION"] < 2) {
 		this->setString("3DSX_PATH", _3DSX_PATH);
 		this->setString("NDS_PATH", _NDS_PATH);
+		this->setString("ARCHIVE_PATH", ARCHIVES_DEFAULT);
 	}
 }
 
@@ -74,6 +75,7 @@ void Config::initialize() {
 	this->setBool("SHOW_SPEED", false);
 	this->setString("3DSX_PATH", _3DSX_PATH);
 	this->setString("NDS_PATH", _NDS_PATH);
+	this->setString("ARCHIVE_PATH", ARCHIVES_DEFAULT);
 	this->setInt("VERSION", this->configVersion);
 
 	// Write to file.
@@ -282,6 +284,12 @@ Config::Config() {
 		this->ndspath(this->getString("NDS_PATH"));
 	}
 
+	if (!this->json.contains("ARCHIVE_PATH")) {
+		this->archivepath(ARCHIVES_DEFAULT);
+	} else {
+		this->archivepath(this->getString("ARCHIVE_PATH"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -321,6 +329,8 @@ void Config::save() {
 		this->setBool("SHOW_SPEED", this->showSpeed());
 		this->setString("3DSX_PATH", this->_3dsxpath());
 		this->setString("NDS_PATH", this->ndspath());
+		this->setString("ARCHIVE_PATH", this->archivepath());
+		
 		// Write changes to file.
 		const std::string dump = this->json.dump(1, '\t');
 		fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), file);

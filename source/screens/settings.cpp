@@ -42,8 +42,6 @@ void Settings::Draw(void) const {
 		DrawLanguageSelection();
 	} else if (mode == 2) {
 		DrawColorChanging();
-	} else if (mode == 4) {
-		DrawMiscSettings();
 	}
 }
 
@@ -56,11 +54,27 @@ void Settings::DrawSubMenu(void) const {
 	GFX::DrawArrow(0, 218, 0, 1);
 	GFX::DrawArrow(318, 240, 180.0, 1);
 
-	GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("LANGUAGE"));
-	GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("COLORS"));
-	GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_BAR_STYLE"));
+	if (this->settingPage == 0) {
+		GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("LANGUAGE"));
+		GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("COLORS"));
+		GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_BAR_STYLE"));
+	} else if (this->settingPage == 1) {
+		GFX::DrawButton(mainButtons2[0].x, mainButtons2[0].y, Lang::get("CHANGE_MUSICFILE"));
+		GFX::DrawButton(mainButtons2[1].x, mainButtons2[1].y, Lang::get("CHANGE_KEY_DELAY"));
+		GFX::DrawButton(mainButtons2[2].x, mainButtons2[2].y, Lang::get("TOGGLE_FADE"));
+		GFX::DrawButton(mainButtons2[3].x, mainButtons2[3].y, Lang::get("TOGGLE_PROGRESSBAR"));
+	} else if (this->settingPage == 2) {
+		GFX::DrawButton(mainButtons[0].x, mainButtons[0].y, Lang::get("CHANGE_3DSX_PATH"));
+		GFX::DrawButton(mainButtons[1].x, mainButtons[1].y, Lang::get("CHANGE_NDS_PATH"));
+		GFX::DrawButton(mainButtons[2].x, mainButtons[2].y, Lang::get("CHANGE_ARCHIVE_PATH"));
+	}
+
 	// Selector.
-	Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
+	if (this->settingPage == 0 || this->settingPage == 2) {
+		Animation::Button(mainButtons[Selection].x, mainButtons[Selection].y, .060);
+	} else {
+		Animation::Button(mainButtons2[Selection].x, mainButtons2[Selection].y, .060);
+	}
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
@@ -219,151 +233,187 @@ void Settings::DrawColorChanging(void) const {
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
 }
 
-void Settings::DrawMiscSettings(void) const {
-	GFX::DrawTop();
-	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), "Universal-Updater", 400);
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
-	GFX::DrawBottom();
-	GFX::DrawArrow(0, 218, 0, 1);
-
-	GFX::DrawButton(mainButtons2[0].x, mainButtons2[0].y, Lang::get("CHANGE_MUSICFILE"));
-	GFX::DrawButton(mainButtons2[1].x, mainButtons2[1].y, Lang::get("CHANGE_KEY_DELAY"));
-	GFX::DrawButton(mainButtons2[2].x, mainButtons2[2].y, Lang::get("TOGGLE_FADE"));
-
-	// Selector.
-	Animation::Button(mainButtons2[Selection].x, mainButtons2[Selection].y, .060);
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
-}
-
-void Settings::MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_A) {
-		if (Selection == 0) {
-			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
-			if (tempMusic != "") {
-				config->musicPath(tempMusic);
-			}
-		} else if (Selection == 1) {
-			config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
-		} else if (Selection == 2) {
-			if (config->screenFade()) {
-				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
-					config->screenFade(false);
-					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-				}
-			} else {
-				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
-					config->screenFade(true);
-					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-				}
-			}
-		}
-	}
-
-	if (hDown & KEY_TOUCH) {
-		if (touching(touch, mainButtons2[0])) {
-			std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
-			if (tempMusic != "") {
-				config->musicPath(tempMusic);
-			}
-		} else if (touching(touch, mainButtons2[1])) {
-			config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
-		} else if (touching(touch, mainButtons2[2])) {
-			if (config->screenFade()) {
-				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
-					config->screenFade(false);
-					Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-				}
-			} else {
-				if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
-					config->screenFade(true);
-					Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-				}
-			}
-		}
-	}
-
-	if ((hDown & KEY_B || hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
-		Selection = 0;
-		mode = 0;
-	}
-
-	// No idea where to place the button for it, so do it here for now.
-	if (hDown & KEY_SELECT) {
-		if (config->progressDisplay()) {
-			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_DISABLE"))) {
-				config->progressDisplay(false);
-				Msg::DisplayWarnMsg(Lang::get("DISABLED"));
-			}
-		} else {
-			if (Msg::promptMsg(Lang::get("PROGRESS_BAR_ENABLE"))) {
-				config->progressDisplay(true);
-				Msg::DisplayWarnMsg(Lang::get("ENABLED"));
-			}
-		}
-	}
-
-	// Navigation.
-	if (hDown & KEY_UP) {
-		if (Selection > 1)	Selection -= 2;
-	} else if (hDown & KEY_DOWN) {
-		if (Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
-	} else if (hDown & KEY_LEFT) {
-		if (Selection%2) Selection--;
-	} else if (hDown & KEY_RIGHT) {
-		if (!(Selection%2)) Selection++;
-	}
-}
-
 
 void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_UP) {
-		if (Selection > 0)	Selection--;
-	}
-
-	if (hDown & KEY_DOWN) {
-		if (Selection < 2)	Selection++;
-	}
-
-	if (hDown & KEY_A) {
-		switch (Selection) {
-			case 0:
-				screenPos = 0;
-				selectedLang = 0;
-				mode = 1;
-				break;
-			case 1:
-				screenPos = 0;
-				mode = 2;
-				break;
-			case 2:
-				if (config->useBars())	config->useBars(false);
-				else	config->useBars(true);
-				break;
-		}
-	}
-
-	if (hDown & KEY_TOUCH) {
-		if (touching(touch, mainButtons[0])) {
-			screenPos = 0;
-			selectedLang = 0;
-			mode = 1;
-		} else if (touching(touch, mainButtons[1])) {
-			screenPos = 0;
-			mode = 2;
-		} else if (touching(touch, mainButtons[2])) {
-			if (config->useBars())	config->useBars(false);
-			else	config->useBars(true);
-		}
-	}
-
-	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+	if ((hDown & KEY_B)) {
 		Gui::screenBack(config->screenFade());
 		return;
 	}
 
 	if ((hDown & KEY_R) || (hDown & KEY_TOUCH && touching(touch, arrowPos[4]))) {
-		Selection = 0;
-		mode = 4;
+		if (this->settingPage < 2) {
+			this->settingPage++;
+			Selection = 0;
+		}
+	}
+
+	if ((hDown & KEY_L) || (hDown & KEY_TOUCH && touching(touch, arrowPos[2]))) {
+		if (this->settingPage > 0) {
+			this->settingPage--;
+			Selection = 0;
+		}
+	}
+
+	if (this->settingPage == 0) {
+		if (hDown & KEY_UP) {
+			if (Selection > 0)	Selection--;
+		}
+
+		if (hDown & KEY_DOWN) {
+			if (Selection < 2)	Selection++;
+		}
+
+		if (hDown & KEY_A) {
+			switch (Selection) {
+				case 0:
+					screenPos = 0;
+					selectedLang = 0;
+					mode = 1;
+					break;
+				case 1:
+					screenPos = 0;
+					mode = 2;
+					break;
+				case 2:
+					if (config->useBars())	config->useBars(false);
+					else	config->useBars(true);
+					break;
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, mainButtons[0])) {
+				screenPos = 0;
+				selectedLang = 0;
+				mode = 1;
+			} else if (touching(touch, mainButtons[1])) {
+				screenPos = 0;
+				mode = 2;
+			} else if (touching(touch, mainButtons[2])) {
+				if (config->useBars())	config->useBars(false);
+				else	config->useBars(true);
+			}
+		}
+	} else if (this->settingPage == 1) {
+		if (hDown & KEY_A) {
+			if (Selection == 0) {
+				std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
+				if (tempMusic != "") {
+					config->musicPath(tempMusic);
+				}
+			} else if (Selection == 1) {
+				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+			} else if (Selection == 2) {
+				if (config->screenFade()) {
+					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
+						config->screenFade(false);
+						Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					}
+				} else {
+					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
+						config->screenFade(true);
+						Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					}
+				}
+			} else if (Selection == 3) {
+				if (config->progressDisplay()) {
+					if (Msg::promptMsg(Lang::get("PROGRESS_BAR_DISABLE"))) {
+						config->progressDisplay(false);
+						Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					}
+				} else {
+					if (Msg::promptMsg(Lang::get("PROGRESS_BAR_ENABLE"))) {
+						config->progressDisplay(true);
+						Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					}
+				}
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, mainButtons2[0])) {
+				std::string tempMusic = selectFilePath(Lang::get("SELECT_MUSIC_FILE"), "sdmc:/", {"wav"}, 2);
+				if (tempMusic != "") {
+					config->musicPath(tempMusic);
+				}
+			} else if (touching(touch, mainButtons2[1])) {
+				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+			} else if (touching(touch, mainButtons2[2])) {
+				if (config->screenFade()) {
+					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
+						config->screenFade(false);
+						Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					}
+				} else {
+					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_ENABLE"))) {
+						config->screenFade(true);
+						Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					}
+				}
+			} else if (touching(touch, mainButtons2[3])) {
+				if (config->progressDisplay()) {
+					if (Msg::promptMsg(Lang::get("PROGRESS_BAR_DISABLE"))) {
+						config->progressDisplay(false);
+						Msg::DisplayWarnMsg(Lang::get("DISABLED"));
+					}
+				} else {
+					if (Msg::promptMsg(Lang::get("PROGRESS_BAR_ENABLE"))) {
+						config->progressDisplay(true);
+						Msg::DisplayWarnMsg(Lang::get("ENABLED"));
+					}
+				}
+			}
+		}
+		
+		// Navigation.
+		if (hDown & KEY_UP) {
+			if (Selection > 1)	Selection -= 2;
+		} else if (hDown & KEY_DOWN) {
+			if (Selection < 2)	Selection += 2;
+		} else if (hDown & KEY_LEFT) {
+			if (Selection%2) Selection--;
+		} else if (hDown & KEY_RIGHT) {
+			if (!(Selection%2)) Selection++;
+		}
+	} else if (this->settingPage == 2) {
+		if (hDown & KEY_UP) {
+			if (Selection > 0)	Selection--;
+		}
+
+		if (hDown & KEY_DOWN) {
+			if (Selection < 2)	Selection++;
+		}
+
+		if (hDown & KEY_A) {
+			std::string tempPath;
+			switch (Selection) {
+				case 0:
+					tempPath = selectFilePath(Lang::get("SELECT_3DSX_PATH"), config->_3dsxpath(), {});
+					if (tempPath != "") config->_3dsxpath(tempPath);
+					break;
+				case 1:
+					tempPath = selectFilePath(Lang::get("SELECT_NDS_PATH"), config->ndspath(), {});
+					if (tempPath != "")	config->ndspath(tempPath);
+					break;
+				case 2:
+					tempPath = selectFilePath(Lang::get("SELECT_ARCHIVE_PATH"), config->archivepath(), {});
+					if (tempPath != "")	config->archivepath(tempPath);
+					break;
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, mainButtons[0])) {
+				std::string tempPath = selectFilePath(Lang::get("SELECT_3DSX_PATH"), config->_3dsxpath(), {});
+				if (tempPath != "") config->_3dsxpath(tempPath);
+			} else if (touching(touch, mainButtons[1])) {
+				std::string tempPath = selectFilePath(Lang::get("SELECT_NDS_PATH"), config->ndspath(), {});
+				if (tempPath != "")	config->ndspath(tempPath);
+			} else if (touching(touch, mainButtons[2])) {
+				std::string tempPath = selectFilePath(Lang::get("SELECT_ARCHIVE_PATH"), config->archivepath(), {});
+				if (tempPath != "")	config->archivepath(tempPath);
+			}
+		}
 	}
 }
 
@@ -568,7 +618,5 @@ void Settings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		LanguageSelection(hDown, hHeld, touch);
 	} else if (mode == 2) {
 		colorChanging(hDown, hHeld, touch);
-	} else if (mode == 4) {
-		MiscSettingsLogic(hDown, hHeld, touch);
 	}
 }

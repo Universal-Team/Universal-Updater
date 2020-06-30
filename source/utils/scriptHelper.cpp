@@ -71,6 +71,7 @@ Result ScriptHelper::downloadRelease(std::string repo, std::string file, std::st
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxpath().c_str());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndspath().c_str());
+	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archivepath().c_str());
 
 	Result ret = NONE;
 	if (downloadFromRelease("https://github.com/" + repo, file, out, message, includePrereleases, showVersions) != 0) {
@@ -89,6 +90,7 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxpath().c_str());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndspath().c_str());
+	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archivepath().c_str());
 
 	Result ret = NONE;
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
@@ -108,13 +110,16 @@ Result ScriptHelper::downloadFile(std::string file, std::string output, std::str
 
 // Remove a File.
 Result ScriptHelper::removeFile(std::string file, std::string message) {
+	std::string out;
+	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archivepath().c_str());
+
 	Result ret = NONE;
-	if (access(file.c_str(), F_OK) != 0 ) {
+	if (access(out.c_str(), F_OK) != 0 ) {
 		return DELETE_ERROR;
 	}
 
 	Msg::DisplayMsg(message);
-	deleteFile(file.c_str());
+	deleteFile(out.c_str());
 	return ret;
 }
 
@@ -130,12 +135,16 @@ void ScriptHelper::installFile(std::string file, bool updatingSelf, std::string 
 
 // Extract Files.
 void ScriptHelper::extractFile(std::string file, std::string input, std::string output, std::string message) {
+	std::string out, in;
+	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archivepath().c_str());
+	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), config->archivepath().c_str());
+
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	filesExtracted = 0;
 	progressbarType = ProgressBar::Extracting;
 	Threads::create((ThreadFunc)displayProgressBar);
-	extractArchive(file, input, output);
+	extractArchive(in, input, out);
 	showProgressBar = false;
 }
 

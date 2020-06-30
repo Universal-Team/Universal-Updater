@@ -63,8 +63,6 @@ using json = nlohmann::json;
 
 #endif
 
-extern char * arg0;
-
 #define WORKING_DIR	"/"
 #define SCRIPTS_PATH	"sdmc:/3ds/Universal-Updater/scripts/" // The Scripts will be here.
 #define MUSIC_PATH	"sdmc:/3ds/Universal-Updater/Music.wav" // Default Music File / Path.
@@ -75,3 +73,4 @@ extern char * arg0;
 #define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"
 #define _3DSX_PATH "sdmc:/3ds"
 #define _NDS_PATH "sdmc:"
+#define ARCHIVES_DEFAULT "sdmc:"

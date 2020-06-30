@@ -46,17 +46,16 @@ private:
 	mutable int screenPos = 0;
 	int colorSelection = 0;
 	int keyRepeatDelay = 0;
+	int settingPage = 0;
 
 	// Draws.
 	void DrawSubMenu(void) const;
 	void DrawLanguageSelection(void) const;
 	void DrawColorChanging(void) const;
-	void DrawMiscSettings(void) const;
 	// Logic's.
 	void SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void LanguageSelection(u32 hDown, u32 hHeld, touchPosition touch);
 	void colorChanging(u32 hDown, u32 hHeld, touchPosition touch);
-	void MiscSettingsLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
 	const std::vector<Structs::ButtonPos> mainButtons = {
 		{80, 30, 149, 52}, // Language.
