@@ -79,12 +79,12 @@ bool Store::updateAvailable(int index) {
 		if (this->updateJSON.contains(this->updateFile)) {
 			if (this->updateJSON[this->updateFile].contains(entry)) {
 				const std::string updateEntry2 = (std::string)this->updateJSON[this->updateFile][entry];
-				return strcasecmp(updateEntry.c_str(), updateEntry2.c_str()) > 0;  
+				return strcasecmp(updateEntry.c_str(), updateEntry2.c_str()) > 0;
 			} else {
-				return true; // Since we do not have this entry there yet.
+				return false; // Since we do not have this entry there yet.
 			}
 		} else { // Our update json don't have that yet.. so display available.
-			return true;
+			return false;
 		}
 	} else { // Since the Store doesn't have that feature.
 		return false;
@@ -97,7 +97,8 @@ bool Store::updateAvailable(int index) {
 void Store::writeToFile(int index) {
 	FILE *file = fopen("sdmc:/3ds/Universal-Updater/updates.json", "w");
 	this->updateJSON[this->updateFile][this->sortedStore[index].title] = this->sortedStore[index].last_updated;
-	fwrite(this->updateJSON.dump(1, '\t').c_str(), 1, this->updateJSON.dump(1, '\t').size(), file);
+	const std::string dump = this->updateJSON.dump(1, '\t');
+	fwrite(dump.c_str(), 1, this->updateJSON.dump(1, '\t').size(), file);
 	fclose(file);
 
 	this->sortedStore[index].updateAvailable = false;

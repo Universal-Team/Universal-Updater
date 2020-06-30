@@ -124,6 +124,12 @@ public:
 	bool showSpeed() { return this->v_showSpeed; }
 	void showSpeed(bool v) { this->v_showSpeed = v; if (!this->changesMade)	this->changesMade = true; }
 
+	// Variables.
+	std::string _3dsxpath() { return this->v_3dsx_install_path; }
+	void _3dsxpath(std::string v) { this->v_3dsx_install_path = v; if (!this->changesMade)	this->changesMade = true; }
+	std::string ndspath() { return this->v_nds_install_path; }
+	void ndspath(std::string v) { this->v_nds_install_path = v; if (!this->changesMade)	this->changesMade = true; }
+
 	// Mainly helper.
 	bool getBool(const std::string &key);
 	void setBool(const std::string &key, bool v);
@@ -134,7 +140,7 @@ public:
 private:
 	nlohmann::json json; // Our private JSON file.
 	bool changesMade = false, initialChanges = false;
-	int configVersion = 1;
+	int configVersion = 2;
 
 	// Color variables and more.
 	u32 v_barColor, v_topBG, v_bottomBG, v_textColor, v_buttonColor, v_selectedColor, v_unselectedColor, v_progressbarColor,
@@ -142,6 +148,9 @@ private:
 	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
 	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
 	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed;
+
+	// Some variables.
+	std::string v_3dsx_install_path, v_nds_install_path;
 };
 
 #endif

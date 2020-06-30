@@ -73,3 +73,5 @@ extern char * arg0;
 #define ENTRIES_PER_SCREEN 3
 #define ENTRIES_PER_LIST 7
 #define metaFile "sdmc:/3ds/Universal-Updater/ScriptInfo.json"
+#define _3DSX_PATH "sdmc:/3ds"
+#define _NDS_PATH "sdmc:"

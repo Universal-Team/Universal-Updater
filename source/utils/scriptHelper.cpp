@@ -34,6 +34,7 @@
 #include "thread.hpp"
 
 #include <fstream>
+#include <regex>
 #include <unistd.h>
 
 extern bool showProgressBar;
@@ -67,8 +68,12 @@ int ScriptHelper::getNum(nlohmann::json json, const std::string &key, const std:
 
 // Download from a Github Release.
 Result ScriptHelper::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, bool showVersions, std::string message) {
+	std::string out;
+	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxpath().c_str());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndspath().c_str());
+
 	Result ret = NONE;
-	if (downloadFromRelease("https://github.com/" + repo, file, output, message, includePrereleases, showVersions) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, out, message, includePrereleases, showVersions) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		ret = FAILED_DOWNLOAD;
@@ -81,12 +86,16 @@ Result ScriptHelper::downloadRelease(std::string repo, std::string file, std::st
 
 // Download a File from everywhere.
 Result ScriptHelper::downloadFile(std::string file, std::string output, std::string message) {
+	std::string out;
+	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxpath().c_str());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndspath().c_str());
+
 	Result ret = NONE;
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressbarType = ProgressBar::Downloading;
 	Threads::create((ThreadFunc)displayProgressBar);
-	if (downloadToFile(file, output) != 0) {
+	if (downloadToFile(file, out) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		ret = FAILED_DOWNLOAD;

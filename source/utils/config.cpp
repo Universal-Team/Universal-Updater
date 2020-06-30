@@ -30,9 +30,12 @@
 #include <citro2d.h>
 #include <unistd.h>
 
-// Used to add missing stuff for the JSON. No new things for now.
+// Used to add missing stuff for the JSON.
 void Config::addMissingThings() {
-
+	if (this->json["VERSION"] < 2) {
+		this->setString("3DSX_PATH", _3DSX_PATH);
+		this->setString("NDS_PATH", _NDS_PATH);
+	}
 }
 
 // In case it doesn't exist.
@@ -69,10 +72,13 @@ void Config::initialize() {
 	this->setBool("FIRST_STARTUP", true);
 	this->setBool("USE_SCRIPT_COLORS", true);
 	this->setBool("SHOW_SPEED", false);
+	this->setString("3DSX_PATH", _3DSX_PATH);
+	this->setString("NDS_PATH", _NDS_PATH);
 	this->setInt("VERSION", this->configVersion);
 
 	// Write to file.
-	fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
+	const std::string dump = this->json.dump(1, '\t');
+	fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), file);
 	fclose(file); // Now we have the file and can properly access it.
 }
 
@@ -93,7 +99,6 @@ Config::Config() {
 	// Here we add the missing things.
 	if (this->json["VERSION"] < this->configVersion) {
 		this->addMissingThings();
-		this->save();
 	}
 
 	if (!this->json.contains("BARCOLOR")) {
@@ -265,6 +270,18 @@ Config::Config() {
 		this->showSpeed(this->getBool("SHOW_SPEED"));
 	}
 
+	if (!this->json.contains("3DSX_PATH")) {
+		this->_3dsxpath(_3DSX_PATH);
+	} else {
+		this->_3dsxpath(this->getString("3DSX_PATH"));
+	}
+
+	if (!this->json.contains("NDS_PATH")) {
+		this->ndspath(_NDS_PATH);
+	} else {
+		this->ndspath(this->getString("NDS_PATH"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -302,8 +319,11 @@ void Config::save() {
 		this->setBool("FIRST_STARTUP", this->firstStartup());
 		this->setBool("USE_SCRIPT_COLORS", this->useScriptColor());
 		this->setBool("SHOW_SPEED", this->showSpeed());
+		this->setString("3DSX_PATH", this->_3dsxpath());
+		this->setString("NDS_PATH", this->ndspath());
 		// Write changes to file.
-		fwrite(this->json.dump(1, '\t').c_str(), 1, this->json.dump(1, '\t').size(), file);
+		const std::string dump = this->json.dump(1, '\t');
+		fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), file);
 		fclose(file);
 	}
 }
