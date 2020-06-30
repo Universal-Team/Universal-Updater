@@ -188,5 +188,12 @@
 	"SELECT_AUTHOR": "表示した作者を選択します。",
 	"SELECT_CONSOLE": "表示したコンソールを選択します。",
 	"NO_AUTHORS_AVAILABLE": "利用可能な作者がありません。",
-	"NO_CONSOLES_AVAILABLE": "利用可能なコンソールがありません。"
+	"NO_CONSOLES_AVAILABLE": "利用可能なコンソールがありません。",
+	"CHANGE_3DSX_PATH": "Change 3DSX path",
+	"CHANGE_NDS_PATH": "Change NDS path",
+	"CHANGE_ARCHIVE_PATH": "Change Archive path",
+	"SELECT_3DSX_PATH": "Select the 3DSX path.",
+	"SELECT_NDS_PATH": "Select the NDS path.",
+	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
+	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
 }
