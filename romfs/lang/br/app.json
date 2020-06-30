@@ -188,5 +188,12 @@
 	"SELECT_AUTHOR": "Select an bruhthor you like to bruh.",
 	"SELECT_CONSOLE": "Select a bruhsole you like to bruh.",
 	"NO_AUTHORS_AVAILABLE": "No bruhthors available.",
-	"NO_CONSOLES_AVAILABLE": "No bruhsoles available."
+	"NO_CONSOLES_AVAILABLE": "No bruhsoles available.",
+	"CHANGE_3DSX_PATH": "Change 3DSX path",
+	"CHANGE_NDS_PATH": "Change NDS path",
+	"CHANGE_ARCHIVE_PATH": "Change Archive path",
+	"SELECT_3DSX_PATH": "Select the 3DSX path.",
+	"SELECT_NDS_PATH": "Select the NDS path.",
+	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
+	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
 }
