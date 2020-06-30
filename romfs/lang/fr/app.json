@@ -188,5 +188,12 @@
 	"SELECT_AUTHOR": "Sélectionnez un auteur que vous voulez voir.",
 	"SELECT_CONSOLE": "Sélectionnez une console que vous voulez voir.",
 	"NO_AUTHORS_AVAILABLE": "Pas d'auteurs disponibles.",
-	"NO_CONSOLES_AVAILABLE": "Pas de consoles disponibles."
+	"NO_CONSOLES_AVAILABLE": "Pas de consoles disponibles.",
+	"CHANGE_3DSX_PATH": "Change 3DSX path",
+	"CHANGE_NDS_PATH": "Change NDS path",
+	"CHANGE_ARCHIVE_PATH": "Change Archive path",
+	"SELECT_3DSX_PATH": "Select the 3DSX path.",
+	"SELECT_NDS_PATH": "Select the NDS path.",
+	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
+	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
 }
