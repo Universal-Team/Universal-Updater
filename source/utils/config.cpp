@@ -36,6 +36,7 @@ void Config::addMissingThings() {
 		this->setString("3DSX_PATH", _3DSX_PATH);
 		this->setString("NDS_PATH", _NDS_PATH);
 		this->setString("ARCHIVE_PATH", ARCHIVES_DEFAULT);
+		this->setBool("CITRA", false);
 	}
 }
 
@@ -76,6 +77,7 @@ void Config::initialize() {
 	this->setString("3DSX_PATH", _3DSX_PATH);
 	this->setString("NDS_PATH", _NDS_PATH);
 	this->setString("ARCHIVE_PATH", ARCHIVES_DEFAULT);
+	this->setBool("CITRA", false);
 	this->setInt("VERSION", this->configVersion);
 
 	// Write to file.
@@ -290,6 +292,12 @@ Config::Config() {
 		this->archivepath(this->getString("ARCHIVE_PATH"));
 	}
 
+	if (!this->json.contains("CITRA")) {
+		this->citra(false);
+	} else {
+		this->citra(this->getBool("CITRA"));
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -330,7 +338,7 @@ void Config::save() {
 		this->setString("3DSX_PATH", this->_3dsxpath());
 		this->setString("NDS_PATH", this->ndspath());
 		this->setString("ARCHIVE_PATH", this->archivepath());
-		
+		this->setBool("CITRA", this->citra());
 		// Write changes to file.
 		const std::string dump = this->json.dump(1, '\t');
 		fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), file);

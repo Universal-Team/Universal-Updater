@@ -123,7 +123,9 @@ public:
 	// Show Downloadspeed.
 	bool showSpeed() { return this->v_showSpeed; }
 	void showSpeed(bool v) { this->v_showSpeed = v; if (!this->changesMade)	this->changesMade = true; }
-
+	// Citra stuff.
+	bool citra() { return this->v_citra; }
+	void citra(bool v) { this->v_citra = v; if (!this->changesMade)	this->changesMade = true; }
 	// Variables.
 	std::string _3dsxpath() { return this->v_3dsx_install_path; }
 	void _3dsxpath(std::string v) { this->v_3dsx_install_path = v; if (!this->changesMade)	this->changesMade = true; }
@@ -149,7 +151,7 @@ private:
 		v_outdatedColor, v_uptodateColor, v_notfoundColor, v_futureColor;
 	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
 	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
-	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed;
+	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed, v_citra;
 
 	// Some variables.
 	std::string v_3dsx_install_path, v_nds_install_path, v_archive_path;

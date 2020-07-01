@@ -62,14 +62,19 @@ ScriptInfo parseInfo(std::string fileName) {
 }
 
 // Check if Script version has the current version.
-void ScriptList::checkForValidate(void) {
+bool ScriptList::checkForValidate(void) {
 	FILE* file = fopen(currentFile.c_str(), "rt");
 	nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
 	fclose(file);
 	int ver = ScriptHelper::getNum(json, "info", "version");
-	if (ver < SCRIPT_VERSION || ver > SCRIPT_VERSION) {
+	if (ver == 3 || ver == 4) {
+		return true;
+	} else {
 		Msg::DisplayWarnMsg(Lang::get("INCOMPATIBLE_SCRIPT"));
+		return false;
 	}
+
+	return false;
 }
 
 // Open a script file and return it to a JSON.
@@ -206,18 +211,23 @@ ScriptList::ScriptList() {
 		if (ScriptHelper::checkIfValid(config->autobootFile()) == true) {
 			ScriptInfo fI = parseInfo(config->autobootFile());
 			currentFile = config->autobootFile();
-			selectedTitle = fI.title;
-			jsonFile = openScriptFile();
-			Desc = Description(jsonFile);
-			checkForValidate();
-			fileInfo2 = parseObjects(currentFile);
-			loadColors(jsonFile);
-			loadDesc();
-			isScriptSelected = true;
-			Selection = 0;
-			mode = 2;
-			changeBackHandle = true;
-			AutobootWhat = 0;
+			if (checkForValidate()) {
+				selectedTitle = fI.title;
+				jsonFile = openScriptFile();
+				Desc = Description(jsonFile);
+				fileInfo2 = parseObjects(currentFile);
+				loadColors(jsonFile);
+				loadDesc();
+				isScriptSelected = true;
+				Selection = 0;
+				mode = 2;
+				changeBackHandle = true;
+				AutobootWhat = 0;
+			} else {
+				AutobootWhat = 0;
+				changeBackHandle = true;
+				Gui::setScreen(std::make_unique<MainMenu>(), config->screenFade(), true);
+			}
 		} else {
 			AutobootWhat = 0;
 			changeBackHandle = true;
@@ -642,16 +652,18 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 						if (!dirContents[screenPos + i].isDirectory && fileInfo.size() != 0) {
 							if (ScriptHelper::checkIfValid(dirContents[screenPos + i].name) == true) {
 								currentFile = dirContents[screenPos + i].name;
-								selectedTitle = fileInfo[screenPos + i].title;
-								jsonFile = openScriptFile();
-								Desc = Description(jsonFile);
-								checkForValidate();
-								fileInfo2 = parseObjects(currentFile);
-								loadColors(jsonFile);
-								loadDesc();
-								isScriptSelected = true;
-								Selection = 0;
-								mode = 2;
+								if (checkForValidate()) {
+									selectedTitle = fileInfo[screenPos + i].title;
+									jsonFile = openScriptFile();
+									Desc = Description(jsonFile);
+									checkForValidate();
+									fileInfo2 = parseObjects(currentFile);
+									loadColors(jsonFile);
+									loadDesc();
+									isScriptSelected = true;
+									Selection = 0;
+									mode = 2;
+								}
 							}
 						}
 					}
@@ -662,16 +674,18 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 						if (!dirContents[screenPosList + i].isDirectory && fileInfo.size() != 0) {
 							if (ScriptHelper::checkIfValid(dirContents[screenPosList + i].name) == true) {
 								currentFile = dirContents[screenPosList + i].name;
-								selectedTitle = fileInfo[screenPosList + i].title;
-								jsonFile = openScriptFile();
-								Desc = Description(jsonFile);
-								checkForValidate();
-								fileInfo2 = parseObjects(currentFile);
-								loadColors(jsonFile);
-								loadDesc();
-								isScriptSelected = true;
-								Selection = 0;
-								mode = 2;
+								if (checkForValidate()) {
+									selectedTitle = fileInfo[screenPosList + i].title;
+									jsonFile = openScriptFile();
+									Desc = Description(jsonFile);
+									checkForValidate();
+									fileInfo2 = parseObjects(currentFile);
+									loadColors(jsonFile);
+									loadDesc();
+									isScriptSelected = true;
+									Selection = 0;
+									mode = 2;
+								}
 							}
 						}
 					}
@@ -684,16 +698,18 @@ void ScriptList::ListSelection(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else if (fileInfo.size() != 0) {
 				if (ScriptHelper::checkIfValid(dirContents[Selection].name) == true) {
 					currentFile = dirContents[Selection].name;
-					selectedTitle = fileInfo[Selection].title;
-					jsonFile = openScriptFile();
-					Desc = Description(jsonFile);
-					checkForValidate();
-					fileInfo2 = parseObjects(currentFile);
-					loadColors(jsonFile);
-					loadDesc();
-					isScriptSelected = true;
-					Selection = 0;
-					mode = 2;
+					if (checkForValidate()) {
+						selectedTitle = fileInfo[Selection].title;
+						jsonFile = openScriptFile();
+						Desc = Description(jsonFile);
+						checkForValidate();
+						fileInfo2 = parseObjects(currentFile);
+						loadColors(jsonFile);
+						loadDesc();
+						isScriptSelected = true;
+						Selection = 0;
+						mode = 2;
+					}
 				}
 			}
 		}

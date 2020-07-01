@@ -48,7 +48,7 @@ private:
 	void deleteScript(int selectedScript);
 	void refreshList();
 	nlohmann::json openScriptFile();
-	void checkForValidate(void);
+	bool checkForValidate(void);
 	void loadDesc(void);
 	Result runFunctions(nlohmann::json &json);
 	
