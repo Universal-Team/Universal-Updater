@@ -143,7 +143,7 @@
 	"SCRIPT_CANCELED": "Script Annullato!",
 	"SYNTAX_ERROR": "Errore Di Sintassi!",
 	"COPY_ERROR": "Errore di Copia!",
-	"MOVE_ERROR": "Errore di Sposta!",
+	"MOVE_ERROR": "Errore di Spostamento!",
 	"DELETE_ERROR": "Errore di Eliminazione!",
 	"CHANGE_KEY_DELAY": "Modifica Ritardo Chiave",
 	"ENTER_KEY_DELAY": "Inserisci il ritardo della chiave per lo scorrimento.",
@@ -189,11 +189,11 @@
 	"SELECT_CONSOLE": "Seleziona una console che ti piace visualizzare.",
 	"NO_AUTHORS_AVAILABLE": "Nessun autore disponibile.",
 	"NO_CONSOLES_AVAILABLE": "Nessuna console disponibile.",
-	"CHANGE_3DSX_PATH": "Change 3DSX path",
-	"CHANGE_NDS_PATH": "Change NDS path",
-	"CHANGE_ARCHIVE_PATH": "Change Archive path",
-	"SELECT_3DSX_PATH": "Select the 3DSX path.",
-	"SELECT_NDS_PATH": "Select the NDS path.",
-	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
-	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
+	"CHANGE_3DSX_PATH": "Cambia percorso 3DSX",
+	"CHANGE_NDS_PATH": "Cambia percorso NDS",
+	"CHANGE_ARCHIVE_PATH": "Cambia il percorso dell'Archivio",
+	"SELECT_3DSX_PATH": "Selezionare il percorso 3DSX.",
+	"SELECT_NDS_PATH": "Selezionare il percorso NDS.",
+	"SELECT_ARCHIVE_PATH": "Seleziona il percorso dell'archivio.",
+	"TOGGLE_PROGRESSBAR": "Attiva/Disattiva Barra dei progressi"
 }
