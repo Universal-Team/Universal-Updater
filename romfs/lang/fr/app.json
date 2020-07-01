@@ -189,11 +189,11 @@
 	"SELECT_CONSOLE": "Sélectionnez une console que vous voulez voir.",
 	"NO_AUTHORS_AVAILABLE": "Pas d'auteurs disponibles.",
 	"NO_CONSOLES_AVAILABLE": "Pas de consoles disponibles.",
-	"CHANGE_3DSX_PATH": "Change 3DSX path",
-	"CHANGE_NDS_PATH": "Change NDS path",
-	"CHANGE_ARCHIVE_PATH": "Change Archive path",
-	"SELECT_3DSX_PATH": "Select the 3DSX path.",
-	"SELECT_NDS_PATH": "Select the NDS path.",
-	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
-	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
+	"CHANGE_3DSX_PATH": "Changer l'emplacement des 3DSX",
+	"CHANGE_NDS_PATH": "Changer l'emplacement des NDS",
+	"CHANGE_ARCHIVE_PATH": "Changer l'emplacement des archives",
+	"SELECT_3DSX_PATH": "Choisir l'emplacement des 3DSX.",
+	"SELECT_NDS_PATH": "Choisir l'emplacement des NDS.",
+	"SELECT_ARCHIVE_PATH": "Choisir l'emplacement des archives.",
+	"TOGGLE_PROGRESSBAR": "Activer/désactiver la barre de progression"
 }
