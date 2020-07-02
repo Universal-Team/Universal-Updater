@@ -189,11 +189,11 @@
 	"SELECT_CONSOLE": "Seleccione un autor que le guste ver.",
 	"NO_AUTHORS_AVAILABLE": "No hay autores disponibles.",
 	"NO_CONSOLES_AVAILABLE": "No hay consolas disponibles.",
-	"CHANGE_3DSX_PATH": "Change 3DSX path",
-	"CHANGE_NDS_PATH": "Change NDS path",
-	"CHANGE_ARCHIVE_PATH": "Change Archive path",
-	"SELECT_3DSX_PATH": "Select the 3DSX path.",
-	"SELECT_NDS_PATH": "Select the NDS path.",
-	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
-	"TOGGLE_PROGRESSBAR": "Toggle Progressbar"
+	"CHANGE_3DSX_PATH": "Cambiar ruta 3DSX",
+	"CHANGE_NDS_PATH": "Cambiar ruta de NDS",
+	"CHANGE_ARCHIVE_PATH": "Cambiar ruta de archivo",
+	"SELECT_3DSX_PATH": "Selecciona la ruta 3DSX.",
+	"SELECT_NDS_PATH": "Seleccione la ruta de la tienda.",
+	"SELECT_ARCHIVE_PATH": "Seleccione la ruta del archivo.",
+	"TOGGLE_PROGRESSBAR": "Cambiar barra de progreso"
 }
