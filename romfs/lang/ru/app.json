@@ -188,5 +188,12 @@
 	"SELECT_AUTHOR": "Выберите автора, которого вы хотите просматривать.",
 	"SELECT_CONSOLE": "Выберите консоль, которую вы хотите просматривать.",
 	"NO_AUTHORS_AVAILABLE": "Нет авторов.",
-	"NO_CONSOLES_AVAILABLE": "Нет доступных консолей."
+	"NO_CONSOLES_AVAILABLE": "Нет доступных консолей.",
+	"CHANGE_3DSX_PATH": "Изменить путь 3DSX",
+	"CHANGE_NDS_PATH": "Изменить путь NDS",
+	"CHANGE_ARCHIVE_PATH": "Изменить путь к архиву",
+	"SELECT_3DSX_PATH": "Выбрать путь 3DSX.",
+	"SELECT_NDS_PATH": "Выбрать путь NDS.",
+	"SELECT_ARCHIVE_PATH": "Выбрать путь к архиву.",
+	"TOGGLE_PROGRESSBAR": "Включить / выключить прогрессбар"
 }

@@ -188,5 +188,12 @@
 	"SELECT_AUTHOR": "表示した作者を選択します。",
 	"SELECT_CONSOLE": "表示したコンソールを選択します。",
 	"NO_AUTHORS_AVAILABLE": "利用可能な作者がありません。",
-	"NO_CONSOLES_AVAILABLE": "利用可能なコンソールがありません。"
+	"NO_CONSOLES_AVAILABLE": "利用可能なコンソールがありません。",
+	"CHANGE_3DSX_PATH": "3DSXのパスを変更します",
+	"CHANGE_NDS_PATH": "NDSのパスを変更します",
+	"CHANGE_ARCHIVE_PATH": "アーカイブのパスを変更します",
+	"SELECT_3DSX_PATH": "3DSXのパス選択します",
+	"SELECT_NDS_PATH": "NDSのパスを選択します",
+	"SELECT_ARCHIVE_PATH": "アーカイブのパスを選択します",
+	"TOGGLE_PROGRESSBAR": "プログレスバーを切り替え"
 }
