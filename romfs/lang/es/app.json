@@ -195,5 +195,5 @@
 	"SELECT_3DSX_PATH": "Selecciona la ruta 3DSX.",
 	"SELECT_NDS_PATH": "Seleccione la ruta de la tienda.",
 	"SELECT_ARCHIVE_PATH": "Seleccione la ruta del archivo.",
-	"TOGGLE_PROGRESSBAR": "Cambiar barra de progreso"
+	"TOGGLE_PROGRESSBAR": "Activar/desactivar barra de progreso"
 }
