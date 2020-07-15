@@ -195,5 +195,7 @@
 	"SELECT_3DSX_PATH": "Choisir l'emplacement des 3DSX.",
 	"SELECT_NDS_PATH": "Choisir l'emplacement des NDS.",
 	"SELECT_ARCHIVE_PATH": "Choisir l'emplacement des archives.",
-	"TOGGLE_PROGRESSBAR": "(dés)activer la barre de chargement"
+	"TOGGLE_PROGRESSBAR": "(dés)activer la barre de chargement",
+	"SELECT_RGB_COLOR": "Select your RGB Color.",
+	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
 }
