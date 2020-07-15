@@ -195,5 +195,7 @@
 	"SELECT_3DSX_PATH": "3DSXのパス選択します",
 	"SELECT_NDS_PATH": "NDSのパスを選択します",
 	"SELECT_ARCHIVE_PATH": "アーカイブのパスを選択します",
-	"TOGGLE_PROGRESSBAR": "プログレスバーを切り替え"
+	"TOGGLE_PROGRESSBAR": "プログレスバーを切り替え",
+	"SELECT_RGB_COLOR": "Select your RGB Color.",
+	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
 }
