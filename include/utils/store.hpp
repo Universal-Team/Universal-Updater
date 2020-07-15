@@ -35,6 +35,7 @@
 struct UniStoreV2Struct {
 	std::string title;
 	std::string author;
+	std::string description;
 	std::string version;
 	std::string category;
 	std::string console;
@@ -59,6 +60,7 @@ public:
 
 	std::string returnTitle(const int index);
 	std::string returnAuthor(const int index);
+	std::string returnDescription(const int index);
 	int returnIconIndex(const int index);
 	int returnJSONIndex(const int index);
 	int getSize();

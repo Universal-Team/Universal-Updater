@@ -201,9 +201,10 @@ void UniStoreV2::DrawList(void) const {
 			GFX::DrawSprite(sprites_updateStore_idx, this->StoreBoxesList[i].x+340, this->StoreBoxesList[i].y+30);
 		}
 
-		// Display Author & App name.
-		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+12, 0.45f, this->returnTextColor(), this->sortedStore->returnTitle(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
-		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+28, 0.45f, this->returnTextColor(), this->sortedStore->returnAuthor(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
+		// Display Title, Author and Description.
+		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+5, 0.45f, this->returnTextColor(), this->sortedStore->returnTitle(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
+		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+18, 0.45f, this->returnTextColor(), this->sortedStore->returnAuthor(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
+		Gui::DrawString(this->StoreBoxesList[i].x+55, this->StoreBoxesList[i].y+32, 0.45f, this->returnTextColor(), this->sortedStore->returnDescription(i + (this->storePageList * STORE_ENTRIES_LIST)), 300);
 	}
 }
 

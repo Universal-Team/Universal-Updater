@@ -106,7 +106,7 @@ void Store::writeToFile(int index) {
 
 // Here we get the data of the UniStore!
 UniStoreV2Struct Store::getData(const int index) {
-	UniStoreV2Struct temp = {"", "", "", "", "" ,"", -1, 0, false};
+	UniStoreV2Struct temp = {"", "", "", "", "", "" ,"", -1, 0, false};
 
 	if (index > (int)this->storeJson["storeContent"].size()) return temp; // Empty.
 
@@ -119,6 +119,11 @@ UniStoreV2Struct Store::getData(const int index) {
 	// Author.
 	if (this->storeJson["storeContent"][index]["info"].contains("author")) {
 		temp.author = this->storeJson["storeContent"][index]["info"]["author"];
+	}
+
+	// Description.
+	if (this->storeJson["storeContent"][index]["info"].contains("description")) {
+		temp.description = this->storeJson["storeContent"][index]["info"]["description"];
 	}
 
 	// Version.
@@ -247,25 +252,13 @@ void Store::sorting(bool Ascending, SortType sorttype) {
 	this->sorttype = sorttype;
 	switch(this->sorttype) {
 		case SortType::TITLE:
-			if (Ascending) {
-				std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareTitleAscending);
-			} else {
-				std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareTitleDescending);
-			}
+			Ascending ? std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareTitleAscending) : std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareAuthorAscending);
 			break;
 		case SortType::AUTHOR:
-			if (Ascending) {
-				std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareAuthorAscending);
-			} else {
-				std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareAuthorDescending);
-			}
+			Ascending ? std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareTitleAscending) : std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareAuthorDescending);
 			break;
 		case SortType::LAST_UPDATED:
-			if (Ascending) {
-				std::sort(this->sortedStore.begin(), sortedStore.end(), compareUpdateAscending);
-			} else {
-				std::sort(this->sortedStore.begin(), sortedStore.end(), compareUpdateDescending);
-			}
+			Ascending ? std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareUpdateAscending) : std::sort(this->sortedStore.begin(), this->sortedStore.end(), compareUpdateDescending);
 			break;
 	}
 }
@@ -279,6 +272,11 @@ std::string Store::returnTitle(const int index) {
 std::string Store::returnAuthor(const int index) {
 	if (index > (int)this->sortedStore.size())	return "?"; // Out of scope.
 	return this->sortedStore[index].author;
+}
+
+std::string Store::returnDescription(const int index) {
+	if (index > (int)this->sortedStore.size())	return "?"; // Out of scope.
+	return this->sortedStore[index].description;
 }
 
 int Store::returnIconIndex(const int index) {
