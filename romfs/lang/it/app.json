@@ -195,5 +195,7 @@
 	"SELECT_3DSX_PATH": "Selezionare il percorso 3DSX.",
 	"SELECT_NDS_PATH": "Selezionare il percorso NDS.",
 	"SELECT_ARCHIVE_PATH": "Seleziona il percorso dell'archivio.",
-	"TOGGLE_PROGRESSBAR": "Attiva/Disattiva Barra dei progressi"
+	"TOGGLE_PROGRESSBAR": "Attiva/Disattiva Barra dei progressi",
+	"SELECT_RGB_COLOR": "Select your RGB Color.",
+	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
 }
