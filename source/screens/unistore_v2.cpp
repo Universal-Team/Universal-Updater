@@ -73,6 +73,13 @@ UniStoreV2::UniStoreV2(nlohmann::json &JSON, const std::string sheetPath, const 
 
 	this->outlineColorLight = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "outlineLight"));
 	this->outlineColorDark  = getColor(ScriptHelper::getString(this->storeJson, "storeInfo", "outlineDark"));
+
+	// Mode select.
+	if (this->storeJson["storeInfo"].contains("showGrid")) {
+		this->mode = this->storeJson["storeInfo"]["showGrid"] ? 0 : 1; 
+	} else {
+		this->mode = 0;
+	}
 }
 
 UniStoreV2::~UniStoreV2() {
@@ -93,7 +100,7 @@ void UniStoreV2::DrawBaseTop(void) const {
 	Gui::Draw_Rect(0, 0, 400, 25, this->darkMode ? this->barColorDark : this->barColorLight);
 	Gui::Draw_Rect(0, 25, 400, 190, this->darkMode ? this->bgColorDark : this->bgColorLight);
 	Gui::Draw_Rect(0, 215, 400, 25, this->darkMode ? this->barColorDark : this->barColorLight);
-	if (config->useBars() == true) {
+	if (config->useBars()) {
 		GFX::DrawSprite(sprites_top_screen_top_idx, 0, 0);
 		GFX::DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 	}
@@ -104,7 +111,7 @@ void UniStoreV2::DrawBaseBottom(void) const {
 	Gui::Draw_Rect(0, 0, 320, 25, this->darkMode ? this->barColorDark : this->barColorLight);
 	Gui::Draw_Rect(0, 25, 320, 190, this->darkMode ? this->bgColorDark : this->bgColorLight);
 	Gui::Draw_Rect(0, 215, 320, 25, this->darkMode ? this->barColorDark : this->barColorLight);
-	if (config->useBars() == true) {
+	if (config->useBars()) {
 		GFX::DrawSprite(sprites_top_screen_top_idx, 0, 0);
 		GFX::DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 	}
@@ -238,7 +245,7 @@ void UniStoreV2::parseObjects(int selection) {
 
 void UniStoreV2::DrawSearchMenu(void) const {
 	this->DrawBaseTop();
-	if (config->useBars() == true) {
+	if (config->useBars()) {
 		Gui::DrawStringCentered(0, 0, 0.7f, this->returnTextColor(), Lang::get("SEARCH_MENU"), 400);
 	} else {
 		Gui::DrawStringCentered(0, 2, 0.7f, this->returnTextColor(), Lang::get("SEARCH_MENU"), 400);
@@ -393,12 +400,17 @@ void UniStoreV2::Draw(void) const {
 
 void UniStoreV2::DrawSelectMenu(int option) const {
 	std::vector<std::string> options;
-	if (option == 0) {
-		options = this->sortedStore->getAuthors();
-	} else if (option == 1) {
-		options = this->sortedStore->getCategories();
-	} else if (option == 2) {
-		options = this->sortedStore->getSystems();
+
+	switch(option) {
+		case 0:
+			options = this->sortedStore->getAuthors();
+			break;
+		case 1:
+			options = this->sortedStore->getCategories();
+			break;
+		case 2:
+			options = this->sortedStore->getSystems();
+			break;
 	}
 
 	this->DrawBaseTop();
@@ -480,6 +492,7 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 					break;
 				}
+
 			this->isDropDown = false;
 		}
 
@@ -510,6 +523,7 @@ void UniStoreV2::DropLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->storePageList = 0;
 					this->sortedStore->reset();
 				}
+
 				this->isDropDown = false;
 			}
 		}
