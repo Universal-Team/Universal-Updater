@@ -23,8 +23,6 @@ jobs:
           submodules: recursive
       - name: "Install tools"
         run: |
-          sudo apt-get update
-          sudo apt-get install p7zip-full qrencode -y
           curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
           sudo 7z e bannertool.zip linux-x86_64/bannertool
           sudo chmod +x bannertool
@@ -39,10 +37,8 @@ jobs:
         id: build
         run: |
           make
-
           mkdir -p ~/artifacts
-          cp Universal-Updater.3dsx ~/artifacts
-          cp Universal-Updater.cia ~/artifacts
+          cp Universal-Updater.* ~/artifacts
           echo "::set-output name=commit_tag::$(git log --format=%h -1)"
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Publish build to GH Actions"
@@ -64,6 +60,10 @@ jobs:
       current_date: ${{ steps.commit.outputs.current_date }}
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
+      - name: "Install tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install qrencode -y
       - name: "Checkout repo"
         uses: actions/checkout@v1
       - name: Download artifacts
