@@ -28,10 +28,12 @@ jobs:
           curl -L https://github.com/Steveice10/bannertool/releases/download/1.2.0/bannertool.zip -o bannertool.zip
           sudo 7z e bannertool.zip linux-x86_64/bannertool
           sudo chmod +x bannertool
+          mv bannertool /usr/local/bin
           rm bannertool.zip
           curl -L https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.17/makerom-v0.17-ubuntu_x86_64.zip -o makerom-v0.17-ubuntu_x86_64.zip
           sudo 7z e makerom-v0.17-ubuntu_x86_64.zip
           sudo chmod +x makerom
+          mv makerom /usr/local/bin
           rm makerom-v0.17-ubuntu_x86_64.zip
       - name: "Build & Prepare Universal Updater"
         id: build
