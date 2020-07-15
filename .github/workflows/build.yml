@@ -1,0 +1,161 @@
+name: Build Universal Updator
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:20200528
+    name: "Build with Docker using devKitARM r54"
+    outputs:
+      commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
+      commit_message: ${{ steps.make-cias.outputs.commit_message }}
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: "Install tools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install p7zip-full qrencode -y
+          curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
+          sudo 7z e bannertool.zip linux-x86_64/bannertool
+          sudo chmod +x bannertool
+          rm bannertool.zip
+          curl -L https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip -o makerom_015_ctrtool.zip
+          sudo 7z e makerom_015_ctrtool.zip Linux_x86_64/makerom
+          sudo chmod +x makerom
+          rm makerom_015_ctrtool.zip
+      - name: "Build Universal Updater"
+        run: |
+          make
+      - name: "Make artifacts"
+        id: make-cias
+        run: |
+          mkdir -p ~/artifacts
+          cp Universal-Updater.3dsx ~/artifacts
+          cp Universal-Updater.cia ~/artifacts
+          echo "::set-output name=commit_tag::$(git log --format=%h -1)"
+          echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
+      - name: "Publish build to GH Actions"
+        uses: actions/upload-artifact@v2
+        with:
+          path: ~/artifacts/*
+          name: "build"
+
+  # Only run this for non-PR jobs.
+  publish_build_twlbot:
+    runs-on: ubuntu-latest
+    name: "Publish build to TWLBot"
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    needs: build
+    env:
+      COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+    outputs:
+      current_date: ${{ steps.commit.outputs.current_date }}
+      twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: "build"
+          path: "build"
+      - name: Upload to Universal-Team/Universal-Updater release
+        if: ${{ startsWith(github.ref, 'refs/tags') }}
+        run: |
+          ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
+      - name: "Commit and push to TWLBot/Builds"
+        id: "commit"
+        run: |
+          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo "::set-output name=current_date::$CURRENT_DATE"
+
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+          mkdir extras/builds/Universal-Updater/
+          qrencode -o extras/builds/Universal-Updater/Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$(git describe --abbrev=0 --tags)/Universal-Updater.cia
+          cd extras/builds/Universal-Updater/
+          cp ${{ github.workspace }}/build/* .
+          git stage .
+          git commit -m "Universal Updater | $COMMIT_TAG"
+          git tag v$CURRENT_DATE
+          git push origin v$CURRENT_DATE
+          echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
+      - name: Release to Universal-Team/extras
+        run: |
+          AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+          CONTENT_TYPE="Content-Type: application/json"
+          API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal Team | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", "prerelease": true}"
+
+          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
+
+          ID=$(echo $RESPONSE | jq --raw-output '.id')
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/Universal-Team/extras/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
+
+  send_webhook_success:
+    runs-on: ubuntu-latest
+    needs: [publish_build_twlbot, build]
+    name: "Send Discord success webhook"
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    env:
+      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
+      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
+      - name: "Send success webhook"
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+          chmod +x send.sh
+          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.png
+          ./send.sh success ${{ secrets.WEBHOOK_URL }}
+
+  send_webhook_failure:
+    runs-on: ubuntu-latest
+    needs: [publish_build_twlbot, build]
+    name: "Send Discord failure webhook"
+    if: ${{ failure() && !startsWith(github.ref, 'refs/pull') }}
+    env:
+      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
+      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
+      - name: "Send failure webhook"
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+          chmod +x send.sh
+          ./send.sh failure ${{ secrets.WEBHOOK_URL }}
