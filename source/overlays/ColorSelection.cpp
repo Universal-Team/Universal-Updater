@@ -72,7 +72,7 @@ static void Draw(u8 r, u8 g, u8 b) {
 	Gui::DrawStringCentered(0, config->useBars() ? 0 : 2, 0.7f, config->textColor(), Lang::get("SELECT_RGB_COLOR"), 400);
 	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.7f, Lang::get("UI_COLOR_BEHAVIOUR")))/2, 0.7f, config->textColor(), Lang::get("UI_COLOR_BEHAVIOUR"), 390, 70);
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(255, 255, 255, 190));
+	Gui::Draw_Rect(0, 0, 320, 240, config->bottomBG() + C2D_Color32(0, 0, 0, 190));
 	DrawRGBColor(r, g, b);
 	C3D_FrameEnd(0);
 }
