@@ -498,40 +498,40 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (hDown & KEY_A) {
 			switch(this->colorMode) {
 				case 0:
-					config->barColor(Overlays::SelectColor(config->barColor()));
+					config->barColor(Overlays::SelectRGB(config->barColor()));
 					break;
 				case 1:
-					config->topBG(Overlays::SelectColor(config->topBG()));
+					config->topBG(Overlays::SelectRGB(config->topBG()));
 					break;
 				case 2:
-					config->bottomBG(Overlays::SelectColor(config->bottomBG()));
+					config->bottomBG(Overlays::SelectRGB(config->bottomBG()));
 					break;
 				case 3:
-					config->textColor(Overlays::SelectColor(config->textColor()));
+					config->textColor(Overlays::SelectRGB(config->textColor()));
 					break;
 				case 4:
-					config->selectedColor(Overlays::SelectColor(config->selectedColor()));
+					config->selectedColor(Overlays::SelectRGB(config->selectedColor()));
 					break;
 				case 5:
-					config->unselectedColor(Overlays::SelectColor(config->unselectedColor()));
+					config->unselectedColor(Overlays::SelectRGB(config->unselectedColor()));
 					break;
 				case 6:
-					config->progressbarColor(Overlays::SelectColor(config->progressbarColor()));
+					config->progressbarColor(Overlays::SelectRGB(config->progressbarColor()));
 					break;
 				case 7:
-					config->notfoundColor(Overlays::SelectColor(config->notfoundColor()));
+					config->notfoundColor(Overlays::SelectRGB(config->notfoundColor()));
 					break;
 				case 8:
-					config->outdatedColor(Overlays::SelectColor(config->outdatedColor()));
+					config->outdatedColor(Overlays::SelectRGB(config->outdatedColor()));
 					break;
 				case 9:
-					config->uptodateColor(Overlays::SelectColor(config->uptodateColor()));
+					config->uptodateColor(Overlays::SelectRGB(config->uptodateColor()));
 					break;
 				case 10:
-					config->futureColor(Overlays::SelectColor(config->futureColor()));
+					config->futureColor(Overlays::SelectRGB(config->futureColor()));
 					break;
 				case 11:
-					config->buttonColor(Overlays::SelectColor(config->buttonColor()));
+					config->buttonColor(Overlays::SelectRGB(config->buttonColor()));
 					break;
 			}
 		}

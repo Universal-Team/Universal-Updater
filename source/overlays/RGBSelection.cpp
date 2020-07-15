@@ -84,7 +84,7 @@ static void Draw(u8 r, u8 g, u8 b) {
 }
 
 
-u32 Overlays::SelectColor(u32 oldColor) {
+u32 Overlays::SelectRGB(u32 oldColor) {
 	u8 r = ColorHelper::getColorValue(oldColor, 2);
 	u8 g = ColorHelper::getColorValue(oldColor, 1);
 	u8 b = ColorHelper::getColorValue(oldColor, 0);

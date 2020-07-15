@@ -30,7 +30,7 @@
 #include "common.hpp"
 
 namespace Overlays {
-	u32 SelectColor(u32 oldColor);
+	u32 SelectRGB(u32 oldColor);
 }
 
 #endif
