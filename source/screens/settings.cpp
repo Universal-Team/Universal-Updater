@@ -556,7 +556,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, mainButtons[0])) {
 				int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
-				if(temp != -1) {
+				if (temp != -1) {
 					red = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(red, ColorHelper::getColorValue(config->barColor(), 1), ColorHelper::getColorValue(config->barColor(), 0), 255));
@@ -586,7 +586,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			} else if (touching(touch, mainButtons[1])) {
 				int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
-				if(temp != -1) {
+				if (temp != -1) {
 					green = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(ColorHelper::getColorValue(config->barColor(), 2), green, ColorHelper::getColorValue(config->barColor(), 0), 255));
@@ -616,7 +616,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			} else if (touching(touch, mainButtons[2])) {
 				int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
-				if(temp != -1) {
+				if (temp != -1) {
 					blue = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(ColorHelper::getColorValue(config->barColor(), 2), ColorHelper::getColorValue(config->barColor(), 1), blue, 255));
