@@ -25,20 +25,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full qrencode -y
-          curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
+          curl -L https://github.com/Steveice10/bannertool/releases/download/1.2.0/bannertool.zip -o bannertool.zip
           sudo 7z e bannertool.zip linux-x86_64/bannertool
           sudo chmod +x bannertool
           rm bannertool.zip
-          curl -L https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip -o makerom_015_ctrtool.zip
-          sudo 7z e makerom_015_ctrtool.zip Linux_x86_64/makerom
+          curl -L https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.17/makerom-v0.17-ubuntu_x86_64.zip -o makerom-v0.17-ubuntu_x86_64.zip
+          sudo 7z e makerom-v0.17-ubuntu_x86_64.zip
           sudo chmod +x makerom
-          rm makerom_015_ctrtool.zip
-      - name: "Build Universal Updater"
+          rm makerom-v0.17-ubuntu_x86_64.zip
+      - name: "Build & Prepare Universal Updater"
+        id: build
+        env:
+          PATH: $PATH:$(pwd)
         run: |
           make
-      - name: "Make artifacts"
-        id: make-cias
-        run: |
+
           mkdir -p ~/artifacts
           cp Universal-Updater.3dsx ~/artifacts
           cp Universal-Updater.cia ~/artifacts
