@@ -35,8 +35,6 @@ jobs:
           rm makerom-v0.17-ubuntu_x86_64.zip
       - name: "Build & Prepare Universal Updater"
         id: build
-        env:
-          PATH: $PATH:$(pwd)
         run: |
           make
 
