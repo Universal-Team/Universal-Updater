@@ -25,6 +25,7 @@
 */
 
 #include "keyboard.hpp"
+#include "overlay.hpp"
 #include "settings.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -158,6 +159,7 @@ void Settings::DrawColorChanging(void) const {
 		} else if (colorMode == 11) {
 			GFX::DrawButton(100, 100, "");
 		}
+
 		Gui::DrawStringCentered(0, 215, 0.7f, WHITE, Lang::get(colorList[colorMode]), 320);
 	}
 
@@ -176,6 +178,7 @@ void Settings::DrawColorChanging(void) const {
 			if (screenPos + i == colorSelection) {
 				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 			}
+
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, config->textColor(), line1, 320);
 		}
 	} else {
@@ -492,6 +495,47 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 	} else {
+		if (hDown & KEY_A) {
+			switch(this->colorMode) {
+				case 0:
+					config->barColor(Overlays::SelectColor(config->barColor()));
+					break;
+				case 1:
+					config->topBG(Overlays::SelectColor(config->topBG()));
+					break;
+				case 2:
+					config->bottomBG(Overlays::SelectColor(config->bottomBG()));
+					break;
+				case 3:
+					config->textColor(Overlays::SelectColor(config->textColor()));
+					break;
+				case 4:
+					config->selectedColor(Overlays::SelectColor(config->selectedColor()));
+					break;
+				case 5:
+					config->unselectedColor(Overlays::SelectColor(config->unselectedColor()));
+					break;
+				case 6:
+					config->progressbarColor(Overlays::SelectColor(config->progressbarColor()));
+					break;
+				case 7:
+					config->notfoundColor(Overlays::SelectColor(config->notfoundColor()));
+					break;
+				case 8:
+					config->outdatedColor(Overlays::SelectColor(config->outdatedColor()));
+					break;
+				case 9:
+					config->uptodateColor(Overlays::SelectColor(config->uptodateColor()));
+					break;
+				case 10:
+					config->futureColor(Overlays::SelectColor(config->futureColor()));
+					break;
+				case 11:
+					config->buttonColor(Overlays::SelectColor(config->buttonColor()));
+					break;
+			}
+		}
+
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 			colorSelection = colorMode;
 			dropDownMenu = true;

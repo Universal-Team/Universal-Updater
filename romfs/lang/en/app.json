@@ -220,5 +220,8 @@
 	"SELECT_3DSX_PATH":					"Select the 3DSX path.",
 	"SELECT_NDS_PATH":					"Select the NDS path.",
 	"SELECT_ARCHIVE_PATH":				"Select the Archive path.",
-	"TOGGLE_PROGRESSBAR":				"Toggle Progressbar"
+	"TOGGLE_PROGRESSBAR":				"Toggle Progressbar",
+
+	"SELECT_RGB_COLOR":					"Select your RGB Color.",
+	"UI_COLOR_BEHAVIOUR":				"Press START to Select.\n\uE001 to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
 }
