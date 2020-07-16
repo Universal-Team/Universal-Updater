@@ -196,6 +196,6 @@
 	"SELECT_NDS_PATH": "Wybierz lokalizację NDS.",
 	"SELECT_ARCHIVE_PATH": "Wybierz lokalizację archiwum.",
 	"TOGGLE_PROGRESSBAR": "Przełącz pasek postępu",
-	"SELECT_RGB_COLOR": "Select your RGB Color.",
+	"SELECT_RGB_COLOR": "Wybierz kolor RGB.",
 	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
 }
