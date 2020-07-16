@@ -159,17 +159,17 @@ u32 Overlays::SelectRGB(u32 oldColor) {
 		// Change RGB Value on the next button!
 		if (hidKeysDown() & KEY_TOUCH) {
 			if (touch.px >= 270 && touch.px <= 270 + 40 && touch.py >= 30 && touch.py <= 30 + 20) {
-				int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_RED_RGB"));
 				if (temp != -1) {
 					r = temp;
 				}
 			} else if (touch.px >= 270 && touch.px <= 270 + 40 && touch.py >= 80 && touch.py <= 80 + 20) {
-				int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_GREEN_RGB"));
 				if (temp != -1) {
 					g = temp;
 				}
 			} else if (touch.px >= 270 && touch.px <= 270 + 40 && touch.py >= 130 && touch.py <= 130 + 20) {
-				int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_BLUE_RGB"));
 				if (temp != -1) {
 					b = temp;
 				}

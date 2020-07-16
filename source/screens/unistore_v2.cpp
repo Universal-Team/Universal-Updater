@@ -753,7 +753,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			// Search menu.
 			if (hDown & KEY_TOUCH) {
 				if (touching(touch, searchPos[0])) {
-					std::string temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+					std::string temp = Input::setkbdString(50, Lang::get("ENTER_SEARCH"));
 					if (temp != "") {
 						this->selectedBox = 0;
 						this->storePage = 0;
@@ -834,7 +834,7 @@ void UniStoreV2::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				std::string temp; int amount;
 				switch(this->searchSelection) {
 					case 0:
-						temp = Input::getStringLong(Lang::get("ENTER_SEARCH"));
+						temp = Input::setkbdString(50, Lang::get("ENTER_SEARCH"));
 						if (temp != "") {
 							this->selectedBox = 0;
 							this->storePage = 0;

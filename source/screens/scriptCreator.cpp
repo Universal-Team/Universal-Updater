@@ -172,17 +172,17 @@ void ScriptCreator::createNewJson(std::string fileName) {
 // Test.
 void ScriptCreator::createDownloadRelease() {
 	// Repo.
-	std::string repo = Input::getString(50, "Enter the name of the Owner.");
+	std::string repo = Input::setkbdString(50, "Enter the name of the Owner.");
 	repo += "/";
-	repo += Input::getString(50, "Enter the name of the repo.");
+	repo += Input::setkbdString(50, "Enter the name of the repo.");
 	// File.
-	std::string file = Input::getString(50, "Enter the name of the file.");
+	std::string file = Input::setkbdString(50, "Enter the name of the file.");
 	// Output.
-	std::string output = Input::getString(50, "Enter the name of the Output path.");
+	std::string output = Input::setkbdString(50, "Enter the name of the Output path.");
 	// Prerelease.
 	bool prerelease = true;
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 
 	this->editScript[this->entryName].push_back({{"type", "downloadRelease"}, {"repo", repo}, {"file", file}, {"output", output}, {"includePrerelease", prerelease}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadRelease();'.");
@@ -192,11 +192,11 @@ void ScriptCreator::createDownloadRelease() {
 
 void ScriptCreator::createDownloadFile() {
 	// URL of the file.
-	std::string file = Input::getString(50, "Enter the URL of the file.");
+	std::string file = Input::setkbdString(50, "Enter the URL of the file.");
 	// Output.
-	std::string output = Input::getString(50, "Enter the name of the Output path.");
+	std::string output = Input::setkbdString(50, "Enter the name of the Output path.");
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 
 	this->editScript[this->entryName].push_back({{"type", "downloadFile"}, {"file", file}, {"output", output}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDownloadFile();'.");
@@ -205,9 +205,9 @@ void ScriptCreator::createDownloadFile() {
 
 void ScriptCreator::createDeleteFile() {
 	// URL of the file.
-	std::string file = Input::getString(50, "Enter the path to the file.");
+	std::string file = Input::setkbdString(50, "Enter the path to the file.");
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 
 	this->editScript[this->entryName].push_back({{"type", "deleteFile"}, {"file", file}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createDeleteFile();'.");
@@ -216,13 +216,13 @@ void ScriptCreator::createDeleteFile() {
 
 void ScriptCreator::createExtractFile() {
 	// File path.
-	std::string file = Input::getString(50, "Enter the path to the file.");
+	std::string file = Input::setkbdString(50, "Enter the path to the file.");
 	// Input of the archive.
-	std::string input = Input::getString(50, "Enter the Input of what should be extracted.");
+	std::string input = Input::setkbdString(50, "Enter the Input of what should be extracted.");
 	// Output path.
-	std::string output = Input::getString(50, "Enter the output path.");
+	std::string output = Input::setkbdString(50, "Enter the output path.");
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 
 	this->editScript[this->entryName].push_back({{"type", "extractFile"}, {"file", file}, {"input", input}, {"output", output}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createExtractFile();'.");
@@ -231,9 +231,9 @@ void ScriptCreator::createExtractFile() {
 
 void ScriptCreator::createInstallCia() {
 	// File path.
-	std::string file = Input::getString(50, "Enter the path to the CIA File.");
+	std::string file = Input::setkbdString(50, "Enter the path to the CIA File.");
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 
 	this->editScript[this->entryName].push_back({{"type", "installCia"}, {"file", file}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createInstallCia();'.");
@@ -242,7 +242,7 @@ void ScriptCreator::createInstallCia() {
 
 void ScriptCreator::createMkDir() {
 	// Directory path.
-	std::string directory = Input::getString(50, "Enter the directory path.");
+	std::string directory = Input::setkbdString(50, "Enter the directory path.");
 
 	this->editScript[this->entryName].push_back({{"type", "mkdir"}, {"directory", directory}});
 	Logging::writeToLog("Execute 'ScriptCreator::createMkDir();'.");
@@ -250,7 +250,7 @@ void ScriptCreator::createMkDir() {
 
 void ScriptCreator::createRmDir() {
 	// Directory path.
-	std::string directory = Input::getString(50, "Enter the directory path.");
+	std::string directory = Input::setkbdString(50, "Enter the directory path.");
 
 	this->editScript[this->entryName].push_back({{"type", "rmdir"}, {"directory", directory}});
 	Logging::writeToLog("Execute 'ScriptCreator::createRmDir();'.");
@@ -258,17 +258,19 @@ void ScriptCreator::createRmDir() {
 
 void ScriptCreator::createMkFile() {
 	// File path.
-	std::string file = Input::getString(50, "Enter the path to the new File.");
+	std::string file = Input::setkbdString(50, "Enter the path to the new File.");
 
 	this->editScript[this->entryName].push_back({{"type", "mkfile"}, {"file", file}});
 	Logging::writeToLog("Execute 'ScriptCreator::createMkFile();'.");
 }
 
 void ScriptCreator::createTimeMsg() {
+	int seconds = 0;
 	// Message.
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 	// Seconds.
-	int seconds = Input::getUint(999, "Enter the Seconds for the Message to display.");
+	int temp = Input::setInt(999, "Enter the Seconds for the Message to display.");
+	if (temp != -1)	seconds = temp;
 
 	this->editScript[this->entryName].push_back({{"type", "timeMsg"}, {"message", message}, {"seconds", seconds}});
 	Logging::writeToLog("Execute 'ScriptCreator::createTimeMsg();'.");
@@ -280,31 +282,31 @@ void ScriptCreator::createSaveConfig() {
 }
 
 void ScriptCreator::createBootTitle() {
-	std::string titleID = Input::getString(50, "Enter the TitleID.");
+	std::string titleID = Input::setkbdString(50, "Enter the TitleID.");
 	bool isNAND = Msg::promptMsg("Is the current title a NAND title?");
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 	this->editScript[this->entryName].push_back({{"type", "bootTitle"}, {"TitleID", titleID}, {"NAND", isNAND}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createBootTitle();'.");
 }
 
 void ScriptCreator::createPromptMessage() {
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 	this->editScript[this->entryName].push_back({{"type", "promptMessage"}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createPromptMessage();'.");
 }
 
 void ScriptCreator::createCopy() {
-	std::string source = Input::getString(50, "Enter the source location.");
-	std::string destination = Input::getString(50, "Enter the destination location.");
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string source = Input::setkbdString(50, "Enter the source location.");
+	std::string destination = Input::setkbdString(50, "Enter the destination location.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 	this->editScript[this->entryName].push_back({{"type", "copy"}, {"source", source}, {"destination", destination}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createCopy();'.");
 }
 
 void ScriptCreator::createMove() {
-	std::string oldLocation = Input::getString(50, "Enter the old location.");
-	std::string newLocation = Input::getString(50, "Enter the new location.");
-	std::string message = Input::getString(50, "Enter the Message.");
+	std::string oldLocation = Input::setkbdString(50, "Enter the old location.");
+	std::string newLocation = Input::setkbdString(50, "Enter the new location.");
+	std::string message = Input::setkbdString(50, "Enter the Message.");
 	this->editScript[this->entryName].push_back({{"type", "move"}, {"old", oldLocation}, {"new", newLocation}, {"message", message}});
 	Logging::writeToLog("Execute 'ScriptCreator::createMove();'.");
 }
@@ -320,18 +322,22 @@ void ScriptCreator::save() {
 // Important to make Scripts valid.
 void ScriptCreator::setInfoStuff(void) {
 	// Get needed things.
-	const std::string test = Input::getString(50, "Enter the Title of the script.");
-	const std::string test2 = Input::getString(50, "Enter the Author name of the script.");
-	const std::string test3 = Input::getString(80, "Enter the short description of the script.");
-	const std::string test4 = Input::getString(300, "Enter the long description of the script.");
-	int scriptRevision = Input::getUint(99, "Enter the script revision.");
+	const std::string test = Input::setkbdString(50, "Enter the Title of the script.");
+	const std::string test2 = Input::setkbdString(50, "Enter the Author name of the script.");
+	const std::string test3 = Input::setkbdString(80, "Enter the short description of the script.");
+	const std::string test4 = Input::setkbdString(300, "Enter the long description of the script.");
+	int scriptRevision = Input::setInt(99, "Enter the script revision.");
 	// Set the real JSON stuff.
 	this->setString("info", "title", test);
 	this->setString("info", "author", test2);
 	this->setString("info", "shortDesc", test3);
 	this->setString("info", "description", test4);
 	this->setInt("info", "version", SCRIPT_VERSION);
-	this->setInt("info", "revision", scriptRevision);
+	if (scriptRevision != -1) {
+		this->setInt("info", "revision", scriptRevision);
+	} else {
+		this->setInt("info", "revision", 1);
+	}
 }
 
 
@@ -345,7 +351,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 		switch(Selection) {
 			case 0:
 				this->jsonFileName = config->scriptPath();
-				this->jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
+				this->jsonFileName += Input::setkbdString(20, "Enter the name of the JSON file.");
 				if (this->jsonFileName != "") {
 					this->jsonFileName += ".json";
 					this->createNewJson(this->jsonFileName);
@@ -355,7 +361,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 						this->setInfoStuff();
 					}
 
-					this->entryName = Input::getString(50, "Enter the EntryName.");
+					this->entryName = Input::setkbdString(50, "Enter the EntryName.");
 					this->Selection = 0;
 					this->mode = 1;
 				}
@@ -366,7 +372,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->jsonFileName = tempScript;
 					if (access(this->jsonFileName.c_str(), F_OK) == 0) {
 						this->openJson(this->jsonFileName);
-						this->entryName = Input::getString(50, "Enter the EntryName.");
+						this->entryName = Input::setkbdString(50, "Enter the EntryName.");
 						this->Selection = 0;
 						this->mode = 1;
 					}
@@ -387,7 +393,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
 			this->jsonFileName = config->scriptPath();
-			this->jsonFileName += Input::getString(20, "Enter the name of the JSON file.");
+			this->jsonFileName += Input::setkbdString(20, "Enter the name of the JSON file.");
 			if (this->jsonFileName != "") {
 				this->jsonFileName += ".json";
 				this->createNewJson(this->jsonFileName);
@@ -397,7 +403,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->setInfoStuff();
 				}
 
-				this->entryName = Input::getString(50, "Enter the EntryName.");
+				this->entryName = Input::setkbdString(50, "Enter the EntryName.");
 				this->Selection = 0;
 				this->mode = 1;
 			}
@@ -407,7 +413,7 @@ void ScriptCreator::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 				this->jsonFileName = tempScript;
 				if (access(this->jsonFileName.c_str(), F_OK) == 0) {
 					this->openJson(this->jsonFileName);
-					this->entryName = Input::getString(50, "Enter the EntryName.");
+					this->entryName = Input::setkbdString(50, "Enter the EntryName.");
 					this->Selection = 0;
 					this->mode = 1;
 				}
@@ -526,7 +532,7 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->createMove();
 					break;
 				case 2:
-					this->entryName = Input::getString(50, "Enter the new entry.");
+					this->entryName = Input::setkbdString(50, "Enter the new entry.");
 					break;
 			}
 		}
@@ -567,7 +573,7 @@ void ScriptCreator::scriptLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else if (touching(touch, creatorButtons[1])) {
 				this->createMove();
 			} else if (touching(touch, creatorButtons[2])) {
-				this->entryName = Input::getString(50, "Enter the new entry.");
+				this->entryName = Input::setkbdString(50, "Enter the new entry.");
 			}
 		}
 	}

@@ -305,7 +305,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->musicPath(tempMusic);
 				}
 			} else if (Selection == 1) {
-				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+				int temp = Input::setInt(255, Lang::get("ENTER_KEY_DELAY"));
+				if (temp != -1) config->keyDelay(temp);
 			} else if (Selection == 2) {
 				if (config->screenFade()) {
 					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
@@ -340,7 +341,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->musicPath(tempMusic);
 				}
 			} else if (touching(touch, mainButtons2[1])) {
-				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+				int temp = Input::setInt(255, Lang::get("ENTER_KEY_DELAY"));
+				if (temp != -1) config->keyDelay(temp);
 			} else if (touching(touch, mainButtons2[2])) {
 				if (config->screenFade()) {
 					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
@@ -555,7 +557,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, mainButtons[0])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_RED_RGB"));
 				if (temp != -1) {
 					red = temp;
 					if (colorMode == 0) {
@@ -585,7 +587,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 			} else if (touching(touch, mainButtons[1])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_GREEN_RGB"));
 				if (temp != -1) {
 					green = temp;
 					if (colorMode == 0) {
@@ -615,7 +617,7 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 			} else if (touching(touch, mainButtons[2])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
+				int temp = Input::setu8(Lang::get("ENTER_BLUE_RGB"));
 				if (temp != -1) {
 					blue = temp;
 					if (colorMode == 0) {

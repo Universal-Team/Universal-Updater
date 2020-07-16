@@ -143,7 +143,7 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 		LightEvent_Clear(&waitCommit);
 		file_toCommit_size = file_buffer_pos + tofill;
 		file_buffer_pos = 0;
-		svcFlushProcessDataCache(CUR_PROCESS_HANDLE, g_buffers[g_index], file_toCommit_size);
+		svcFlushProcessDataCache(CUR_PROCESS_HANDLE, (u32)g_buffers[g_index], file_toCommit_size);
 		g_index = !g_index;
 		LightEvent_Signal(&readyToCommit);
 	}
@@ -207,7 +207,7 @@ Result downloadToFile(std::string url, std::string path) {
 	LightEvent_Clear(&waitCommit);
 
 	file_toCommit_size = file_buffer_pos;
-	svcFlushProcessDataCache(CUR_PROCESS_HANDLE, g_buffers[g_index], file_toCommit_size);
+	svcFlushProcessDataCache(CUR_PROCESS_HANDLE, (u32)g_buffers[g_index], file_toCommit_size);
 	g_index = !g_index;
 	if (!filecommit()) {
 		retcode = -3;
