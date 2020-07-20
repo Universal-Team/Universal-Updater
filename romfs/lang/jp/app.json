@@ -197,5 +197,5 @@
 	"SELECT_ARCHIVE_PATH": "アーカイブのパスを選択します",
 	"TOGGLE_PROGRESSBAR": "プログレスバーを切り替え",
 	"SELECT_RGB_COLOR": "RGB色を選択します。",
-	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
+	"UI_COLOR_BEHAVIOUR": "STARTを押して選択します\nを押してキャンセルします\nタッチでRGBを変更します\n十字キーでRGBを変更します"
 }
