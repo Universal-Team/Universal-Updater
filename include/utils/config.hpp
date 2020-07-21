@@ -38,6 +38,7 @@ public:
 	void save();
 	void initialize();
 	void addMissingThings();
+	void sysLang();
 
 	// Bar Color.
 	u32 barColor() { return this->v_barColor; }
