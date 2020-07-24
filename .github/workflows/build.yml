@@ -3,6 +3,7 @@ name: Build Universal Updator
 on:
   push:
     branches: ["*"]
+    branches-ignore: [translation]
   pull_request:
     branches: ["*"]
   release:
