@@ -197,5 +197,5 @@
 	"SELECT_ARCHIVE_PATH": "Выбрать путь к архиву.",
 	"TOGGLE_PROGRESSBAR": "Включить / выключить прогрессбар",
 	"SELECT_RGB_COLOR": "Выберите цвет RGB.",
-	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
+	"UI_COLOR_BEHAVIOUR": "Нажмите СТАРТ для выбора.\n для отмены.\nНажмите на екран для управления RGB.\nD-Pad для управления RGB."
 }
