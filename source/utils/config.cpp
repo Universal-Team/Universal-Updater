@@ -40,6 +40,52 @@ void Config::addMissingThings() {
 	}
 }
 
+//Detects system language and is used later to set app language to system language
+void Config::sysLang() {
+  u8 language = 0;
+
+  CFGU_GetSystemLanguage(&language);
+  switch(language) {
+    case 0:
+      this->language("jp");
+      break;
+    case 1:
+      this->language("en");
+      break;
+    case 2:
+      this->language("fr");
+      break;
+    case 3:
+      this->language("de");
+      break;
+    case 4:
+      this->language("it");
+      break;
+	case 5:
+      this->language("es");
+      break;
+	case 6:
+      this->language("en"); //Simplified chinese, not translated
+      break;
+	case 7:
+      this->language("en"); //Korean, not translated
+      break;
+	case 8:
+      this->language("nl");
+      break;
+	case 9:
+      this->language("pt");
+      break;
+	case 10:
+      this->language("ru");
+      break;
+	case 11:
+      this->language("en"); //traditional chinese, not translated
+      break;
+  }
+}
+
+
 // In case it doesn't exist.
 void Config::initialize() {
 	// Create through fopen "Write".
@@ -70,7 +116,7 @@ void Config::initialize() {
 	this->setInt("KEY_DELAY", 5);
 	this->setBool("SCREEN_FADE", false);
 	this->setBool("PROGRESS_DISPLAY", true);
-	this->setString("LANGUAGE", "en");
+	this->sysLang();
 	this->setBool("FIRST_STARTUP", true);
 	this->setBool("USE_SCRIPT_COLORS", true);
 	this->setBool("SHOW_SPEED", false);
@@ -250,7 +296,7 @@ Config::Config() {
 	}
 
 	if (!this->json.contains("LANGUAGE") || this->json.at("LANGUAGE").is_number()) {
-		this->language("en");
+		this->sysLang();
 		this->initialChanges = true;
 	} else {
 		this->language(this->getString("LANGUAGE"));

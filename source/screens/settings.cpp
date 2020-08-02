@@ -25,6 +25,7 @@
 */
 
 #include "keyboard.hpp"
+#include "overlay.hpp"
 #include "settings.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -158,6 +159,7 @@ void Settings::DrawColorChanging(void) const {
 		} else if (colorMode == 11) {
 			GFX::DrawButton(100, 100, "");
 		}
+
 		Gui::DrawStringCentered(0, 215, 0.7f, WHITE, Lang::get(colorList[colorMode]), 320);
 	}
 
@@ -176,6 +178,7 @@ void Settings::DrawColorChanging(void) const {
 			if (screenPos + i == colorSelection) {
 				Gui::drawAnimatedSelector(0, 40+(i*57), 320, 45, .060, TRANSPARENT, config->selectedColor());
 			}
+
 			Gui::DrawStringCentered(0, 50+(i*57), 0.7f, config->textColor(), line1, 320);
 		}
 	} else {
@@ -302,7 +305,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->musicPath(tempMusic);
 				}
 			} else if (Selection == 1) {
-				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+				int temp = Input::setInt(255, Lang::get("ENTER_KEY_DELAY"));
+				if (temp != -1) config->keyDelay(temp);
 			} else if (Selection == 2) {
 				if (config->screenFade()) {
 					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
@@ -337,7 +341,8 @@ void Settings::SubMenuLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->musicPath(tempMusic);
 				}
 			} else if (touching(touch, mainButtons2[1])) {
-				config->keyDelay(Input::getUint(255, Lang::get("ENTER_KEY_DELAY")));
+				int temp = Input::setInt(255, Lang::get("ENTER_KEY_DELAY"));
+				if (temp != -1) config->keyDelay(temp);
 			} else if (touching(touch, mainButtons2[2])) {
 				if (config->screenFade()) {
 					if (Msg::promptMsg(Lang::get("TOGGLE_FADE_DISABLE"))) {
@@ -492,6 +497,47 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 	} else {
+		if (hDown & KEY_A) {
+			switch(this->colorMode) {
+				case 0:
+					config->barColor(Overlays::SelectRGB(config->barColor()));
+					break;
+				case 1:
+					config->topBG(Overlays::SelectRGB(config->topBG()));
+					break;
+				case 2:
+					config->bottomBG(Overlays::SelectRGB(config->bottomBG()));
+					break;
+				case 3:
+					config->textColor(Overlays::SelectRGB(config->textColor()));
+					break;
+				case 4:
+					config->selectedColor(Overlays::SelectRGB(config->selectedColor()));
+					break;
+				case 5:
+					config->unselectedColor(Overlays::SelectRGB(config->unselectedColor()));
+					break;
+				case 6:
+					config->progressbarColor(Overlays::SelectRGB(config->progressbarColor()));
+					break;
+				case 7:
+					config->notfoundColor(Overlays::SelectRGB(config->notfoundColor()));
+					break;
+				case 8:
+					config->outdatedColor(Overlays::SelectRGB(config->outdatedColor()));
+					break;
+				case 9:
+					config->uptodateColor(Overlays::SelectRGB(config->uptodateColor()));
+					break;
+				case 10:
+					config->futureColor(Overlays::SelectRGB(config->futureColor()));
+					break;
+				case 11:
+					config->buttonColor(Overlays::SelectRGB(config->buttonColor()));
+					break;
+			}
+		}
+
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, arrowPos[3]))) {
 			colorSelection = colorMode;
 			dropDownMenu = true;
@@ -511,8 +557,8 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		if (hDown & KEY_TOUCH) {
 			if (touching(touch, mainButtons[0])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
-				if(temp != -1) {
+				int temp = Input::setu8(Lang::get("ENTER_RED_RGB"));
+				if (temp != -1) {
 					red = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(red, ColorHelper::getColorValue(config->barColor(), 1), ColorHelper::getColorValue(config->barColor(), 0), 255));
@@ -541,8 +587,8 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 			} else if (touching(touch, mainButtons[1])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
-				if(temp != -1) {
+				int temp = Input::setu8(Lang::get("ENTER_GREEN_RGB"));
+				if (temp != -1) {
 					green = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(ColorHelper::getColorValue(config->barColor(), 2), green, ColorHelper::getColorValue(config->barColor(), 0), 255));
@@ -571,8 +617,8 @@ void Settings::colorChanging(u32 hDown, u32 hHeld, touchPosition touch) {
 					}
 				}
 			} else if (touching(touch, mainButtons[2])) {
-				int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
-				if(temp != -1) {
+				int temp = Input::setu8(Lang::get("ENTER_BLUE_RGB"));
+				if (temp != -1) {
 					blue = temp;
 					if (colorMode == 0) {
 						config->barColor(RGBA8(ColorHelper::getColorValue(config->barColor(), 2), ColorHelper::getColorValue(config->barColor(), 1), blue, 255));

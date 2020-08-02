@@ -1,9 +1,6 @@
 <p align="center">
-	<img src="https://github.com/Universal-Team/Universal-Updater/blob/master/app/banner.png"><br>
-	<b>A multiapp, JSON script-based updater for Nintendo 3DS</b>
-</p>
-
-<p align="center">
+	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/blob/master/app/banner.png"></a><br>
+	<b>A multiapp, JSON script-based updater for Nintendo 3DS</b><br>
 	<a href="https://discord.gg/KDJCfGF" style="padding-left: 5px; padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord-Server-blue.svg" height="20">
 	</a>
@@ -18,17 +15,16 @@
 
 ## Features
 
-Universal-Updater is packed with features! Some include the JSON script updater, an App store, an FTP server, and more!
+Universal-Updater is a homebrew application for the Nintendo 3DS that is intended for easy set-up of other homebrew titles! Some features include:
 
-- JSON-based Script updater
-- JSON Script Downloader
-- An App Store, the UniStore
-- A Settings page, for configuring Universal-Updater Settings
-
+- Intergration with the Universal DB store, the easiest way to download all your homebrew titles
+- A flexible and easily developable scripting system (with pre-made scripts included)
+- Translations for multi-lingual users
+- Customizable interface colors
 
 ## Compilation
 
-To build Universal-Updater from source, you need devkitPro installed, along with devkitARM, libctru, 3ds-curl, and 3ds-libarchive. To get these you can run `pacman -S 3ds-dev --noconfirm`, then `pacman -S 3ds-curl --noconfirm`, and lastly `pacman -S 3ds-libarchive --noconfirm`. Now that you have everything installed, you just need to run clone the repository and run `make`
+To build Universal-Updater from source, you will need to setup a system with devkitARM, libctru, 3ds-curl and 3ds-libarchive. Check out the [Getting Started](https://devkitpro.org/wiki/Getting_Started) page on the devkitPro wiki to set your PC up for 3ds-development purposes.
 
 ## Screenshots
 

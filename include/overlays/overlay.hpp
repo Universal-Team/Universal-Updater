@@ -24,15 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_KEYBOARD_HPP
-#define _UNIVERSAL_UPDATER_KEYBOARD_HPP
+#ifndef _UNIVERSAL_UPDATER_OVERLAY_HPP
+#define _UNIVERSAL_UPDATER_OVERLAY_HPP
 
-#include <string>
+#include "common.hpp"
 
-namespace Input {
-	std::string setkbdString(uint maxLength, std::string Text);
-	std::uint8_t setu8(std::string Text);
-	int setInt(int maxValue, std::string Text);
+namespace Overlays {
+	u32 SelectRGB(u32 oldColor);
 }
 
 #endif
