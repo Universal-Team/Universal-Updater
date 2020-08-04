@@ -196,6 +196,6 @@
 	"SELECT_NDS_PATH": "Wähle den NDS Pfad.",
 	"SELECT_ARCHIVE_PATH": "Wählen Sie den Archivpfad.",
 	"TOGGLE_PROGRESSBAR": "Fortschrittsleiste umschalten",
-	"SELECT_RGB_COLOR": "Select your RGB Color.",
-	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
+	"SELECT_RGB_COLOR": "Wähle deine RGB-Farbe.",
+	"UI_COLOR_BEHAVIOUR": "Drücke START zum wählen.\n zum abbrechen.\nBerühren zum Kontrollieren des RGB.\nSteuerkreuz zum Kontrollieren des RGB."
 }
