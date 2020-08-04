@@ -1,4 +1,4 @@
-name: Build Universal Updator
+name: Build Universal-Updater
 
 on:
   push:
@@ -14,8 +14,8 @@ jobs:
     container: devkitpro/devkitarm
     name: "Build with Docker using devKitARM r54"
     outputs:
-      commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
-      commit_message: ${{ steps.make-cias.outputs.commit_message }}
+      commit_tag: ${{ steps.build.outputs.commit_tag }}
+      commit_message: ${{ steps.build.outputs.commit_message }}
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
@@ -36,12 +36,13 @@ jobs:
           sudo chmod +x makerom
           mv makerom /usr/local/bin
           rm makerom-v0.17-ubuntu_x86_64.zip
-      - name: "Build & Prepare Universal Updater"
+      - name: "Build & Prepare Universal-Updater"
         id: build
         run: |
           make
           mkdir -p ~/artifacts
-          cp Universal-Updater.* ~/artifacts
+          cp Universal-Updater.3dsx ~/artifacts
+          cp Universal-Updater.cia ~/artifacts
           echo "::set-output name=commit_tag::$(git log --format=%h -1)"
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Publish build to GH Actions"
@@ -53,7 +54,7 @@ jobs:
   # Only run this for non-PR jobs.
   publish_build_twlbot:
     runs-on: ubuntu-latest
-    name: "Publish build to TWLBot"
+    name: "Publish build to Universal-Team/extras"
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
@@ -87,7 +88,7 @@ jobs:
 
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
-      - name: "Commit and push to TWLBot/Builds"
+      - name: "Commit and push to Universal-Team/extras"
         id: "commit"
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
@@ -101,7 +102,7 @@ jobs:
           cd extras/builds/Universal-Updater/
           cp ${{ github.workspace }}/build/* .
           git stage .
-          git commit -m "Universal Updater | $COMMIT_TAG"
+          git commit -m "Universal-Updater | $COMMIT_TAG"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
@@ -110,7 +111,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal Team | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", "prerelease": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal-Updater | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
