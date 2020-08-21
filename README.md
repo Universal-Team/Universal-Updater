@@ -24,11 +24,11 @@ Universal-Updater is a homebrew application for the Nintendo 3DS that is intende
 
 ## Compilation
 
-To build Universal-Updater from source, you will need to setup a system with devkitARM, libctru, 3ds-curl and 3ds-libarchive. Check out the [Getting Started](https://devkitpro.org/wiki/Getting_Started) page on the devkitPro wiki to set your PC up for 3ds-development purposes.
+To build Universal-Updater from source, you will need to setup a system with devkitARM, libctru, 3ds-curl and 3ds-libarchive. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S devkitARM libctru 3ds-curl 3ds-libarchive`. You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
 
 ## Screenshots
 
-![](https://universal-team.github.io/images/universal-updater/script-browse-3.png)![](https://universal-team.github.io/images/universal-updater/script-browse-7.png)![](https://universal-team.github.io/images/universal-updater/scriptlist-selection.png)![](https://universal-team.github.io/images/universal-updater/mainMenu.png)
+![](https://universal-team.net/images/universal-updater/script-browse-3.png)![](https://universal-team.net/images/universal-updater/script-browse-7.png)![](https://universal-team.net/images/universal-updater/scriptlist-selection.png)![](https://universal-team.net/images/universal-updater/mainMenu.png)
 
 ## Translations
 
