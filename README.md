@@ -23,8 +23,25 @@ Universal-Updater is a homebrew application for the Nintendo 3DS that is intende
 - Customizable interface colors
 
 ## Compilation
+### Setting up your enviromment
 
 To build Universal-Updater from source, you will need to setup a system with devkitARM, libctru, 3ds-curl and 3ds-libarchive. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S devkitARM libctru 3ds-curl 3ds-libarchive`. You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
+
+### Cloning the repo
+
+To download the source you will need to clone it with submodules, this can be done by running
+```
+git clone --recursive https://github.com/Universal-Team/Universal-Updater.git
+```
+or if you've already cloned it running 
+```
+git submodule update --init --recursive
+```
+to update all the submodules.
+
+### Compiling
+
+Simply run `make` in the Universal-Updater source directory.
 
 ## Screenshots
 
