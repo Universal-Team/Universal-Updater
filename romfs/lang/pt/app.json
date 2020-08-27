@@ -189,13 +189,13 @@
 	"SELECT_CONSOLE": "Selecione um console que você gosta de ver.",
 	"NO_AUTHORS_AVAILABLE": "Não há autores disponíveis.",
 	"NO_CONSOLES_AVAILABLE": "Nenhum console disponível.",
-	"CHANGE_3DSX_PATH": "Change 3DSX path",
-	"CHANGE_NDS_PATH": "Change NDS path",
-	"CHANGE_ARCHIVE_PATH": "Change Archive path",
-	"SELECT_3DSX_PATH": "Selecionar o percurso do 3DSX.",
-	"SELECT_NDS_PATH": "Selecionar o percurso do NDS.",
-	"SELECT_ARCHIVE_PATH": "Select the Archive path.",
-	"TOGGLE_PROGRESSBAR": "Toggle Progressbar",
+	"CHANGE_3DSX_PATH": "Alterar o caminho do 3DSX",
+	"CHANGE_NDS_PATH": "Alterar o caminho do NDS",
+	"CHANGE_ARCHIVE_PATH": "Alterar o caminho do ficheiro",
+	"SELECT_3DSX_PATH": "Selecionar o caminho do 3DSX.",
+	"SELECT_NDS_PATH": "Selecionar o caminho do NDS.",
+	"SELECT_ARCHIVE_PATH": "Seleciona o caminho do ficheiro.",
+	"TOGGLE_PROGRESSBAR": "Ativar/desativar a barra de progresso",
 	"SELECT_RGB_COLOR": "Seleciona a tua cor RGB.",
-	"UI_COLOR_BEHAVIOUR": "Press START to Select.\n to cancel.\nTouch to control the RGB.\nD-Pad to control the RGB."
+	"UI_COLOR_BEHAVIOUR": "Prime START para selecionar.\nPrime  para cancelar.\nToca para controlar o RGB.\nUsa o botão direcional para controlar o RGB."
 }
