@@ -17,7 +17,7 @@
 
 Universal-Updater is a homebrew application for the Nintendo 3DS that is intended for easy set-up of other homebrew titles! Some features include:
 
-- Intergration with the Universal DB store, the easiest way to download all your homebrew titles
+- Integration with the Universal DB store, the easiest way to download all your homebrew titles
 - A flexible and easily developable scripting system (with pre-made scripts included)
 - Translations for multi-lingual users
 - Customizable interface colors
