@@ -11,8 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
-    name: "Build with Docker using devKitARM r54"
+    container: devkitpro/devkitarm:20200730
+    name: "Build with Docker using devKitARM r55"
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
       commit_message: ${{ steps.build.outputs.commit_message }}
@@ -126,40 +126,26 @@ jobs:
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
-  send_webhook_success:
+  send_webhook:
     runs-on: ubuntu-latest
     needs: [publish_build_twlbot, build]
-    name: "Send Discord success webhook"
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    name: "Send Discord webhook"
+    if: ${{ !startsWith(github.ref, 'refs/pull') }}
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
       TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
       - name: "Send success webhook"
+        if: ${{ success() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
           export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.png
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
-
-  send_webhook_failure:
-    runs-on: ubuntu-latest
-    needs: [publish_build_twlbot, build]
-    name: "Send Discord failure webhook"
-    if: ${{ failure() && !startsWith(github.ref, 'refs/pull') }}
-    env:
-      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
-      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
-    steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
       - name: "Send failure webhook"
+        if: ${{ failure() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
