@@ -47,14 +47,14 @@ jobs:
           mkdir -p ~/artifacts
           cp Universal-Updater.3dsx ~/artifacts
           cp Universal-Updater.cia ~/artifacts
-          echo "::set-output name=commit_tag::$(git describe --abbrev=0 --tags)"
-          echo "::set-output name=commit_hash::$(git log --format=%h -1)"
-          echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
+          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+          echo ::set-output name=commit_message::$(git log --pretty=format:"%an - %s" -1)
 
           # Webhook info
-          echo "::set-output name=author_name::$(git log -1 '$GITHUB_SHA' --pretty='%aN')"
-          echo "::set-output name=committer_name::$(git log -1 '$GITHUB_SHA' --pretty='%cN')"
-          echo "::set-output name=commit_message::$(git log -1 '$GITHUB_SHA' --pretty='%b')"
+          echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
+          echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
+          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%b")
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
