@@ -20,7 +20,6 @@ jobs:
       author_name: ${{ steps.build.outputs.author_name }}
       committer_name: ${{ steps.build.outputs.committer_name }}
       commit_subject: ${{ steps.build.outputs.commit_subject }}
-      commit_message: ${{ steps.build.outputs.commit_message }}
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
@@ -55,7 +54,6 @@ jobs:
           # Webhook info
           echo "::set-output name=author_name::$(git log -1 '$GITHUB_SHA' --pretty='%aN')"
           echo "::set-output name=committer_name::$(git log -1 '$GITHUB_SHA' --pretty='%cN')"
-          echo "::set-output name=commit_subject::$(git log -1 '$GITHUB_SHA' --pretty='%s')"
           echo "::set-output name=commit_message::$(git log -1 '$GITHUB_SHA' --pretty='%b')"
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
