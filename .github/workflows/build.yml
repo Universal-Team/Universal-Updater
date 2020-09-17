@@ -11,8 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm:20200730
-    name: "Build with Docker using devKitARM r55"
+    container: devkitpro/devkitarm
+    name: "Build with Docker using devKitARM"
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
       commit_hash: ${{ steps.build.outputs.commit_hash }}
