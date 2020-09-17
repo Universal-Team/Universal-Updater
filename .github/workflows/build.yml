@@ -15,6 +15,11 @@ jobs:
     name: "Build with Docker using devKitARM r55"
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
+      commit_hash: ${{ steps.build.outputs.commit_hash }}
+      commit_message: ${{ steps.build.outputs.commit_message }}
+      author_name: ${{ steps.build.outputs.author_name }}
+      committer_name: ${{ steps.build.outputs.committer_name }}
+      commit_subject: ${{ steps.build.outputs.commit_subject }}
       commit_message: ${{ steps.build.outputs.commit_message }}
     steps:
       - name: "Checkout repo"
@@ -43,8 +48,15 @@ jobs:
           mkdir -p ~/artifacts
           cp Universal-Updater.3dsx ~/artifacts
           cp Universal-Updater.cia ~/artifacts
-          echo "::set-output name=commit_tag::$(git log --format=%h -1)"
+          echo "::set-output name=commit_tag::$(git describe --abbrev=0 --tags)"
+          echo "::set-output name=commit_hash::$(git log --format=%h -1)"
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
+
+          # Webhook info
+          echo "::set-output name=author_name::$(git log -1 '$GITHUB_SHA' --pretty='%aN')"
+          echo "::set-output name=committer_name::$(git log -1 '$GITHUB_SHA' --pretty='%cN')"
+          echo "::set-output name=commit_subject::$(git log -1 '$GITHUB_SHA' --pretty='%s')"
+          echo "::set-output name=commit_message::$(git log -1 '$GITHUB_SHA' --pretty='%b')"
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
@@ -59,6 +71,7 @@ jobs:
     needs: build
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
@@ -68,8 +81,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install qrencode -y
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -98,12 +109,12 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
           mkdir -p extras/builds/Universal-Updater/
-          qrencode -o extras/builds/Universal-Updater/Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$(git describe --abbrev=0 --tags)/Universal-Updater.cia
           cd extras/builds/Universal-Updater/
           qrencode -o Universal-Updater.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.cia
+          qrencode -o Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$COMMIT_TAG/Universal-Updater.cia
           cp ${{ github.workspace }}/build/* .
           git stage .
-          git commit -m "Universal-Updater | $COMMIT_TAG"
+          git commit -m "Universal-Updater | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
@@ -112,7 +123,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal-Updater | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal-Updater | $COMMIT_HASH\", \"body\": \"$COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
@@ -133,13 +144,12 @@ jobs:
     name: "Send Discord webhook"
     if: ${{ !startsWith(github.ref, 'refs/pull') }}
     env:
-      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
-      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
+      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
       - name: "Send success webhook"
         if: ${{ success() }}
         run: |
