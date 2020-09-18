@@ -74,7 +74,6 @@ jobs:
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
-      twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
       - name: Install tools
         run: |
@@ -116,7 +115,6 @@ jobs:
           git commit -m "Universal-Updater | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
-          echo ::set-output name=twlbot_commit::$(git log --format=%H -1)
       - name: Release to Universal-Team/extras
         run: |
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
