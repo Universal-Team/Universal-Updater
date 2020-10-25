@@ -11,7 +11,7 @@
 *.lst
 .vscode/ipch
 *.DS_Store
-3ds/romfs/gfx/*.t3x
+romfs/gfx/*.t3x
 
 bannertool*
 makerom*
