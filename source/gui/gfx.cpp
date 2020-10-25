@@ -27,85 +27,39 @@
 #include "common.hpp"
 #include "gfx.hpp"
 
-extern std::unique_ptr<Config> config;
-extern bool isScriptSelected;
-extern u32 barColor, bgTopColor, bgBottomColor, TextColor;
-
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, isScriptSelected ? barColor : config->barColor());
-	Gui::Draw_Rect(0, 25, 400, 190, isScriptSelected ? bgTopColor : config->topBG());
-	Gui::Draw_Rect(0, 215, 400, 25, isScriptSelected ? barColor : config->barColor());
-	if (config->useBars()) {
-		DrawSprite(sprites_top_screen_top_idx, 0, 0);
-		DrawSprite(sprites_top_screen_bot_idx, 0, 215);
-	}
+	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(50, 73, 98, 255));
+	Gui::Draw_Rect(0, 25, 400, 215, C2D_Color32(38, 44, 77, 255));
+	Gui::Draw_Rect(0, 25, 400, 1, C2D_Color32(25, 30, 53, 255));
 }
 
-void GFX::DrawBottom(void) {
+void GFX::DrawBottom(bool useBar) {
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 25, isScriptSelected ? barColor : config->barColor());
-	Gui::Draw_Rect(0, 25, 320, 190, isScriptSelected ? bgBottomColor : config->bottomBG());
-	Gui::Draw_Rect(0, 215, 320, 25, isScriptSelected ? barColor : config->barColor());
-	if (config->useBars()) {
+
+	Gui::Draw_Rect(0, useBar ? 25 : 0, 320, useBar ? 190 : 240, C2D_Color32(38, 44, 77, 255));
+
+	if (useBar) {
+		Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(57, 84, 114, 255));
+		Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(57, 84, 114, 255));
 		DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
 		DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
 	}
+}
+
+void GFX::drawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr) {
+	static constexpr int w	= 1;
+	const u32 outlineColor = selected ? C2D_Color32(240, 0, 0, 255) : C2D_Color32(0, 0, 0, 255);
+	C2D_DrawRectSolid(xPos, yPos, 0.5, width, height, clr);
+
+	C2D_DrawRectSolid(xPos, yPos, 0.5, width, w, outlineColor); // top
+	C2D_DrawRectSolid(xPos, yPos + w, 0.5, w, height - 2 * w, outlineColor); // left
+	C2D_DrawRectSolid(xPos + width - w, yPos + w, 0.5, w, height - 2 * w, outlineColor); // right
+	C2D_DrawRectSolid(xPos, yPos + height - w, 0.5, width, w, outlineColor); // bottom
 }
 
 extern C2D_SpriteSheet sprites;
 
 void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	Gui::DrawSprite(sprites, img, x, y, ScaleX, ScaleY);
-}
-
-void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);	
-
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, img), x, y, 0.5f, &tint, ScaleX, ScaleY);
-}
-
-void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
-	C2D_Sprite sprite;
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
-
-	if (arrowSprite == 0) {
-		C2D_SpriteFromSheet(&sprite, sprites, sprites_arrow_idx);
-	} else {
-		C2D_SpriteFromSheet(&sprite, sprites, sprites_side_arrow_idx);
-	}
-	
-	C2D_SpriteRotateDegrees(&sprite, rotation);
-	C2D_SpriteSetPos(&sprite, x, y);
-	C2D_SpriteSetDepth(&sprite, 0.5);
-	C2D_DrawSpriteTinted(&sprite, &tint);
-}
-
-// Draw a Button and draw Text on it.
-void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, color, 0.5);
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_button_idx), x, y, 0.5f, &tint);
-	Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, isScriptSelected ? TextColor : config->textColor(), ButtonText, 145, 30);
-}
-
-void GFX::TextFormatted(float x, float y, float size, const char *format, ...) {
-	char str[512];
-	va_list va;
-	va_start(va, format);
-	vsnprintf(str, 512, format, va);
-	va_end(va);
-	char * Text = strtok(str, "\n");
-	Gui::DrawStringCentered(x, y, size, isScriptSelected ? TextColor : config->textColor(), Text);
 }

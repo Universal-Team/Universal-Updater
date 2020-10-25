@@ -24,15 +24,33 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#include "lang.hpp"
 
-#include <string>
+#include <stdio.h>
+#include <unistd.h>
 
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
-};
+static nlohmann::json appJson;
 
-#endif
+std::string Lang::get(const std::string &key) {
+	if (!appJson.contains(key)) return "MISSING: " + key;
+
+	return appJson.at(key).get_ref<const std::string&>();
+}
+
+void Lang::load(const std::string lang) {
+	FILE *values;
+
+	/* Check if exist. */
+	if (access(("romfs:/lang/" + lang + "/app.json").c_str(), F_OK) == 0) {
+		values = fopen(std::string(("romfs:/lang/" + lang + "/app.json")).c_str(), "rt");
+		appJson = nlohmann::json::parse(values, nullptr, false);
+		fclose(values);
+		return;
+
+	} else {
+		values = fopen(("romfs:/lang/en/app.json"), "rt");
+		appJson = nlohmann::json::parse(values, nullptr, false);
+		fclose(values);
+		return;
+	}
+}

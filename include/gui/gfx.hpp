@@ -27,24 +27,16 @@
 #ifndef _UNIVERSAL_UPDATER_GFX_HPP
 #define _UNIVERSAL_UPDATER_GFX_HPP
 
-#include "colorHelper.hpp"
-#include "gui.hpp"
+#include "common.hpp"
 #include "sprites.h"
-
-extern std::unique_ptr<Config> config;
+#include <citro2d.h>
+#include <string>
 
 namespace GFX {
-	// Basic GUI.
 	void DrawTop(void);
-	void DrawBottom(void);
-	// Draw arrow.
-	void DrawArrow(int x, int y, float rotation = 0, int arrowSprite = 0);
-	// Draw Sprites.
+	void DrawBottom(bool useBar = false);
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawSpriteBlend(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-
-	void DrawButton(int x, int y, std::string ButtonText = "", u32 color = config->buttonColor());
-	void TextFormatted(float x, float y, float size, const char *format, ...);
-}
+	void drawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = C2D_Color32(49, 49, 49, 255));
+};
 
 #endif

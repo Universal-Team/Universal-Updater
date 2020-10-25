@@ -26,7 +26,4 @@
 
 #include "init.hpp"
 
-int main() {
-	Init::MainLoop(); // Init::MainLoop() has the whole logic already. ;P
-	return 0;
-}
+int main() { return Init::MainLoop(); }

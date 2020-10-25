@@ -24,15 +24,40 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#ifndef _UNIVERSAL_UPDATER_META_HPP
+#define _UNIVERSAL_UPDATER_META_HPP
 
+#include "json.hpp"
 #include <string>
 
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
+enum favoriteMarks {
+	STAR = 1 << 0,
+	HEART = 1 << 1,
+	DIAMOND = 1 << 2,
+	CLUBS = 1 << 3,
+	SPADE = 1 << 4
+};
+
+class Meta {
+public:
+	Meta();
+	~Meta() { this->SaveCall(); };
+
+	std::string GetUpdated(std::string unistoreName, std::string entry) const;
+	int GetMarks(std::string unistoreName, std::string entry) const;
+	bool UpdateAvailable(std::string unistoreName, std::string entry, std::string updated) const;
+
+	void SetUpdated(std::string unistoreName, std::string entry, std::string updated) {
+		this->metadataJson[unistoreName][entry]["updated"] = updated;
+	};
+
+	void SetMarks(std::string unistoreName, std::string entry, int marks) {
+		this->metadataJson[unistoreName][entry]["marks"] = marks;
+	};
+
+	void SaveCall();
+private:
+	nlohmann::json metadataJson = nullptr;
 };
 
 #endif

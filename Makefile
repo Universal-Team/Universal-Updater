@@ -76,15 +76,16 @@ endif
 TARGET		:=	Universal-Updater
 BUILD		:=	build
 UNIVCORE	:= 	Universal-Core
-SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/overlays source/screens source/utils
+SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/overlays source/screens \
+							source/store source/utils
 DATA		:=	data
-INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/screens include/utils 
+INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/screens \
+							include/store include/utils
 GRAPHICS	:=	assets/gfx
-#GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
 APP_AUTHOR	:=	Universal-Team
-APP_DESCRIPTION :=  A multiapp, JSON script-based updater for Nintendo 3DS
+APP_DESCRIPTION := A multiapp, JSON script-based updater for Nintendo 3DS
 ICON		:=	app/icon.png
 BNR_IMAGE	:=  app/banner.png
 BNR_AUDIO	:=	app/BannerAudio.wav
@@ -252,7 +253,7 @@ $(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
 
 	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(APP_DESCRIPTION)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-	$(MAKEROM) -f cia -target t -exefslogo -o "../Universal-Updater.cia" -elf "../Universal-Updater.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/logo.bcma.lz" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
+	$(MAKEROM) -f cia -target t -exefslogo -o "../$(TARGET).cia" -elf "../$(TARGET).elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/logo.bcma.lz" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
 #---------------------------------------------------------------------------------

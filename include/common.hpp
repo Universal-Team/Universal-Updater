@@ -24,15 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
+#define _UNIVERSAL_UPDATER_COMMON_HPP
 
-#include <string>
-
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
-};
+#include "gfx.hpp"
+#include "lang.hpp"
+#include "msg.hpp"
+#include "screenCommon.hpp"
 
 #endif

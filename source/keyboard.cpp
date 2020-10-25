@@ -24,15 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#include "gfx.hpp"
+#include "keyboard.hpp"
+#include "screenCommon.hpp"
 
-#include <string>
+std::string Input::setkbdString(uint maxLength, std::string Text) {
+	C3D_FrameEnd(0); // Needed, so the system will not freeze.
 
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
-};
+	SwkbdState state;
+	swkbdInit(&state, SWKBD_TYPE_NORMAL, 2, maxLength);
+	char temp[maxLength] = { 0 };
+	swkbdSetHintText(&state, Text.c_str());
+	swkbdSetValidation(&state, SWKBD_NOTBLANK_NOTEMPTY, SWKBD_FILTER_PROFANITY, 0);
+	SwkbdButton ret = swkbdInputText(&state, temp, maxLength);
+	temp[maxLength - 1] = '\0';
 
-#endif
+	return (ret == SWKBD_BUTTON_CONFIRM ? temp : "");
+}

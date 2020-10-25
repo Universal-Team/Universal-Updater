@@ -24,15 +24,41 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#ifndef _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
+#define _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
 
-#include <string>
+#include "common.hpp"
+#include "store.hpp"
+#include "storeEntry.hpp"
 
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
+/*
+	Modes:
+
+	0: Entry Info.
+	1: Download List.
+	2: Search + Favorites.
+	3: Sorting.
+	4: Settings / Credits(?).
+*/
+
+class MainScreen : public Screen {
+public:
+	MainScreen();
+	void Draw(void) const override;
+	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+private:
+	void init(const std::string &storeName); // Preparing store.
+
+	std::unique_ptr<Store> store = nullptr;
+	std::unique_ptr<Meta> meta = nullptr;
+	std::vector<std::unique_ptr<StoreEntry>> entries;
+	std::vector<std::string> dwnldList;
+	bool initialized = false, fetchDown = false, showMarks = false;
+	int storeMode = 0, marks = 0, markIndex = 0;
+
+	/* Title, Author, Category, Console. */
+	std::vector<bool> searchIncludes = { false, false, false, false };
+	std::string searchResult = "";
 };
 
 #endif

@@ -24,15 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define _UNIVERSAL_UPDATER_MSG_HPP
+#ifndef _UNIVERSAL_UPDATER_LANG_HPP
+#define _UNIVERSAL_UPDATER_LANG_HPP
 
+#include "json.hpp"
 #include <string>
 
-namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
+namespace Lang {
+	std::string get(const std::string &key);
+	void load(const std::string lang);
 };
 
 #endif
