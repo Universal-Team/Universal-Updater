@@ -37,7 +37,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 
 		Gui::DrawStringCentered(25, 0, 0.6, C2D_Color32(255, 255, 255, 255), entry->GetTitle(), 265);
 		Gui::DrawStringCentered(25, 20, 0.4, C2D_Color32(255, 255, 255, 255), entry->GetAuthor(), 265);
-		Gui::DrawStringCentered(25, 50, 0.4, C2D_Color32(255, 255, 255, 255), entry->GetDescription(), 220);
+		Gui::DrawStringCentered(25, 50, 0.4, C2D_Color32(255, 255, 255, 255), entry->GetDescription(), 220, 0, nullptr, C2D_WordWrap);
 
 
 		Gui::DrawString(61, 130, 0.45, C2D_Color32(255, 255, 255, 255), Lang::get("VERSION") + ": " + entry->GetVersion(), 265);

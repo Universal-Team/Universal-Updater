@@ -38,7 +38,7 @@ StoreEntry::StoreEntry(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &met
 	this->Title = store->GetTitleEntry(index);
 	this->Author = store->GetAuthorEntry(index);
 
-	this->Description = Gui::WrapText(store->GetDescriptionEntry(index), 0.4f, 200);
+	this->Description = store->GetDescriptionEntry(index);
 
 	this->Category = StringUtils::FetchStringsFromVector(store->GetCategoryIndex(index));
 	this->Version = store->GetVersionEntry(index);
