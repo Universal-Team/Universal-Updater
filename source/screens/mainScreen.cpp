@@ -27,7 +27,10 @@
 #include "mainScreen.hpp"
 #include "storeUtils.hpp"
 
-MainScreen::MainScreen() { this->meta = std::make_unique<Meta>(); };
+MainScreen::MainScreen() {
+	this->meta = std::make_unique<Meta>();
+	this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
+};
 
 void MainScreen::init(const std::string &storeName) {
 	this->storeMode = 0;
@@ -89,7 +92,7 @@ void MainScreen::Draw(void) const {
 
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (!this->initialized) {
-		if (hDown & KEY_Y) this->init("romfs:/UniStore/Stack-Store.unistore");
+		if (hDown & KEY_Y) this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
 		return;
 	}
 
@@ -126,6 +129,6 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 
-		if (hDown & KEY_Y) this->init("romfs:/UniStore/Stack-Store.unistore");
+		if (hDown & KEY_Y) this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
 	}
 }
