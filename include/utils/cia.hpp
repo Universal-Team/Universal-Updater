@@ -24,15 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_CIA_HPP
+#define _UNIVERSAL_UPDATER_CIA_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
 
-inline std::unique_ptr<Config> config;
+#include <3ds.h>
+
+Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType);
+Result deletePrevious(u64 titleid, FS_MediaType media);
+Result installCia(const char *ciaPath, bool updateSelf);
 
 #endif

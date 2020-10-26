@@ -24,15 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_ANIMATION_HPP
+#define _UNIVERSAL_UPDATER_ANIMATION_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include <3ds.h>
+#include <string>
 
-inline std::unique_ptr<Config> config;
+enum class ProgressBar {
+	Downloading,
+	Extracting,
+	Installing
+};
+
+namespace Animation {
+	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
+};
 
 #endif

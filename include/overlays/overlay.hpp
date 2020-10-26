@@ -24,15 +24,17 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_OVERLAY_HPP
+#define _UNIVERSAL_UPDATER_OVERLAY_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
+#include "store.hpp"
+#include "storeEntry.hpp"
+#include <3ds.h>
 
-inline std::unique_ptr<Config> config;
+namespace Overlays {
+	void SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
+	void SelectLanguage();
+};
 
 #endif

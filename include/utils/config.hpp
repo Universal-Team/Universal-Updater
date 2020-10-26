@@ -24,15 +24,40 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_CONFIG_HPP
+#define _UNIVERSAL_UPDATER_CONFIG_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "json.hpp"
 
-inline std::unique_ptr<Config> config;
+#include <3ds.h>
+#include <string>
+
+class Config {
+public:
+	Config();
+	void save();
+	void initialize();
+	void sysLang();
+
+	/* Language. */
+	std::string language() const { return this->v_language; };
+	void language(std::string v) { this->v_language = v; if (!this->changesMade) this->changesMade = true; };
+	/* Last Store. */
+	std::string lastStore() const { return this->v_lastStore; };
+	void lastStore(std::string v) { this->v_lastStore = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Mainly helper. */
+	bool getBool(const std::string &key);
+	void setBool(const std::string &key, bool v);
+	int getInt(const std::string &key);
+	void setInt(const std::string &key, int v);
+	std::string getString(const std::string &key);
+	void setString(const std::string &key, const std::string &v);
+private:
+	nlohmann::json json; // Our private JSON file.
+	bool changesMade = false;
+
+	std::string v_language, v_lastStore;
+};
 
 #endif

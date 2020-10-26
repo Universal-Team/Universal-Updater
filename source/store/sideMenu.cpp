@@ -65,4 +65,18 @@ void StoreUtils::SideMenuHandle(u32 hDown, u32 hHeld, touchPosition touch, int &
 			}
 		}
 	}
+
+	if (hDown & KEY_R) {
+		if (currentMenu < 4) {
+			if (currentMenu + 1 == 1) fetch = true;
+			currentMenu++;
+		}
+	}
+
+	if (hDown & KEY_L) {
+		if (currentMenu > 0) {
+			if (currentMenu - 1 == 1) fetch = true;
+			currentMenu--;
+		}
+	}
 }

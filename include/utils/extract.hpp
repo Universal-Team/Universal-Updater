@@ -24,15 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_EXTRACT_HPP
+#define _UNIVERSAL_UPDATER_EXTRACT_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
 
-inline std::unique_ptr<Config> config;
+enum ExtractError {
+	EXTRACT_ERROR_NONE = 0,
+	EXTRACT_ERROR_ARCHIVE,
+	EXTRACT_ERROR_ALLOC,
+	EXTRACT_ERROR_FIND,
+	EXTRACT_ERROR_READFILE,
+	EXTRACT_ERROR_OPENFILE,
+	EXTRACT_ERROR_WRITEFILE,
+};
+
+Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath);
 
 #endif

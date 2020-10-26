@@ -24,15 +24,42 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_FILE_BROWSE_HPP
+#define _UNIVERSAL_UPDATER_FILE_BROWSE_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include <dirent.h>
+#include <string>
+#include <sys/stat.h>
+#include <vector>
 
-inline std::unique_ptr<Config> config;
+struct DirEntry {
+	std::string name;
+	std::string path;
+	bool isDirectory;
+};
+
+/*
+	UniStore Info struct.
+*/
+struct UniStoreInfo {
+	std::string Title;
+	std::string Author;
+	std::string URL;
+	std::string FileName;
+	std::string Description;
+	int Version;
+	int StoreSize;
+};
+
+bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList);
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
+void getDirectoryContents(std::vector<DirEntry> &dirContents);
+std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList);
+
+bool returnIfExist(const std::string &path, const std::vector<std::string> &extensionList);
+std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path);
+
+void dirCopy(DirEntry *entry, int i, const char *destinationPath, const char *sourcePath);
+int fcopy(const char *sourcePath, const char *destinationPath);
 
 #endif

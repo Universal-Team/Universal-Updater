@@ -39,8 +39,7 @@ void Msg::DisplayMsg(std::string text) {
 	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, text)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), text, 395, 70);
-
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, text)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), text, 395, 100);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -67,12 +66,6 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	}
 }
 
-
-const std::vector<Structs::ButtonPos> promptBtn = {
-	{10, 100, 140, 35}, // Yes.
-	{170, 100, 140, 35} // No.
-};
-
 extern touchPosition touch;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
@@ -85,26 +78,42 @@ bool Msg::promptMsg(std::string promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), promptMsg, 395, 70);
-	Gui::DrawStringCentered(0, 217, 0.72f, C2D_Color32(255, 255, 255, 255), Lang::get("CONFIRM_OR_CANCEL"), 400);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), promptMsg, 395, 100);
 
-	GFX::DrawBottom();
-	Gui::Draw_Rect(10, 100, 140, 35, C2D_Color32(0, 0, 50, 255));
-	Gui::Draw_Rect(170, 100, 140, 35, C2D_Color32(0, 0, 50, 255));
-
-	Gui::DrawString((320 - Gui::GetStringWidth(0.6f, Lang::get("YES"))) / 2 - 150 + 70, 110, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("YES"), 140);
-	Gui::DrawString((320 - Gui::GetStringWidth(0.6f, Lang::get("NO"))) / 2 + 150 - 70, 110, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("NO"), 140);
-
+	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(50, 73, 98, 255));
+	Gui::Draw_Rect(0, 214, 400, 1, C2D_Color32(25, 30, 53, 255));
+	Gui::DrawStringCentered(0, 217, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("CONFIRM_OR_CANCEL"), 400);
 	C3D_FrameEnd(0);
 
 	while(1) {
 		gspWaitForVBlank();
 		hidScanInput();
-		hidTouchRead(&touch);
-		if ((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[0]))) return true;
-		else if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[1]))) return false;
+
+		if (hidKeysDown() & KEY_A) return true;
+		else if (hidKeysDown() & KEY_B) return false;
+	}
+}
+
+void Msg::waitMsg(std::string msg) {
+	bool doOut = false;
+
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+
+	GFX::DrawTop();
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), msg, 395, 100);
+
+	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(50, 73, 98, 255));
+	Gui::Draw_Rect(0, 214, 400, 1, C2D_Color32(25, 30, 53, 255));
+	Gui::DrawStringCentered(0, 217, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("KEY_CONTINUE"), 400);
+	C3D_FrameEnd(0);
+
+	while(!doOut) {
+		hidScanInput();
+
+		if (hidKeysDown()) doOut = !doOut;
 	}
 }

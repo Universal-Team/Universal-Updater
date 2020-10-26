@@ -72,9 +72,7 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH, 0.5);
 
 					/* Update Available mark. */
-					if (entries[i2]->GetUpdateAvl()) {
-						GFX::DrawSprite(sprites_updateStore_idx, GridBoxes[i].x + 30, GridBoxes[i].y + 30);
-					}
+					if (entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_updateStore_idx, GridBoxes[i].x + 30, GridBoxes[i].y + 30);
 				}
 			}
 		}

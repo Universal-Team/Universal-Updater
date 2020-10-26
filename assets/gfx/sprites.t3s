@@ -2,13 +2,11 @@
 
 sprites/bottom_screen_bot.png
 sprites/bottom_screen_top.png
-sprites/button.png
 sprites/delete.png
 sprites/noIcon.png
 sprites/top_screen_bot.png
 sprites/top_screen_top.png
 sprites/search.png
-sprites/selector.png
 sprites/universal-updater.png
 sprites/update.png
 sprites/updateStore.png

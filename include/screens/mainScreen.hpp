@@ -30,6 +30,7 @@
 #include "common.hpp"
 #include "store.hpp"
 #include "storeEntry.hpp"
+#include "storeUtils.hpp"
 
 /*
 	Modes:
@@ -47,14 +48,14 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	void init(const std::string &storeName); // Preparing store.
 
 	std::unique_ptr<Store> store = nullptr;
 	std::unique_ptr<Meta> meta = nullptr;
 	std::vector<std::unique_ptr<StoreEntry>> entries;
 	std::vector<std::string> dwnldList;
-	bool initialized = false, fetchDown = false, showMarks = false;
-	int storeMode = 0, marks = 0, markIndex = 0;
+	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false, ascending = false;
+	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0;
+	SortType sorttype = SortType::TITLE;
 
 	/* Title, Author, Category, Console. */
 	std::vector<bool> searchIncludes = { false, false, false, false };

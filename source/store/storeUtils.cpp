@@ -139,10 +139,8 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
 */
 void StoreUtils::ResetAll(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries) {
-	if (store) {
+	if (store && store->GetValid()) {
 		entries.clear();
-
-		Msg::DisplayMsg("Fetching Store Entries...");
 
 		for (int i = 0; i < store->GetStoreSize(); i++) {
 			entries.push_back( std::make_unique<StoreEntry>(store, meta, i) );

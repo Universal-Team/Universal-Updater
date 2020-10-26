@@ -33,6 +33,7 @@ namespace Msg {
 	void DisplayMsg(std::string text);
 	void DisplayWarnMsg(std::string Text);
 	bool promptMsg(std::string promptMsg);
+	void waitMsg(std::string msg);
 };
 
 #endif

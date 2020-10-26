@@ -38,6 +38,7 @@ public:
 	void LoadFromFile(std::string file);
 	void loadSheets();
 	void unloadSheets();
+	void update(const std::string &file);
 
 	/* Get Information of the UniStore itself. */
 	std::string GetUniStoreTitle() const;
@@ -76,10 +77,13 @@ public:
 
 	int GetDownloadBtn() const { return this->downBtn; };
 	void SetDownloadBtn(int v) { this->downBtn = v; };
+
+	nlohmann::json &GetJson() { return this->storeJson; };
+	bool GetValid() const { return this->valid; };
 private:
-	nlohmann::json storeJson = nullptr, metadataJson = nullptr;
+	nlohmann::json storeJson = nullptr;
 	std::vector<C2D_SpriteSheet> sheets;
-	bool isValid = true;
+	bool valid = false;
 	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0, downBtn = 0;
 };
 

@@ -25,14 +25,13 @@
 */
 
 #include "lang.hpp"
-
 #include <stdio.h>
 #include <unistd.h>
 
 static nlohmann::json appJson;
 
 std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "MISSING: " + key;
+	if (!appJson.contains(key)) return "";
 
 	return appJson.at(key).get_ref<const std::string&>();
 }

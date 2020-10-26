@@ -57,13 +57,14 @@ Result Init::Initialize() {
 	cfguInit();
 	amInit();
 	acInit();
-	Lang::load("en");
 
 	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
-	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
+
+	config = std::make_unique<Config>();
+	Lang::load(config->language());
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 
@@ -79,7 +80,7 @@ Result Init::MainLoop() {
 	bool fullExit = false;
 
 	Initialize();
-	hidSetRepeatParameters(10, 10);
+	hidSetRepeatParameters(20, 10);
 
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
@@ -116,6 +117,7 @@ Result Init::Exit() {
 
 	gfxExit();
 	cfguExit();
+	config->save();
 
 	acExit();
 	amExit();

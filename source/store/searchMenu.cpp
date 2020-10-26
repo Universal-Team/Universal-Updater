@@ -74,7 +74,7 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	Gui::DrawString(SearchMenu[4].x + 13, SearchMenu[4].y - 2, 0.4, C2D_Color32(255, 255, 255, 255), Lang::get("CONSOLE"));
 
 	/* Filters. */
-	Gui::DrawString(84, 150, 0.5, C2D_Color32(255, 255, 255, 255), "Filter to:");
+	Gui::DrawString(84, 150, 0.5, C2D_Color32(255, 255, 255, 255), Lang::get("FILTER_TO"));
 
 	GFX::drawBox(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, marks & favoriteMarks::STAR);
 	GFX::drawBox(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, marks & favoriteMarks::HEART);
@@ -137,14 +137,17 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 	/* Start for now does a search. */
 	if (hDown & KEY_START) {
-		StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-		store->SetScreenIndx(0);
-		store->SetEntry(0);
-		store->SetBox(0);
+		if (store && store->GetValid()) {
+			StoreUtils::ResetAll(store, meta, entries);
+			StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+			store->SetScreenIndx(0);
+			store->SetEntry(0);
+			store->SetBox(0);
+		}
 	}
 
 	/* Reset all. */
 	if (hDown & KEY_SELECT) {
-		StoreUtils::ResetAll(store, meta, entries);
+		if (store && store->GetValid()) StoreUtils::ResetAll(store, meta, entries);
 	}
 }

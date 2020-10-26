@@ -24,47 +24,53 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "download.hpp"
 #include "mainScreen.hpp"
 #include "storeUtils.hpp"
+#include <unistd.h>
 
 MainScreen::MainScreen() {
 	this->meta = std::make_unique<Meta>();
-	this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
+
+	/* Check if lastStore is accessible. */
+	if (config->lastStore() != "universal-db-beta.unistore" || config->lastStore() != "") {
+		if (access((std::string("sdmc:/3ds/Universal-Updater/stores/") + config->lastStore()).c_str(), F_OK) != 0) {
+			config->lastStore("universal-db-beta.unistore");
+		}
+	}
+
+	/* If Universal DB --> Get! */
+	if (config->lastStore() == "universal-db-beta.unistore" || config->lastStore() == "") {
+		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db-beta.unistore", F_OK) != 0) {
+			Msg::DisplayMsg(Lang::get("DOWNLOAD_UNIVERSAL_DB"));
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db-beta.unistore");
+		}
+	}
+
+	this->store = std::make_unique<Store>("sdmc:/3ds/Universal-Updater/stores/" + config->lastStore());
+	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 };
 
-void MainScreen::init(const std::string &storeName) {
-	this->storeMode = 0;
-	Msg::DisplayMsg("Preparing UniStore... please wait.");
-
-	this->store = nullptr;
-	this->initialized = false;
-
-	this->store = std::make_unique<Store>(storeName);
-
-	StoreUtils::ResetAll(this->store, this->meta, this->entries);
-	this->initialized = true;
-}
-
 void MainScreen::Draw(void) const {
-	/* If not initialized --> Bruh. */
-	if (!this->initialized) {
-		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7, C2D_Color32(255, 255, 255, 255), "UniStore not initialized.");
+	if (this->storeMode == 4) {
+		/* Credits. */
+		StoreUtils::DrawCredits();
 		GFX::DrawBottom();
+		StoreUtils::DrawSideMenu(this->storeMode);
+		StoreUtils::DrawSettings(this->sPage, this->sSelection);
 		return;
 	}
 
 	GFX::DrawTop();
-
-	Gui::DrawStringCentered(0, 1, 0.7, C2D_Color32(255, 255, 255, 255), this->store->GetUniStoreTitle());
+	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7, C2D_Color32(255, 255, 255, 255), this->store->GetUniStoreTitle());
+	else Gui::DrawStringCentered(0, 1, 0.7f, C2D_Color32(255, 255, 255, 255), Lang::get("INVALID_UNISTORE"), 370);
 	StoreUtils::DrawGrid(this->store, this->entries);
-
 	GFX::DrawBottom();
 
 	switch(this->storeMode) {
 		case 0:
 			/* Entry Info. */
-			StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
+			if (this->store && this->store->GetValid()) StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
 			break;
 
 		case 1:
@@ -79,56 +85,60 @@ void MainScreen::Draw(void) const {
 
 		case 3:
 			/* Sorting. */
-			break;
-
-		case 4:
-			/* Credits + Settings(?). */
+			StoreUtils::DrawSorting(this->ascending, this->sorttype);
 			break;
 	}
 
 	StoreUtils::DrawSideMenu(this->storeMode);
-	if (this->showMarks) StoreUtils::DisplayMarkBox(this->entries[this->store->GetEntry()]->GetMarks());
+	if (this->showMarks && this->store && this->store->GetValid()) StoreUtils::DisplayMarkBox(this->entries[this->store->GetEntry()]->GetMarks());
 }
 
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (!this->initialized) {
-		if (hDown & KEY_Y) this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
-		return;
-	}
-
 	if (this->showMarks) StoreUtils::MarkHandle(hDown, hHeld, touch, this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 
 	if (!this->showMarks) {
-		if (this->storeMode != 1) StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries);
+		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
+			StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries);
+		}
 
 		StoreUtils::SideMenuHandle(hDown, hHeld, touch, this->storeMode, this->fetchDown);
 
 		/* Fetch Download list. */
 		if (this->fetchDown) {
 			this->fetchDown = false;
-
 			this->dwnldList.clear();
-			this->dwnldList = this->store->GetDownloadList(this->entries[this->store->GetEntry()]->GetEntryIndex());
-			this->store->SetDownloadIndex(0); // Reset to 0.
-			this->store->SetDownloadSIndex(0);
-			this->store->SetDownloadBtn(0);
+
+			if (this->store && this->store->GetValid()) {
+				this->store->SetDownloadIndex(0); // Reset to 0.
+				this->store->SetDownloadSIndex(0);
+				this->store->SetDownloadBtn(0);
+
+				if (this->store->GetValid()) {
+					this->dwnldList = this->store->GetDownloadList(this->entries[this->store->GetEntry()]->GetEntryIndex());
+				}
+			}
 		}
 
 		switch(this->storeMode) {
 			case 0:
-				StoreUtils::EntryHandle(hDown, hHeld, touch, this->showMarks);
+				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(hDown, hHeld, touch, this->showMarks, this->storeMode, this->fetchDown);
 				break;
 
 			case 1:
-				StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->dwnldList);
+				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()]->GetEntryIndex(), this->dwnldList, this->storeMode);
 				break;
 
 			case 2:
 				StoreUtils::SearchHandle(hDown, hHeld, touch, this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks);
 				break;
+
+			case 3:
+				StoreUtils::SortHandle(hDown, hHeld, touch, this->store, this->entries, this->ascending, this->sorttype);
+				break;
+
+			case 4:
+				StoreUtils::SettingsHandle(hDown, hHeld, touch, this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta);
+				break;
 		}
-
-
-		if (hDown & KEY_Y) this->init("sdmc:/3ds/Universal-Updater/stores/Universal-DB.unistore");
 	}
 }

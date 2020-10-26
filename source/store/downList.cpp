@@ -24,10 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "scriptUtils.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
-#define DOWNLOAD_ENTRIES  8
+#define DOWNLOAD_ENTRIES 8
 
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{54, 6, 262, 22},
@@ -46,7 +47,7 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries) {
 	if (store) {
 		if (entries.size() > 0) {
-			for (int i = 0; i < 8 && i < (int)entries.size(); i++) {
+			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
 
 				if (store->GetDownloadBtn() == i) {
 					GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, true);
@@ -64,7 +65,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	}
 }
 
-void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::vector<std::string> &entries) {
+void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const int &index, const std::vector<std::string> &entries, int &currentMenu) {
 	if (store) { // Ensure, store is not a nullptr.
 		u32 hRepeat = hidKeysDownRepeat();
 		bool needUpdate = false;
@@ -98,7 +99,12 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 		}
 
 		if (hDown & KEY_A) {
-			/* TODO: Execution handle. */
+			const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()];
+			if (Msg::promptMsg(tmp)) ScriptUtils::runFunctions(store->GetJson(), index, entries[store->GetDownloadIndex()]);
+		}
+
+		if (hDown & KEY_B) {
+			currentMenu = 0;
 		}
 
 		if (needUpdate) {

@@ -24,15 +24,37 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_SCRIPT_UTILS_HPP
+#define _UNIVERSAL_UPDATER_SCRIPT_UTILS_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "json.hpp"
+#include <3ds.h>
+#include <string>
 
-inline std::unique_ptr<Config> config;
+enum ScriptState {
+	NONE = 0,
+	FAILED_DOWNLOAD,
+	SCRIPT_CANCELED,
+	SYNTAX_ERROR,
+	COPY_ERROR,
+	MOVE_ERROR,
+	DELETE_ERROR
+};
+
+namespace ScriptUtils {
+	bool matchPattern(std::string pattern, std::string tested);
+
+	Result removeFile(std::string file, std::string message);
+	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
+	Result prompt(std::string message);
+	Result copyFile(std::string source, std::string destination, std::string message);
+	Result renameFile(std::string oldName, std::string newName, std::string message);
+	Result downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
+	Result downloadFile(std::string file, std::string output, std::string message);
+	void installFile(std::string file, bool updatingSelf, std::string message);
+	void extractFile(std::string file, std::string input, std::string output, std::string message);
+
+	Result runFunctions(nlohmann::json storeJson, int selection, std::string entry);
+};
 
 #endif

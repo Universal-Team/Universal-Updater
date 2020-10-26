@@ -24,15 +24,49 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_DOWNLOAD_HPP
+#define _UNIVERSAL_UPDATER_DOWNLOAD_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
 
-inline std::unique_ptr<Config> config;
+#define APP_TITLE "Universal-Updater"
+#define VERSION_STRING "3.0.0"
+
+enum DownloadError {
+	DL_ERROR_NONE = 0,
+	DL_ERROR_WRITEFILE,
+	DL_ERROR_ALLOC,
+	DL_ERROR_STATUSCODE,
+	DL_ERROR_GIT,
+	DL_CANCEL, // No clue if that's needed tho.
+};
+
+Result downloadToFile(std::string url, std::string path);
+Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases);
+
+/*
+	Check Wi-Fi status.
+	@return True if Wi-Fi is connected; false if not.
+*/
+bool checkWifiStatus(void);
+
+/*
+	Display "Please connect to Wi-Fi" for 2s.
+*/
+void notConnectedMsg(void);
+
+/*
+	Display "Not Implemented Yet" for 2s.
+*/
+void notImplemented(void);
+
+/*
+	Display the done msg.
+*/
+void doneMsg(void);
+
+void displayProgressBar();
+bool DownloadUniStore(const std::string &URL);
+bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 
 #endif

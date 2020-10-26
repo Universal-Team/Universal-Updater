@@ -24,15 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_FILES_HPP
+#define _UNIVERSAL_UPDATER_FILES_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
 
-inline std::unique_ptr<Config> config;
+Result makeDirs(const char *path);
+Result openFile(Handle *fileHandle, const char *path, bool write);
+Result deleteFile(const char *path);
+Result removeDir(const char *path);
+Result removeDirRecursive(const char *path);
 
 #endif

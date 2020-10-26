@@ -24,15 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#include "animation.hpp"
+#include "common.hpp"
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+extern ProgressBar progressbarType;
 
-inline std::unique_ptr<Config> config;
+void Animation::DrawProgressBar(u64 currentProgress, u64 totalProgress) {
+	Gui::Draw_Rect(30, 120, 340, 30, C2D_Color32(0, 0, 0, 255));
 
-#endif
+	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, C2D_Color32(255, 255, 255, 255));
+}

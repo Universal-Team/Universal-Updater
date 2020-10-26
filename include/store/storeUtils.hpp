@@ -45,7 +45,7 @@ namespace StoreUtils {
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
-	void EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark);
+	void EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, int &menu, bool &fetch);
 
 	/* Side Menu. */
 	void DrawSideMenu(const int &currentMenu);
@@ -53,7 +53,7 @@ namespace StoreUtils {
 
 	/* Download Entries. */
 	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries);
-	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::vector<std::string> &entries);
+	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const int &index, const std::vector<std::string> &entries, int &currentMenu);
 
 	/* Search + Favorite Menu. */
 	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks);
@@ -63,7 +63,17 @@ namespace StoreUtils {
 	void DisplayMarkBox(const int &marks);
 	void MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta);
 
+	/* Credits. */
+	void DrawCredits();
+
+	/* Settings. */
+	void DrawSettings(const int &page, const int &selection);
+	void SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
+
 	/* Sorting. */
+	void DrawSorting(const bool &asc, const SortType &st);
+	void SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st);
+
 	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 

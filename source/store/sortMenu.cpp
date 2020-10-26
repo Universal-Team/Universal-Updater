@@ -24,15 +24,22 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#include "keyboard.hpp"
+#include "storeUtils.hpp"
+#include "structs.hpp"
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-inline std::unique_ptr<Config> config;
+/*
+	Draw the Sort Menu.
+*/
+void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 
-#endif
+}
+
+/*
+	Sort Handle.
+*/
+void StoreUtils::SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st) {
+
+}
