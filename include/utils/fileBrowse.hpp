@@ -48,6 +48,7 @@ struct UniStoreInfo {
 	std::string FileName;
 	std::string Description;
 	int Version;
+	int Revision;
 	int StoreSize;
 };
 

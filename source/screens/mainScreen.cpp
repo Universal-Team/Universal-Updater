@@ -42,8 +42,9 @@ MainScreen::MainScreen() {
 	/* If Universal DB --> Get! */
 	if (config->lastStore() == "universal-db-beta.unistore" || config->lastStore() == "") {
 		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db-beta.unistore", F_OK) != 0) {
-			Msg::DisplayMsg(Lang::get("DOWNLOAD_UNIVERSAL_DB"));
-			DownloadUniStore("https://db.universal-team.net/unistore/universal-db-beta.unistore");
+			std::string tmp = "";
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db-beta.unistore", -1, tmp, true, true);
+			DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
 		}
 	}
 
@@ -52,25 +53,17 @@ MainScreen::MainScreen() {
 };
 
 void MainScreen::Draw(void) const {
-	if (this->storeMode == 4) {
-		/* Credits. */
-		StoreUtils::DrawCredits();
-		GFX::DrawBottom();
-		StoreUtils::DrawSideMenu(this->storeMode);
-		StoreUtils::DrawSettings(this->sPage, this->sSelection);
-		return;
-	}
-
 	GFX::DrawTop();
-	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7, C2D_Color32(255, 255, 255, 255), this->store->GetUniStoreTitle());
-	else Gui::DrawStringCentered(0, 1, 0.7f, C2D_Color32(255, 255, 255, 255), Lang::get("INVALID_UNISTORE"), 370);
-	StoreUtils::DrawGrid(this->store, this->entries);
+	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7, TEXT_COLOR, this->store->GetUniStoreTitle());
+	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370);
+	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
+
 	GFX::DrawBottom();
 
 	switch(this->storeMode) {
 		case 0:
 			/* Entry Info. */
-			if (this->store && this->store->GetValid()) StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
+			if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
 			break;
 
 		case 1:
@@ -87,6 +80,10 @@ void MainScreen::Draw(void) const {
 			/* Sorting. */
 			StoreUtils::DrawSorting(this->ascending, this->sorttype);
 			break;
+
+		case 4:
+			StoreUtils::DrawSettings(this->sPage, this->sSelection);
+			break;
 	}
 
 	StoreUtils::DrawSideMenu(this->storeMode);
@@ -98,7 +95,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (!this->showMarks) {
 		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
-			StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries);
+			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries);
 		}
 
 		StoreUtils::SideMenuHandle(hDown, hHeld, touch, this->storeMode, this->fetchDown);
@@ -113,7 +110,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				this->store->SetDownloadSIndex(0);
 				this->store->SetDownloadBtn(0);
 
-				if (this->store->GetValid()) {
+				if ((int)this->entries.size() > this->store->GetEntry()) {
 					this->dwnldList = this->store->GetDownloadList(this->entries[this->store->GetEntry()]->GetEntryIndex());
 				}
 			}
@@ -125,7 +122,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 1:
-				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()]->GetEntryIndex(), this->dwnldList, this->storeMode);
+				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta);
 				break;
 
 			case 2:

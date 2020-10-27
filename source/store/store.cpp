@@ -34,6 +34,7 @@
 
 extern C2D_SpriteSheet sprites;
 extern bool checkWifiStatus();
+static bool firstStart = true;
 
 /*
 	Initialize a store.
@@ -43,52 +44,70 @@ extern bool checkWifiStatus();
 Store::Store(std::string file) { this->update(file); };
 
 void Store::update(const std::string &file) {
-	FILE *in = fopen(file.c_str(), "rt");
-	this->storeJson = nlohmann::json::parse(in, nullptr, false);
-	fclose(in);
+	bool doSheet = false;
+	this->LoadFromFile(file);
 
-	if (this->storeJson.contains("storeInfo")) {
+	int rev = -1;
+	if (this->valid) {
+		if (this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
+			rev = this->storeJson["storeInfo"]["revision"];
+		}
 
-		/* Checking... */
-		if (checkWifiStatus()) { // Only do, if WiFi available.
-			if (this->storeJson["storeInfo"].contains("url") && this->storeJson["storeInfo"]["url"].is_string()) {
-				if (this->storeJson["storeInfo"].contains("file") && this->storeJson["storeInfo"]["file"].is_string()) {
-					const std::string URL = this->storeJson["storeInfo"]["url"];
+		if (firstStart) {
+			firstStart = false;
 
-					if (URL != "") {
-						Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
-						DownloadUniStore(URL);
-					}
-				}
+			if (!config->autoupdate()) {
+				this->loadSheets();
+				return;
 			}
+		}
 
-			if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_array()) {
-				if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_array()) {
-					const std::vector<std::string> locs = this->storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-					const std::vector<std::string> sht = this->storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
+		if (this->storeJson.contains("storeInfo")) {
+			/* Checking... */
+			if (checkWifiStatus()) { // Only do, if WiFi available.
+				if (this->storeJson["storeInfo"].contains("url") && this->storeJson["storeInfo"]["url"].is_string()) {
+					if (this->storeJson["storeInfo"].contains("file") && this->storeJson["storeInfo"]["file"].is_string()) {
+						const std::string URL = this->storeJson["storeInfo"]["url"];
 
-					if (locs.size() == sht.size()) {
-						for (int i = 0; i < (int)sht.size(); i++) {
-							char msg[150];
-							snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-							Msg::DisplayMsg(msg);
-							DownloadSpriteSheet(locs[i], sht[i]);
+						if (URL != "") {
+							std::string tmp = "";
+							doSheet = DownloadUniStore(URL, rev, tmp);
 						}
 					}
 				}
 
-			} else if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_string()) {
-				if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_string()) {
-					const std::string fl = this->storeJson["storeInfo"]["sheetURL"];
-					const std::string fl2 = this->storeJson["storeInfo"]["sheet"];
-					Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
-					DownloadSpriteSheet(fl, fl2);
+				if (doSheet) {
+					/* SpriteSheet Array. */
+					if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_array()) {
+						if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_array()) {
+							const std::vector<std::string> locs = this->storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
+							const std::vector<std::string> sht = this->storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
+
+							if (locs.size() == sht.size()) {
+								for (int i = 0; i < (int)sht.size(); i++) {
+									char msg[150];
+									snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+									Msg::DisplayMsg(msg);
+									DownloadSpriteSheet(locs[i], sht[i]);
+								}
+							}
+						}
+
+						/* Single SpriteSheet (No array). */
+					} else if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_string()) {
+						if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_string()) {
+							const std::string fl = this->storeJson["storeInfo"]["sheetURL"];
+							const std::string fl2 = this->storeJson["storeInfo"]["sheet"];
+							Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
+							DownloadSpriteSheet(fl, fl2);
+						}
+					}
 				}
 			}
-		}
 
-		this->LoadFromFile(file);
-		this->loadSheets();
+			this->LoadFromFile(file);
+			this->loadSheets();
+		}
 	}
 }
 
@@ -308,22 +327,6 @@ std::string Store::GetLicenseEntry(int index) const {
 	}
 
 	return "";
-}
-
-/*
-	Return the size of an index.
-
-	int index: The index.
-*/
-int Store::GetSizeEntry(int index) const {
-	if (!this->valid) return 0;
-	if (index > (int)this->storeJson["storeContent"].size() - 1) return 0; // Empty.
-
-	if (this->storeJson["storeContent"][index]["info"].contains("size") && this->storeJson["storeContent"][index]["info"]["size"].is_number()) {
-		return this->storeJson["storeContent"][index]["info"]["size"];
-	}
-
-	return 0;
 }
 
 /*

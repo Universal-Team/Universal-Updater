@@ -402,7 +402,7 @@ Result downloadFromRelease(std::string url, std::string asset, std::string path,
 	@return True if Wi-Fi is connected; false if not.
 */
 bool checkWifiStatus(void) {
-	return true; // For citra.
+	//return true; // For citra.
 	u32 wifiStatus;
 	bool res = false;
 
@@ -452,26 +452,26 @@ void displayProgressBar() {
 
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, C2D_Color32(255, 255, 255, 255), progressBarMsg, 400);
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 400);
 
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
-				Gui::DrawStringCentered(0, 80, 0.6f, C2D_Color32(255, 255, 255, 255), str, 400);
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 400);
 				Animation::DrawProgressBar(downloadNow, downloadTotal);
 				break;
 
 			case ProgressBar::Extracting:
-				Gui::DrawStringCentered(0, 180, 0.6f, C2D_Color32(255, 255, 255, 255), str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, C2D_Color32(255, 255, 255, 255), std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
+				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;
 
 			case ProgressBar::Installing:
-				Gui::DrawStringCentered(0, 80, 0.6f, C2D_Color32(255, 255, 255, 255), str, 400);
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 400);
 				Animation::DrawProgressBar(installOffset, installSize);
 				break;
 		}
@@ -481,7 +481,8 @@ void displayProgressBar() {
 	}
 }
 
-bool DownloadUniStore(const std::string &URL) {
+bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
+	Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -524,24 +525,131 @@ bool DownloadUniStore(const std::string &URL) {
 		return false;
 	}
 
-	nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-	if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
-		if (parsedAPI["storeInfo"].contains("file")) {
-			const std::string file = parsedAPI["storeInfo"]["file"];
+		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
+			if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
+				const int rev = parsedAPI["storeInfo"]["revision"];
+				socExit();
+				free(result_buf);
+				free(socubuf);
+				result_buf = nullptr;
+				result_sz = 0;
+				result_written = 0;
 
-			FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + file).c_str(), "w");
-			fwrite(result_buf, sizeof(char), result_written, out);
-			fclose(out);
+				return rev > revCurrent;
+			}
+		}
+	}
 
-			socExit();
-			free(result_buf);
-			free(socubuf);
-			result_buf = nullptr;
-			result_sz = 0;
-			result_written = 0;
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
 
-			return true;
+	return false;
+}
+
+bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool isDownload, const bool isUDB) {
+	if (isUDB) Msg::DisplayMsg(Lang::get("DOWNLOADING_UNIVERSAL_DB"));
+	else {
+		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
+		else Msg::DisplayMsg((isDownload ? Lang::get("DOWNLOADING_UNISTORE") : Lang::get("UPDATING_UNISTORE")));
+	}
+
+	Result ret = 0;
+
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return false;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return false;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, URL.c_str());
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return false;
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return false;
+	}
+
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+
+		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
+			if (currentRev > -1) {
+
+				if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
+					const int rev = parsedAPI["storeInfo"]["revision"];
+
+					if (rev > currentRev) {
+						Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
+						if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+							fl = parsedAPI["storeInfo"]["file"];
+
+							FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str(), "w");
+							fwrite(result_buf, sizeof(char), result_written, out);
+							fclose(out);
+
+							socExit();
+							free(result_buf);
+							free(socubuf);
+							result_buf = nullptr;
+							result_sz = 0;
+							result_written = 0;
+
+							return true;
+						}
+					}
+				}
+
+			} else {
+				if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+					fl = parsedAPI["storeInfo"]["file"];
+
+					FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str(), "w");
+					fwrite(result_buf, sizeof(char), result_written, out);
+					fclose(out);
+
+					socExit();
+					free(result_buf);
+					free(socubuf);
+					result_buf = nullptr;
+					result_sz = 0;
+					result_written = 0;
+
+					return true;
+				}
+			}
 		}
 	}
 

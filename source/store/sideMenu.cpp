@@ -29,11 +29,11 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> sidePos = {
-	{0, 0, 48, 48},
-	{0, 48, 48, 48},
-	{0, 96, 48, 48},
-	{0, 144, 48, 48},
-	{0, 192, 48, 48}
+	{ 0, 0, 48, 48 },
+	{ 0, 48, 48, 48 },
+	{ 0, 96, 48, 48 },
+	{ 0, 144, 48, 48 },
+	{ 0, 192, 48, 48 }
 };
 
 /*
@@ -42,14 +42,14 @@ static const std::vector<Structs::ButtonPos> sidePos = {
 void StoreUtils::DrawSideMenu(const int &currentMenu) {
 	for (int i = 0; i < 5; i++) {
 		if (i == currentMenu) {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, C2D_Color32(108, 130, 155, 255));
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, SIDEBAR_SELECTED_COLOR);
 
 		} else {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, C2D_Color32(77, 101, 128, 255));
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, SIDEBAR_UNSELECTED_COLOR);
 		}
 	}
 
-	Gui::Draw_Rect(48, 0, 1, 240, C2D_Color32(25, 30, 53, 255));
+	Gui::Draw_Rect(48, 0, 1, 240, BAR_OUTL_COLOR);
 }
 
 /*

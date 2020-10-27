@@ -40,7 +40,7 @@ static const std::vector<Structs::ButtonPos> markBox = {
 	Draw the Entry Info part.
 */
 void StoreUtils::DisplayMarkBox(const int &marks) {
-	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190)); // Darken.
+	Gui::Draw_Rect(0, 0, 320, 240, DIM_COLOR); // Darken.
 
 	GFX::drawBox(markBox[0].x, markBox[0].y, markBox[0].w, markBox[0].h, marks & favoriteMarks::STAR);
 	GFX::drawBox(markBox[1].x, markBox[1].y, markBox[1].w, markBox[1].h, marks & favoriteMarks::HEART);
@@ -48,11 +48,11 @@ void StoreUtils::DisplayMarkBox(const int &marks) {
 	GFX::drawBox(markBox[3].x, markBox[3].y, markBox[3].w, markBox[3].h, marks & favoriteMarks::CLUBS);
 	GFX::drawBox(markBox[4].x, markBox[4].y, markBox[4].w, markBox[4].h, marks & favoriteMarks::SPADE);
 
-	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 12, 0.9, C2D_Color32(255, 255, 255, 255), "★");
-	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 12, 0.9, C2D_Color32(255, 255, 255, 255), "♥");
-	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 12, 0.9, C2D_Color32(255, 255, 255, 255), "♦");
-	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 12, 0.9, C2D_Color32(255, 255, 255, 255), "♣");
-	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 12, 0.9, C2D_Color32(255, 255, 255, 255), "♠");
+	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 12, 0.9, TEXT_COLOR, "★");
+	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 12, 0.9, TEXT_COLOR, "♥");
+	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 12, 0.9, TEXT_COLOR, "♦");
+	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 12, 0.9, TEXT_COLOR, "♣");
+	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 12, 0.9, TEXT_COLOR, "♠");
 }
 
 /*
@@ -93,7 +93,8 @@ void StoreUtils::MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::uniq
 				entry->SetMark(meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()));
 			}
 		}
-
-		if (hDown & KEY_B) showMark = false; // Return back to screen.
 	}
+
+
+	if (hDown & KEY_B) showMark = false; // Return back to screen.
 }

@@ -104,7 +104,7 @@ void Config::initialize() {
 	Constructor of the config.
 */
 Config::Config() {
-	if (access("sdmc:/3ds/Universal-Updater/Config.json", F_OK) != 0 ) {
+	if (access("sdmc:/3ds/Universal-Updater/Config.json", F_OK) != 0) {
 		this->initialize();
 	}
 
@@ -121,6 +121,12 @@ Config::Config() {
 	if (!this->json.contains("LastStore")) this->lastStore("universal-db-beta.unistore");
 	else this->lastStore(this->getString("LastStore"));
 
+	if (!this->json.contains("List")) this->list(false);
+	else this->list(this->getBool("List"));
+
+	if (!this->json.contains("AutoUpdate")) this->autoupdate(true);
+	else this->autoupdate(this->getBool("AutoUpdate"));
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -133,6 +139,8 @@ void Config::save() {
 		this->setString("Language", this->language());
 		this->setInt("Version", 1);
 		this->setString("LastStore", this->lastStore());
+		this->setBool("List", this->list());
+		this->setBool("AutoUpdate", this->autoupdate());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

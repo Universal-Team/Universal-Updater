@@ -24,7 +24,6 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "gui.hpp"
 #include "storeEntry.hpp"
 
 /*
@@ -46,7 +45,6 @@ StoreEntry::StoreEntry(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &met
 	this->LastUpdated = store->GetLastUpdatedEntry(index);
 	this->License = store->GetLicenseEntry(index);
 	this->MarkString = StringUtils::GetMarkString(meta->GetMarks(store->GetUniStoreTitle(), this->Title));
-	this->Size = StringUtils::formatBytes(store->GetSizeEntry(index));
 
 	this->Icon = store->GetIconEntry(index);
 	this->SheetIndex = 0;

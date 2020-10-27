@@ -30,7 +30,6 @@
 extern ProgressBar progressbarType;
 
 void Animation::DrawProgressBar(u64 currentProgress, u64 totalProgress) {
-	Gui::Draw_Rect(30, 120, 340, 30, C2D_Color32(0, 0, 0, 255));
-
-	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, C2D_Color32(255, 255, 255, 255));
+	Gui::Draw_Rect(30, 120, 340, 30, PROGRESSBAR_OUT_COLOR);
+	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, PROGRESSBAR_IN_COLOR);
 }

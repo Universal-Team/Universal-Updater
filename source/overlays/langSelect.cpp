@@ -36,14 +36,14 @@ static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", 
 static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp "};
 
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{85, 6, 150, 22},
-	{85, 36, 150, 22},
-	{85, 66, 150, 22},
-	{85, 96, 150, 22},
-	{85, 126, 150, 22},
-	{85, 156, 150, 22},
-	{85, 186, 150, 22},
-	{85, 216, 150, 22}
+	{ 85, 4, 150, 22 },
+	{ 85, 34, 150, 22 },
+	{ 85, 64, 150, 22 },
+	{ 85, 94, 150, 22 },
+	{ 85, 124, 150, 22 },
+	{ 85, 154, 150, 22 },
+	{ 85, 184, 150, 22 },
+	{ 85, 214, 150, 22 }
 };
 
 void Overlays::SelectLanguage() {
@@ -53,16 +53,16 @@ void Overlays::SelectLanguage() {
 	while(!doOut) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
 
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, C2D_Color32(255, 255, 255, 255), Lang::get("SELECT_LANG"));
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_LANG"));
 		GFX::DrawBottom();
 
 		for(int i = 0; i < 8 && i < (int)languages.size(); i++) {
-			GFX::drawBox(85, 6 + (i * 30), 150, 22, sPos + i == selection);
-			Gui::DrawStringCentered(0, mainButtons[i].y + 4, 0.45f, C2D_Color32(255, 255, 255, 255), languages[sPos + i], 280);
+			GFX::drawBox(85, mainButtons[i].y, 150, 22, sPos + i == selection);
+			Gui::DrawStringCentered(0, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280);
 		}
 		C3D_FrameEnd(0);
 
@@ -84,6 +84,19 @@ void Overlays::SelectLanguage() {
 			config->language(l);
 			Lang::load(config->language());
 			doOut = true;
+		}
+
+		if (hidKeysDown() & KEY_TOUCH) {
+			for (int i = 0; i < 8; i++) {
+				if (touching(touch, mainButtons[i])) {
+					if (i + sPos < (int)languages.size()) {
+						const std::string l = langsTemp[i + sPos];
+						config->language(l);
+						Lang::load(config->language());
+						doOut = true;
+					}
+				}
+			}
 		}
 
 		if (selection < sPos) sPos = selection;

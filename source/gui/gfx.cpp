@@ -29,37 +29,36 @@
 
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, C2D_Color32(50, 73, 98, 255));
-	Gui::Draw_Rect(0, 25, 400, 215, C2D_Color32(38, 44, 77, 255));
-	Gui::Draw_Rect(0, 25, 400, 1, C2D_Color32(25, 30, 53, 255));
+	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 25, 400, 215, BG_COLOR);
+	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
 }
 
-void GFX::DrawBottom(bool useBar) {
+void GFX::DrawBottom() {
 	Gui::ScreenDraw(Bottom);
-
-	Gui::Draw_Rect(0, useBar ? 25 : 0, 320, useBar ? 190 : 240, C2D_Color32(38, 44, 77, 255));
-
-	if (useBar) {
-		Gui::Draw_Rect(0, 0, 320, 25, C2D_Color32(57, 84, 114, 255));
-		Gui::Draw_Rect(0, 215, 320, 25, C2D_Color32(57, 84, 114, 255));
-		DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
-		DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
-	}
+	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 }
 
 void GFX::drawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr) {
 	static constexpr int w	= 1;
-	const u32 outlineColor = selected ? C2D_Color32(240, 0, 0, 255) : C2D_Color32(0, 0, 0, 255);
-	C2D_DrawRectSolid(xPos, yPos, 0.5, width, height, clr);
+	const uint32_t outlineColor = selected ? BOX_SELECTED_COLOR : BOX_UNSELECTED_COLOR; // Get Selected | Unselected color.
 
-	C2D_DrawRectSolid(xPos, yPos, 0.5, width, w, outlineColor); // top
-	C2D_DrawRectSolid(xPos, yPos + w, 0.5, w, height - 2 * w, outlineColor); // left
-	C2D_DrawRectSolid(xPos + width - w, yPos + w, 0.5, w, height - 2 * w, outlineColor); // right
-	C2D_DrawRectSolid(xPos, yPos + height - w, 0.5, width, w, outlineColor); // bottom
+	Gui::Draw_Rect(xPos, yPos, width, height, clr); // Draw middle BG.
+
+	Gui::Draw_Rect(xPos, yPos, width, w, outlineColor); // Top.
+	Gui::Draw_Rect(xPos, yPos + w, w, height - 2 * w, outlineColor); // Left.
+	Gui::Draw_Rect(xPos + width - w, yPos + w, w, height - 2 * w, outlineColor); // Right.
+	Gui::Draw_Rect(xPos, yPos + height - w, width, w, outlineColor); // Bottom.
 }
 
 extern C2D_SpriteSheet sprites;
 
 void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	Gui::DrawSprite(sprites, img, x, y, ScaleX, ScaleY);
+}
+
+void GFX::DrawButton(float xPos, float yPos, float width, float height, bool selected, std::string Text) {
+	drawBox(xPos, yPos, width, height, selected);
+
+	Gui::DrawStringCentered(xPos - 160 + (width / 2), yPos + (height / 2) - (Gui::GetStringHeight(0.4f, Text) / 2), 0.4f, TEXT_COLOR, Text, width - 4, height - 4);
 }

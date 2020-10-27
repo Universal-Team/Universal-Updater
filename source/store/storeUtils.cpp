@@ -26,34 +26,41 @@
 
 #include "storeUtils.hpp"
 
+static std::string lower_case(const std::string &str) {
+	std::string lower;
+	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
+
+	return lower;
+}
+
 /*
 	Compare Title.
 */
 bool StoreUtils::compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(a->GetTitle().c_str(), b->GetTitle().c_str()) > 0;
+	return strcasecmp(lower_case(a->GetTitle()).c_str(), lower_case(b->GetTitle()).c_str()) > 0;
 }
 bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(b->GetTitle().c_str(), a->GetTitle().c_str()) > 0;
+	return strcasecmp(lower_case(b->GetTitle()).c_str(), lower_case(a->GetTitle()).c_str()) > 0;
 }
 
 /*
 	Compare Author.
 */
 bool StoreUtils::compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(a->GetAuthor().c_str(), b->GetAuthor().c_str()) > 0;
+	return strcasecmp(lower_case(a->GetAuthor()).c_str(), lower_case(b->GetAuthor()).c_str()) > 0;
 }
 bool StoreUtils::compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(b->GetAuthor().c_str(), a->GetAuthor().c_str()) > 0;
+	return strcasecmp(lower_case(b->GetAuthor()).c_str(), lower_case(a->GetAuthor()).c_str()) > 0;
 }
 
 /*
 	Compare Last Updated.
 */
 bool StoreUtils::compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(a->GetLastUpdated().c_str(), b->GetLastUpdated().c_str()) > 0;
+	return strcasecmp(lower_case(a->GetLastUpdated()).c_str(), lower_case(b->GetLastUpdated()).c_str()) > 0;
 }
 bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(b->GetLastUpdated().c_str(), a->GetLastUpdated().c_str()) > 0;
+	return strcasecmp(lower_case(b->GetLastUpdated()).c_str(), lower_case(a->GetLastUpdated()).c_str()) > 0;
 }
 
 /*
@@ -84,7 +91,7 @@ void StoreUtils::SortEntries(bool Ascending, SortType sorttype, std::vector<std:
 */
 static bool findInVector(const std::vector<std::string> &items, const std::string &query) {
 	for(const std::string &item : items) {
-		if (item.find(query) != std::string::npos) return true;
+		if (lower_case(item).find(query) != std::string::npos) return true;
 	}
 
 	return false;
@@ -103,13 +110,32 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 */
 
 void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks) {
+	bool hasDone = false;
+
+	/* Check for no title, author, category & console. */
+	if (!title && !author && !category && !console) {
+		if (selectedMarks != 0) {
+			for (auto it = entries.begin(); it != entries.end(); ++it) {
+
+				if (!((*it)->GetMarks() & selectedMarks)) {
+					entries.erase(it);
+					--it;
+				}
+			}
+		}
+
+		hasDone = true;
+	}
+
+	if (hasDone) return;
+
 	for (auto it = entries.begin(); it != entries.end(); ++it) {
 		if (selectedMarks != 0) { // if not 0, do filter.
 			if ((*it)->GetMarks() & selectedMarks) {
-				if (!((title && (*it)->GetTitle().find(query) != std::string::npos)
-				|| (author && (*it)->GetAuthor().find(query) != std::string::npos)
-				|| (category && findInVector((*it)->GetCategoryFull(), query))
-				|| (console && findInVector((*it)->GetConsoleFull(), query)))) {
+				if (!((title && lower_case((*it)->GetTitle()).find(lower_case(query)) != std::string::npos)
+				|| (author && lower_case((*it)->GetAuthor()).find(lower_case(query)) != std::string::npos)
+				|| (category && findInVector((*it)->GetCategoryFull(), lower_case(query)))
+				|| (console && findInVector((*it)->GetConsoleFull(), lower_case(query))))) {
 					entries.erase(it);
 					--it;
 				}
@@ -120,10 +146,10 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 			}
 
 		} else { // Else without filter.
-			if (!((title && (*it)->GetTitle().find(query) != std::string::npos)
-			|| (author && (*it)->GetAuthor().find(query) != std::string::npos)
-			|| (category && findInVector((*it)->GetCategoryFull(), query))
-			|| (console && findInVector((*it)->GetConsoleFull(), query)))) {
+			if (!((title && lower_case((*it)->GetTitle()).find(lower_case(query)) != std::string::npos)
+			|| (author && lower_case((*it)->GetAuthor()).find(lower_case(query)) != std::string::npos)
+			|| (category && findInVector((*it)->GetCategoryFull(), lower_case(query)))
+			|| (console && findInVector((*it)->GetConsoleFull(), lower_case(query))))) {
 				entries.erase(it);
 				--it;
 			}
@@ -139,15 +165,17 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
 */
 void StoreUtils::ResetAll(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries) {
-	if (store && store->GetValid()) {
+	if (store) {
 		entries.clear();
+		if (store->GetValid()) {
 
-		for (int i = 0; i < store->GetStoreSize(); i++) {
-			entries.push_back( std::make_unique<StoreEntry>(store, meta, i) );
+			for (int i = 0; i < store->GetStoreSize(); i++) {
+				entries.push_back( std::make_unique<StoreEntry>(store, meta, i) );
+			}
+
+			store->SetBox(0);
+			store->SetEntry(0);
+			store->SetScreenIndx(0);
 		}
-
-		store->SetBox(0);
-		store->SetEntry(0);
-		store->SetScreenIndx(0);
 	}
 }

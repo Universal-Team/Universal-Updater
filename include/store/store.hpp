@@ -53,7 +53,6 @@ public:
 	std::vector<std::string> GetConsoleEntry(int index) const;
 	std::string GetLastUpdatedEntry(int index) const;
 	std::string GetLicenseEntry(int index) const;
-	int GetSizeEntry(int index) const;
 	C2D_Image GetIconEntry(int index) const;
 
 	std::vector<std::string> GetDownloadList(int index) const;

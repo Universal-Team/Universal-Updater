@@ -50,10 +50,10 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 	Draw the Search + Favorites Menu.
 */
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks) {
-	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, C2D_Color32(51, 75, 102, 255));
-	Gui::Draw_Rect(55, 35, 258, 1, C2D_Color32(25, 30, 53, 255));
+	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
+	Gui::Draw_Rect(55, 35, 258, 1, SEARCH_BAR_OUTL_COLOR);
 
-	Gui::DrawStringCentered(28, 10, 0.6, C2D_Color32(255, 255, 255, 255), searchResult, 265);
+	Gui::DrawStringCentered(28, 10, 0.6, TEXT_COLOR, searchResult, 265);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
@@ -65,16 +65,16 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 		}
 	}
 
-	Gui::DrawString(84, 60, 0.5, C2D_Color32(255, 255, 255, 255), Lang::get("INCLUDE_IN_RESULTS"));
+	Gui::DrawString(84, 60, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"));
 
-	Gui::DrawString(SearchMenu[1].x + 13, SearchMenu[1].y - 2, 0.4, C2D_Color32(255, 255, 255, 255), Lang::get("TITLE"));
-	Gui::DrawString(SearchMenu[2].x + 13, SearchMenu[2].y - 2, 0.4, C2D_Color32(255, 255, 255, 255), Lang::get("AUTHOR"));
+	Gui::DrawString(SearchMenu[1].x + 13, SearchMenu[1].y - 2, 0.4, TEXT_COLOR, Lang::get("TITLE"));
+	Gui::DrawString(SearchMenu[2].x + 13, SearchMenu[2].y - 2, 0.4, TEXT_COLOR, Lang::get("AUTHOR"));
 
-	Gui::DrawString(SearchMenu[3].x + 13, SearchMenu[3].y - 2, 0.4, C2D_Color32(255, 255, 255, 255), Lang::get("CATEGORY"));
-	Gui::DrawString(SearchMenu[4].x + 13, SearchMenu[4].y - 2, 0.4, C2D_Color32(255, 255, 255, 255), Lang::get("CONSOLE"));
+	Gui::DrawString(SearchMenu[3].x + 13, SearchMenu[3].y - 2, 0.4, TEXT_COLOR, Lang::get("CATEGORY"));
+	Gui::DrawString(SearchMenu[4].x + 13, SearchMenu[4].y - 2, 0.4, TEXT_COLOR, Lang::get("CONSOLE"));
 
 	/* Filters. */
-	Gui::DrawString(84, 150, 0.5, C2D_Color32(255, 255, 255, 255), Lang::get("FILTER_TO"));
+	Gui::DrawString(84, 150, 0.5, TEXT_COLOR, Lang::get("FILTER_TO"));
 
 	GFX::drawBox(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, marks & favoriteMarks::STAR);
 	GFX::drawBox(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, marks & favoriteMarks::HEART);
@@ -82,11 +82,11 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	GFX::drawBox(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, marks & favoriteMarks::CLUBS);
 	GFX::drawBox(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, marks & favoriteMarks::SPADE);
 
-	Gui::DrawString(SearchMenu[5].x + 8, SearchMenu[5].y + 8, 0.5, C2D_Color32(255, 255, 255, 255), "★");
-	Gui::DrawString(SearchMenu[6].x + 8, SearchMenu[6].y + 8, 0.5, C2D_Color32(255, 255, 255, 255), "♥");
-	Gui::DrawString(SearchMenu[7].x + 8, SearchMenu[7].y + 8, 0.5, C2D_Color32(255, 255, 255, 255), "♦");
-	Gui::DrawString(SearchMenu[8].x + 8, SearchMenu[8].y + 8, 0.5, C2D_Color32(255, 255, 255, 255), "♣");
-	Gui::DrawString(SearchMenu[9].x + 8, SearchMenu[9].y + 8, 0.5, C2D_Color32(255, 255, 255, 255), "♠");
+	Gui::DrawString(SearchMenu[5].x + 8, SearchMenu[5].y + 8, 0.5, TEXT_COLOR, "★");
+	Gui::DrawString(SearchMenu[6].x + 8, SearchMenu[6].y + 8, 0.5, TEXT_COLOR, "♥");
+	Gui::DrawString(SearchMenu[7].x + 8, SearchMenu[7].y + 8, 0.5, TEXT_COLOR, "♦");
+	Gui::DrawString(SearchMenu[8].x + 8, SearchMenu[8].y + 8, 0.5, TEXT_COLOR, "♣");
+	Gui::DrawString(SearchMenu[9].x + 8, SearchMenu[9].y + 8, 0.5, TEXT_COLOR, "♠");
 }
 
 /*
@@ -102,6 +102,14 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 			if (touching(touch, SearchMenu[i + 1])) {
 				searchIncludes[i] = !searchIncludes[i];
 				didTouch = true;
+
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 				break;
 			}
 		}
@@ -111,6 +119,14 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 			if (touching(touch, SearchMenu[0])) {
 				searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"));
 				didTouch = true;
+
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 			}
 		}
 
@@ -118,36 +134,59 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 		if (!didTouch) {
 			if (touching(touch, SearchMenu[5])) {
 				marks = marks ^ favoriteMarks::STAR;
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 
 			} else if (touching(touch, SearchMenu[6])) {
 				marks = marks ^ favoriteMarks::HEART;
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 
 			} else if (touching(touch, SearchMenu[7])) {
 				marks = marks ^ favoriteMarks::DIAMOND;
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 
 			} else if (touching(touch, SearchMenu[8])) {
 				marks = marks ^ favoriteMarks::CLUBS;
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 
 			} else if (touching(touch, SearchMenu[9])) {
 				marks = marks ^ favoriteMarks::SPADE;
-
+				if (store && store->GetValid()) {
+					StoreUtils::ResetAll(store, meta, entries);
+					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
+					store->SetScreenIndx(0);
+					store->SetEntry(0);
+					store->SetBox(0);
+				}
 			}
 		}
 	}
 
-	/* Start for now does a search. */
-	if (hDown & KEY_START) {
-		if (store && store->GetValid()) {
-			StoreUtils::ResetAll(store, meta, entries);
-			StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-			store->SetScreenIndx(0);
-			store->SetEntry(0);
-			store->SetBox(0);
-		}
-	}
-
 	/* Reset all. */
-	if (hDown & KEY_SELECT) {
+	if (hDown & KEY_X) {
 		if (store && store->GetValid()) StoreUtils::ResetAll(store, meta, entries);
 	}
 }

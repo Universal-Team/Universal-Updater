@@ -24,29 +24,40 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "storeUtils.hpp"
+#include "overlay.hpp"
 
 /*
-	Draw the Credits.
+	Show the Credits.
 */
-void StoreUtils::DrawCredits() {
-	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 1, 0.7f, C2D_Color32(255, 255, 255, 255), "Universal-Updater - " + Lang::get("CREDITS"));
+void Overlays::ShowCredits() {
+	bool doOut = false;
 
-	Gui::DrawString(10, 30, 0.5f, C2D_Color32(255, 255, 255, 255), "Universal-Team");
-	Gui::DrawString(10, 50, 0.4f, C2D_Color32(255, 255, 255, 255), Lang::get("APP_DEVELOPEMENT"));
+	while(!doOut) {
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
 
+		GFX::DrawTop();
+		GFX::DrawSprite(sprites_universal_updater_idx, 220, 30);
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater - " + Lang::get("CREDITS"));
 
-	Gui::DrawString(10, 77, 0.5f, C2D_Color32(255, 255, 255, 255), Lang::get("CONTRIBUTORS"));
-	Gui::DrawString(10, 97, 0.4f, C2D_Color32(255, 255, 255, 255), Lang::get("CONTRIBUTORS_2"), 390);
+		Gui::DrawString(10, 30, 0.5f, TEXT_COLOR, "- Universal-Team");
+		Gui::DrawString(10, 60, 0.5f, TEXT_COLOR, "- devkitPro");
+		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- https://icons8.com/");
+		Gui::DrawString(10, 120, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"));
+		Gui::DrawString(10, 170, 0.5f, TEXT_COLOR, Lang::get("GITHUB"));
 
-	Gui::DrawString(10, 124, 0.5f, C2D_Color32(255, 255, 255, 255), "devkitPro");
-	Gui::DrawString(10, 144, 0.4f, C2D_Color32(255, 255, 255, 255), Lang::get("LIBRARIES"), 390);
+		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
+		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
+		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390);
 
-	Gui::DrawString(10, 171, 0.5f, C2D_Color32(255, 255, 255, 255), Lang::get("TRANSLATORS"));
-	Gui::DrawString(10, 191, 0.4f, C2D_Color32(255, 255, 255, 255), Lang::get("TRANSLATORS_2"), 390);
+		GFX::DrawBottom();
+		GFX::DrawSprite(sprites_universal_core_idx, 0, 26);
+		C3D_FrameEnd(0);
 
-	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(50, 73, 98, 255));
-	Gui::Draw_Rect(0, 214, 400, 1, C2D_Color32(25, 30, 53, 255));
-	Gui::DrawStringCentered(0, 217, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390);
+		hidScanInput();
+
+		if (hidKeysDown()) doOut = true;
+	}
 }

@@ -43,6 +43,10 @@ namespace StoreUtils {
 	void DrawGrid(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
 	void GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries);
 
+	/* Top List. */
+	void DrawList(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
+	void ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries);
+
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
 	void EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, int &menu, bool &fetch);
@@ -53,7 +57,7 @@ namespace StoreUtils {
 
 	/* Download Entries. */
 	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries);
-	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const int &index, const std::vector<std::string> &entries, int &currentMenu);
+	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta);
 
 	/* Search + Favorite Menu. */
 	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks);

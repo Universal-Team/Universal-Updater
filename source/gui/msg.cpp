@@ -35,11 +35,11 @@
 void Msg::DisplayMsg(std::string text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, text)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), text, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, text)) / 2, 0.6f, TEXT_COLOR, text, 395, 100);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -52,11 +52,11 @@ void Msg::DisplayMsg(std::string text) {
 void Msg::DisplayWarnMsg(std::string Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 1, 0.6f, C2D_Color32(255, 255, 255, 255), Text, 400);
+	Gui::DrawStringCentered(0, 1, 0.6f, TEXT_COLOR, Text, 400);
 
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -66,9 +66,6 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	}
 }
 
-extern touchPosition touch;
-extern bool touching(touchPosition touch, Structs::ButtonPos button);
-
 /*
 	Display a Message, which needs to be confirmed with A/B.
 
@@ -77,14 +74,14 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 bool Msg::promptMsg(std::string promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), promptMsg, 395, 100);
+	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, TEXT_COLOR, promptMsg, 395, 100);
 
-	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(50, 73, 98, 255));
-	Gui::Draw_Rect(0, 214, 400, 1, C2D_Color32(25, 30, 53, 255));
-	Gui::DrawStringCentered(0, 217, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("CONFIRM_OR_CANCEL"), 400);
+	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	C3D_FrameEnd(0);
 
 	while(1) {
@@ -101,14 +98,14 @@ void Msg::waitMsg(std::string msg) {
 
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, C2D_Color32(255, 255, 255, 255), msg, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, TEXT_COLOR, msg, 395, 100);
 
-	Gui::Draw_Rect(0, 215, 400, 25, C2D_Color32(50, 73, 98, 255));
-	Gui::Draw_Rect(0, 214, 400, 1, C2D_Color32(25, 30, 53, 255));
-	Gui::DrawStringCentered(0, 217, 0.6f, C2D_Color32(255, 255, 255, 255), Lang::get("KEY_CONTINUE"), 400);
+	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("KEY_CONTINUE"), 400);
 	C3D_FrameEnd(0);
 
 	while(!doOut) {

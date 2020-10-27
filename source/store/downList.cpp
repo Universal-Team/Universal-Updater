@@ -29,16 +29,16 @@
 #include "structs.hpp"
 
 #define DOWNLOAD_ENTRIES 8
-
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
-	{54, 6, 262, 22},
-	{54, 36, 262, 22},
-	{54, 66, 262, 22},
-	{54, 96, 262, 22},
-	{54, 126, 262, 22},
-	{54, 156, 262, 22},
-	{54, 186, 262, 22},
-	{54, 216, 262, 22}
+	{ 54, 4, 262, 22 },
+	{ 54, 34, 262, 22 },
+	{ 54, 64, 262, 22 },
+	{ 54, 94, 262, 22 },
+	{ 54, 124, 262, 22 },
+	{ 54, 154, 262, 22 },
+	{ 54, 184, 262, 22 },
+	{ 54, 214, 262, 22 }
 };
 
 /*
@@ -56,21 +56,24 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 					GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
 				}
 
-				Gui::DrawStringCentered(27, downloadBoxes[i].y + 4, 0.45f, C2D_Color32(255, 255, 255, 255), entries[(i + store->GetDownloadSIndex())], 255);
+				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260);
 			}
 
 		} else {
-			Gui::DrawStringCentered(0, downloadBoxes[0].y + 4, 0.5f, C2D_Color32(255, 255, 255, 255), Lang::get("NO_DOWNLOADS_AVAILABLE"), 280);
+			Gui::DrawStringCentered(25, downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 260);
 		}
 	}
 }
 
-void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const int &index, const std::vector<std::string> &entries, int &currentMenu) {
-	if (store) { // Ensure, store is not a nullptr.
+void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta) {
+	bool needUpdate = false;
+
+	if (store && entry) { // Ensure, store & entry is not a nullptr.
 		u32 hRepeat = hidKeysDownRepeat();
-		bool needUpdate = false;
 
 		if (hRepeat & KEY_DOWN) {
+			if (entries.size() <= 0) return;
+
 			if (store->GetDownloadBtn() > 6) {
 				if (store->GetDownloadIndex() < (int)entries.size() - 1) {
 					store->SetDownloadIndex(store->GetDownloadIndex() + 1);
@@ -86,6 +89,8 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 		}
 
 		if (hRepeat & KEY_UP) {
+			if (entries.size() <= 0) return;
+
 			if (store->GetDownloadBtn() < 1) {
 				if (store->GetDownloadIndex() > 0) {
 					store->SetDownloadIndex(store->GetDownloadIndex() - 1);
@@ -98,9 +103,33 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 			}
 		}
 
+		if (hDown & KEY_TOUCH) {
+			if (entries.size() <= 0) return;
+
+			for (int i = 0; i < 8; i++) {
+				if (touching(touch, downloadBoxes[i])) {
+					if (i + store->GetDownloadSIndex() < (int)entries.size()) {
+						const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + store->GetDownloadSIndex()];
+
+						if (Msg::promptMsg(tmp)) {
+							ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[i + store->GetDownloadSIndex()]);
+							if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
+							entry->SetUpdateAvl(false);
+						}
+					}
+				}
+			}
+		}
+
 		if (hDown & KEY_A) {
+			if (entries.size() <= 0) return;
+
 			const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()];
-			if (Msg::promptMsg(tmp)) ScriptUtils::runFunctions(store->GetJson(), index, entries[store->GetDownloadIndex()]);
+			if (Msg::promptMsg(tmp)) {
+				ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[store->GetDownloadIndex()]);
+				if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
+				entry->SetUpdateAvl(false);
+			}
 		}
 
 		if (hDown & KEY_B) {

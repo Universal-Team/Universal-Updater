@@ -28,40 +28,76 @@
 #include "storeUtils.hpp"
 
 extern bool exiting;
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{54, 6, 262, 22},
-	{54, 36, 262, 22},
-	{54, 66, 262, 22},
-	{54, 96, 262, 22},
-	{54, 126, 262, 22},
-	{54, 156, 262, 22},
-	{54, 186, 262, 22},
-	{54, 216, 262, 22}
+	{ 54, 4, 262, 22 },
+	{ 54, 34, 262, 22 },
+	{ 54, 64, 262, 22 },
+	{ 54, 94, 262, 22 },
+	{ 54, 124, 262, 22 },
+	{ 54, 154, 262, 22 },
+	{ 54, 184, 262, 22 },
+	{ 54, 214, 262, 22 }
 };
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "THEME", "SELECT_UNISTORE", "EXIT_APP" };
+
+static const std::string autoupdate() { return (config->autoupdate() ? "DISABLE_AUTOUPDATE_UNISTORE" : "ENABLE_AUTOUPDATE_UNISTORE"); };
+
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "TOGGLE_STYLE", "CREDITS", "EXIT_APP" };
 
 /*
 	Main Settings.
 */
 static void DrawSettingsMain(const int &selection) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		GFX::drawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection);
-		Gui::DrawStringCentered(27, mainButtons[i].y + 4, 0.45f, C2D_Color32(255, 255, 255, 255), Lang::get(mainStrings[i]), 255);
 	}
+
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
 }
 
 static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
+	u32 hRepeat = hidKeysDownRepeat();
+
 	if (hDown & KEY_B) {
 		selection = 0;
 		storeMode = 0;
 	}
 
-	if (hDown & KEY_DOWN) {
-		if (selection < 3) selection++;
+	if (hRepeat & KEY_DOWN) {
+		if (selection < 5) selection++;
 	}
 
-	if (hDown & KEY_UP) {
+	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			Overlays::SelectLanguage();
+
+		} else if (touching(touch, mainButtons[1])) {
+			Overlays::SelectStore(store, entries, meta);
+
+		} else if (touching(touch, mainButtons[2])) {
+			config->list(!config->list());
+			store->SetEntry(0);
+			store->SetScreenIndx(0);
+			store->SetBox(0);
+
+		} else if (touching(touch, mainButtons[3])) {
+			config->autoupdate(!config->autoupdate());
+
+		} else if (touching(touch, mainButtons[4])) {
+			Overlays::ShowCredits();
+
+		} else if (touching(touch, mainButtons[5])) {
+			exiting = true;
+		}
 	}
 
 	if (hDown & KEY_A) {
@@ -71,13 +107,25 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 				break;
 
 			case 1:
-				break; // Theme.
-
-			case 2:
 				Overlays::SelectStore(store, entries, meta);
 				break;
 
+			case 2:
+				config->list(!config->list());
+				store->SetEntry(0);
+				store->SetScreenIndx(0);
+				store->SetBox(0);
+				break;
+
 			case 3:
+				config->autoupdate(!config->autoupdate());
+				break;
+
+			case 4:
+				Overlays::ShowCredits();
+				break;
+
+			case 5:
 				exiting = true;
 				break;
 		}

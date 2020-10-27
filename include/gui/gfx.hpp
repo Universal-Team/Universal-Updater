@@ -32,11 +32,50 @@
 #include <citro2d.h>
 #include <string>
 
+/*
+	Define all used Colors, for easier changes.
+*/
+
+/* Standard Colors. */
+#define WHITE C2D_Color32(255, 255, 255, 255)
+#define BLACK C2D_Color32(0, 0, 0, 255)
+#define TRANSPARENT C2D_Color32(0, 0, 0, 0)
+#define DIM_COLOR C2D_Color32(0, 0, 0, 190)
+
+/* Bar, Text, BG Colors. */
+#define TEXT_COLOR WHITE
+#define BAR_COLOR C2D_Color32(50, 73, 98, 255)
+#define BAR_OUTL_COLOR C2D_Color32(25, 30, 53, 255)
+#define BG_COLOR C2D_Color32(38, 44, 77, 255)
+
+/* Progressbar Colors. */
+#define PROGRESSBAR_OUT_COLOR BLACK
+#define PROGRESSBAR_IN_COLOR WHITE
+
+/* Entry Colors. */
+#define ENTRY_BAR_COLOR BAR_COLOR
+#define ENTRY_BAR_OUTL_COLOR BAR_OUTL_COLOR
+
+/* Entry Box Colors. */
+#define BOX_INSIDE_COLOR C2D_Color32(49, 49, 49, 255)
+#define BOX_SELECTED_COLOR C2D_Color32(240, 0, 0, 255)
+#define BOX_UNSELECTED_COLOR BLACK
+
+/* Search Menu Colors. */
+#define SEARCH_BAR_COLOR C2D_Color32(51, 75, 102, 255)
+#define SEARCH_BAR_OUTL_COLOR BAR_OUTL_COLOR
+
+/* Sidebar Colors. */
+#define SIDEBAR_SELECTED_COLOR C2D_Color32(108, 130, 155, 255)
+#define SIDEBAR_UNSELECTED_COLOR C2D_Color32(77, 101, 128, 255)
+
 namespace GFX {
 	void DrawTop(void);
-	void DrawBottom(bool useBar = false);
+	void DrawBottom();
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void drawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = C2D_Color32(49, 49, 49, 255));
+	void drawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = BOX_INSIDE_COLOR);
+
+	void DrawButton(float xPos, float yPos, float width, float height, bool selected, std::string Text = "");
 };
 
 #endif

@@ -127,7 +127,7 @@ bool returnIfExist(const std::string &path, const std::vector<std::string> &exte
 	Return UniStore info.
 */
 UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
-	UniStoreInfo Temp = { "", "", "", fileName, "", 0, -1 }; // Title, Author, URL, FileName, Desc, Version, Entries.
+	UniStoreInfo Temp = { "", "", "", fileName, "", 0, -1, -1 }; // Title, Author, URL, FileName, Desc, Version, Revision, Entries.
 	nlohmann::json JSON = nullptr;
 
 	FILE *temp = fopen(file.c_str(), "rt");
@@ -154,6 +154,10 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 
 	if (JSON["storeInfo"].contains("version") && JSON["storeInfo"]["version"].is_number()) {
 		Temp.Version = JSON["storeInfo"]["version"];
+	}
+
+	if (JSON["storeInfo"].contains("revision") && JSON["storeInfo"]["revision"].is_number()) {
+		Temp.Revision = JSON["storeInfo"]["revision"];
 	}
 
 	if (JSON.contains("storeContent")) Temp.StoreSize = JSON["storeContent"].size();

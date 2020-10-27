@@ -226,28 +226,41 @@ void ScriptUtils::extractFile(std::string file, std::string input, std::string o
 	threadFree(thread);
 }
 
-// Execute | run the script.
+/*
+	Execute | run the script.
+*/
 Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::string entry) {
 	Result ret = NONE; // No Error as of yet.
 
-	if (!storeJson.contains("storeContent")) return SYNTAX_ERROR;
-	if ((int)storeJson["storeContent"].size() < selection) return SYNTAX_ERROR;
-	if (!storeJson["storeContent"][selection].contains(entry)) return SYNTAX_ERROR;
-
+	if (!storeJson.contains("storeContent")) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
+	if ((int)storeJson["storeContent"].size() < selection) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
+	if (!storeJson["storeContent"][selection].contains(entry)) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
 
 	for(int i = 0; i < (int)storeJson["storeContent"][selection][entry].size(); i++) {
 		if (ret == NONE) {
-			std::string type = storeJson["storeContent"][selection][entry][i]["type"];
+			std::string type = "";
+
+			if (storeJson["storeContent"][selection][entry][i].contains("type") && storeJson["storeContent"][selection][entry][i]["type"].is_string()) {
+				type = storeJson["storeContent"][selection][entry][i]["type"];
+
+			} else {
+				ret = SYNTAX_ERROR;
+			}
 
 			if (type == "deleteFile") {
 				bool missing = false;
 				std::string file = "", message = "";
 
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file")) file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
+					file = storeJson["storeContent"][selection][entry][i]["file"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ret = ScriptUtils::removeFile(file, message);
 				else ret = SYNTAX_ERROR;
 
@@ -255,13 +268,20 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false;
 				std::string file = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file")) file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
+					file = storeJson["storeContent"][selection][entry][i]["file"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output")) output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
+					output = storeJson["storeContent"][selection][entry][i]["output"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ret = ScriptUtils::downloadFile(file, output, message);
 				else ret = SYNTAX_ERROR;
 
@@ -269,19 +289,28 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false, includePrereleases = false;
 				std::string repo = "", file = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("repo")) repo = storeJson["storeContent"][selection][entry][i]["repo"];
+				if (storeJson["storeContent"][selection][entry][i].contains("repo") && storeJson["storeContent"][selection][entry][i]["repo"].is_string()) {
+					repo = storeJson["storeContent"][selection][entry][i]["repo"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file")) file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
+					file = storeJson["storeContent"][selection][entry][i]["file"];
+				}
 				else  missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output")) output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
+					output = storeJson["storeContent"][selection][entry][i]["output"];
+				}
 				else missing = true;
 
 				if (storeJson["storeContent"][selection][entry][i].contains("includePrereleases") && storeJson["storeContent"][selection][entry][i]["includePrereleases"].is_boolean())
 					includePrereleases = storeJson["storeContent"][selection][entry][i]["includePrereleases"];
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message);
 				else ret = SYNTAX_ERROR;
 
@@ -289,16 +318,25 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false;
 				std::string file = "", input = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file")) file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
+					file = storeJson["storeContent"][selection][entry][i]["file"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("input")) input = storeJson["storeContent"][selection][entry][i]["input"];
+				if (storeJson["storeContent"][selection][entry][i].contains("input") && storeJson["storeContent"][selection][entry][i]["input"].is_string()) {
+					input = storeJson["storeContent"][selection][entry][i]["input"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output")) output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
+					output = storeJson["storeContent"][selection][entry][i]["output"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ScriptUtils::extractFile(file, input, output, message);
 				else ret = SYNTAX_ERROR;
 
@@ -306,14 +344,19 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false, updateSelf = false;
 				std::string file = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file")) file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
+					file = storeJson["storeContent"][selection][entry][i]["file"];
+				}
 				else missing = true;
 
 				if (storeJson["storeContent"][selection][entry][i].contains("updateSelf") && storeJson["storeContent"][selection][entry][i]["updateSelf"].is_boolean()) {
 					updateSelf = storeJson["storeContent"][selection][entry][i]["updateSelf"];
 				}
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ScriptUtils::installFile(file, updateSelf, message);
 				else ret = SYNTAX_ERROR;
 
@@ -321,7 +364,9 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false;
 				std::string directory = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("directory")) directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				if (storeJson["storeContent"][selection][entry][i].contains("directory") && storeJson["storeContent"][selection][entry][i]["directory"].is_string()) {
+					directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				}
 				else missing = true;
 
 				if (!missing) makeDirs(directory.c_str());
@@ -331,11 +376,13 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				bool missing = false;
 				std::string directory = "", message = "", promptmsg = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("directory")) directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				if (storeJson["storeContent"][selection][entry][i].contains("directory") && storeJson["storeContent"][selection][entry][i]["directory"].is_string()) {
+					directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				}
 				else missing = true;
 
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-				if (!missing) {
+				if (!missing && directory != "") {
 					if (access(directory.c_str(), F_OK) != 0) ret = DELETE_ERROR;
 					else {
 						if (Msg::promptMsg(promptmsg)) removeDirRecursive(directory.c_str());
@@ -346,24 +393,35 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 
 			} else if (type == "promptMessage") {
 				std::string Message = "";
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				ret = ScriptUtils::prompt(Message);
 
 				if (ret == SCRIPT_CANCELED) {
 					ret = NONE;
 					i++; // Skip.
 				}
+
 			} else if (type == "copy") {
 				std::string Message = "", source = "", destination = "";
 				bool missing = false;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("source")) source = storeJson["storeContent"][selection][entry][i]["source"];
+				if (storeJson["storeContent"][selection][entry][i].contains("source") && storeJson["storeContent"][selection][entry][i]["source"].is_string()) {
+					source = storeJson["storeContent"][selection][entry][i]["source"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("destination")) destination = storeJson["storeContent"][selection][entry][i]["destination"];
+				if (storeJson["storeContent"][selection][entry][i].contains("destination") && storeJson["storeContent"][selection][entry][i]["destination"].is_string()) {
+					destination = storeJson["storeContent"][selection][entry][i]["destination"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message);
 				else ret = SYNTAX_ERROR;
 
@@ -371,13 +429,20 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::s
 				std::string Message = "", oldFile = "", newFile = "";
 				bool missing = false;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("old")) oldFile = storeJson["storeContent"][selection][entry][i]["old"];
+				if (storeJson["storeContent"][selection][entry][i].contains("old") && storeJson["storeContent"][selection][entry][i]["old"].is_string()) {
+					oldFile = storeJson["storeContent"][selection][entry][i]["old"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("new")) newFile = storeJson["storeContent"][selection][entry][i]["new"];
+				if (storeJson["storeContent"][selection][entry][i].contains("new") && storeJson["storeContent"][selection][entry][i]["new"].is_string()) {
+					newFile = storeJson["storeContent"][selection][entry][i]["new"];
+				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message")) Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
+					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				}
+
 				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message);
 				else ret = SYNTAX_ERROR;
 			}
