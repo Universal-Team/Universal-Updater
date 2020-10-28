@@ -29,6 +29,8 @@
 #include "storeUtils.hpp"
 #include <unistd.h>
 
+extern int fadeAlpha;
+
 /*
 	MainScreen Constructor.
 
@@ -68,6 +70,7 @@ void MainScreen::Draw(void) const {
 	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370);
 	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
 
+	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 	GFX::DrawBottom();
 
 	switch(this->storeMode) {
@@ -99,6 +102,7 @@ void MainScreen::Draw(void) const {
 
 	StoreUtils::DrawSideMenu(this->storeMode);
 	if (this->showMarks && this->store && this->store->GetValid()) StoreUtils::DisplayMarkBox(this->entries[this->store->GetEntry()]->GetMarks());
+	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 }
 
 /*

@@ -30,7 +30,7 @@
 #include <string>
 
 namespace Input {
-	std::string setkbdString(uint maxLength, std::string Text);
+	std::string setkbdString(const uint &maxLength, const std::string &Text);
 };
 
 #endif

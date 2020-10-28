@@ -94,39 +94,37 @@ static bool DownloadStore() {
 	bool doSheet = false;
 	std::string file = "";
 
-	if (checkWifiStatus()) {
-		const std::string URL = Input::setkbdString(50, Lang::get("ENTER_URL"));
+	const std::string URL = Input::setkbdString(150, Lang::get("ENTER_URL"));
 
-		if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
+	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
+
+	if (doSheet) {
+		FILE *temp = fopen(file.c_str(), "rt");
+		nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
+		fclose(temp);
 
 		if (doSheet) {
-			FILE *temp = fopen(file.c_str(), "rt");
-			nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
-			fclose(temp);
+			if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
+				if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
+					const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
+					const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
 
-			if (doSheet) {
-				if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
-					if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
-						const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-						const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
-
-						if (locs.size() == sht.size()) {
-							for (int i = 0; i < (int)sht.size(); i++) {
-								char msg[150];
-								snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-								Msg::DisplayMsg(msg);
-								DownloadSpriteSheet(locs[i], sht[i]);
-							}
+					if (locs.size() == sht.size()) {
+						for (int i = 0; i < (int)sht.size(); i++) {
+							char msg[150];
+							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+							Msg::DisplayMsg(msg);
+							DownloadSpriteSheet(locs[i], sht[i]);
 						}
 					}
+				}
 
-				} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
-					if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
-						const std::string fl = storeJson["storeInfo"]["sheetURL"];
-						const std::string fl2 = storeJson["storeInfo"]["sheet"];
-						Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
-						DownloadSpriteSheet(fl, fl2);
-					}
+			} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
+				if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
+					const std::string fl = storeJson["storeInfo"]["sheetURL"];
+					const std::string fl2 = storeJson["storeInfo"]["sheet"];
+					Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
+					DownloadSpriteSheet(fl, fl2);
 				}
 			}
 		}
@@ -254,12 +252,14 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		}
 
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
-			if (DownloadStore()) {
-				selection = 0;
-				info = GetUniStoreInfo(_STORE_PATH);
+			if (checkWifiStatus()) {
+				if (DownloadStore()) {
+					selection = 0;
+					info = GetUniStoreInfo(_STORE_PATH);
 
-			} else {
-				Msg::waitMsg(Lang::get("INVALID_UNISTORE"));
+				} else {
+					Msg::waitMsg(Lang::get("INVALID_UNISTORE"));
+				}
 			}
 		}
 

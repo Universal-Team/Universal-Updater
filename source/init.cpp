@@ -34,6 +34,7 @@
 bool exiting = false;
 touchPosition touch;
 C2D_SpriteSheet sprites;
+int fadeAlpha = 0;
 
 /*
 	If button Position pressed -> Do something.
@@ -95,11 +96,18 @@ Result Init::MainLoop() {
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 		Gui::DrawScreen(false);
-		Gui::ScreenLogic(hDown, hHeld, touch, true, false);
+		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
 		C3D_FrameEnd(0);
 
 		if (exiting) {
-			fullExit = true;
+			if (hDown & KEY_START) fullExit = true; // Make it optionally faster.
+
+			if (fadeAlpha < 255) {
+				fadeAlpha += 2;
+				if (fadeAlpha >= 255) {
+					fullExit = true;
+				}
+			}
 		}
 	}
 

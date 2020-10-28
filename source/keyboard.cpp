@@ -28,7 +28,13 @@
 #include "keyboard.hpp"
 #include "screenCommon.hpp"
 
-std::string Input::setkbdString(uint maxLength, std::string Text) {
+/*
+	Return a string of the keyboard.
+
+	const uint &maxLength: Const Reference to the max length.
+	const std::string &Text: Const Reference to the Text.
+*/
+std::string Input::setkbdString(const uint &maxLength, const std::string &Text) {
 	C3D_FrameEnd(0); // Needed, so the system will not freeze.
 
 	SwkbdState state;
