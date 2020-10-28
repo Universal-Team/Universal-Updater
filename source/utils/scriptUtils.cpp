@@ -53,7 +53,7 @@ bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &te
 */
 Result ScriptUtils::removeFile(const std::string &file, const std::string &message) {
 	std::string out;
-	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
+	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
@@ -123,9 +123,9 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 */
 Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, const bool &includePrereleases, const std::string &message) {
 	std::string out;
-	out = std::regex_replace(output, std::regex("%3DSX%"), "sdmc:/3ds");
-	out = std::regex_replace(out, std::regex("%NDS%"), "sdmc:");
-	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
+	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 
 	Result ret = NONE;
 
@@ -157,9 +157,9 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 */
 Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message) {
 	std::string out;
-	out = std::regex_replace(output, std::regex("%3DSX%"), "sdmc:/3ds");
-	out = std::regex_replace(out, std::regex("%NDS%"), "sdmc:");
-	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
+	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 
 	Result ret = NONE;
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
@@ -208,8 +208,8 @@ void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf,
 */
 void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
 	std::string out, in;
-	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
-	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
+	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;

@@ -42,7 +42,8 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 
 static const std::string autoupdate() { return (config->autoupdate() ? "DISABLE_AUTOUPDATE_UNISTORE" : "ENABLE_AUTOUPDATE_UNISTORE"); };
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "TOGGLE_STYLE", "CREDITS", "EXIT_APP" };
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "TOGGLE_STYLE", "CREDITS", "CHANGE_DIRECTORIES", "EXIT_APP" };
+static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
 /*
 	Main Settings.
@@ -50,7 +51,7 @@ static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTO
 	const int &selection: Const Reference to the Settings Selection.
 */
 static void DrawSettingsMain(const int &selection) {
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 7; i++) {
 		GFX::drawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection);
 	}
 
@@ -60,6 +61,18 @@ static void DrawSettingsMain(const int &selection) {
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[5]), 260);
+}
+
+/*
+	Directory Change Draw.
+
+	const int &selection: Const Reference to the Settings Selection.
+*/
+static void DrawSettingsDir(const int &selection) {
+	for (int i = 0; i < 3; i++) {
+		GFX::DrawButton(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection, Lang::get(dirStrings[i]));
+	}
 }
 
 /*
@@ -93,7 +106,7 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 5) selection++;
+		if (selection < 6) selection++;
 	}
 
 	if (hRepeat & KEY_UP) {
@@ -119,10 +132,17 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 		} else if (touching(touch, mainButtons[4])) {
 			Overlays::ShowCredits();
 
-		} else if (touching(touch, mainButtons[5])) {
+ 		} else if (touching(touch, mainButtons[5])) {
+			selection = 0;
+			page = 1;
+
+		} else if (touching(touch, mainButtons[6])) {
 			exiting = true;
+
 		}
 	}
+
+
 
 	if (hDown & KEY_A) {
 		switch(selection) {
@@ -150,7 +170,78 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 				break;
 
 			case 5:
+				selection = 0;
+				page = 1;
+				break;
+
+			case 6:
 				exiting = true;
+				break;
+		}
+	}
+}
+
+/*
+	Directory Handle.
+	Here you can..
+
+	- Change the Directory of...
+		- 3DSX, NDS & Archives.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	int &selection: Reference to the Selection.
+*/
+static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
+	u32 hRepeat = hidKeysDownRepeat();
+
+	if (hDown & KEY_B) {
+		page = 0;
+		selection = 5;
+	}
+
+	if (hRepeat & KEY_DOWN) {
+		if (selection < 2) selection++;
+	}
+
+	if (hRepeat & KEY_UP) {
+		if (selection > 0) selection--;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			const std::string path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
+			if (path != "") config->_3dsxPath(path);
+
+		} else if (touching(touch, mainButtons[1])) {
+			const std::string path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
+			if (path != "") config->ndsPath(path);
+
+		} else if (touching(touch, mainButtons[2])) {
+			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
+			if (path != "") config->archPath(path);
+		}
+	}
+
+	if (hDown & KEY_A) {
+		std::string path = "";
+
+		switch(selection) {
+			case 0:
+				path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
+				if (path != "") config->_3dsxPath(path);
+				break;
+
+			case 1:
+				path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
+				if (path != "") config->ndsPath(path);
+				break;
+
+			case 2:
+				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
+				if (path != "") config->archPath(path);
 				break;
 		}
 	}
@@ -166,6 +257,10 @@ void StoreUtils::DrawSettings(const int &page, const int &selection) {
 	switch(page) {
 		case 0:
 			DrawSettingsMain(selection);
+			break;
+
+		case 1:
+			DrawSettingsDir(selection);
 			break;
 	}
 }
@@ -188,6 +283,10 @@ void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &
 	switch(page) {
 		case 0:
 			SettingsHandleMain(hDown, hHeld, touch, page, dspSettings, storeMode, selection, store, entries, meta);
+			break;
+
+		case 1:
+			SettingsHandleDir(hDown, hHeld, touch, page, selection);
 			break;
 	}
 }

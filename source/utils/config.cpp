@@ -118,14 +118,15 @@ Config::Config() {
 	if (!this->json.contains("Language")) this->sysLang();
 	else this->language(this->getString("Language"));
 
-	if (!this->json.contains("LastStore")) this->lastStore("universal-db-beta.unistore");
-	else this->lastStore(this->getString("LastStore"));
+	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
 
-	if (!this->json.contains("List")) this->list(false);
-	else this->list(this->getBool("List"));
+	if (this->json.contains("List")) this->list(this->getBool("List"));
 
-	if (!this->json.contains("AutoUpdate")) this->autoupdate(true);
-	else this->autoupdate(this->getBool("AutoUpdate"));
+	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
+
+	if (this->json.contains("_3DSX_Path")) this->_3dsxPath(this->getString("_3DSX_Path"));
+	if (this->json.contains("NDS_Path")) this->ndsPath(this->getString("NDS_Path"));
+	if (this->json.contains("Archive_Path")) this->archPath(this->getString("Archive_Path"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -141,6 +142,9 @@ void Config::save() {
 		this->setString("LastStore", this->lastStore());
 		this->setBool("List", this->list());
 		this->setBool("AutoUpdate", this->autoupdate());
+		this->setString("_3DSX_Path", this->_3dsxPath());
+		this->setString("NDS_Path", this->ndsPath());
+		this->setString("Archive_Path", this->archPath());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

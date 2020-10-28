@@ -54,6 +54,15 @@ public:
 	/* Auto update on boot. */
 	bool autoupdate() const { return this->v_autoUpdate; };
 	void autoupdate(const bool &v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string _3dsxPath() const { return this->v_3dsxPath; };
+	void _3dsxPath(const std::string &v) { this->v_3dsxPath = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string ndsPath() const { return this->v_ndsPath; };
+	void ndsPath(const std::string &v) { this->v_ndsPath = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string archPath() const { return this->v_archivePath; };
+	void archPath(const std::string &v) { this->v_archivePath = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -66,7 +75,8 @@ private:
 	nlohmann::json json;
 	bool changesMade = false;
 
-	std::string v_language = "en", v_lastStore = "universal-db-beta.unistore";
+	std::string v_language = "en", v_lastStore = "universal-db-beta.unistore",
+				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
 	bool v_list = false, v_autoUpdate = true;
 };
 
