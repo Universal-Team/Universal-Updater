@@ -42,11 +42,11 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		Gui::DrawStringCentered(25, 20, 0.4, TEXT_COLOR, entry->GetAuthor(), 265);
 		if (entry->GetDescription() != "") Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 220, 0, nullptr, C2D_WordWrap);
 
-		Gui::DrawString(61, 130, 0.45, TEXT_COLOR, Lang::get("VERSION") + ": " + entry->GetVersion(), 265);
-		Gui::DrawString(61, 145, 0.45, TEXT_COLOR, Lang::get("CATEGORY") + ": " + entry->GetCategory(), 265);
-		Gui::DrawString(61, 160, 0.45, TEXT_COLOR, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 265);
-		Gui::DrawString(61, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 265);
-		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 265);
+		Gui::DrawString(61, 130, 0.45, TEXT_COLOR, Lang::get("VERSION") + ": " + entry->GetVersion(), 240);
+		Gui::DrawString(61, 145, 0.45, TEXT_COLOR, Lang::get("CATEGORY") + ": " + entry->GetCategory(), 240);
+		Gui::DrawString(61, 160, 0.45, TEXT_COLOR, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 240);
+		Gui::DrawString(61, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 240);
+		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240);
 	}
 }
 

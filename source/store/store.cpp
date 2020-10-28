@@ -328,14 +328,14 @@ std::string Store::GetLastUpdatedEntry(const int &index) const {
 	const int &index: Const Reference to the index.
 */
 std::string Store::GetLicenseEntry(const int &index) const {
-	if (!this->valid) return "";
-	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
+	if (!this->valid) return Lang::get("NO_LICENSE");
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return Lang::get("NO_LICENSE"); // Empty.
 
 	if (this->storeJson["storeContent"][index]["info"].contains("license") && this->storeJson["storeContent"][index]["info"]["license"].is_string()) {
 		return this->storeJson["storeContent"][index]["info"]["license"];
 	}
 
-	return "";
+	return Lang::get("NO_LICENSE");
 }
 
 /*
