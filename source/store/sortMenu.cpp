@@ -41,7 +41,9 @@ static const std::vector<Structs::ButtonPos> buttons = {
 };
 
 /*
-	Return SortType uint8_t.
+	Return SortType as an uint8_t.
+
+	const SortType &st: Const Reference to the SortType variable.
 */
 static const uint8_t GetType(const SortType &st) {
 	switch(st) {
@@ -60,6 +62,9 @@ static const uint8_t GetType(const SortType &st) {
 
 /*
 	Draw the Sort Menu.
+
+	const bool &asc: Const Reference to the Ascending variable.
+	const SortType &st: Const Reference to the SortType variable.
 */
 void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 	/* Display Key. */
@@ -77,11 +82,26 @@ void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 
 /*
 	Sort Handle.
+	Here you can..
+
+	- Sort your Entries to..
+		- Title (Ascending / Descending).
+		- Author (Ascending / Descending).
+		- Last Updated Date (Ascending / Descending).
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
+	bool &asc: Reference to the Ascending variable.
+	SortType &st: Reference to the SortType.
 */
 void StoreUtils::SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st) {
-	if (store && store->GetValid() && entries.size() > 0) {
+	if (store && store->GetValid() && entries.size() > 0) { // Ensure, this is valid and more than 0 entries exist.
 
 		if (hDown & KEY_TOUCH) {
+			/* SortType Part. */
 			if (touching(touch, buttons[0])) {
 				st = SortType::TITLE;
 				StoreUtils::SortEntries(asc, st, entries);
@@ -94,6 +114,7 @@ void StoreUtils::SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::uniq
 				st = SortType::LAST_UPDATED;
 				StoreUtils::SortEntries(asc, st, entries);
 
+			/* Ascending | Descending Part. */
 			} else if (touching(touch, buttons[3])) {
 				asc = true;
 				StoreUtils::SortEntries(asc, st, entries);

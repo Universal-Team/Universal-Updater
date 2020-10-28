@@ -37,7 +37,9 @@ static const std::vector<Structs::ButtonPos> markBox = {
 };
 
 /*
-	Draw the Entry Info part.
+	Draw the Marking part.
+
+	const int &marks: A Reference to the active mark flags.
 */
 void StoreUtils::DisplayMarkBox(const int &marks) {
 	Gui::Draw_Rect(0, 0, 320, 240, DIM_COLOR); // Darken.
@@ -57,9 +59,22 @@ void StoreUtils::DisplayMarkBox(const int &marks) {
 
 /*
 	Mark Menu handle.
+	Here you can..
+
+	- Mark the selected app.
+	- Return to EntryInfo with `B`.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	std::unique_ptr<StoreEntry> &entry: Reference to the current StoreEntry.
+	const std::unique_ptr<Store> &store: Const Reference to the Store, since we do not modify anything there.
+	bool &showMark: Reference to showMark, so we know, if we should stay here or not.
+	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
 void StoreUtils::MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta) {
 	if (meta && entry) {
+
 		if (hDown & KEY_TOUCH) {
 			/* Star. */
 			if (touching(touch, markBox[0])) {

@@ -29,12 +29,19 @@
 #include "storeUtils.hpp"
 #include <unistd.h>
 
+/*
+	MainScreen Constructor.
+
+	Initialized Meta, Store and StoreEntry class and:
+
+	- Downloads Universal-DB.. in case nothing exist.
+*/
 MainScreen::MainScreen() {
 	this->meta = std::make_unique<Meta>();
 
 	/* Check if lastStore is accessible. */
 	if (config->lastStore() != "universal-db-beta.unistore" || config->lastStore() != "") {
-		if (access((std::string("sdmc:/3ds/Universal-Updater/stores/") + config->lastStore()).c_str(), F_OK) != 0) {
+		if (access((std::string(_STORE_PATH) + config->lastStore()).c_str(), F_OK) != 0) {
 			config->lastStore("universal-db-beta.unistore");
 		}
 	}
@@ -48,10 +55,13 @@ MainScreen::MainScreen() {
 		}
 	}
 
-	this->store = std::make_unique<Store>("sdmc:/3ds/Universal-Updater/stores/" + config->lastStore());
+	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 };
 
+/*
+	MainScreen Main Draw.
+*/
 void MainScreen::Draw(void) const {
 	GFX::DrawTop();
 	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7, TEXT_COLOR, this->store->GetUniStoreTitle());
@@ -82,6 +92,7 @@ void MainScreen::Draw(void) const {
 			break;
 
 		case 4:
+			/* Settings. */
 			StoreUtils::DrawSettings(this->sPage, this->sSelection);
 			break;
 	}
@@ -90,6 +101,9 @@ void MainScreen::Draw(void) const {
 	if (this->showMarks && this->store && this->store->GetValid()) StoreUtils::DisplayMarkBox(this->entries[this->store->GetEntry()]->GetMarks());
 }
 
+/*
+	MainScreen Logic.
+*/
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (this->showMarks) StoreUtils::MarkHandle(hDown, hHeld, touch, this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 

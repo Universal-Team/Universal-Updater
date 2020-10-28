@@ -41,8 +41,8 @@ enum DownloadError {
 	DL_CANCEL, // No clue if that's needed tho.
 };
 
-Result downloadToFile(std::string url, std::string path);
-Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases);
+Result downloadToFile(const std::string &url, const std::string &path);
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, const bool &includePrereleases);
 
 /*
 	Check Wi-Fi status.
@@ -67,7 +67,7 @@ void doneMsg(void);
 
 void displayProgressBar();
 bool IsUpdateAvailable(const std::string &URL, const int &revCurrent);
-bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool isDownload = false, const bool isUDB = false);
+bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload = false, const bool &isUDB = false);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 
 #endif

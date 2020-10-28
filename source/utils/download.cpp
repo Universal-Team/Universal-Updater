@@ -96,7 +96,7 @@ bool filecommit() {
 	return true;
 }
 
-static void commitToFileThreadFunc(void* args) {
+static void commitToFileThreadFunc(void *args) {
 	LightEvent_Signal(&waitCommit);
 
 	while (true) {
@@ -146,7 +146,10 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 	return bsz;
 }
 
-Result downloadToFile(std::string url, std::string path) {
+Result downloadToFile(const std::string &url, const std::string &path) {
+	downloadTotal = 1;
+	downloadNow = 0;
+
 	CURLcode curlResult;
 	CURL *hnd;
 	Result retcode = 0;
@@ -253,7 +256,7 @@ exit:
 	following function is from
 	https://github.com/angelsl/libctrfgh/blob/master/curl_test/src/main.c
 */
-static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata) {
+static size_t handle_data(char *ptr, size_t size, size_t nmemb, void *userdata) {
 	(void)userdata;
 	const size_t bsz = size*nmemb;
 
@@ -282,11 +285,10 @@ static size_t handle_data(char* ptr, size_t size, size_t nmemb, void* userdata) 
 	return bsz;
 }
 
+/*
+	This + Above is Used for No File Write and instead into RAM.
+*/
 static Result setupContext(CURL *hnd, const char *url) {
-	downloadTotal = 1;
-	downloadNow = 0;
-	//curl_easy_setopt(hnd, CURLOPT_XFERINFOFUNCTION, curlProgress);
-
 	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
 	curl_easy_setopt(hnd, CURLOPT_URL, url);
 	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L);
@@ -302,7 +304,15 @@ static Result setupContext(CURL *hnd, const char *url) {
 	return 0;
 }
 
-Result downloadFromRelease(std::string url, std::string asset, std::string path, std::string Message, bool includePrereleases) {
+/*
+	Download a file of a GitHub Release.
+
+	const std::string &url: Const Reference to the URL. (https://github.com/Owner/Repo)
+	const std::string &asset: Const Reference to the Asset. (File.filetype)
+	const std::string &path: Const Reference, where to store. (sdmc:/File.filetype)
+	const bool &includePrereleases: Const Reference, if including Pre-Releases.
+*/
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, const bool &includePrereleases) {
 	Result ret = 0;
 	CURL *hnd;
 
@@ -419,7 +429,9 @@ void doneMsg(void) { Msg::waitMsg(Lang::get("DONE")); }
 
 void notConnectedMsg(void) { Msg::waitMsg(Lang::get("CONNECT_WIFI")); }
 
-
+/*
+	Display the progressbar.
+*/
 void displayProgressBar() {
 	char str[256];
 
@@ -481,6 +493,12 @@ void displayProgressBar() {
 	}
 }
 
+/*
+	Return, if an update is available.
+
+	const std::string &URL: Const Reference to the URL of the UniStore.
+	const int &revCurrent: Const Reference to the current Revision. (-1 if unused)
+*/
 bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
 	Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
 	Result ret = 0;
@@ -553,7 +571,15 @@ bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
 	return false;
 }
 
-bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool isDownload, const bool isUDB) {
+/*
+	Download a UniStore and return, if revision is higher than current.
+
+	const std::string &URL: Const Reference to the URL of the UniStore.
+	const int &currentRev: Const Reference to the current Revision. (-1 if unused)
+	const bool &isDownload: Const Reference, if download or updating.
+	const bool &isUDB: Const Reference, if Universal-DB download or not.
+*/
+bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload, const bool &isUDB) {
 	if (isUDB) Msg::DisplayMsg(Lang::get("DOWNLOADING_UNIVERSAL_DB"));
 	else {
 		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
@@ -616,7 +642,7 @@ bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string
 						if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
 							fl = parsedAPI["storeInfo"]["file"];
 
-							FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str(), "w");
+							FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
 							fwrite(result_buf, sizeof(char), result_written, out);
 							fclose(out);
 
@@ -636,7 +662,7 @@ bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string
 				if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
 					fl = parsedAPI["storeInfo"]["file"];
 
-					FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str(), "w");
+					FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
 					fwrite(result_buf, sizeof(char), result_written, out);
 					fclose(out);
 
@@ -663,6 +689,12 @@ bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string
 	return false;
 }
 
+/*
+	Download a SpriteSheet.
+
+	const std::string &URL: Const Reference to the SpriteSheet URL.
+	const std::string &file: Const Reference to the filepath.
+*/
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 	Result ret = 0;
 
@@ -710,7 +742,7 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 
 	if (sheet) {
 		if (C2D_SpriteSheetCount(sheet) > 0) {
-			FILE *out = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + file).c_str(), "w");
+			FILE *out = fopen((std::string(_STORE_PATH) + file).c_str(), "w");
 			fwrite(result_buf, sizeof(char), result_written, out);
 			fclose(out);
 

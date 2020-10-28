@@ -35,14 +35,14 @@
 	Includes MetaData file creation, if non existent.
 */
 Meta::Meta() {
-	if (access("sdmc:/3ds/Universal-Updater/MetaData.json", F_OK) != 0) {
-		FILE *temp = fopen("sdmc:/3ds/Universal-Updater/MetaData.json", "w");
+	if (access(_META_PATH, F_OK) != 0) {
+		FILE *temp = fopen(_META_PATH, "w");
 		char tmp[2] = { '{', '}' };
 		fwrite(tmp, sizeof(tmp), 1, temp);
 		fclose(temp);
 	}
 
-	FILE *temp = fopen("sdmc:/3ds/Universal-Updater/MetaData.json", "rt");
+	FILE *temp = fopen(_META_PATH, "rt");
 	this->metadataJson = nlohmann::json::parse(temp, nullptr, false);
 	fclose(temp);
 }
@@ -54,13 +54,14 @@ Meta::Meta() {
 	std::string entry: The Entry name.
 */
 std::string Meta::GetUpdated(std::string unistoreName, std::string entry) const {
-	if (!this->metadataJson.contains(unistoreName)) return "";
+	if (!this->metadataJson.contains(unistoreName)) return ""; // UniStore Name does not exist.
 
-	if (!this->metadataJson[unistoreName].contains(entry)) return "";
+	if (!this->metadataJson[unistoreName].contains(entry)) return ""; // Entry does not exist.
 
-	if (!this->metadataJson[unistoreName][entry].contains("updated")) return "";
+	if (!this->metadataJson[unistoreName][entry].contains("updated")) return ""; // updated does not exist.
 
-	return this->metadataJson[unistoreName][entry]["updated"];
+	if (this->metadataJson[unistoreName][entry].is_string()) return this->metadataJson[unistoreName][entry]["updated"];
+	return "";
 }
 
 /*
@@ -72,13 +73,14 @@ std::string Meta::GetUpdated(std::string unistoreName, std::string entry) const 
 int Meta::GetMarks(std::string unistoreName, std::string entry) const {
 	int temp = 0;
 
-	if (!this->metadataJson.contains(unistoreName)) return temp;
+	if (!this->metadataJson.contains(unistoreName)) return temp; // UniStore Name does not exist.
 
-	if (!this->metadataJson[unistoreName].contains(entry)) return temp;
+	if (!this->metadataJson[unistoreName].contains(entry)) return temp; // Entry does not exist.
 
-	if (!this->metadataJson[unistoreName][entry].contains("marks")) return temp;
+	if (!this->metadataJson[unistoreName][entry].contains("marks")) return temp; // marks does not exist.
 
-	return this->metadataJson[unistoreName][entry]["marks"];
+	if (this->metadataJson[unistoreName][entry]["marks"].is_number()) return this->metadataJson[unistoreName][entry]["marks"];
+	return temp;
 }
 
 /*
@@ -102,7 +104,7 @@ bool Meta::UpdateAvailable(std::string unistoreName, std::string entry, std::str
 	Write to file.. called on destructor.
 */
 void Meta::SaveCall() {
-	FILE *file = fopen("sdmc:/3ds/Universal-Updater/MetaData.json", "wb");
+	FILE *file = fopen(_META_PATH, "wb");
 	const std::string dump = this->metadataJson.dump(1, '\t');
 	fwrite(dump.c_str(), 1, dump.size(), file);
 	fclose(file);

@@ -105,32 +105,16 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 }
 
 /*
-	Directory exist?
-*/
-bool returnIfExist(const std::string &path, const std::vector<std::string> &extensionList) {
-	std::vector<DirEntry> dirContents;
-
-	chdir(path.c_str());
-	std::vector<DirEntry> dirContentsTemp;
-	getDirectoryContents(dirContentsTemp, extensionList);
-
-	for(uint i = 0; i < dirContentsTemp.size(); i++) {
-		dirContents.push_back(dirContentsTemp[i]);
-	}
-
-	if (dirContents.size() == 0) return false;
-
-	return true;
-}
-
-/*
 	Return UniStore info.
+
+	const std::string &file: Const Reference to the path of the file.
+	const std::string &fieName: Const Reference to the filename, without path.
 */
 UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 	UniStoreInfo Temp = { "", "", "", fileName, "", 0, -1, -1 }; // Title, Author, URL, FileName, Desc, Version, Revision, Entries.
 	nlohmann::json JSON = nullptr;
 
-	FILE *temp = fopen(file.c_str(), "rt");
+	FILE *temp = fopen(file.c_str(), "r");
 	JSON = nlohmann::json::parse(temp, nullptr, false);
 	fclose(temp);
 
@@ -167,6 +151,8 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 
 /*
 	Return UniStore info vector.
+
+	const std::string &path: Const Reference to the path, where to check.
 */
 std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	std::vector<UniStoreInfo> info;
@@ -177,7 +163,7 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	getDirectoryContents(dirContents, { "unistore" });
 
 	for(uint i = 0; i < dirContents.size(); i++) {
-		info.push_back( GetInfo("sdmc:/3ds/Universal-Updater/stores/" + dirContents[i].name, dirContents[i].name) );
+		info.push_back( GetInfo(path + dirContents[i].name, dirContents[i].name) );
 	}
 
 	return info;
@@ -186,7 +172,14 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 #define copyBufSize 0x8000
 u32 copyBuf[copyBufSize];
 
-void dirCopy(DirEntry *entry, int i, const char *destinationPath, const char *sourcePath) {
+/*
+	Copy a directory.
+
+	DirEntry *entry: Pointer to a DirEntry.
+	const char *destinationPath: Pointer to the destination path.
+	const char *sourcePath: Pointer to the source path.
+*/
+void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePath) {
 	std::vector<DirEntry> dirContents;
 	dirContents.clear();
 	if (entry->isDirectory)	chdir((sourcePath + ("/" + entry->name)).c_str());
@@ -195,6 +188,12 @@ void dirCopy(DirEntry *entry, int i, const char *destinationPath, const char *so
 	if (((int)dirContents.size()) != 1)	fcopy((sourcePath + ("/" + entry->name)).c_str(), (destinationPath + ("/" + entry->name)).c_str());
 }
 
+/*
+	The copy operation.
+
+	const char *destinationPath: Pointer to the destination path.
+	const char *sourcePath: Pointer to the source path.
+*/
 int fcopy(const char *sourcePath, const char *destinationPath) {
 	DIR *isDir = opendir(sourcePath);
 
@@ -211,7 +210,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		for(int i = 1; i < ((int)dirContents.size()); i++) {
 			chdir(sourcePath);
 			entry = &dirContents.at(i);
-			dirCopy(entry, i, destinationPath, sourcePath);
+			dirCopy(entry, destinationPath, sourcePath);
 		}
 
 		chdir(destinationPath);

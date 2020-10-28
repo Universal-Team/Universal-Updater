@@ -42,19 +42,19 @@ enum ScriptState {
 };
 
 namespace ScriptUtils {
-	bool matchPattern(std::string pattern, std::string tested);
+	bool matchPattern(const std::string &pattern, const std::string &tested);
 
-	Result removeFile(std::string file, std::string message);
-	void bootTitle(const std::string TitleID, bool isNAND, std::string message);
-	Result prompt(std::string message);
-	Result copyFile(std::string source, std::string destination, std::string message);
-	Result renameFile(std::string oldName, std::string newName, std::string message);
-	Result downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message);
-	Result downloadFile(std::string file, std::string output, std::string message);
-	void installFile(std::string file, bool updatingSelf, std::string message);
-	void extractFile(std::string file, std::string input, std::string output, std::string message);
+	Result removeFile(const std::string &file, const std::string &message);
+	void bootTitle(const std::string &TitleID, const bool &isNAND, const std::string &message);
+	Result prompt(const std::string &message);
+	Result copyFile(const std::string &source, const std::string &destination, const std::string &message);
+	Result renameFile(const std::string &oldName, const std::string &newName, const std::string &message);
+	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, const bool &includePrereleases, const std::string &message);
+	Result downloadFile(const std::string &file, const std::string &output, const std::string &message);
+	void installFile(const std::string &file, const bool &updatingSelf, const std::string &message);
+	void extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message);
 
-	Result runFunctions(nlohmann::json storeJson, int selection, std::string entry);
+	Result runFunctions(const nlohmann::json &storeJson, const int &selection, const std::string &entry);
 };
 
 #endif

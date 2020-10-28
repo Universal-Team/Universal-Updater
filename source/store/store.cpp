@@ -39,20 +39,28 @@ static bool firstStart = true;
 /*
 	Initialize a store.
 
-	std::string file: The UniStore file.
+	const std::string &file: The UniStore file.
 */
-Store::Store(std::string file) { this->update(file); };
+Store::Store(const std::string &file) { this->update(file); };
 
+/*
+	Update an UniStore,, including SpriteSheet, if revision increased.
+
+	const std::string &file: Const Reference to the fileName.
+*/
 void Store::update(const std::string &file) {
 	bool doSheet = false;
 	this->LoadFromFile(file);
 
 	int rev = -1;
+
+	/* Only do this, if valid. */
 	if (this->valid) {
 		if (this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
 			rev = this->storeJson["storeInfo"]["revision"];
 		}
 
+		/* First start exceptions. */
 		if (firstStart) {
 			firstStart = false;
 
@@ -154,8 +162,8 @@ void Store::loadSheets() {
 			for (int i = 0; i < (int)sheetLocs.size(); i++) {
 				this->sheets.push_back({ });
 
-				if (access((std::string("sdmc:/3ds/Universal-Updater/stores/") + sheetLocs[i]).c_str(), F_OK) == 0) {
-					this->sheets[i] = C2D_SpriteSheetLoad((std::string("sdmc:/3ds/Universal-Updater/stores/") + sheetLocs[i]).c_str());
+				if (access((std::string(_STORE_PATH) + sheetLocs[i]).c_str(), F_OK) == 0) {
+					this->sheets[i] = C2D_SpriteSheetLoad((std::string(_STORE_PATH) + sheetLocs[i]).c_str());
 				}
 			}
 		}
@@ -166,13 +174,14 @@ void Store::loadSheets() {
 /*
 	Load a UniStore from a file.
 
-	std::string file: The file of the UniStore.
+	const std::string &file: The file of the UniStore.
 */
-void Store::LoadFromFile(std::string file) {
-	FILE *temp = fopen(file.c_str(), "rt");
-	this->storeJson = nlohmann::json::parse(temp, nullptr, false);
-	fclose(temp);
+void Store::LoadFromFile(const std::string &file) {
+	FILE *in = fopen(file.c_str(), "rt");
+	this->storeJson = nlohmann::json::parse(in, nullptr, false);
+	fclose(in);
 
+	/* Check, if valid. */
 	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) this->valid = true;
 }
 
@@ -190,9 +199,9 @@ std::string Store::GetUniStoreTitle() const {
 /*
 	Return the Title of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetTitleEntry(int index) const {
+std::string Store::GetTitleEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -206,9 +215,9 @@ std::string Store::GetTitleEntry(int index) const {
 /*
 	Return the Author name of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetAuthorEntry(int index) const {
+std::string Store::GetAuthorEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -222,9 +231,9 @@ std::string Store::GetAuthorEntry(int index) const {
 /*
 	Return the Description of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetDescriptionEntry(int index) const {
+std::string Store::GetDescriptionEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -238,9 +247,9 @@ std::string Store::GetDescriptionEntry(int index) const {
 /*
 	Return the Category of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::vector<std::string> Store::GetCategoryIndex(int index) const {
+std::vector<std::string> Store::GetCategoryIndex(const int &index) const {
 	if (!this->valid) return { "" };
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { "" }; // Empty.
 
@@ -261,9 +270,9 @@ std::vector<std::string> Store::GetCategoryIndex(int index) const {
 /*
 	Return the Version of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetVersionEntry(int index) const {
+std::string Store::GetVersionEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -277,9 +286,9 @@ std::string Store::GetVersionEntry(int index) const {
 /*
 	Return the Console of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::vector<std::string> Store::GetConsoleEntry(int index) const {
+std::vector<std::string> Store::GetConsoleEntry(const int &index) const {
 	if (!this->valid) return { "" };
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { "" }; // Empty.
 
@@ -300,9 +309,9 @@ std::vector<std::string> Store::GetConsoleEntry(int index) const {
 /*
 	Return the Last updated date of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetLastUpdatedEntry(int index) const {
+std::string Store::GetLastUpdatedEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -316,9 +325,9 @@ std::string Store::GetLastUpdatedEntry(int index) const {
 /*
 	Return the License of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::string Store::GetLicenseEntry(int index) const {
+std::string Store::GetLicenseEntry(const int &index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -332,9 +341,9 @@ std::string Store::GetLicenseEntry(int index) const {
 /*
 	Return a C2D_Image of an index.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-C2D_Image Store::GetIconEntry(int index) const {
+C2D_Image Store::GetIconEntry(const int &index) const {
 	if (!this->valid) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 	int iconIndex = -1, sheetIndex = 0;
 
@@ -364,9 +373,9 @@ C2D_Image Store::GetIconEntry(int index) const {
 /*
 	Return the download list of an entry.
 
-	int index: The index.
+	const int &index: Const Reference to the index.
 */
-std::vector<std::string> Store::GetDownloadList(int index) const {
+std::vector<std::string> Store::GetDownloadList(const int &index) const {
 	if (!this->valid) return { "" };
 	std::vector<std::string> temp;
 

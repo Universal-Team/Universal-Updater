@@ -87,11 +87,11 @@ namespace StoreUtils {
 	bool compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 
-	void SortEntries(bool Ascending, SortType sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries);
+	void SortEntries(const bool &Ascending, const SortType &sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries);
 
-	void search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks = 0);
+	void search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, const bool &title, const bool &author, const bool &category, const bool &console, const int &selectedMarks = 0);
 
-	void ResetAll(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries);
+	void ResetAll(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries);
 };
 
 #endif

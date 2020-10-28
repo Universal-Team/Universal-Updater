@@ -47,7 +47,11 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 };
 
 /*
-	Draw the Search + Favorites Menu.
+	Draw the Search + Filter Menu.
+
+	const std::vector<bool> &searchIncludes: Const Reference to the searchIncludes.
+	const std::string &searchResult: Const Reference to the searchResult.
+	const int &marks: Const Reference to the filter mark flags.
 */
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks) {
 	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
@@ -90,7 +94,22 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 }
 
 /*
-	Search Handle.
+	Search + Filter Handle.
+	Here you can..
+
+	- Filter your apps for the marks.
+	- Search the UniStore.
+	- Include stuff into the search.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Store Entries.
+	std::vector<bool> &searchIncludes: Reference to the searchIncludes.
+	std::unique_ptr<Meta> &meta: Reference to the Meta class.
+	std::string &searchResult: Reference to the searchResult.
+	int &marks: Reference to the mark flags.
 */
 void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks) {
 	/* Checkboxes. */
@@ -120,7 +139,7 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 				searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"));
 				didTouch = true;
 
-				if (store && store->GetValid()) {
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);
@@ -134,7 +153,8 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 		if (!didTouch) {
 			if (touching(touch, SearchMenu[5])) {
 				marks = marks ^ favoriteMarks::STAR;
-				if (store && store->GetValid()) {
+
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);
@@ -144,7 +164,8 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 			} else if (touching(touch, SearchMenu[6])) {
 				marks = marks ^ favoriteMarks::HEART;
-				if (store && store->GetValid()) {
+
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);
@@ -154,7 +175,8 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 			} else if (touching(touch, SearchMenu[7])) {
 				marks = marks ^ favoriteMarks::DIAMOND;
-				if (store && store->GetValid()) {
+
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);
@@ -164,7 +186,8 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 			} else if (touching(touch, SearchMenu[8])) {
 				marks = marks ^ favoriteMarks::CLUBS;
-				if (store && store->GetValid()) {
+
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);
@@ -174,7 +197,8 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 			} else if (touching(touch, SearchMenu[9])) {
 				marks = marks ^ favoriteMarks::SPADE;
-				if (store && store->GetValid()) {
+
+				if (store && store->GetValid()) { // Only search, when valid.
 					StoreUtils::ResetAll(store, meta, entries);
 					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
 					store->SetScreenIndx(0);

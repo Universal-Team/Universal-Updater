@@ -52,9 +52,11 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 
 /*
 	Delete a Store.. including the Spritesheets, if found.
+
+	const std::string &file: The file of the UniStore.
 */
 static void DeleteStore(const std::string &file) {
-	FILE *temp = fopen((std::string("sdmc:/3ds/Universal-Updater/stores/") + file).c_str(), "rt");
+	FILE *temp = fopen((std::string(_STORE_PATH) + file).c_str(), "rt");
 	nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
 	fclose(temp);
 
@@ -64,9 +66,9 @@ static void DeleteStore(const std::string &file) {
 
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
-			if ((std::string("sdmc:/3ds/Universal-Updater/stores/") + sht[i]) != "") {
-				if (access((std::string("sdmc:/3ds/Universal-Updater/stores/") + sht[i]).c_str(), F_OK) == 0) {
-					deleteFile((std::string("sdmc:/3ds/Universal-Updater/stores/") + sht[i]).c_str());
+			if ((std::string(_STORE_PATH) + sht[i]) != "") {
+				if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
+					deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
 				}
 			}
 		}
@@ -75,14 +77,14 @@ static void DeleteStore(const std::string &file) {
 	} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
 		const std::string fl = storeJson["storeInfo"]["sheet"];
 
-		if ((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl) != "") {
-			if (access((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str(), F_OK) == 0) {
-				deleteFile((std::string("sdmc:/3ds/Universal-Updater/stores/") + fl).c_str());
+		if ((std::string(_STORE_PATH) + fl) != "") {
+			if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
+				deleteFile((std::string(_STORE_PATH) + fl).c_str());
 			}
 		}
 	}
 
-	deleteFile((std::string("sdmc:/3ds/Universal-Updater/stores/") + file).c_str()); // Now delete UniStore.
+	deleteFile((std::string(_STORE_PATH) + file).c_str()); // Now delete UniStore.
 }
 
 /*
@@ -133,12 +135,24 @@ static bool DownloadStore() {
 	return doSheet;
 }
 
+/*
+	This is the UniStore Manage Handle.
+	Here you can..
 
+	- Delete a UniStore.
+	- Download / Add a UniStore.
+	- Check for Updates for a UniStore.
+	- Switch the UniStore.
+
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Store Entries.
+	std::unique_ptr<Meta> &meta: Reference to the Meta class.
+*/
 void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
 	bool doOut = false;
 	int selection = 0, sPos = 0;
 
-	std::vector<UniStoreInfo> info = GetUniStoreInfo("sdmc:/3ds/Universal-Updater/stores/");
+	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH);
 
 	while(!doOut) {
 		Gui::clearTextBufs();
@@ -196,7 +210,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			if (hidKeysDown() & KEY_A) {
 				/* Load selected one. */
 				if (info[selection].StoreSize > 0) {
-					store = std::make_unique<Store>("sdmc:/3ds/Universal-Updater/stores/" + info[selection].FileName);
+					store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
 					StoreUtils::ResetAll(store, meta, entries);
 					config->lastStore(info[selection].FileName);
 					doOut = true;
@@ -208,7 +222,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)info.size()) {
 							if (info[i + sPos].StoreSize > 0) {
-								store = std::make_unique<Store>("sdmc:/3ds/Universal-Updater/stores/" + info[i + sPos].FileName);
+								store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName);
 								StoreUtils::ResetAll(store, meta, entries);
 								config->lastStore(info[i + sPos].FileName);
 								doOut = true;
@@ -231,7 +245,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				if (info[selection].FileName != "") {
 					DeleteStore(info[selection].FileName);
 					selection = 0;
-					info = GetUniStoreInfo("sdmc:/3ds/Universal-Updater/stores/");
+					info = GetUniStoreInfo(_STORE_PATH);
 				}
 			}
 
@@ -242,7 +256,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
 			if (DownloadStore()) {
 				selection = 0;
-				info = GetUniStoreInfo("sdmc:/3ds/Universal-Updater/stores/");
+				info = GetUniStoreInfo(_STORE_PATH);
 
 			} else {
 				Msg::waitMsg(Lang::get("INVALID_UNISTORE"));

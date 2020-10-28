@@ -26,51 +26,67 @@
 
 #include "storeUtils.hpp"
 
-static std::string lower_case(const std::string &str) {
-	std::string lower;
-	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
 
-	return lower;
-}
 
 /*
 	Compare Title.
+
+	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(a->GetTitle()).c_str(), lower_case(b->GetTitle()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) > 0;
+
+	return true;
 }
 bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(b->GetTitle()).c_str(), lower_case(a->GetTitle()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetTitle()).c_str(), StringUtils::lower_case(a->GetTitle()).c_str()) > 0;
+
+	return true;
 }
 
 /*
 	Compare Author.
+
+	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(a->GetAuthor()).c_str(), lower_case(b->GetAuthor()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str()) > 0;
+
+	return true;
 }
 bool StoreUtils::compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(b->GetAuthor()).c_str(), lower_case(a->GetAuthor()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetAuthor()).c_str(), StringUtils::lower_case(a->GetAuthor()).c_str()) > 0;
+
+	return true;
 }
 
 /*
 	Compare Last Updated.
+
+	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(a->GetLastUpdated()).c_str(), lower_case(b->GetLastUpdated()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetLastUpdated()).c_str(), StringUtils::lower_case(b->GetLastUpdated()).c_str()) > 0;
+
+	return true;
 }
 bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	return strcasecmp(lower_case(b->GetLastUpdated()).c_str(), lower_case(a->GetLastUpdated()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetLastUpdated()).c_str(), StringUtils::lower_case(a->GetLastUpdated()).c_str()) > 0;
+
+	return true;
 }
 
 /*
 	Sort the entries.
 
-	bool Ascending: Is Ascending?
-	SortType sorttype: The sort type.
+	const bool &Ascending: Const Reference to Ascending.
+	const SortType &sorttype: Const Reference to the sort type.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Entries, which should be sorted.
 */
-void StoreUtils::SortEntries(bool Ascending, SortType sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::SortEntries(const bool &Ascending, const SortType &sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	switch(sorttype) {
 		case SortType::TITLE:
 			Ascending ? std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleAscending) : std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleDescending);
@@ -88,10 +104,13 @@ void StoreUtils::SortEntries(bool Ascending, SortType sorttype, std::vector<std:
 
 /*
 	Find a query from a vector.
+
+	const std::vector<std::string> &items: Const Reference to the vector strings / items.
+	const std::string &query: Const Reference to the query.
 */
 static bool findInVector(const std::vector<std::string> &items, const std::string &query) {
 	for(const std::string &item : items) {
-		if (lower_case(item).find(query) != std::string::npos) return true;
+		if (StringUtils::lower_case(item).find(query) != std::string::npos) return true;
 	}
 
 	return false;
@@ -101,15 +120,14 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 	Search for stuff of the store.
 
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
-	const std::string &query: What should be searched?
-	bool title: Include titles?
-	bool author: Include authors?
-	bool category: Include categories?
-	bool console: Include consoles?
-	int selectedMarks: The selected marks.
+	const std::string &query: Const Reference to the query.
+	const bool &title: Const Reference, to if titles should be included.
+	const bool &author: Const Reference, to if authors should be included.
+	const bool &category: Const Reference, to if categories should be included.
+	const bool &console: Const Reference, to if consoles should be included.
+	const int &selectedMarks: Const Reference, to the selected mark flags.
 */
-
-void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks) {
+void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, const bool &title, const bool &author, const bool &category, const bool &console, const int &selectedMarks) {
 	bool hasDone = false;
 
 	/* Check for no title, author, category & console. */
@@ -132,10 +150,10 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 	for (auto it = entries.begin(); it != entries.end(); ++it) {
 		if (selectedMarks != 0) { // if not 0, do filter.
 			if ((*it)->GetMarks() & selectedMarks) {
-				if (!((title && lower_case((*it)->GetTitle()).find(lower_case(query)) != std::string::npos)
-				|| (author && lower_case((*it)->GetAuthor()).find(lower_case(query)) != std::string::npos)
-				|| (category && findInVector((*it)->GetCategoryFull(), lower_case(query)))
-				|| (console && findInVector((*it)->GetConsoleFull(), lower_case(query))))) {
+				if (!((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
+				|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
+				|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
+				|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query))))) {
 					entries.erase(it);
 					--it;
 				}
@@ -146,10 +164,10 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 			}
 
 		} else { // Else without filter.
-			if (!((title && lower_case((*it)->GetTitle()).find(lower_case(query)) != std::string::npos)
-			|| (author && lower_case((*it)->GetAuthor()).find(lower_case(query)) != std::string::npos)
-			|| (category && findInVector((*it)->GetCategoryFull(), lower_case(query)))
-			|| (console && findInVector((*it)->GetConsoleFull(), lower_case(query))))) {
+			if (!((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
+			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query))))) {
 				entries.erase(it);
 				--it;
 			}
@@ -160,15 +178,15 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 /*
 	Reset everything of the store and clear + fetch the Entries again.
 
-	std::unique_ptr<Store> &store: Reference to the Store.
-	std::unique_ptr<Meta> &meta: Reference to the meta.
+	const std::unique_ptr<Store> &store: Const Reference to the Store class.
+	const std::unique_ptr<Meta> &meta: Const Reference to the Meta class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
 */
-void StoreUtils::ResetAll(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::ResetAll(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	if (store) {
 		entries.clear();
-		if (store->GetValid()) {
 
+		if (store->GetValid()) {
 			for (int i = 0; i < store->GetStoreSize(); i++) {
 				entries.push_back( std::make_unique<StoreEntry>(store, meta, i) );
 			}

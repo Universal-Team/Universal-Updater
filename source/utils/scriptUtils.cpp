@@ -43,7 +43,7 @@ extern void downloadFailed();
 
 static Thread thread;
 
-bool ScriptUtils::matchPattern(std::string pattern, std::string tested) {
+bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &tested) {
 	std::regex patternRegex(pattern);
 	return regex_match(tested, patternRegex);
 }
@@ -51,7 +51,7 @@ bool ScriptUtils::matchPattern(std::string pattern, std::string tested) {
 /*
 	Remove a File.
 */
-Result ScriptUtils::removeFile(std::string file, std::string message) {
+Result ScriptUtils::removeFile(const std::string &file, const std::string &message) {
 	std::string out;
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
 
@@ -66,7 +66,7 @@ Result ScriptUtils::removeFile(std::string file, std::string message) {
 /*
 	Boot a title.
 */
-void ScriptUtils::bootTitle(const std::string TitleID, bool isNAND, std::string message) {
+void ScriptUtils::bootTitle(const std::string &TitleID, const bool &isNAND, const std::string &message) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
@@ -81,7 +81,7 @@ void ScriptUtils::bootTitle(const std::string TitleID, bool isNAND, std::string 
 /*
 	Prompt message.
 */
-Result ScriptUtils::prompt(std::string message) {
+Result ScriptUtils::prompt(const std::string &message) {
 	Result ret = NONE;
 	if (!Msg::promptMsg(message)) ret = SCRIPT_CANCELED;
 
@@ -91,7 +91,7 @@ Result ScriptUtils::prompt(std::string message) {
 /*
 	Copy.
 */
-Result ScriptUtils::copyFile(std::string source, std::string destination, std::string message) {
+Result ScriptUtils::copyFile(const std::string &source, const std::string &destination, const std::string &message) {
 	Result ret = NONE;
 	if (access(source.c_str(), F_OK) != 0) return COPY_ERROR;
 
@@ -106,7 +106,7 @@ Result ScriptUtils::copyFile(std::string source, std::string destination, std::s
 /*
 	Rename / Move a file.
 */
-Result ScriptUtils::renameFile(std::string oldName, std::string newName, std::string message) {
+Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message) {
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
 
@@ -121,7 +121,7 @@ Result ScriptUtils::renameFile(std::string oldName, std::string newName, std::st
 /*
 	Download from GitHub Release.
 */
-Result ScriptUtils::downloadRelease(std::string repo, std::string file, std::string output, bool includePrereleases, std::string message) {
+Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, const bool &includePrereleases, const std::string &message) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), "sdmc:/3ds");
 	out = std::regex_replace(out, std::regex("%NDS%"), "sdmc:");
@@ -137,7 +137,7 @@ Result ScriptUtils::downloadRelease(std::string repo, std::string file, std::str
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
-	if (downloadFromRelease("https://github.com/" + repo, file, out, message, includePrereleases) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
 		showProgressBar = false;
 		downloadFailed();
 		ret = FAILED_DOWNLOAD;
@@ -155,7 +155,7 @@ Result ScriptUtils::downloadRelease(std::string repo, std::string file, std::str
 /*
 	Download a file.
 */
-Result ScriptUtils::downloadFile(std::string file, std::string output, std::string message) {
+Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), "sdmc:/3ds");
 	out = std::regex_replace(out, std::regex("%NDS%"), "sdmc:");
@@ -188,7 +188,7 @@ Result ScriptUtils::downloadFile(std::string file, std::string output, std::stri
 /*
 	Install CIA files.
 */
-void ScriptUtils::installFile(std::string file, bool updatingSelf, std::string message) {
+void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf, const std::string &message) {
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressbarType = ProgressBar::Installing;
@@ -206,7 +206,7 @@ void ScriptUtils::installFile(std::string file, bool updatingSelf, std::string m
 /*
 	Extract files.
 */
-void ScriptUtils::extractFile(std::string file, std::string input, std::string output, std::string message) {
+void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
 	std::string out, in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
 	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), "sdmc:");
@@ -229,7 +229,7 @@ void ScriptUtils::extractFile(std::string file, std::string input, std::string o
 /*
 	Execute | run the script.
 */
-Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, std::string entry) {
+Result ScriptUtils::runFunctions(const nlohmann::json &storeJson, const int &selection, const std::string &entry) {
 	Result ret = NONE; // No Error as of yet.
 
 	if (!storeJson.contains("storeContent")) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };

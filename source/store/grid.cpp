@@ -48,7 +48,10 @@ static const std::vector<Structs::ButtonPos> GridBoxes = {
 };
 
 /*
-	Draw the top Grid.
+	Draw the Top Grid.
+
+	const std::unique_ptr<Store> &store: Const Reference to the Store class.
+	const std::vector<std::unique_ptr<StoreEntry>> &entries: Const Reference to the StoreEntries.
 */
 void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	if (store) { // Ensure, store is not a nullptr.
@@ -81,7 +84,16 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 
 
 /*
-	The logic for the Top Grid.
+	Top Grid Logic Handle.
+	Here you can..
+
+	- Scroll through the Grid with the D-Pad.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 */
 void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	if (store) { // Ensure, store is not a nullptr.

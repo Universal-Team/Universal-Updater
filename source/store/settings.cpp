@@ -46,6 +46,8 @@ static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTO
 
 /*
 	Main Settings.
+
+	const int &selection: Const Reference to the Settings Selection.
 */
 static void DrawSettingsMain(const int &selection) {
 	for (int i = 0; i < 6; i++) {
@@ -60,6 +62,28 @@ static void DrawSettingsMain(const int &selection) {
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
 }
 
+/*
+	Settings Main Handle.
+	Here you can..
+
+	- Change the Language.
+	- Access the UniStore Manage Handle.
+	- Change the Top Grid / List style.
+	- Enable UniStore auto update on boot.
+	- Show the Credits.
+	- Exit Universal-Updater.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	bool &dspSettings: Reference to the display Settings.
+	int &storeMode: Reference to the Store Mode.
+	int &selection: Reference to the Selection.
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
+	std::unique_ptr<Meta> &meta: Reference to the Meta class.
+*/
 static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
 	u32 hRepeat = hidKeysDownRepeat();
 
@@ -134,6 +158,9 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 
 /*
 	Draw the Settings.
+
+	const int &page: Const Reference to the page.
+	const int &selection: Const Reference to the selection.
 */
 void StoreUtils::DrawSettings(const int &page, const int &selection) {
 	switch(page) {
@@ -145,6 +172,17 @@ void StoreUtils::DrawSettings(const int &page, const int &selection) {
 
 /*
 	Settings Handle.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	bool &dspSettings: Reference to the display Settings.
+	int &storeMode: Reference to the Store Mode.
+	int &selection: Reference to the Selection.
+	std::unique_ptr<Store> &store: Reference to the Store class.
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
+	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
 void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
 	switch(page) {

@@ -28,6 +28,18 @@
 #include "stringUtils.hpp"
 
 /*
+	To lowercase conversion.
+
+	const std::string &str: The string which should be converted.
+*/
+std::string StringUtils::lower_case(const std::string &str) {
+	std::string lower;
+	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
+
+	return lower;
+}
+
+/*
 	Fetch strings from a vector and return it as a single string.
 
 	std::vector<std::string> fetch: The vector.

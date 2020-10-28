@@ -29,11 +29,11 @@
 /*
 	Fetch informations on constructor.
 
-	std::unique_ptr<Store> &store: Reference to the store.
-	std::unique_ptr<Meta> &meta: Reference to the meta.
-	int index: Index of the entry.
+	const std::unique_ptr<Store> &store: Const Reference to the Store class.
+	const std::unique_ptr<Meta> &meta: Const Reference to the Meta class.
+	const int &index: Const Reference Index of the entry.
 */
-StoreEntry::StoreEntry(std::unique_ptr<Store> &store, std::unique_ptr<Meta> &meta, int index) {
+StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, const int &index) {
 	this->Title = store->GetTitleEntry(index);
 	this->Author = store->GetAuthorEntry(index);
 

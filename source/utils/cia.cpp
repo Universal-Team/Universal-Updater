@@ -27,7 +27,7 @@
 #include "cia.hpp"
 #include "files.hpp"
 
-Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
+Result CIA_LaunchTitle(const u64 &titleId, const FS_MediaType &mediaType) {
 	Result ret = 0;
 	u8 param[0x300];
 	u8 hmac[0x20];
@@ -45,7 +45,7 @@ Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
 	return 0;
 }
 
-Result deletePrevious(u64 titleid, FS_MediaType media) {
+Result deletePrevious(const u64 &titleid, const FS_MediaType &media) {
 	Result ret = 0;
 	u32 titles_amount = 0;
 
@@ -82,7 +82,7 @@ Result deletePrevious(u64 titleid, FS_MediaType media) {
 	return 0;
 }
 
-FS_MediaType getTitleDestination(u64 titleId) {
+FS_MediaType getTitleDestination(const u64 &titleId) {
 	u16 platform = (u16) ((titleId >> 48) & 0xFFFF);
 	u16 category = (u16) ((titleId >> 32) & 0xFFFF);
 	u8 variation = (u8) (titleId & 0xFF);
@@ -93,7 +93,7 @@ FS_MediaType getTitleDestination(u64 titleId) {
 
 u64 installSize = 0, installOffset = 0;
 
-Result installCia(const char *ciaPath, bool updatingSelf) {
+Result installCia(const char *ciaPath, const bool &updatingSelf) {
 	u32 bytes_read = 0, bytes_written;
 	installSize = 0, installOffset = 0; u64 size = 0;
 	Handle ciaHandle, fileHandle;

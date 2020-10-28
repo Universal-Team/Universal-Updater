@@ -30,16 +30,16 @@
 /*
 	Displays just a message until the next draw frame.
 
-	std::string Text: The Message.
+	const std::string &Text: The Message, which should be displayed.
 */
-void Msg::DisplayMsg(std::string text) {
+void Msg::DisplayMsg(const std::string &Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, text)) / 2, 0.6f, TEXT_COLOR, text, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, TEXT_COLOR, Text, 395, 100);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -47,9 +47,9 @@ void Msg::DisplayMsg(std::string text) {
 /*
 	Displays a warn message for 3 seconds.
 
-	std::string Text: The Message.
+	const std::string &Text: The Message, which should be displayed.
 */
-void Msg::DisplayWarnMsg(std::string Text) {
+void Msg::DisplayWarnMsg(const std::string &Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
@@ -69,9 +69,9 @@ void Msg::DisplayWarnMsg(std::string Text) {
 /*
 	Display a Message, which needs to be confirmed with A/B.
 
-	std::string promptMsg: The Message.
+	const std::string &promptMsg: The Message, which should be displayed.
 */
-bool Msg::promptMsg(std::string promptMsg) {
+bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
@@ -93,7 +93,12 @@ bool Msg::promptMsg(std::string promptMsg) {
 	}
 }
 
-void Msg::waitMsg(std::string msg) {
+/*
+	Display a message, which can be "confirmed" with any key.
+
+	const std::string &msg: The message which should be displayed.
+*/
+void Msg::waitMsg(const std::string &msg) {
 	bool doOut = false;
 
 	Gui::clearTextBufs();

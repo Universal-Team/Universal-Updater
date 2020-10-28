@@ -46,6 +46,11 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 85, 214, 150, 22 }
 };
 
+/*
+	Select a Language.
+
+	Can be skipped with `B`.
+*/
 void Overlays::SelectLanguage() {
 	bool doOut = false;
 	int selection = 0, sPos = 0;

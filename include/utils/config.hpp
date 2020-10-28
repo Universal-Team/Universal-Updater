@@ -41,19 +41,19 @@ public:
 
 	/* Language. */
 	std::string language() const { return this->v_language; };
-	void language(std::string v) { this->v_language = v; if (!this->changesMade) this->changesMade = true; };
+	void language(const std::string &v) { this->v_language = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Last Store. */
 	std::string lastStore() const { return this->v_lastStore; };
-	void lastStore(std::string v) { this->v_lastStore = v; if (!this->changesMade) this->changesMade = true; };
+	void lastStore(const std::string &v) { this->v_lastStore = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Using Top List. */
 	bool list() const { return this->v_list; };
-	void list(bool v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
+	void list(const bool &v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Auto update on boot. */
 	bool autoupdate() const { return this->v_autoUpdate; };
-	void autoupdate(bool v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
+	void autoupdate(const bool &v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);

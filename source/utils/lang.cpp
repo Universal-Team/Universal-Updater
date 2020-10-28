@@ -36,7 +36,7 @@ std::string Lang::get(const std::string &key) {
 	return appJson.at(key).get_ref<const std::string&>();
 }
 
-void Lang::load(const std::string lang) {
+void Lang::load(const std::string &lang) {
 	FILE *values;
 
 	/* Check if exist. */

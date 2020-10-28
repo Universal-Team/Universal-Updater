@@ -29,6 +29,9 @@
 
 /*
 	Draw the Entry Info part.
+
+	const std::unique_ptr<Store> &store: Const Reference to the Store class.
+	const std::unique_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry.
 */
 void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry) {
 	if (store && entry) { // Ensure, store & entry is not a nullptr.
@@ -48,7 +51,18 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 }
 
 /*
-	Entry Handle Logic.
+	The EntryInfo handle.
+	Here you can..
+
+	- Go to the download list, by pressing `A`.
+	- Show the MarkMenu with START.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	bool &showMark: Reference to showMark.. to show the mark menu.
+	int &menu: Reference to the StoreMode / Menu, to properly switch to download list.
+	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 */
 void StoreUtils::EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, int &menu, bool &fetch) {
 	if (hDown & KEY_START) showMark = !showMark;

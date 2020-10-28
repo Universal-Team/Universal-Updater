@@ -35,4 +35,7 @@
 
 inline std::unique_ptr<Config> config;
 
+#define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
+#define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
+
 #endif
