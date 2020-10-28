@@ -332,6 +332,8 @@ std::string Store::GetLicenseEntry(const int &index) const {
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return Lang::get("NO_LICENSE"); // Empty.
 
 	if (this->storeJson["storeContent"][index]["info"].contains("license") && this->storeJson["storeContent"][index]["info"]["license"].is_string()) {
+		if (this->storeJson["storeContent"][index]["info"]["license"] == "") return Lang::get("NO_LICENSE");
+
 		return this->storeJson["storeContent"][index]["info"]["license"];
 	}
 
