@@ -126,51 +126,18 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 	bool category: if categories should be included.
 	bool console: if consoles should be included.
 	int selectedMarks: The selected mark flags.
+	bool updateAvl: if available updates should be an included flag
 */
-void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks) {
-	bool hasDone = false;
-
-	/* Check for no title, author, category & console. */
-	if (!title && !author && !category && !console) {
-		if (selectedMarks != 0) {
-			for (auto it = entries.begin(); it != entries.end(); ++it) {
-
-				if (!((*it)->GetMarks() & selectedMarks)) {
-					entries.erase(it);
-					--it;
-				}
-			}
-		}
-
-		hasDone = true;
-	}
-
-	if (hasDone) return;
-
+void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl) {
 	for (auto it = entries.begin(); it != entries.end(); ++it) {
-		if (selectedMarks != 0) { // if not 0, do filter.
-			if ((*it)->GetMarks() & selectedMarks) {
-				if (!((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
-				|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
-				|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
-				|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query))))) {
-					entries.erase(it);
-					--it;
-				}
-
-			} else {
-				entries.erase(it);
-				--it;
-			}
-
-		} else { // Else without filter.
-			if (!((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
-			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query))))) {
-				entries.erase(it);
-				--it;
-			}
+		if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
+		|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
+		|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
+		|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
+		|| (!title && !author && !category && !console))
+		&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
+			entries.erase(it);
+			--it;
 		}
 	}
 }

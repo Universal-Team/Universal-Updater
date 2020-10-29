@@ -111,7 +111,7 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	int &marks: Reference to the mark flags.
 	bool &updateFilter: Reference to the update filter.
 */
-void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter) {
+void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype) {
 	/* Checkboxes. */
 	if (hDown & KEY_TOUCH) {
 		bool didTouch = false;
@@ -121,14 +121,6 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 			if (touching(touch, SearchMenu[i + 1])) {
 				searchIncludes[i] = !searchIncludes[i];
 				didTouch = true;
-
-				if (store && store->GetValid()) {
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
 				break;
 			}
 		}
@@ -138,14 +130,6 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 			if (touching(touch, SearchMenu[0])) {
 				searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"));
 				didTouch = true;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
 			}
 		}
 
@@ -153,61 +137,34 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 		if (!didTouch) {
 			if (touching(touch, SearchMenu[5])) {
 				marks = marks ^ favoriteMarks::STAR;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
-
+				didTouch = true;
 			} else if (touching(touch, SearchMenu[6])) {
 				marks = marks ^ favoriteMarks::HEART;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
-
+				didTouch = true;
 			} else if (touching(touch, SearchMenu[7])) {
 				marks = marks ^ favoriteMarks::DIAMOND;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
-
+				didTouch = true;
 			} else if (touching(touch, SearchMenu[8])) {
 				marks = marks ^ favoriteMarks::CLUBS;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
-
+				didTouch = true;
 			} else if (touching(touch, SearchMenu[9])) {
 				marks = marks ^ favoriteMarks::SPADE;
-
-				if (store && store->GetValid()) { // Only search, when valid.
-					StoreUtils::ResetAll(store, meta, entries);
-					StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks);
-					store->SetScreenIndx(0);
-					store->SetEntry(0);
-					store->SetBox(0);
-				}
-
+				didTouch = true;
 			} else if (touching(touch, SearchMenu[10])) {
 				updateFilter = !updateFilter;
+				didTouch = true;
+			}
+		}
+
+		if (didTouch) {
+			if (store && store->GetValid()) { // Only search, when valid.
+				StoreUtils::ResetAll(store, meta, entries);
+				StoreUtils::search(entries, searchResult, searchIncludes[0], searchIncludes[1], searchIncludes[2], searchIncludes[3], marks, updateFilter);
+				store->SetScreenIndx(0);
+				store->SetEntry(0);
+				store->SetBox(0);
+
+				StoreUtils::SortEntries(ascending, sorttype, entries);
 			}
 		}
 	}
