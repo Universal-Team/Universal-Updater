@@ -30,20 +30,21 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> SearchMenu = {
-	{55, 5, 258, 30}, // Search bar.
+	{ 55, 5, 258, 30 }, // Search bar.
 
 	/* Includes. */
-	{85, 84, 10, 10},
-	{85, 100, 10, 10},
-	{167, 84, 10, 10},
-	{167, 100, 10, 10},
+	{ 85, 84, 10, 10 },
+	{ 85, 100, 10, 10 },
+	{ 167, 84, 10, 10 },
+	{ 167, 100, 10, 10 },
 
 	/* Filters. */
-	{85, 170, 30, 30},
-	{125, 170, 30, 30},
-	{165, 170, 30, 30},
-	{205, 170, 30, 30},
-	{245, 170, 30, 30}
+	{ 82, 170, 30, 30 },
+	{ 117, 170, 30, 30 },
+	{ 152, 170, 30, 30 },
+	{ 187, 170, 30, 30 },
+	{ 222, 170, 30, 30 },
+	{ 257, 170, 30, 30 }
 };
 
 /*
@@ -52,30 +53,26 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 	const std::vector<bool> &searchIncludes: Const Reference to the searchIncludes.
 	const std::string &searchResult: Const Reference to the searchResult.
 	const int &marks: Const Reference to the filter mark flags.
+	const bool &updateFilter: Const Reference to the update filter.
 */
-void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks) {
+void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks, const bool &updateFilter) {
+	Gui::Draw_Rect(54, 4, 260, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
 	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
-	Gui::Draw_Rect(55, 35, 258, 1, SEARCH_BAR_OUTL_COLOR);
 
 	Gui::DrawStringCentered(28, 10, 0.6, TEXT_COLOR, searchResult, 265);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
-		if (searchIncludes[i]) {
-			GFX::drawBox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, SearchMenu[i + 1].w, SearchMenu[i + 1].h, true);
-
-		} else {
-			GFX::drawBox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, SearchMenu[i + 1].w, SearchMenu[i + 1].h, false);
-		}
+		GFX::DrawCheckbox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, searchIncludes[i]);
 	}
 
 	Gui::DrawString(84, 60, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"));
 
-	Gui::DrawString(SearchMenu[1].x + 13, SearchMenu[1].y - 2, 0.4, TEXT_COLOR, Lang::get("TITLE"));
-	Gui::DrawString(SearchMenu[2].x + 13, SearchMenu[2].y - 2, 0.4, TEXT_COLOR, Lang::get("AUTHOR"));
+	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"));
+	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"));
 
-	Gui::DrawString(SearchMenu[3].x + 13, SearchMenu[3].y - 2, 0.4, TEXT_COLOR, Lang::get("CATEGORY"));
-	Gui::DrawString(SearchMenu[4].x + 13, SearchMenu[4].y - 2, 0.4, TEXT_COLOR, Lang::get("CONSOLE"));
+	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, TEXT_COLOR, Lang::get("CATEGORY"));
+	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"));
 
 	/* Filters. */
 	Gui::DrawString(84, 150, 0.5, TEXT_COLOR, Lang::get("FILTER_TO"));
@@ -85,6 +82,8 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	GFX::drawBox(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, marks & favoriteMarks::DIAMOND);
 	GFX::drawBox(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, marks & favoriteMarks::CLUBS);
 	GFX::drawBox(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, marks & favoriteMarks::SPADE);
+	GFX::drawBox(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, updateFilter);
+	GFX::DrawSprite(sprites_update_filter_idx, SearchMenu[10].x + 8, SearchMenu[10].y + 8);
 
 	Gui::DrawString(SearchMenu[5].x + 8, SearchMenu[5].y + 8, 0.5, TEXT_COLOR, "★");
 	Gui::DrawString(SearchMenu[6].x + 8, SearchMenu[6].y + 8, 0.5, TEXT_COLOR, "♥");
@@ -110,8 +109,9 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 	std::string &searchResult: Reference to the searchResult.
 	int &marks: Reference to the mark flags.
+	bool &updateFilter: Reference to the update filter.
 */
-void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks) {
+void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter) {
 	/* Checkboxes. */
 	if (hDown & KEY_TOUCH) {
 		bool didTouch = false;
@@ -205,6 +205,9 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 					store->SetEntry(0);
 					store->SetBox(0);
 				}
+
+			} else if (touching(touch, SearchMenu[10])) {
+				updateFilter = !updateFilter;
 			}
 		}
 	}

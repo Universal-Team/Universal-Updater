@@ -43,10 +43,13 @@ void Overlays::ShowCredits() {
 		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater - " + Lang::get("CREDITS"));
 
 		Gui::DrawString(10, 30, 0.5f, TEXT_COLOR, "- Universal-Team");
-		Gui::DrawString(10, 60, 0.5f, TEXT_COLOR, "- devkitPro");
-		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- https://icons8.com/");
-		Gui::DrawString(10, 120, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"));
-		Gui::DrawString(10, 170, 0.5f, TEXT_COLOR, Lang::get("GITHUB"));
+		Gui::DrawString(10, 50, 0.5f, TEXT_COLOR, "- devkitPro");
+		Gui::DrawString(10, 70, 0.5f, TEXT_COLOR, "- dlbeer");
+		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- FlagBrew");
+		Gui::DrawString(10, 110, 0.5f, TEXT_COLOR, "- https://icons8.com/");
+		Gui::DrawString(10, 130, 0.5f, TEXT_COLOR, "- PabloMK7");
+		Gui::DrawString(10, 150, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"));
+		Gui::DrawString(10, 195, 0.5f, TEXT_COLOR, Lang::get("GITHUB"));
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);

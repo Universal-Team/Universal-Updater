@@ -75,7 +75,7 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH, 0.5);
 
 					/* Update Available mark. */
-					if (entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_updateStore_idx, GridBoxes[i].x + 30, GridBoxes[i].y + 30);
+					if (entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32);
 				}
 			}
 		}
@@ -94,8 +94,10 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<Store> &store: Reference to the Store class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
+	const int &currentMode: Reference to the current Mode.
+	int &lastMode: Reference to the last mode.
 */
-void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode) {
 	if (store) { // Ensure, store is not a nullptr.
 		u32 hRepeat = hidKeysDownRepeat();
 		bool needUpdate = false;
@@ -144,6 +146,11 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 				store->SetBox(store->GetBox() - 5);
 				store->SetEntry(store->GetEntry() - 5);
 			}
+		}
+
+		if (hDown & KEY_A) {
+			lastMode = currentMode;
+			currentMode = 1;
 		}
 
 		if (needUpdate) {

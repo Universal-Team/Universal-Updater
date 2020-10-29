@@ -46,20 +46,13 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 
 	const std::unique_ptr<Store> &store: Const Reference to the Store class.
 	const std::vector<std::string> &entries: Const Reference to the download list as a vector of strings.
+	const bool &fetch: Const Reference to Fetch.
 */
-void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries) {
-	if (store) {
-
+void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, const bool &fetch) {
+	if (store && !fetch) {
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
-
-				if (store->GetDownloadBtn() == i) {
-					GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, true);
-
-				} else {
-					GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
-				}
-
+				GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, store->GetDownloadIndex() == i + store->GetDownloadSIndex());
 				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260);
 			}
 
@@ -85,43 +78,37 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	const std::vector<std::string> &entries: Const Reference to the download list, since we do not modify anything in it.
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
 	std::unique_ptr<Meta> &meta: Reference to the Meta, to apply the updates stuff.
+	const int &lastMode: Const Reference to the last mode.
 */
-void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta) {
-	bool needUpdate = false;
-
+void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode) {
 	if (store && entry) { // Ensure, store & entry is not a nullptr.
 		u32 hRepeat = hidKeysDownRepeat();
 
 		if (hRepeat & KEY_DOWN) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			if (store->GetDownloadBtn() > 6) {
-				if (store->GetDownloadIndex() < (int)entries.size() - 1) {
-					store->SetDownloadIndex(store->GetDownloadIndex() + 1);
-					needUpdate = true;
-				}
-
-			} else {
-				if (store->GetDownloadIndex() < (int)entries.size() - 1) {
-					store->SetDownloadBtn(store->GetDownloadBtn() + 1);
-					store->SetDownloadIndex(store->GetDownloadIndex() + 1);
-				}
-			}
+			if (store->GetDownloadIndex() < (int)entries.size() - 1) store->SetDownloadIndex(store->GetDownloadIndex() + 1);
 		}
 
 		if (hRepeat & KEY_UP) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			if (store->GetDownloadBtn() < 1) {
-				if (store->GetDownloadIndex() > 0) {
-					store->SetDownloadIndex(store->GetDownloadIndex() - 1);
-					needUpdate = true;
-				}
+			if (store->GetDownloadIndex() > 0) store->SetDownloadIndex(store->GetDownloadIndex() - 1);
+		}
 
-			} else {
-				store->SetDownloadBtn(store->GetDownloadBtn() - 1);
-				store->SetDownloadIndex(store->GetDownloadIndex() - 1);
-			}
+
+		if (hRepeat & KEY_RIGHT) {
+			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
+
+			if (store->GetDownloadIndex() + 8 < (int)entries.size()-1) store->SetDownloadIndex(store->GetDownloadIndex() + 8);
+			else store->SetDownloadIndex(entries.size()-1);
+		}
+
+		if (hRepeat & KEY_LEFT) {
+			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
+
+			if (store->GetDownloadIndex() - 8 > 0) store->SetDownloadIndex(store->GetDownloadIndex() - 8);
+			else store->SetDownloadIndex(0);
 		}
 
 		if (hDown & KEY_TOUCH) {
@@ -153,24 +140,10 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 			}
 		}
 
-		if (hDown & KEY_B) {
-			currentMenu = 0; // Go back to EntryInfo.
-		}
+		if (hDown & KEY_B) currentMenu = lastMode; // Go back to EntryInfo.
 
 		/* Scroll Handle. */
-		if (needUpdate) {
-			needUpdate = false;
-
-			if (store->GetDownloadBtn() > 6) {
-				if (store->GetDownloadIndex() < (int)entries.size()) {
-					store->SetDownloadSIndex(store->GetDownloadSIndex() + 1);
-				}
-
-			} else if (store->GetDownloadBtn() < 1) {
-				if (store->GetDownloadSIndex() > 0) {
-					store->SetDownloadSIndex(store->GetDownloadSIndex() - 1);
-				}
-			}
-		}
+		if (store->GetDownloadIndex() < store->GetDownloadSIndex()) store->SetDownloadSIndex(store->GetDownloadIndex());
+		else if (store->GetDownloadIndex() > store->GetDownloadSIndex() + 8 - 1) store->SetDownloadSIndex(store->GetDownloadIndex() - 8 + 1);
 	}
 }

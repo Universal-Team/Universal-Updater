@@ -97,3 +97,14 @@ void GFX::DrawButton(const float &xPos, const float &yPos, const float &width, c
 
 	Gui::DrawStringCentered(xPos - 160 + (width / 2), yPos + (height / 2) - (Gui::GetStringHeight(0.4f, Text) / 2), 0.4f, TEXT_COLOR, Text, width - 4, height - 4);
 }
+
+/*
+	Draw the checkbox.
+
+	const float &xPos: Const Reference to the X-Position where to draw the box.
+	const float &yPos: Const Reference to the Y-Position where to draw the box.
+	const bool &selected: Const Reference, checked or not.
+*/
+void GFX::DrawCheckbox(const float &xPos, const float &yPos, const bool &selected) {
+	GFX::DrawSprite((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos);
+}

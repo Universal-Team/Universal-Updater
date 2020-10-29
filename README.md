@@ -33,7 +33,7 @@ To download the source you will need to clone it with submodules, this can be do
 ```
 git clone --recursive https://github.com/Universal-Team/Universal-Updater.git
 ```
-or if you've already cloned it running 
+or if you've already cloned it running
 ```
 git submodule update --init --recursive
 ```
@@ -52,12 +52,9 @@ Simply run `make` in the Universal-Updater source directory.
 Want to help to translate Universal-Updater? Then feel free to join us on Crowdin [here](https://crwd.in/universal-updater).
 Is it a new Language which isn't available in Universal-Updater? Then join our [Discord Server](https://discord.gg/KDJCfGF) and ask Evie to add the language to crowdin.
 
-## Contributions
+## Credits
 
-[PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.
-
-## Icon Credits
-
-<a target="_blank" href="https://icons8.com/icons/set/trash">Trash icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-
-<a target="_blank" href="https://icons8.com/icons/set/menu">Menu icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+- [dlbeer](https://github.com/dlbeer) for [quirc](https://github.com/dlbeer/quirc) which i changed to C++.
+- [FlagBrew](https://github.com/FlagBrew): For the QR Code Scanner code, which i reworked some bit.
+- [Icons8](https://icons8.com/): For the icons.
+- [PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.

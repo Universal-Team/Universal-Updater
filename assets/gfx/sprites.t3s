@@ -1,14 +1,18 @@
 --atlas -f rgba -z auto
 
-sprites/bottom_screen_bot.png
-sprites/bottom_screen_top.png
+sprites/add.png
+sprites/checked.png
 sprites/delete.png
+sprites/download.png
+sprites/info.png
 sprites/noIcon.png
-sprites/top_screen_bot.png
-sprites/top_screen_top.png
+sprites/qr_code.png
 sprites/search.png
+sprites/settings.png
+sprites/sort.png
+sprites/unchecked.png
 sprites/universal-updater.png
-sprites/update.png
-sprites/updateStore.png
 sprites/universal-core.png
-sprites/view.png
+sprites/update.png
+sprites/update_app.png
+sprites/update_filter.png

@@ -121,13 +121,13 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
 	const std::string &query: Const Reference to the query.
-	const bool &title: Const Reference, to if titles should be included.
-	const bool &author: Const Reference, to if authors should be included.
-	const bool &category: Const Reference, to if categories should be included.
-	const bool &console: Const Reference, to if consoles should be included.
-	const int &selectedMarks: Const Reference, to the selected mark flags.
+	bool title: if titles should be included.
+	bool author: if authors should be included.
+	bool category: if categories should be included.
+	bool console: if consoles should be included.
+	int selectedMarks: The selected mark flags.
 */
-void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, const bool &title, const bool &author, const bool &category, const bool &console, const int &selectedMarks) {
+void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks) {
 	bool hasDone = false;
 
 	/* Check for no title, author, category & console. */
@@ -171,6 +171,20 @@ void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const
 				entries.erase(it);
 				--it;
 			}
+		}
+	}
+}
+
+/*
+	Filter for available updates.
+
+	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
+*/
+void StoreUtils::FilterUpdateAvailable(std::vector<std::unique_ptr<StoreEntry>> &entries) {
+	for (auto it = entries.begin(); it != entries.end(); ++it) {
+		if (!((*it)->GetUpdateAvl())) {
+			entries.erase(it);
+			--it;
 		}
 	}
 }

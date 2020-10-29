@@ -76,10 +76,10 @@ endif
 TARGET		:=	Universal-Updater
 BUILD		:=	build
 UNIVCORE	:= 	Universal-Core
-SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/overlays source/screens \
+SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/overlays source/qr source/screens \
 							source/store source/utils
 DATA		:=	data
-INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/screens \
+INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/qr include/screens \
 							include/store include/utils
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs

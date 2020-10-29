@@ -30,14 +30,13 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{ 10, 4, 300, 22 },
-	{ 10, 34, 300, 22 },
-	{ 10, 64, 300, 22 },
-	{ 10, 94, 300, 22 },
-	{ 10, 124, 300, 22 },
-	{ 10, 154, 300, 22 },
-	{ 10, 184, 300, 22 },
-	{ 54, 214, 300, 22 }
+	{ 10, 6, 300, 22 },
+	{ 10, 36, 300, 22 },
+	{ 10, 66, 300, 22 },
+	{ 10, 96, 300, 22 },
+	{ 10, 126, 300, 22 },
+	{ 10, 156, 300, 22 },
+	{ 10, 186, 300, 22 }
 };
 
 /*
@@ -56,7 +55,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		dirContents.clear();
 		chdir(oldDir.c_str());
 		std::vector<DirEntry> dirContentsTemp;
-		getDirectoryContents(dirContentsTemp);
+		getDirectoryContents(dirContentsTemp, {"/"});
 
 		for(uint i = 0; i < dirContentsTemp.size(); i++) {
 			dirContents.push_back(dirContentsTemp[i]);
@@ -77,8 +76,13 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, currentPath, 390);
 
 		GFX::DrawBottom();
+
+		Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
+		Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
+		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 390);
+
 		if (dirContents.size() > 0) {
-			for(int i = 0; i < 8 && i < (int)dirContents.size(); i++) {
+			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
 				GFX::drawBox(10, mainButtons[i].y, 300, 22, sPos + i == selection);
 				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, dirContents[sPos + i].name, 295);
 			}
@@ -93,7 +97,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			sPos = 0;
 			dirContents.clear();
 			std::vector<DirEntry> dirContentsTemp;
-			getDirectoryContents(dirContentsTemp);
+			getDirectoryContents(dirContentsTemp, {"/"});
 
 			for(uint i = 0; i < dirContentsTemp.size(); i++) {
 				dirContents.push_back(dirContentsTemp[i]);
@@ -115,6 +119,16 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 				if (selection > 0) selection--;
 			}
 
+			if (hRepeat & KEY_RIGHT) {
+				if (selection + 7 < (int)dirContents.size()-1) selection += 7;
+				else selection = dirContents.size()-1;
+			}
+
+			if (hRepeat & KEY_LEFT) {
+				if (selection - 7 > 0) selection -= 7;
+				else selection = 0;
+			}
+
 			if (hidKeysDown() & KEY_A) {
 				if (dirContents[selection].isDirectory) {
 
@@ -129,7 +143,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			}
 
 			if (hidKeysDown() & KEY_TOUCH) {
-				for (int i = 0; i < 7; i++) {
+				for (int i = 0; i < 6; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)dirContents.size()) {
 							if (dirContents[i + sPos].isDirectory) {
@@ -148,10 +162,10 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			}
 
 			if (selection < sPos) sPos = selection;
-			else if (selection > sPos + 8 - 1) sPos = selection - 8 + 1;
+			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
 		}
 
-		if (hidKeysDown() & KEY_X) {
+		if ((hidKeysDown() & KEY_X) || (hidKeysDown() & KEY_START)) {
 			if (currentPath.size() > 0 && currentPath.back() == '/') currentPath.pop_back(); // Pop back the "/".
 			return currentPath;
 		}

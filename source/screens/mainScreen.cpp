@@ -59,6 +59,7 @@ MainScreen::MainScreen() {
 
 	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
+	StoreUtils::SortEntries(false, SortType::LAST_UPDATED, this->entries);
 };
 
 /*
@@ -81,12 +82,12 @@ void MainScreen::Draw(void) const {
 
 		case 1:
 			/* Download List. */
-			StoreUtils::DrawDownList(this->store, this->dwnldList);
+			StoreUtils::DrawDownList(this->store, this->dwnldList, this->fetchDown);
 			break;
 
 		case 2:
 			/* Search + Favorites. */
-			StoreUtils::DrawSearchMenu(this->searchIncludes, this->searchResult, this->marks);
+			StoreUtils::DrawSearchMenu(this->searchIncludes, this->searchResult, this->marks, this->updateFilter);
 			break;
 
 		case 3:
@@ -113,38 +114,38 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (!this->showMarks) {
 		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
-			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries);
+			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode);
 		}
 
 		StoreUtils::SideMenuHandle(hDown, hHeld, touch, this->storeMode, this->fetchDown);
 
 		/* Fetch Download list. */
 		if (this->fetchDown) {
-			this->fetchDown = false;
 			this->dwnldList.clear();
 
 			if (this->store && this->store->GetValid()) {
 				this->store->SetDownloadIndex(0); // Reset to 0.
 				this->store->SetDownloadSIndex(0);
-				this->store->SetDownloadBtn(0);
 
 				if ((int)this->entries.size() > this->store->GetEntry()) {
 					this->dwnldList = this->store->GetDownloadList(this->entries[this->store->GetEntry()]->GetEntryIndex());
 				}
 			}
+
+			this->fetchDown = false;
 		}
 
 		switch(this->storeMode) {
 			case 0:
-				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(hDown, hHeld, touch, this->showMarks, this->storeMode, this->fetchDown);
+				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(hDown, hHeld, touch, this->showMarks, this->fetchDown);
 				break;
 
 			case 1:
-				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta);
+				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode);
 				break;
 
 			case 2:
-				StoreUtils::SearchHandle(hDown, hHeld, touch, this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks);
+				StoreUtils::SearchHandle(hDown, hHeld, touch, this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks, this->updateFilter);
 				break;
 
 			case 3:

@@ -57,8 +57,7 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 						C2D_DrawImageAt(tempImg, StoreBoxesList[i].x + 1 + offsetW, StoreBoxesList[i].y + 1 + offsetH, 0.5);
 					}
 
-					if (entries[i + store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_updateStore_idx, StoreBoxesList[i].x + 30, StoreBoxesList[i].y + 30);
-
+					if (entries[i + store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
 					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetTitle(), 300);
 					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetAuthor(), 300);
 				}
@@ -79,17 +78,21 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<Store> &store: Reference to the Store class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
+	int &currentMode: Const Reference to the current Mode.
+	int &lastMode: Reference to the last mode.
 */
-void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode) {
 	if (store) { // Ensure, store is not a nullptr.
 		u32 hRepeat = hidKeysDownRepeat();
 
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetEntry() < (int)entries.size() - 1) store->SetEntry(store->GetEntry() + 1);
+			else store->SetEntry(0);
 		}
 
 		if (hRepeat & KEY_RIGHT) {
 			if (store->GetEntry() < (int)entries.size() - 3) store->SetEntry(store->GetEntry() + 3);
+			else store->SetEntry(entries.size() - 1);
 		}
 
 		if (hRepeat & KEY_LEFT) {
@@ -100,6 +103,10 @@ void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 			if (store->GetEntry() > 0) store->SetEntry(store->GetEntry() - 1);
 		}
 
+		if (hDown & KEY_A) {
+			lastMode = currentMode;
+			currentMode = 1;
+		}
 
 		/* Scroll Logic. */
 		if (store->GetEntry() < store->GetScreenIndx()) store->SetScreenIndx(store->GetEntry());

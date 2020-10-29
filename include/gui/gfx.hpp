@@ -75,6 +75,7 @@ namespace GFX {
 	void DrawSprite(const int &img, const int &x, const int &y, const float &ScaleX = 1, const float &ScaleY = 1);
 	void drawBox(const float &xPos, const float &yPos, const float &width = 50, const float &height = 50, const bool &selected = false, const uint32_t &clr = BOX_INSIDE_COLOR);
 	void DrawButton(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const std::string &Text = "");
+	void DrawCheckbox(const float &xPos, const float &yPos, const bool &selected);
 };
 
 #endif

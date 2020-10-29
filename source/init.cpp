@@ -35,6 +35,7 @@ bool exiting = false;
 touchPosition touch;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
+u32 old_time_limit;
 
 /*
 	If button Position pressed -> Do something.
@@ -58,6 +59,9 @@ Result Init::Initialize() {
 	cfguInit();
 	amInit();
 	acInit();
+
+    APT_GetAppCpuTimeLimit(&old_time_limit);
+    APT_SetAppCpuTimeLimit(30);
 
 	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
@@ -129,6 +133,8 @@ Result Init::Exit() {
 
 	acExit();
 	amExit();
+
+    if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit);
 
 	romfsExit();
 	return 0;

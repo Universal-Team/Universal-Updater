@@ -51,6 +51,12 @@ void StoreUtils::DrawSideMenu(const int &currentMenu) {
 		}
 	}
 
+	GFX::DrawSprite(sprites_info_idx, sidePos[0].x + 4, sidePos[0].y + 4);
+	GFX::DrawSprite(sprites_download_idx, sidePos[1].x + 4, sidePos[1].y + 4);
+	GFX::DrawSprite(sprites_search_idx, sidePos[2].x + 4, sidePos[2].y + 4);
+	GFX::DrawSprite(sprites_sort_idx, sidePos[3].x + 4, sidePos[3].y + 4);
+	GFX::DrawSprite(sprites_settings_idx, sidePos[4].x + 4, sidePos[4].y + 4);
+
 	Gui::Draw_Rect(48, 0, 1, 240, BAR_OUTL_COLOR);
 }
 

@@ -27,6 +27,9 @@
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+static const Structs::ButtonPos btn = { 53, 215, 20, 20 };
+
 /*
 	Draw the Entry Info part.
 
@@ -47,6 +50,9 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		Gui::DrawString(61, 160, 0.45, TEXT_COLOR, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 240);
 		Gui::DrawString(61, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 240);
 		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240);
+
+		GFX::drawBox(btn.x, btn.y, btn.w, btn.h, false);
+		Gui::DrawString(btn.x + 3, btn.y, 0.6f, TEXT_COLOR, "★");
 	}
 }
 
@@ -61,14 +67,8 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 	u32 hHeld: The hidKeysHeld() variable.
 	touchPosition touch: The TouchPosition variable.
 	bool &showMark: Reference to showMark.. to show the mark menu.
-	int &menu: Reference to the StoreMode / Menu, to properly switch to download list.
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 */
-void StoreUtils::EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, int &menu, bool &fetch) {
-	if (hDown & KEY_START) showMark = !showMark;
-
-	if (hDown & KEY_A) {
-		fetch = true;
-		menu = 1;
-	}
+void StoreUtils::EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, bool &fetch) {
+	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 }

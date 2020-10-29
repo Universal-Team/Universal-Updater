@@ -74,16 +74,13 @@ public:
 	int GetDownloadIndex() const { return this->downEntry; };
 	void SetDownloadIndex(int v) { this->downEntry = v; };
 
-	int GetDownloadBtn() const { return this->downBtn; };
-	void SetDownloadBtn(int v) { this->downBtn = v; };
-
 	nlohmann::json &GetJson() { return this->storeJson; };
 	bool GetValid() const { return this->valid; };
 private:
 	nlohmann::json storeJson = nullptr;
 	std::vector<C2D_SpriteSheet> sheets;
 	bool valid = false;
-	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0, downBtn = 0;
+	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0;
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include "files.hpp"
 #include "keyboard.hpp"
 #include "overlay.hpp"
+#include "qrcode.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
 #include <unistd.h>
@@ -45,9 +46,10 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 184, 300, 22 },
 
 	/* Add, Delete, Info.. */
-	{ 110, 215, 20, 20 },
-	{ 150, 215, 20, 20 },
-	{ 190, 215, 20, 20 }
+	{ 92, 215, 16, 16 },
+	{ 136, 215, 16, 16 },
+	{ 180, 215, 16, 16 },
+	{ 224, 215, 16, 16 }
 };
 
 /*
@@ -89,13 +91,14 @@ static void DeleteStore(const std::string &file) {
 
 /*
 	Download a Store.. including the SpriteSheets, if found.
+
+	const bool &Cam: Const Reference, if cam should be used.
 */
-static bool DownloadStore() {
+static bool DownloadStore(const bool &Cam = true) {
 	bool doSheet = false;
 	std::string file = "";
 
-	const std::string URL = Input::setkbdString(150, Lang::get("ENTER_URL"));
-
+	const std::string URL = Cam ? QR_Scanner::GetQRURL() : Input::setkbdString(150, Lang::get("ENTER_URL"));
 	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
 
 	if (doSheet) {
@@ -181,14 +184,10 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		if (info.size() <= 0) GFX::DrawBottom(); // Otherwise we'd draw on top.
 
-		GFX::drawBox(mainButtons[7].x, mainButtons[7].y, mainButtons[7].w, mainButtons[7].h, false);
-		Gui::DrawString(mainButtons[7].x + 6, mainButtons[7].y, 0.6f, TEXT_COLOR, "-");
-
-		GFX::drawBox(mainButtons[8].x, mainButtons[8].y, mainButtons[8].w, mainButtons[8].h, false);
-		Gui::DrawString(mainButtons[8].x + 8, mainButtons[8].y, 0.6f, TEXT_COLOR, "i");
-
-		GFX::drawBox(mainButtons[9].x, mainButtons[9].y, mainButtons[9].w, mainButtons[9].h, false);
-		Gui::DrawString(mainButtons[9].x + 5, mainButtons[9].y, 0.6f, TEXT_COLOR, "+");
+		GFX::DrawSprite(sprites_delete_idx, mainButtons[7].x, mainButtons[7].y);
+		GFX::DrawSprite(sprites_update_idx, mainButtons[8].x, mainButtons[8].y);
+		GFX::DrawSprite(sprites_add_idx, mainButtons[9].x, mainButtons[9].y);
+		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[10].x, mainButtons[10].y);
 		C3D_FrameEnd(0);
 
 		hidScanInput();
@@ -205,12 +204,23 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				if (selection > 0) selection--;
 			}
 
+			if (hRepeat & KEY_RIGHT) {
+				if (selection + 7 < (int)info.size()-1) selection += 7;
+				else selection = info.size()-1;
+			}
+
+			if (hRepeat & KEY_LEFT) {
+				if (selection - 7 > 0) selection -= 8;
+				else selection = 0;
+			}
+
 			if (hidKeysDown() & KEY_A) {
 				/* Load selected one. */
 				if (info[selection].StoreSize > 0) {
 					store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
 					StoreUtils::ResetAll(store, meta, entries);
 					config->lastStore(info[selection].FileName);
+					StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
 					doOut = true;
 				}
 			}
@@ -252,6 +262,18 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		}
 
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
+			if (checkWifiStatus()) {
+				if (DownloadStore(false)) {
+					selection = 0;
+					info = GetUniStoreInfo(_STORE_PATH);
+
+				} else {
+					Msg::waitMsg(Lang::get("INVALID_UNISTORE"));
+				}
+			}
+		}
+
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10])) {
 			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;

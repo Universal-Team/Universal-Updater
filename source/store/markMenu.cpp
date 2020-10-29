@@ -33,7 +33,9 @@ static const std::vector<Structs::ButtonPos> markBox = {
 	{72, 94, 52, 52},
 	{134, 94, 52, 52},
 	{196, 94, 52, 52},
-	{258, 94, 52, 52}
+	{258, 94, 52, 52},
+
+	{ 53, 215, 20, 20 }
 };
 
 /*
@@ -55,6 +57,9 @@ void StoreUtils::DisplayMarkBox(const int &marks) {
 	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 12, 0.9, TEXT_COLOR, "♦");
 	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 12, 0.9, TEXT_COLOR, "♣");
 	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 12, 0.9, TEXT_COLOR, "♠");
+
+	GFX::drawBox(markBox[5].x, markBox[5].y, markBox[5].w, markBox[5].h, false);
+	Gui::DrawString(markBox[5].x + 3, markBox[5].y, 0.6f, TEXT_COLOR, "★");
 }
 
 /*
@@ -73,35 +78,38 @@ void StoreUtils::DisplayMarkBox(const int &marks) {
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
 void StoreUtils::MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta) {
-	if (meta && entry) {
+	hidScanInput();
+	touchPosition t;
+	hidTouchRead(&t);
 
-		if (hDown & KEY_TOUCH) {
+	if (meta && entry) {
+		if (hidKeysDown() & KEY_TOUCH) {
 			/* Star. */
-			if (touching(touch, markBox[0])) {
+			if (touching(t, markBox[0])) {
 				meta->SetMarks(store->GetUniStoreTitle(), entry->GetTitle(),
 					meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()) ^ favoriteMarks::STAR);
 				entry->SetMark(meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()));
 
 			/* Heart. */
-			} else if (touching(touch, markBox[1])) {
+			} else if (touching(t, markBox[1])) {
 				meta->SetMarks(store->GetUniStoreTitle(), entry->GetTitle(),
 					meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()) ^ favoriteMarks::HEART);
 				entry->SetMark(meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()));
 
 			/* Diamond. */
-			} else if (touching(touch, markBox[2])) {
+			} else if (touching(t, markBox[2])) {
 				meta->SetMarks(store->GetUniStoreTitle(), entry->GetTitle(),
 					meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()) ^ favoriteMarks::DIAMOND);
 				entry->SetMark(meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()));
 
 			/* Clubs. */
-			} else if (touching(touch, markBox[3])) {
+			} else if (touching(t, markBox[3])) {
 				meta->SetMarks(store->GetUniStoreTitle(), entry->GetTitle(),
 					meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()) ^ favoriteMarks::CLUBS);
 				entry->SetMark(meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()));
 
 			/* Spade. */
-			} else if (touching(touch, markBox[4])) {
+			} else if (touching(t, markBox[4])) {
 				meta->SetMarks(store->GetUniStoreTitle(), entry->GetTitle(),
 					meta->GetMarks(store->GetUniStoreTitle(), entry->GetTitle()) ^ favoriteMarks::SPADE);
 
@@ -111,5 +119,5 @@ void StoreUtils::MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::uniq
 	}
 
 
-	if (hDown & KEY_B) showMark = false; // Return back to screen.
+	if ((hidKeysDown() & KEY_B || hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_TOUCH && touching(t, markBox[5]))) showMark = false; // Return back to screen.
 }

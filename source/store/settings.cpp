@@ -41,8 +41,9 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 };
 
 static const std::string autoupdate() { return (config->autoupdate() ? "DISABLE_AUTOUPDATE_UNISTORE" : "ENABLE_AUTOUPDATE_UNISTORE"); };
+static const std::string topStyle() { return (config->list() ? "TOP_MENU_GRID" : "TOP_MENU_LIST"); };
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "TOGGLE_STYLE", "CREDITS", "CHANGE_DIRECTORIES", "EXIT_APP" };
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "CREDITS", "CHANGE_DIRECTORIES", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
 /*
@@ -57,11 +58,11 @@ static void DrawSettingsMain(const int &selection) {
 
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(topStyle()), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[5]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
 }
 
 /*
@@ -111,6 +112,16 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
+	}
+
+	if (hRepeat & KEY_RIGHT) {
+		if (selection + 8 < (int)mainStrings.size() + 1) selection += 8;
+		else selection = mainStrings.size() + 1;
+	}
+
+	if (hRepeat & KEY_LEFT) {
+		if (selection - 8 > 0) selection -= 8;
+		else selection = 0;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -208,6 +219,16 @@ static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &pa
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
+	}
+
+	if (hRepeat & KEY_RIGHT) {
+		if (selection + 8 < (int)dirStrings.size()-1) selection += 8;
+		else selection = dirStrings.size()-1;
+	}
+
+	if (hRepeat & KEY_LEFT) {
+		if (selection - 8 > 0) selection -= 8;
+		else selection = 0;
 	}
 
 	if (hDown & KEY_TOUCH) {
