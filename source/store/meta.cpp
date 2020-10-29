@@ -60,7 +60,7 @@ std::string Meta::GetUpdated(std::string unistoreName, std::string entry) const 
 
 	if (!this->metadataJson[unistoreName][entry].contains("updated")) return ""; // updated does not exist.
 
-	if (this->metadataJson[unistoreName][entry].is_string()) return this->metadataJson[unistoreName][entry]["updated"];
+	if (this->metadataJson[unistoreName][entry]["updated"].is_string()) return this->metadataJson[unistoreName][entry]["updated"];
 	return "";
 }
 
