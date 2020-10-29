@@ -171,6 +171,12 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 
 	/* Reset all. */
 	if (hDown & KEY_X) {
+		marks = 0;
+		updateFilter = false;
+		for(uint i = 0; i < searchIncludes.size(); i++)
+			searchIncludes[i] = false;
+		searchResult = "";
+
 		if (store && store->GetValid()) StoreUtils::ResetAll(store, meta, entries);
 	}
 }
