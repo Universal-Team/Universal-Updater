@@ -19,7 +19,7 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
 
 - A store format with a concept similar to the Cydia Repositories
    - Default is [Universal-DB](https://db.universal-team.net)
-   - Want to add your own? Go to settings, find "Select Unistore", hit the + icon and type the URL
+   - Want to add your own? Go to settings, find "Select Unistore", hit the + icon and type the URL or hit the QR button and scan the QR code (if they have one)
 - Customization in sorting and display
    - All sorting keys: "Title", "Author" & "Last Updated"
    - Direction could be Ascending or Descending
