@@ -74,7 +74,7 @@
 	"TITLE": "Bruhtle",
 	"TOP_STYLE": "Top Bruhle",
 	"UNISTORE_INVALID_ERROR": "This UniStore is inbruhlid and bruhnot be\nbroded with Universal-Updater.\nMaybe there are Bruhtax bruhrors?",
-	"UNISTORE_TOO_NEW": "Your bruhsion of Universal-Updater is \ntoo grandpa to use this UniStore.\nPlease bruhptdate to the latest version of Universal-Updater.",
+	"UNISTORE_TOO_NEW": "Your version of Universal-Updater is\ntoo old to use this UniStore.\nPlease update to the latest version.",
 	"UNISTORE_TOO_OLD": "This UniStore is grandpa... Which means it cannot be used\nwith this version of Universal-Updater.\nPlease ask the bruhtor to update it.",
 	"UNSUPPORTED_UNISTORE_VERSION": "The version of this UniStore is too lame to work here.",
 	"UPDATE_AVAILABLE": "Bruhpdate Available!",
