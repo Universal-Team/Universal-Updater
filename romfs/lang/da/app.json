@@ -74,7 +74,7 @@
 	"TITLE": "Title",
 	"TOP_STYLE": "Top Style",
 	"UNISTORE_INVALID_ERROR": "This UniStore is invalid and cannot be\nloaded with Universal-Updater.\nMaybe check if there are any Syntax errors?",
-	"UNISTORE_TOO_NEW": "Your version of Universal-Updater is \ntoo old to use this UniStore.\nPlease update to the latest version.",
+	"UNISTORE_TOO_NEW": "Your version of Universal-Updater is\ntoo old to use this UniStore.\nPlease update to the latest version.",
 	"UNISTORE_TOO_OLD": "This UniStore is outdated and cannot be used\nwith this version of Universal-Updater.\nPlease ask the creator to update it.",
 	"UNSUPPORTED_UNISTORE_VERSION": "The version of this UniStore is unsupported.",
 	"UPDATE_AVAILABLE": "Update Available!",
