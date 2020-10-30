@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/blob/master/app/banner.png"></a><br>
-	<b>A multiapp, JSON script-based updater for Nintendo 3DS</b><br>
+	<b>An easy to use app for installing and updating 3DS homebrew</b><br>
 	<a href="https://discord.gg/KDJCfGF" style="padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord%20Server-%23universal--updater-green.svg" alt="Discord Server">
 	</a>
@@ -13,48 +13,36 @@
 	<a title="Crowdin" target="_blank" href="https://crowdin.com/project/universal-updater"><img src="https://badges.crowdin.net/universal-updater/localized.svg" alt="Translation status on Crowdin"></a>
 </p>
 
+Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as we do that for you. 
+
 ## Features
 
-Universal-Updater is a homebrew application for the Nintendo 3DS that is intended for easy set-up of other homebrew titles! Some features include:
-
-- Integration with the Universal DB store, the easiest way to download all your homebrew titles
-- A flexible and easily developable scripting system (with pre-made scripts included)
+- A store format with a concept similar to the Cydia Repositories
+   - Default is [Universal-DB](https://db.universal-team.net)
+   - Want to add your own? Go to settings, find "Select Unistore", hit the + icon and type the URL
+- Customization in sorting and display
+   - All sorting keys: "Title", "Author" & "Last Updated"
+   - Direction could be Ascending or Descending
+   - App display could be shown in either a Grid or Rows
 - Translations for multi-lingual users
-- Customizable interface colors
+   - To contribute to translations, join our [Crowdin](https://crwd.in/universal-updater)
+   - Request a new language on our [Discord Server](https://discord.gg/KDJCfGF)
 
 ## Compilation
 ### Setting up your enviromment
 
-To build Universal-Updater from source, you will need to setup a system with devkitARM, libctru, 3ds-curl and 3ds-libarchive. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S 3ds-dev 3ds-curl 3ds-libarchive`. You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
-
-### Cloning the repo
-
-To download the source you will need to clone it with submodules, this can be done by running
-```
-git clone --recursive https://github.com/Universal-Team/Universal-Updater.git
-```
-or if you've already cloned it running
-```
-git submodule update --init --recursive
-```
-to update all the submodules.
-
-### Compiling
-
-Simply run `make` in the Universal-Updater source directory.
+To build Universal-Updater from source, you will need to setup devkitARM with libctru, 3ds-curl and 3ds-libarchive. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S 3ds-dev 3ds-curl 3ds-libarchive`. You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH. Once you clone the repo (and its submodules), simply run `make` in the source code directory.
 
 ## Screenshots
 
-![](https://universal-team.net/images/universal-updater/script-browse-3.png)![](https://universal-team.net/images/universal-updater/script-browse-7.png)![](https://universal-team.net/images/universal-updater/scriptlist-selection.png)![](https://universal-team.net/images/universal-updater/mainMenu.png)
-
-## Translations
-
-Want to help to translate Universal-Updater? Then feel free to join us on Crowdin [here](https://crwd.in/universal-updater).
-Is it a new Language which isn't available in Universal-Updater? Then join our [Discord Server](https://discord.gg/KDJCfGF) and ask Evie to add the language to crowdin.
+![](https://cdn.discordapp.com/attachments/589882205556310076/771438686809227284/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771507228502917147/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771411115351605248/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771412640068272138/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771423854232207370/test.png)
 
 ## Credits
 
-- [dlbeer](https://github.com/dlbeer) for [quirc](https://github.com/dlbeer/quirc) which i changed to C++.
-- [FlagBrew](https://github.com/FlagBrew): For the QR Code Scanner code, which i reworked some bit.
-- [Icons8](https://icons8.com/): For the icons.
-- [PabloMK7](https://github.com/mariohackandglitch): For improving the Download code.
+- [StackZ](https://github.com/StackZ) - Lead developer, reworked quirc to C++
+- [Pk11](https://github.com/Epicpkmn11) - Mockup Designer, Website Maintainer
+- [NightScript](https://github.com/NightYoshi370) - Concept Creator & Planner
+- [dlbeer](https://github.com/dlbeer) - Original developer of [quirc](https://github.com/dlbeer/quirc)
+- [FlagBrew](https://github.com/FlagBrew): Original QR Code Scanner code
+- [Icons8](https://icons8.com/): Icon Designer
+- [PabloMK7](https://github.com/mariohackandglitch): Download Code Improvements
