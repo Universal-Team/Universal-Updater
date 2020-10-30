@@ -50,7 +50,7 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 		int size = archive_entry_size(entry);
 		if (size > 0) { /* Ignore folders. */
 			std::smatch match;
-			std::string entryName();
+			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
 				extractSize += size;
 				extractFilesCount++;
