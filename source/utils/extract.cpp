@@ -30,24 +30,42 @@
 #include <archive_entry.h>
 #include <regex>
 
-int filesExtracted = 0;
+int filesExtracted = 0, extractFilesCount = 0;
 std::string extractingFile = "";
 
 /* That are our File Progressbar variable. */
 u64 extractSize = 0, writeOffset = 0;
 
-Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath) {
+Result getExtractedSize(const std::string &archivePath, const std::string &wantedFile) {
 	extractSize = 0, writeOffset = 0, filesExtracted = 0;
 
 	archive *a = archive_read_new();
 	archive_entry *entry;
-	int flags;
 
-	/* Select which attributes we want to restore. */
-	flags = ARCHIVE_EXTRACT_TIME;
-	flags |= ARCHIVE_EXTRACT_PERM;
-	flags |= ARCHIVE_EXTRACT_ACL;
-	flags |= ARCHIVE_EXTRACT_FFLAGS;
+	archive_read_support_format_all(a);
+
+	if (archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) return EXTRACT_ERROR_OPENFILE;
+
+	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+		int size = archive_entry_size(entry);
+		if (size > 0) { /* Ignore folders. */
+			std::smatch match;
+			std::string entryName();
+			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
+				extractSize += size;
+				extractFilesCount++;
+			}
+		}
+	}
+
+	archive_read_close(a);
+	archive_read_free(a);
+	return EXTRACT_ERROR_NONE;
+}
+
+Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath) {
+	archive *a = archive_read_new();
+	archive_entry *entry;
 
 	a = archive_read_new();
 	archive_read_support_format_all(a);
@@ -69,8 +87,6 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				}
 
 				uint sizeLeft = archive_entry_size(entry);
-				extractSize = sizeLeft;
-				writeOffset = 0;
 
 				FILE *file = fopen(extractingFile.c_str(), "wb");
 				if (!file) return EXTRACT_ERROR_WRITEFILE;

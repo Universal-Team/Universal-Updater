@@ -68,7 +68,7 @@ static bool killThread = false;
 static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
 
-extern int filesExtracted;
+extern int filesExtracted, extractFilesCount;
 extern std::string extractingFile;
 char progressBarMsg[128] = "";
 bool showProgressBar = false;
@@ -477,7 +477,7 @@ void displayProgressBar() {
 
 			case ProgressBar::Extracting:
 				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
+				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
 				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;

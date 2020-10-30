@@ -219,6 +219,7 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
+	getExtractedSize(in, input);
 	extractArchive(in, input, out);
 	showProgressBar = false;
 	threadJoin(thread, U64_MAX);

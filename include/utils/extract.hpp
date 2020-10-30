@@ -39,6 +39,8 @@ enum ExtractError {
 	EXTRACT_ERROR_WRITEFILE,
 };
 
+Result getExtractedSize(const std::string &archivePath, const std::string &wantedFile);
+
 Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath);
 
 #endif
