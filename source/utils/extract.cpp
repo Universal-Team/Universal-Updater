@@ -25,7 +25,6 @@
 */
 
 #include "extract.hpp"
-#include "files.hpp"
 #include "scriptUtils.hpp"
 #include <archive.h>
 #include <archive_entry.h>
@@ -80,7 +79,12 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
 				extractingFile = outputPath + match.suffix().str();
 
-				makeDirs(outputPath.c_str());
+				/* make directories. */
+				int substrPos = 1;
+				while(extractingFile.find("/", substrPos)) {
+					mkdir(extractingFile.substr(0, substrPos).c_str(), 0777);
+					substrPos = extractingFile.find("/", substrPos) + 1;
+				}
 
 				uint sizeLeft = archive_entry_size(entry);
 
