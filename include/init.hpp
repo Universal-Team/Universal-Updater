@@ -30,15 +30,9 @@
 #include <3ds.h>
 
 namespace Init {
-	// Init, Mainloop & Exit.
 	Result Initialize();
 	Result MainLoop();
 	Result Exit();
-
-	// Sound / Music stuff.
-	void loadSoundEffects(void);
-	void playMusic(void);
-	void stopMusic(void);
-}
+};
 
 #endif

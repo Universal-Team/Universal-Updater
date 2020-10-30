@@ -27,24 +27,55 @@
 #ifndef _UNIVERSAL_UPDATER_GFX_HPP
 #define _UNIVERSAL_UPDATER_GFX_HPP
 
-#include "colorHelper.hpp"
-#include "gui.hpp"
+#include "common.hpp"
 #include "sprites.h"
+#include <citro2d.h>
+#include <string>
 
-extern std::unique_ptr<Config> config;
+/*
+	Define all used Colors, for easier changes.
+*/
+
+/* Standard Colors. */
+#define WHITE C2D_Color32(255, 255, 255, 255)
+#define BLACK C2D_Color32(0, 0, 0, 255)
+#define TRANSPARENT C2D_Color32(0, 0, 0, 0)
+#define DIM_COLOR C2D_Color32(0, 0, 0, 190)
+
+/* Bar, Text, BG Colors. */
+#define TEXT_COLOR WHITE
+#define BAR_COLOR C2D_Color32(50, 73, 98, 255)
+#define BAR_OUTL_COLOR C2D_Color32(25, 30, 53, 255)
+#define BG_COLOR C2D_Color32(38, 44, 77, 255)
+
+/* Progressbar Colors. */
+#define PROGRESSBAR_OUT_COLOR BLACK
+#define PROGRESSBAR_IN_COLOR WHITE
+
+/* Entry Colors. */
+#define ENTRY_BAR_COLOR BAR_COLOR
+#define ENTRY_BAR_OUTL_COLOR BAR_OUTL_COLOR
+
+/* Entry Box Colors. */
+#define BOX_INSIDE_COLOR C2D_Color32(49, 49, 49, 255)
+#define BOX_SELECTED_COLOR C2D_Color32(240, 0, 0, 255)
+#define BOX_UNSELECTED_COLOR BLACK
+
+/* Search Menu Colors. */
+#define SEARCH_BAR_COLOR C2D_Color32(51, 75, 102, 255)
+#define SEARCH_BAR_OUTL_COLOR BAR_OUTL_COLOR
+
+/* Sidebar Colors. */
+#define SIDEBAR_SELECTED_COLOR C2D_Color32(108, 130, 155, 255)
+#define SIDEBAR_UNSELECTED_COLOR C2D_Color32(77, 101, 128, 255)
 
 namespace GFX {
-	// Basic GUI.
 	void DrawTop(void);
-	void DrawBottom(void);
-	// Draw arrow.
-	void DrawArrow(int x, int y, float rotation = 0, int arrowSprite = 0);
-	// Draw Sprites.
-	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawSpriteBlend(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-
-	void DrawButton(int x, int y, std::string ButtonText = "", u32 color = config->buttonColor());
-	void TextFormatted(float x, float y, float size, const char *format, ...);
-}
+	void DrawBottom();
+	void DrawSprite(const int &img, const int &x, const int &y, const float &ScaleX = 1, const float &ScaleY = 1);
+	void drawBox(const float &xPos, const float &yPos, const float &width = 50, const float &height = 50, const bool &selected = false, const uint32_t &clr = BOX_INSIDE_COLOR);
+	void DrawButton(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const std::string &Text = "");
+	void DrawCheckbox(const float &xPos, const float &yPos, const bool &selected);
+};
 
 #endif

@@ -24,184 +24,140 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "config.hpp"
+#include "common.hpp"
+#include "download.hpp"
 #include "init.hpp"
-#include "gfx.hpp"
-#include "gui.hpp"
-#include "lang.hpp"
-#include "logging.hpp"
-#include "mainMenu.hpp"
-#include "screenCommon.hpp"
-#include "scriptlist.hpp"
-#include "startup.hpp"
-#include "sound.h"
-#include "unistore.hpp"
+#include "mainScreen.hpp"
 
-#include <3ds.h>
 #include <dirent.h>
 #include <unistd.h>
 
-bool exiting = false;
-bool dspFound = false;
+bool exiting = false, is3DSX = false;
 touchPosition touch;
-sound *bgm = NULL;
-bool songIsFound = false;
-bool UniStoreAutoboot = false;
-int AutobootWhat = 0; // 0 -> MainMenu ; 1 -> Store; 2 -> Script.
-bool changesMade = false;
-
-// Include all spritesheet's.
 C2D_SpriteSheet sprites;
-std::unique_ptr<Config> config;
+int fadeAlpha = 0;
+u32 old_time_limit, hDown = 0;
 
-// If button Position pressed -> Do something.
+/*
+	Set, if 3DSX or CIA.
+*/
+static void getCurrentUsage(){
+	u64 id;
+	APT_GetProgramID(&id);
+	is3DSX = (id != 0x0004000004391700);
+}
+
+/*
+	If button Position pressed -> Do something.
+
+	touchPosition touch: The TouchPosition variable.
+	Structs::ButtonPos button: The Button Struct.
+*/
 bool touching(touchPosition touch, Structs::ButtonPos button) {
-	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))
-		return true;
-	else
-		return false;
+	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h)) return true;
+	return false;
 }
 
-void Init::loadSoundEffects(void) {
-	if (dspFound) {
-		if (access(config->musicPath().c_str(), F_OK ) != -1) {
-			bgm = new sound(config->musicPath(), 1, true);
-			songIsFound = true;
-		}
-	}
-}
-
-void Init::playMusic(void) {
-	if (songIsFound) {
-		bgm->play();
-	}
-}
-
-void Init::stopMusic(void) {
-	if (songIsFound) {
-		bgm->stop();
-	}
-}
-
-
+/*
+	Initialize Universal-Updater.
+*/
 Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
-	amInit();
 	Gui::init();
+
 	cfguInit();
+	amInit();
 	acInit();
-	// Create Folder if missing.
+
+	APT_GetAppCpuTimeLimit(&old_time_limit);
+	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
+	getCurrentUsage();
+	aptSetSleepAllowed(false);
+
+	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
-	mkdir("sdmc:/3ds/Universal-Updater/scripts", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
-	
-	// We need to make sure, the file exist.
+
 	config = std::make_unique<Config>();
-
 	Lang::load(config->language());
-
-	if (config->screenFade()) {
-		fadein = true;
-		fadealpha = 255;
-	}
-
-	// In case it takes a bit longer to autoboot a script or so.
-	Msg::DisplayStartMSG();
-	if (config->logging()) {
-		Logging::createLogFile();
-	}
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 
-	AutobootWhat = config->autoboot();
 
-	if (!config->firstStartup()) {
-		if (AutobootWhat == 1) {
-			if (access(config->autobootFile().c_str(), F_OK) == 0) {
-				Gui::setScreen(std::make_unique<UniStore>(true, config->autobootFile()), false, true);
-			} else {
-				AutobootWhat = 0;
-				config->autoboot(0);
-				Gui::setScreen(std::make_unique<MainMenu>(), false, true);
-			}
-		} else if (AutobootWhat == 2) {
-			if (access(config->autobootFile().c_str(), F_OK) == 0) {
-				Gui::setScreen(std::make_unique<ScriptList>(), false, true);
-			} else {
-				AutobootWhat = 0;
-				config->autoboot(0);
-				Gui::setScreen(std::make_unique<MainMenu>(), false, true);
-			}
-		} else {
-			AutobootWhat = 0;
-			config->autoboot(0);
-			Gui::setScreen(std::make_unique<MainMenu>(), false, true);
-		}
+	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
+
+	/* Check here for updates. */
+	if (config->updatecheck()) {
+		if (IsUUUpdateAvailable()) UpdateAction();
 	}
 
-	if (config->firstStartup()) {
-		Gui::setScreen(std::make_unique<Startup>(AutobootWhat, config->autobootFile()), false, true);
-	}
+	if (exiting) return -1; // In case the update was successful.
 
-	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
-
- 	if ( access( "sdmc:/3ds/dspfirm.cdc", F_OK ) != -1 ) {
-		ndspInit();
-		dspFound = true;
-		loadSoundEffects();
-		playMusic();
-	}
-
+	Gui::setScreen(std::make_unique<MainScreen>(), false, false);
 	return 0;
 }
 
+/*
+	MainLoop of Universal-Updater.
+*/
 Result Init::MainLoop() {
-	// Initialize everything.
-	Initialize();
-	// Loop as long as the status is not exiting.
-	while (aptMainLoop()) {
+	bool fullExit = false;
+
+	if (Initialize() == -1) fullExit = true;
+	hidSetRepeatParameters(20, 10);
+
+	/* Loop as long as the status is not fullExit. */
+	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
 		u32 hHeld = hidKeysHeld();
-		u32 hDown = hidKeysDown();
+		hDown = hidKeysDown();
+		hRepeat = hidKeysDownRepeat();
 		hidTouchRead(&touch);
-		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(Top, BLACK);
-		C2D_TargetClear(Bottom, BLACK);
-		Gui::clearTextBufs();
-		Gui::DrawScreen(true);
-		Gui::ScreenLogic(hDown, hHeld, touch, true, true);
-		C3D_FrameEnd(0);
-		gspWaitForVBlank();
-		if (exiting) {
-			if (!fadeout)	break;
-		}
 
-		Gui::fadeEffects(16, 16, true);
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+
+		Gui::DrawScreen(false);
+		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
+		C3D_FrameEnd(0);
+
+		if (exiting) {
+			if (hDown & KEY_START) fullExit = true; // Make it optionally faster.
+
+			if (fadeAlpha < 255) {
+				fadeAlpha += 2;
+				if (fadeAlpha >= 255) {
+					fullExit = true;
+				}
+			}
+		}
 	}
-	// Exit all services and exit the app.
+
+	/* Exit all services and exit the app. */
 	Exit();
 	return 0;
 }
 
+/*
+	Exit Universal-Updater.
+*/
 Result Init::Exit() {
-	if (songIsFound) {
-		stopMusic();
-	}
-	delete bgm;
-	if (dspFound) {
-		ndspExit();
-	}
-
-	config->save();
-
 	Gui::exit();
 	Gui::unloadSheet(sprites);
+
 	gfxExit();
 	cfguExit();
+	config->save();
 	acExit();
 	amExit();
+
+    if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit); // Restore old limit.
+	aptSetSleepAllowed(true);
+
 	romfsExit();
 	return 0;
 }

@@ -37,125 +37,55 @@ public:
 	Config();
 	void save();
 	void initialize();
-	void addMissingThings();
 	void sysLang();
 
-	// Bar Color.
-	u32 barColor() { return this->v_barColor; }
-	void barColor(u32 v) { this->v_barColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Top BG Color.
-	u32 topBG() { return this->v_topBG; }
-	void topBG(u32 v) { this->v_topBG = v; if (!this->changesMade)	this->changesMade = true; }
-	// Bottom BG Color.
-	u32 bottomBG() { return this->v_bottomBG; }
-	void bottomBG(u32 v) { this->v_bottomBG = v; if (!this->changesMade)	this->changesMade = true; }
-	// Text Color.
-	u32 textColor() { return this->v_textColor; }
-	void textColor(u32 v) { this->v_textColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Button Color.
-	u32 buttonColor() { return this->v_buttonColor; }
-	void buttonColor(u32 v) { this->v_buttonColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Selected Color.
-	u32 selectedColor() { return this->v_selectedColor; }
-	void selectedColor(u32 v) { this->v_selectedColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Unselected Color.
-	u32 unselectedColor() { return this->v_unselectedColor; }
-	void unselectedColor(u32 v) { this->v_unselectedColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Script Path.
-	std::string scriptPath() { return this->v_scriptPath; }
-	void scriptPath(std::string v) { this->v_scriptPath = v; if (!this->changesMade)	this->changesMade = true; }
-	// Lang Path.
-	int langPath() { return this->v_langPath; }
-	void langPath(int v) { this->v_langPath = v; if (!this->changesMade)	this->changesMade = true; }
-	// View Mode.
-	int viewMode() { return this->v_viewMode; }
-	void viewMode(int v) { this->v_viewMode = v; if (!this->changesMade)	this->changesMade = true; }
-	// Progressbar Color.
-	u32 progressbarColor() { return this->v_progressbarColor; }
-	void progressbarColor(u32 v) { this->v_progressbarColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Music Path.
-	std::string musicPath() { return this->v_musicPath; }
-	void musicPath(std::string v) { this->v_musicPath = v; if (!this->changesMade)	this->changesMade = true; }
-	// Logging.
-	bool logging() { return this->v_logging; }
-	void logging(bool v) { this->v_logging = v; if (!this->changesMade)	this->changesMade = true; }
-	// Use bars.
-	bool useBars() { return this->v_useBars; }
-	void useBars(bool v) { this->v_useBars = v; if (!this->changesMade)	this->changesMade = true; }
-	// Autoboot.
-	int autoboot() { return this->v_autoboot; }
-	void autoboot(int v) { this->v_autoboot = v; if (!this->changesMade)	this->changesMade = true; }
-	// Store Path.
-	std::string storePath() { return this->v_storePath; }
-	void storePath(std::string v) { this->v_storePath = v; if (!this->changesMade)	this->changesMade = true; }
-	// Autoboto file.
-	std::string autobootFile() { return this->v_autobootFile; }
-	void autobootFile(std::string v) { this->v_autobootFile = v; if (!this->changesMade)	this->changesMade = true; }
-	// Outdated Script Color.
-	u32 outdatedColor() { return this->v_outdatedColor; }
-	void outdatedColor(u32 v) { this->v_outdatedColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Uptodate Script Color.
-	u32 uptodateColor() { return this->v_uptodateColor; }
-	void uptodateColor(u32 v) { this->v_uptodateColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Not found Script Color.
-	u32 notfoundColor() { return this->v_notfoundColor; }
-	void notfoundColor(u32 v) { this->v_notfoundColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Future Script Color.
-	u32 futureColor() { return this->v_futureColor; }
-	void futureColor(u32 v) { this->v_futureColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Keydelay.
-	int keyDelay() { return this->v_keyDelay; }
-	void keyDelay(int v) { this->v_keyDelay = v; if (!this->changesMade)	this->changesMade = true; }
-	// Screen Fade.
-	bool screenFade() { return this->v_screenFade; }
-	void screenFade(bool v) { this->v_screenFade = v; if (!this->changesMade)	this->changesMade = true; }
-	// Progressbar Display.
-	bool progressDisplay() { return this->v_progressDisplay; }
-	void progressDisplay(bool v) { this->v_progressDisplay = v; if (!this->changesMade)	this->changesMade = true; }
-	// Language.
-	std::string language() { return this->v_language; }
-	void language(std::string v) { this->v_language = v; if (!this->changesMade)	this->changesMade = true; }
-	// First startup.
-	bool firstStartup() { return this->v_firstStartup; }
-	void firstStartup(bool v) { this->v_firstStartup = v; if (!this->changesMade)	this->changesMade = true; }
-	// Use ScriptColors.
-	bool useScriptColor() { return this->v_useScriptColor; }
-	void useScriptColor(bool v) { this->v_useScriptColor = v; if (!this->changesMade)	this->changesMade = true; }
-	// Show Downloadspeed.
-	bool showSpeed() { return this->v_showSpeed; }
-	void showSpeed(bool v) { this->v_showSpeed = v; if (!this->changesMade)	this->changesMade = true; }
-	// Citra stuff.
-	bool citra() { return this->v_citra; }
-	void citra(bool v) { this->v_citra = v; if (!this->changesMade)	this->changesMade = true; }
-	// Variables.
-	std::string _3dsxpath() { return this->v_3dsx_install_path; }
-	void _3dsxpath(std::string v) { this->v_3dsx_install_path = v; if (!this->changesMade)	this->changesMade = true; }
-	std::string ndspath() { return this->v_nds_install_path; }
-	void ndspath(std::string v) { this->v_nds_install_path = v; if (!this->changesMade)	this->changesMade = true; }
-	std::string archivepath() { return this->v_archive_path; }
-	void archivepath(std::string v) { this->v_archive_path = v; if (!this->changesMade)	this->changesMade = true; }
-	
-	// Mainly helper.
+	/* Language. */
+	std::string language() const { return this->v_language; };
+	void language(const std::string &v) { this->v_language = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Last Store. */
+	std::string lastStore() const { return this->v_lastStore; };
+	void lastStore(const std::string &v) { this->v_lastStore = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Using Top List. */
+	bool list() const { return this->v_list; };
+	void list(bool v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Auto update on boot. */
+	bool autoupdate() const { return this->v_autoUpdate; };
+	void autoupdate(bool v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string _3dsxPath() const { return this->v_3dsxPath; };
+	void _3dsxPath(const std::string &v) { this->v_3dsxPath = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string ndsPath() const { return this->v_ndsPath; };
+	void ndsPath(const std::string &v) { this->v_ndsPath = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string archPath() const { return this->v_archivePath; };
+	void archPath(const std::string &v) { this->v_archivePath = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Fetching old metadata. */
+	bool metadata() const { return this->v_metadata; };
+	void metadata(bool v) { this->v_metadata = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* U-U Update check on startup. */
+	bool updatecheck() const { return this->v_updateCheck; };
+	void updatecheck(bool v) { this->v_updateCheck = v; if (!this->changesMade) this->changesMade = true; };
+private:
+	/* Mainly helper. */
 	bool getBool(const std::string &key);
 	void setBool(const std::string &key, bool v);
 	int getInt(const std::string &key);
 	void setInt(const std::string &key, int v);
 	std::string getString(const std::string &key);
 	void setString(const std::string &key, const std::string &v);
-private:
-	nlohmann::json json; // Our private JSON file.
-	bool changesMade = false, initialChanges = false;
-	int configVersion = 2;
 
-	// Color variables and more.
-	u32 v_barColor, v_topBG, v_bottomBG, v_textColor, v_buttonColor, v_selectedColor, v_unselectedColor, v_progressbarColor,
-		v_outdatedColor, v_uptodateColor, v_notfoundColor, v_futureColor;
-	std::string v_scriptPath, v_musicPath, v_storePath, v_autobootFile, v_language;
-	int v_langPath, v_viewMode, v_autoboot, v_keyDelay;
-	bool v_logging, v_useBars, v_screenFade, v_progressDisplay, v_firstStartup, v_useScriptColor, v_showSpeed, v_citra;
+	nlohmann::json json;
+	bool changesMade = false;
 
-	// Some variables.
-	std::string v_3dsx_install_path, v_nds_install_path, v_archive_path;
+	std::string v_language = "en", v_lastStore = "universal-db-beta.unistore",
+				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
+	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true;
 };
 
 #endif

@@ -28,9 +28,15 @@
 #define _UNIVERSAL_UPDATER_OVERLAY_HPP
 
 #include "common.hpp"
+#include "store.hpp"
+#include "storeEntry.hpp"
+#include <3ds.h>
 
 namespace Overlays {
-	u32 SelectRGB(u32 oldColor);
-}
+	void SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
+	void SelectLanguage();
+	void ShowCredits();
+	std::string SelectDir(const std::string &oldDir, const std::string &msg);
+};
 
 #endif

@@ -27,85 +27,84 @@
 #include "common.hpp"
 #include "gfx.hpp"
 
-extern std::unique_ptr<Config> config;
-extern bool isScriptSelected;
-extern u32 barColor, bgTopColor, bgBottomColor, TextColor;
-
+/*
+	Draw the base top screen.
+*/
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, isScriptSelected ? barColor : config->barColor());
-	Gui::Draw_Rect(0, 25, 400, 190, isScriptSelected ? bgTopColor : config->topBG());
-	Gui::Draw_Rect(0, 215, 400, 25, isScriptSelected ? barColor : config->barColor());
-	if (config->useBars()) {
-		DrawSprite(sprites_top_screen_top_idx, 0, 0);
-		DrawSprite(sprites_top_screen_bot_idx, 0, 215);
-	}
+	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 25, 400, 215, BG_COLOR);
+	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
 }
 
-void GFX::DrawBottom(void) {
+/*
+	Draw the base bottom screen.
+*/
+void GFX::DrawBottom() {
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 25, isScriptSelected ? barColor : config->barColor());
-	Gui::Draw_Rect(0, 25, 320, 190, isScriptSelected ? bgBottomColor : config->bottomBG());
-	Gui::Draw_Rect(0, 215, 320, 25, isScriptSelected ? barColor : config->barColor());
-	if (config->useBars()) {
-		DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
-		DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
-	}
+	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
+}
+
+/*
+	Draw the box.
+
+	const float &xPos: Const Reference to the X-Position where to draw the box.
+	const float &yPos: Const Reference to the Y-Position where to draw the box.
+	const float &width: Const Reference to the Width of the button.
+	const float &height: Const Reference to the Height of the button.
+	const bool &selected: Const Reference, if outline is selected (Red) or not (Black).
+	const uint32_t &clr: (Optional) The color of the inside of the box.
+*/
+void GFX::drawBox(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const uint32_t &clr) {
+	static constexpr int w	= 1;
+	const uint32_t outlineColor = selected ? BOX_SELECTED_COLOR : BOX_UNSELECTED_COLOR; // Get Selected | Unselected color.
+
+	Gui::Draw_Rect(xPos, yPos, width, height, clr); // Draw middle BG.
+
+	Gui::Draw_Rect(xPos, yPos, width, w, outlineColor); // Top.
+	Gui::Draw_Rect(xPos, yPos + w, w, height - 2 * w, outlineColor); // Left.
+	Gui::Draw_Rect(xPos + width - w, yPos + w, w, height - 2 * w, outlineColor); // Right.
+	Gui::Draw_Rect(xPos, yPos + height - w, width, w, outlineColor); // Bottom.
 }
 
 extern C2D_SpriteSheet sprites;
 
-void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
+/*
+	Draw a Sprite of the sprites SpriteSheet.
+
+	const int &img: Const Reference to the Image index.
+	const int &x: Const Reference to the X-Position where to draw.
+	const int &y: Const Reference to the Y-Position where to draw.
+	const float &ScaleX: (Optional) Const Reference to the X-Scale of the Sprite. (1 by default)
+	const float &ScaleY: (Optional) Const Reference to the Y-Scale of the Sprite. (1 by default)
+*/
+void GFX::DrawSprite(const int &img, const int &x, const int &y, const float &ScaleX, const float &ScaleY) {
 	Gui::DrawSprite(sprites, img, x, y, ScaleX, ScaleY);
 }
 
-void GFX::DrawSpriteBlend(int img, int x, int y, float ScaleX, float ScaleY) {
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);	
+/*
+	Draw a button (actually the box) with a centered string in it.
 
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, img), x, y, 0.5f, &tint, ScaleX, ScaleY);
+	const float &xPos: Const Reference to the X-Position where to draw the box.
+	const float &yPos: Const Reference to the Y-Position where to draw the box.
+	const float &width: Const Reference to the Width of the button.
+	const float &height: Const Reference to the Height of the button.
+	const bool &selected: Const Reference, if outline is selected (Red) or not (Black).
+	const std::string &Text: Const Reference of the Text which should be drawn.
+*/
+void GFX::DrawButton(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const std::string &Text) {
+	drawBox(xPos, yPos, width, height, selected);
+
+	Gui::DrawStringCentered(xPos - 160 + (width / 2), yPos + (height / 2) - (Gui::GetStringHeight(0.4f, Text) / 2), 0.4f, TEXT_COLOR, Text, width - 4, height - 4);
 }
 
-void GFX::DrawArrow(int x, int y, float rotation, int arrowSprite) {
-	C2D_Sprite sprite;
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, isScriptSelected ? TextColor : config->textColor(), 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, isScriptSelected ? TextColor : config->textColor(), 0.5);
+/*
+	Draw the checkbox.
 
-	if (arrowSprite == 0) {
-		C2D_SpriteFromSheet(&sprite, sprites, sprites_arrow_idx);
-	} else {
-		C2D_SpriteFromSheet(&sprite, sprites, sprites_side_arrow_idx);
-	}
-	
-	C2D_SpriteRotateDegrees(&sprite, rotation);
-	C2D_SpriteSetPos(&sprite, x, y);
-	C2D_SpriteSetDepth(&sprite, 0.5);
-	C2D_DrawSpriteTinted(&sprite, &tint);
-}
-
-// Draw a Button and draw Text on it.
-void GFX::DrawButton(int x, int y, std::string ButtonText, u32 color) {
-	C2D_ImageTint tint;
-	C2D_SetImageTint(&tint, C2D_TopLeft, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_TopRight, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_BotLeft, color, 0.5);
-	C2D_SetImageTint(&tint, C2D_BotRight, color, 0.5);
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_button_idx), x, y, 0.5f, &tint);
-	Gui::DrawStringCentered(- (158/2) + x, y + (61/2) - (Gui::GetStringHeight(0.6f, ButtonText) / 2), 0.6f, isScriptSelected ? TextColor : config->textColor(), ButtonText, 145, 30);
-}
-
-void GFX::TextFormatted(float x, float y, float size, const char *format, ...) {
-	char str[512];
-	va_list va;
-	va_start(va, format);
-	vsnprintf(str, 512, format, va);
-	va_end(va);
-	char * Text = strtok(str, "\n");
-	Gui::DrawStringCentered(x, y, size, isScriptSelected ? TextColor : config->textColor(), Text);
+	const float &xPos: Const Reference to the X-Position where to draw the box.
+	const float &yPos: Const Reference to the Y-Position where to draw the box.
+	const bool &selected: Const Reference, checked or not.
+*/
+void GFX::DrawCheckbox(const float &xPos, const float &yPos, const bool &selected) {
+	GFX::DrawSprite((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos);
 }

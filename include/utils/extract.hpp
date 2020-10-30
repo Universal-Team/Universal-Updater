@@ -39,6 +39,6 @@ enum ExtractError {
 	EXTRACT_ERROR_WRITEFILE,
 };
 
-Result extractArchive(std::string archivePath, std::string wantedFile, std::string outputPath);
+Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath);
 
 #endif

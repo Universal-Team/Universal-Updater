@@ -25,8 +25,12 @@
 */
 
 #include "init.hpp"
+#include <string>
 
-int main() {
-	Init::MainLoop(); // Init::MainLoop() has the whole logic already. ;P
-	return 0;
+std::string _3dsxPath = "";
+
+int main(int argc, char *argv[]) {
+	if (argc > 0) _3dsxPath = argv[0];
+
+	return Init::MainLoop();
 }

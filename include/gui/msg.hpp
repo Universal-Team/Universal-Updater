@@ -25,15 +25,15 @@
 */
 
 #ifndef _UNIVERSAL_UPDATER_MSG_HPP
-#define UNIVERSAL_UPDATER_MSG_HPP
+#define _UNIVERSAL_UPDATER_MSG_HPP
 
 #include <string>
 
 namespace Msg {
-	void DisplayMsg(std::string text);
-	void DisplayWarnMsg(std::string Text);
-	bool promptMsg(std::string promptMsg);
-	void DisplayStartMSG();
-}
+	void DisplayMsg(const std::string &Text);
+	void DisplayWarnMsg(const std::string &Text);
+	bool promptMsg(const std::string &promptMsg);
+	void waitMsg(const std::string &msg);
+};
 
 #endif

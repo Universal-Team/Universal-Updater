@@ -32,25 +32,34 @@
 #include <sys/stat.h>
 #include <vector>
 
-using namespace std;
-
 struct DirEntry {
 	std::string name;
 	std::string path;
 	bool isDirectory;
-	off_t size;
 };
 
-bool nameEndsWith(const std::string& name, const std::vector<std::string> extensionList);
-void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<std::string> extensionList);
-void getDirectoryContents(std::vector<DirEntry>& dirContents);
+/*
+	UniStore Info struct.
+*/
+struct UniStoreInfo {
+	std::string Title;
+	std::string Author;
+	std::string URL;
+	std::string FileName;
+	std::string Description;
+	int Version;
+	int Revision;
+	int StoreSize;
+};
+
+bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList);
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
+void getDirectoryContents(std::vector<DirEntry> &dirContents);
 std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList);
 
-bool returnIfExist(const std::string &path, const std::vector<std::string> &extensionList);
+std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path);
 
-std::string selectFilePath(std::string selectText, std::string initialPath, const std::vector<std::string> &extensionList, int selectionMode = 1);
-
-void dirCopy(DirEntry* entry, int i, const char *destinationPath, const char *sourcePath);
+void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePath);
 int fcopy(const char *sourcePath, const char *destinationPath);
 
 #endif
