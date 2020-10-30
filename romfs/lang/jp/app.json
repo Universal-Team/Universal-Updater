@@ -74,7 +74,7 @@
 	"TITLE": "タイトル",
 	"TOP_STYLE": "上スタイル",
 	"UNISTORE_INVALID_ERROR": "このUniStoreは無効であり、\nUniversal-Updaterで読み込めません。\n多分、構文エラーがないか確認しますか？",
-	"UNISTORE_TOO_NEW": "Universal-Updaterのバージョンはこの\nUniStoreを使用するには古すぎます。\n最新のバージョンに更新してください。",
+	"UNISTORE_TOO_NEW": "Your version of Universal-Updater is\ntoo old to use this UniStore.\nPlease update to the latest version.",
 	"UNISTORE_TOO_OLD": "このUniStoreは古く、このバージョンの\nUniversal-Updaterでは使用できません。\n作成者に更新しますを依頼してください。",
 	"UNSUPPORTED_UNISTORE_VERSION": "このUniStoreのバージョンはサポートされていません。",
 	"UPDATE_AVAILABLE": "更新があります！",
