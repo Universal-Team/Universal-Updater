@@ -13,7 +13,7 @@
 	<a title="Crowdin" target="_blank" href="https://crowdin.com/project/universal-updater"><img src="https://badges.crowdin.net/universal-updater/localized.svg" alt="Translation status on Crowdin"></a>
 </p>
 
-Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as we do that for you. 
+Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as we do that for you.
 
 ## Features
 
@@ -35,7 +35,7 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 ## Screenshots
 
-![](https://cdn.discordapp.com/attachments/589882205556310076/771438686809227284/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771507228502917147/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771411115351605248/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771412640068272138/test.png)![](https://cdn.discordapp.com/attachments/589882205556310076/771423854232207370/test.png)
+![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/Credits.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySelection.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DownloadList.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/EntryInfo.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/LanguageSelection.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ListStyle.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/MarkMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SearchMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SettingsMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SortMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/StoreSelection.png)
 
 ## Credits
 
