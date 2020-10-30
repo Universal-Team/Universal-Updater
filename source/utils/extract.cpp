@@ -37,7 +37,7 @@ std::string extractingFile = "";
 u64 extractSize = 0, writeOffset = 0;
 
 Result getExtractedSize(const std::string &archivePath, const std::string &wantedFile) {
-	extractSize = 0, writeOffset = 0, filesExtracted = 0;
+	extractSize = 0, writeOffset = 0, filesExtracted = 0, extractFilesCount = 0;
 
 	archive *a = archive_read_new();
 	archive_entry *entry;
@@ -80,10 +80,13 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				extractingFile = outputPath + match.suffix().str();
 
 				/* make directories. */
-				int substrPos = 1;
-				while(extractingFile.find("/", substrPos)) {
-					mkdir(extractingFile.substr(0, substrPos).c_str(), 0777);
-					substrPos = extractingFile.find("/", substrPos) + 1;
+				for (char *slashpos = strchr(extractingFile.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
+					char bak = *(slashpos);
+					*(slashpos) = '\0';
+
+					mkdir(extractingFile.c_str(), 0777);
+
+					*(slashpos) = bak;
 				}
 
 				uint sizeLeft = archive_entry_size(entry);
