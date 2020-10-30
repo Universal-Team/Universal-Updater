@@ -80,11 +80,11 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	int &currentMode: Const Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
+	bool &fetch: Reference to fetch.
+	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode) {
+void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (store) { // Ensure, store is not a nullptr.
-		u32 hRepeat = hidKeysDownRepeat();
-
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetEntry() < (int)entries.size() - 1) store->SetEntry(store->GetEntry() + 1);
 			else store->SetEntry(0);
@@ -101,9 +101,12 @@ void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 
 		if (hRepeat & KEY_UP) {
 			if (store->GetEntry() > 0) store->SetEntry(store->GetEntry() - 1);
+			else store->SetEntry(entries.size() - 1);
 		}
 
 		if (hDown & KEY_A) {
+			fetch = true;
+			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;
 		}

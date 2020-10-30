@@ -79,42 +79,47 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
 	std::unique_ptr<Meta> &meta: Reference to the Meta, to apply the updates stuff.
 	const int &lastMode: Const Reference to the last mode.
+	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 */
-void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode) {
+void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay) {
 	if (store && entry) { // Ensure, store & entry is not a nullptr.
-		u32 hRepeat = hidKeysDownRepeat();
+		if (smallDelay > 0) {
+			smallDelay--;
+		}
 
 		if (hRepeat & KEY_DOWN) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
 			if (store->GetDownloadIndex() < (int)entries.size() - 1) store->SetDownloadIndex(store->GetDownloadIndex() + 1);
+			else store->SetDownloadIndex(0);
 		}
 
 		if (hRepeat & KEY_UP) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
 			if (store->GetDownloadIndex() > 0) store->SetDownloadIndex(store->GetDownloadIndex() - 1);
+			else store->SetDownloadIndex(entries.size() - 1);
 		}
 
 
 		if (hRepeat & KEY_RIGHT) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			if (store->GetDownloadIndex() + 8 < (int)entries.size()-1) store->SetDownloadIndex(store->GetDownloadIndex() + 8);
+			if (store->GetDownloadIndex() + DOWNLOAD_ENTRIES < (int)entries.size()-1) store->SetDownloadIndex(store->GetDownloadIndex() + DOWNLOAD_ENTRIES);
 			else store->SetDownloadIndex(entries.size()-1);
 		}
 
 		if (hRepeat & KEY_LEFT) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			if (store->GetDownloadIndex() - 8 > 0) store->SetDownloadIndex(store->GetDownloadIndex() - 8);
+			if (store->GetDownloadIndex() - DOWNLOAD_ENTRIES > 0) store->SetDownloadIndex(store->GetDownloadIndex() - DOWNLOAD_ENTRIES);
 			else store->SetDownloadIndex(0);
 		}
 
-		if (hDown & KEY_TOUCH) {
+		if (smallDelay == 0 && hDown & KEY_TOUCH) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + store->GetDownloadSIndex() < (int)entries.size()) {
 						const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + store->GetDownloadSIndex()];
@@ -129,7 +134,7 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 			}
 		}
 
-		if (hDown & KEY_A) {
+		if (smallDelay == 0 && hDown & KEY_A) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
 			const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()];
@@ -144,6 +149,6 @@ void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const
 
 		/* Scroll Handle. */
 		if (store->GetDownloadIndex() < store->GetDownloadSIndex()) store->SetDownloadSIndex(store->GetDownloadIndex());
-		else if (store->GetDownloadIndex() > store->GetDownloadSIndex() + 8 - 1) store->SetDownloadSIndex(store->GetDownloadIndex() - 8 + 1);
+		else if (store->GetDownloadIndex() > store->GetDownloadSIndex() + DOWNLOAD_ENTRIES - 1) store->SetDownloadSIndex(store->GetDownloadIndex() - DOWNLOAD_ENTRIES + 1);
 	}
 }

@@ -30,6 +30,7 @@
 #include <unistd.h>
 
 extern int fadeAlpha;
+extern u32 hRepeat;
 
 /*
 	MainScreen Constructor.
@@ -114,10 +115,10 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (!this->showMarks) {
 		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
-			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode);
+			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay);
 		}
 
-		StoreUtils::SideMenuHandle(hDown, hHeld, touch, this->storeMode, this->fetchDown);
+		StoreUtils::SideMenuHandle(hDown, touch, this->storeMode, this->fetchDown);
 
 		/* Fetch Download list. */
 		if (this->fetchDown) {
@@ -141,7 +142,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 1:
-				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode);
+				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode, this->smallDelay);
 				break;
 
 			case 2:

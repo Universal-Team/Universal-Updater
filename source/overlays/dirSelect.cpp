@@ -113,10 +113,12 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		if (dirContents.size() > 0) {
 			if (hRepeat & KEY_DOWN) {
 				if (selection < (int)dirContents.size() - 1) selection++;
+				else selection = 0;
 			}
 
 			if (hRepeat & KEY_UP) {
 				if (selection > 0) selection--;
+				else selection = dirContents.size() - 1;
 			}
 
 			if (hRepeat & KEY_RIGHT) {
@@ -131,13 +133,10 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 			if (hidKeysDown() & KEY_A) {
 				if (dirContents[selection].isDirectory) {
-
 					chdir(dirContents[selection].name.c_str());
-
 					char path[PATH_MAX];
 					getcwd(path, PATH_MAX);
 					currentPath = path;
-
 					dirChanged = true;
 				}
 			}
@@ -174,8 +173,10 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
 
-			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) return "";
-			else {
+			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
+				return "";
+
+			} else {
 				chdir("..");
 				getcwd(path, PATH_MAX);
 				currentPath = path;

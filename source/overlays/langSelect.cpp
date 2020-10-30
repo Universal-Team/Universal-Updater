@@ -78,6 +78,12 @@ void Overlays::SelectLanguage() {
 
 		if (hRepeat & KEY_DOWN) {
 			if (selection < (int)languages.size() - 1) selection++;
+			else selection = 0;
+		}
+
+		if (hRepeat & KEY_UP) {
+			if (selection > 0) selection--;
+			else selection = languages.size() - 1;
 		}
 
 		if (hRepeat & KEY_RIGHT) {
@@ -88,10 +94,6 @@ void Overlays::SelectLanguage() {
 		if (hRepeat & KEY_LEFT) {
 			if (selection - 8 > 0) selection -= 8;
 			else selection = 0;
-		}
-
-		if (hRepeat & KEY_UP) {
-			if (selection > 0) selection--;
 		}
 
 		if (hidKeysDown() & KEY_A) {

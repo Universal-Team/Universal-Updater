@@ -49,11 +49,11 @@ public:
 
 	/* Using Top List. */
 	bool list() const { return this->v_list; };
-	void list(const bool &v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
+	void list(bool v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Auto update on boot. */
 	bool autoupdate() const { return this->v_autoUpdate; };
-	void autoupdate(const bool &v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
+	void autoupdate(bool v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
 
 	std::string _3dsxPath() const { return this->v_3dsxPath; };
 	void _3dsxPath(const std::string &v) { this->v_3dsxPath = v; if (!this->changesMade) this->changesMade = true; };
@@ -63,6 +63,14 @@ public:
 
 	std::string archPath() const { return this->v_archivePath; };
 	void archPath(const std::string &v) { this->v_archivePath = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Fetching old metadata. */
+	bool metadata() const { return this->v_metadata; };
+	void metadata(bool v) { this->v_metadata = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* U-U Update check on startup. */
+	bool updatecheck() const { return this->v_updateCheck; };
+	void updatecheck(bool v) { this->v_updateCheck = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -77,7 +85,7 @@ private:
 
 	std::string v_language = "en", v_lastStore = "universal-db-beta.unistore",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
-	bool v_list = false, v_autoUpdate = true;
+	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true;
 };
 
 #endif

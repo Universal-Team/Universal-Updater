@@ -27,7 +27,6 @@
 #include "fileBrowse.hpp"
 #include "json.hpp"
 #include "structs.hpp"
-
 #include <3ds.h>
 #include <cstring>
 #include <functional>
@@ -111,7 +110,7 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	const std::string &fieName: Const Reference to the filename, without path.
 */
 UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
-	UniStoreInfo Temp = { "", "", "", fileName, "", 0, -1, -1 }; // Title, Author, URL, FileName, Desc, Version, Revision, Entries.
+	UniStoreInfo Temp = { "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, FileName, Desc, Version, Revision, Entries.
 	nlohmann::json JSON = nullptr;
 
 	FILE *temp = fopen(file.c_str(), "r");
@@ -159,11 +158,13 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	std::vector<DirEntry> dirContents;
 
 	chdir(path.c_str());
-
 	getDirectoryContents(dirContents, { "unistore" });
 
 	for(uint i = 0; i < dirContents.size(); i++) {
-		info.push_back( GetInfo(path + dirContents[i].name, dirContents[i].name) );
+		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
+		if ((path + dirContents[i].name).find(".unistore") != std::string::npos) {
+			info.push_back( GetInfo(path + dirContents[i].name, dirContents[i].name) );
+		}
 	}
 
 	return info;

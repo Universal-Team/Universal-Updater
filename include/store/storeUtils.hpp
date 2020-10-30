@@ -41,11 +41,11 @@ enum class SortType : uint8_t {
 namespace StoreUtils {
 	/* Grid. */
 	void DrawGrid(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
-	void GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode);
+	void GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
 
 	/* Top List. */
 	void DrawList(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
-	void ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode);
+	void ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
@@ -53,11 +53,11 @@ namespace StoreUtils {
 
 	/* Side Menu. */
 	void DrawSideMenu(const int &currentMenu);
-	void SideMenuHandle(u32 hDown, u32 hHeld, touchPosition touch, int &currentMenu, bool &fetch);
+	void SideMenuHandle(u32 hDown, touchPosition touch, int &currentMenu, bool &fetch);
 
 	/* Download Entries. */
 	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, const bool &fetch);
-	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode);
+	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay);
 
 	/* Search + Favorite Menu. */
 	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks, const bool &updateFilter);

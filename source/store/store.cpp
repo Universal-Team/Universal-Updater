@@ -29,7 +29,6 @@
 #include "gui.hpp"
 #include "scriptUtils.hpp"
 #include "store.hpp"
-
 #include <unistd.h>
 
 extern C2D_SpriteSheet sprites;
@@ -75,11 +74,18 @@ void Store::update(const std::string &file) {
 			if (checkWifiStatus()) { // Only do, if WiFi available.
 				if (this->storeJson["storeInfo"].contains("url") && this->storeJson["storeInfo"]["url"].is_string()) {
 					if (this->storeJson["storeInfo"].contains("file") && this->storeJson["storeInfo"]["file"].is_string()) {
-						const std::string URL = this->storeJson["storeInfo"]["url"];
 
-						if (URL != "") {
-							std::string tmp = "";
-							doSheet = DownloadUniStore(URL, rev, tmp);
+						const std::string fl = this->storeJson["storeInfo"]["file"];
+						if (!(fl.find("/") != std::string::npos)) {
+							const std::string URL = this->storeJson["storeInfo"]["url"];
+
+							if (URL != "") {
+								std::string tmp = "";
+								doSheet = DownloadUniStore(URL, rev, tmp);
+							}
+
+						} else {
+							Msg::waitMsg(Lang::get("FILE_SLASH"));
 						}
 					}
 				}
@@ -93,10 +99,16 @@ void Store::update(const std::string &file) {
 
 							if (locs.size() == sht.size()) {
 								for (int i = 0; i < (int)sht.size(); i++) {
-									char msg[150];
-									snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-									Msg::DisplayMsg(msg);
-									DownloadSpriteSheet(locs[i], sht[i]);
+									if (!(sht[i].find("/") != std::string::npos)) {
+										char msg[150];
+										snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+										Msg::DisplayMsg(msg);
+										DownloadSpriteSheet(locs[i], sht[i]);
+
+									} else {
+										Msg::waitMsg(Lang::get("SHEET_SLASH"));
+										i++;
+									}
 								}
 							}
 						}
@@ -106,8 +118,14 @@ void Store::update(const std::string &file) {
 						if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_string()) {
 							const std::string fl = this->storeJson["storeInfo"]["sheetURL"];
 							const std::string fl2 = this->storeJson["storeInfo"]["sheet"];
-							Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
-							DownloadSpriteSheet(fl, fl2);
+
+							if (!(fl2.find("/") != std::string::npos)) {
+								Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
+								DownloadSpriteSheet(fl, fl2);
+
+							} else {
+								Msg::waitMsg(Lang::get("SHEET_SLASH"));
+							}
 						}
 					}
 				}
@@ -162,8 +180,17 @@ void Store::loadSheets() {
 			for (int i = 0; i < (int)sheetLocs.size(); i++) {
 				this->sheets.push_back({ });
 
-				if (access((std::string(_STORE_PATH) + sheetLocs[i]).c_str(), F_OK) == 0) {
-					this->sheets[i] = C2D_SpriteSheetLoad((std::string(_STORE_PATH) + sheetLocs[i]).c_str());
+				if (sheetLocs[i] != "") {
+					if (!(sheetLocs[i].find("/") != std::string::npos)) {
+						if (access((std::string(_STORE_PATH) + sheetLocs[i]).c_str(), F_OK) == 0) {
+
+							char msg[150];
+							snprintf(msg, sizeof(msg), Lang::get("LOADING_SPRITESHEET").c_str(), i + 1, sheetLocs.size());
+							Msg::DisplayMsg(msg);
+
+							this->sheets[i] = C2D_SpriteSheetLoad((std::string(_STORE_PATH) + sheetLocs[i]).c_str());
+						}
+					}
 				}
 			}
 		}
@@ -182,7 +209,16 @@ void Store::LoadFromFile(const std::string &file) {
 	fclose(in);
 
 	/* Check, if valid. */
-	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) this->valid = true;
+	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) {
+		if (this->storeJson["storeInfo"].contains("version") && this->storeJson["storeInfo"]["version"].is_number()) {
+			if (this->storeJson["storeInfo"]["version"] < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+			else if (this->storeJson["storeInfo"]["version"] > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+			this->valid = this->storeJson["storeInfo"]["version"] == 3;
+		}
+
+	} else {
+		Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+	}
 }
 
 /*

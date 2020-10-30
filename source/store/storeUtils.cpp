@@ -26,8 +26,6 @@
 
 #include "storeUtils.hpp"
 
-
-
 /*
 	Compare Title.
 

@@ -30,7 +30,7 @@
 #include "json.hpp"
 #include "lang.hpp"
 #include "scriptUtils.hpp"
-#include "stringUtils.hpp"
+#include "stringutils.hpp"
 
 #include <3ds.h>
 #include <curl/curl.h>
@@ -500,7 +500,7 @@ void displayProgressBar() {
 	const int &revCurrent: Const Reference to the current Revision. (-1 if unused)
 */
 bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
-	Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
+	Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -582,7 +582,7 @@ bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
 bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload, const bool &isUDB) {
 	if (isUDB) Msg::DisplayMsg(Lang::get("DOWNLOADING_UNIVERSAL_DB"));
 	else {
-		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UPDATES"));
+		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
 		else Msg::DisplayMsg((isDownload ? Lang::get("DOWNLOADING_UNISTORE") : Lang::get("UPDATING_UNISTORE")));
 	}
 
@@ -632,50 +632,79 @@ bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
 		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
-			if (currentRev > -1) {
+			/* Ensure, version == 3. */
+			if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
+				if (parsedAPI["storeInfo"]["version"] == 3) {
+					if (currentRev > -1) {
 
-				if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-					const int rev = parsedAPI["storeInfo"]["revision"];
+						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
+							const int rev = parsedAPI["storeInfo"]["revision"];
 
-					if (rev > currentRev) {
-						Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
+							if (rev > currentRev) {
+								Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
+								if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+									fl = parsedAPI["storeInfo"]["file"];
+
+									/* Make sure it's not "/", otherwise it breaks. */
+									if (!(fl.find("/") != std::string::npos)) {
+
+										FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
+										fwrite(result_buf, sizeof(char), result_written, out);
+										fclose(out);
+
+										socExit();
+										free(result_buf);
+										free(socubuf);
+										result_buf = nullptr;
+										result_sz = 0;
+										result_written = 0;
+
+										return true;
+
+									} else {
+										Msg::waitMsg(Lang::get("FILE_SLASH"));
+									}
+								}
+							}
+						}
+
+					} else {
 						if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
 							fl = parsedAPI["storeInfo"]["file"];
 
-							FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-							fwrite(result_buf, sizeof(char), result_written, out);
-							fclose(out);
+							/* Make sure it's not "/", otherwise it breaks. */
+							if (!(fl.find("/") != std::string::npos)) {
 
-							socExit();
-							free(result_buf);
-							free(socubuf);
-							result_buf = nullptr;
-							result_sz = 0;
-							result_written = 0;
+								FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
+								fwrite(result_buf, sizeof(char), result_written, out);
+								fclose(out);
 
-							return true;
+								socExit();
+								free(result_buf);
+								free(socubuf);
+								result_buf = nullptr;
+								result_sz = 0;
+								result_written = 0;
+
+								return true;
+
+							} else {
+								Msg::waitMsg(Lang::get("FILE_SLASH"));
+							}
 						}
 					}
-				}
 
-			} else {
-				if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-					fl = parsedAPI["storeInfo"]["file"];
+				} else if (parsedAPI["storeInfo"]["version"] < 3) {
+					Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 
-					FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-					fwrite(result_buf, sizeof(char), result_written, out);
-					fclose(out);
+				} else if (parsedAPI["storeInfo"]["version"] > 3) {
+					Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 
-					socExit();
-					free(result_buf);
-					free(socubuf);
-					result_buf = nullptr;
-					result_sz = 0;
-					result_written = 0;
-
-					return true;
 				}
 			}
+
+		} else {
+			Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
 		}
 	}
 
@@ -696,6 +725,7 @@ bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string
 	const std::string &file: Const Reference to the filepath.
 */
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
+	if (file.find("/") != std::string::npos) return false;
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
@@ -766,4 +796,104 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 	result_written = 0;
 
 	return false;
+}
+
+/*
+	Checks for U-U updates.
+*/
+bool IsUUUpdateAvailable() {
+	if (!checkWifiStatus()) return false;
+
+	Msg::DisplayMsg(Lang::get("CHECK_UU_UPDATES"));
+	Result ret = 0;
+
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return false;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return false;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return false;
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return false;
+	}
+
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+
+		if (parsedAPI.contains("tag_name") && parsedAPI["tag_name"].is_string()) {
+			const std::string tag = parsedAPI["tag_name"];
+
+			socExit();
+			free(result_buf);
+			free(socubuf);
+			result_buf = nullptr;
+			result_sz = 0;
+			result_written = 0;
+
+			return strcasecmp(StringUtils::lower_case(tag).c_str(), StringUtils::lower_case(C_V).c_str()) > 0;
+		}
+	}
+
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return false;
+}
+
+extern bool is3DSX, exiting;
+extern std::string _3dsxPath;
+
+/*
+	Execute U-U update action.
+*/
+void UpdateAction() {
+	if (ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
+	(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"),
+	false, Lang::get("DONLOADING_UNIVERSAL_UPDATER")) == 0) {
+
+		if (is3DSX) {
+			Msg::waitMsg(Lang::get("UPDATE_DONE"));
+			exiting = true;
+			return;
+		}
+
+		ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"));
+		ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"));
+		Msg::waitMsg(Lang::get("UPDATE_DONE"));
+		exiting = true;
+	}
 }

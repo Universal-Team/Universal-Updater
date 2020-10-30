@@ -30,15 +30,21 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-static const std::vector<std::string> ButtonNames = { "TITLE", "AUTHOR", "LAST_UPDATED", "ASCENDING", "DESCENDING" };
 static const std::vector<Structs::ButtonPos> buttons = {
-	{ 66, 46, 100, 30 },
-	{ 66, 86, 100, 30 },
-	{ 66, 126, 100, 30 },
+	{ 75, 50, 100, 16 },
+	{ 75, 70, 100, 16 },
+	{ 75, 90, 100, 16 },
 
-	{ 204, 54, 100, 40 },
-	{ 204, 111, 100, 40 }
+	{ 205, 50, 100, 16 },
+	{ 205, 70, 100, 16 },
+
+	{ 75, 160, 100, 16 },
+	{ 75, 180, 100, 16 }
 };
+
+static void DrawCheck(int pos, bool v) {
+	GFX::DrawSprite((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), buttons[pos].x + 5, buttons[pos].y);
+}
 
 /*
 	Return SortType as an uint8_t.
@@ -67,17 +73,29 @@ static const uint8_t GetType(const SortType &st) {
 	const SortType &st: Const Reference to the SortType variable.
 */
 void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
-	/* Display Key. */
-	Gui::DrawStringCentered(66 - 160 + (100 / 2), 15 + (30 / 2) - (Gui::GetStringHeight(0.6f, Lang::get("KEY")) / 2), 0.6f, TEXT_COLOR, Lang::get("KEY"), 100 - 4, 30 - 4);
-
+	/* Sort By. */
+	Gui::DrawString(buttons[0].x + 5, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"));
 	for (int i = 0; i < 3; i++) {
-		GFX::DrawButton(buttons[i].x, buttons[i].y, buttons[i].w, buttons[i].h, i == GetType(st), Lang::get(ButtonNames[i]));
+		DrawCheck(i, i == GetType(st));
 	}
 
+	Gui::DrawString(buttons[0].x + 25, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"));
+	Gui::DrawString(buttons[1].x + 25, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"));
+	Gui::DrawString(buttons[2].x + 25, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"));
+
 	/* Direction. */
-	Gui::DrawStringCentered(204 - 160 + (100 / 2), 15 + (30 / 2) - (Gui::GetStringHeight(0.6f, Lang::get("DIRECTION")) / 2), 0.6f, TEXT_COLOR, Lang::get("DIRECTION"), 100 - 4, 30 - 4);
-	GFX::DrawButton(buttons[3].x, buttons[3].y, buttons[3].w, buttons[3].h, asc, Lang::get(ButtonNames[3]));
-	GFX::DrawButton(buttons[4].x, buttons[4].y, buttons[4].w, buttons[4].h, !asc, Lang::get(ButtonNames[4]));
+	Gui::DrawString(buttons[3].x + 5, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"));
+	DrawCheck(3, asc);
+	DrawCheck(4, !asc);
+	Gui::DrawString(buttons[3].x + 25, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"));
+	Gui::DrawString(buttons[4].x + 25, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"));
+
+	/* Top Style. */
+	Gui::DrawString(buttons[5].x + 5, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"));
+	DrawCheck(5, config->list());
+	DrawCheck(6, !config->list());
+	Gui::DrawString(buttons[5].x + 25, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"));
+	Gui::DrawString(buttons[6].x + 25, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"));
 }
 
 /*
@@ -89,6 +107,8 @@ void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 		- Author (Ascending / Descending).
 		- Last Updated Date (Ascending / Descending).
 
+	- Change the Top Style.
+
 	u32 hDown: The hidKeysDown() variable.
 	u32 hHeld: The hidKeysHeld() variable.
 	touchPosition touch: The TouchPosition variable.
@@ -99,7 +119,6 @@ void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 */
 void StoreUtils::SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st) {
 	if (store && store->GetValid() && entries.size() > 0) { // Ensure, this is valid and more than 0 entries exist.
-
 		if (hDown & KEY_TOUCH) {
 			/* SortType Part. */
 			if (touching(touch, buttons[0])) {
@@ -122,6 +141,20 @@ void StoreUtils::SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::uniq
 			} else if (touching(touch, buttons[4])) {
 				asc = false;
 				StoreUtils::SortEntries(asc, st, entries);
+
+			} else if (touching(touch, buttons[5])) {
+				if (config->list()) return;
+				config->list(true);
+				store->SetEntry(0);
+				store->SetScreenIndx(0);
+				store->SetBox(0);
+
+			} else if (touching(touch, buttons[6])) {
+				if (!config->list()) return;
+				config->list(false);
+				store->SetEntry(0);
+				store->SetScreenIndx(0);
+				store->SetBox(0);
 			}
 		}
 	}

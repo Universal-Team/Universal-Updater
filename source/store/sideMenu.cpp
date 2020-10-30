@@ -67,12 +67,11 @@ void StoreUtils::DrawSideMenu(const int &currentMenu) {
 	- Switch between the Menus through the sidebar.
 
 	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
 	touchPosition touch: The TouchPosition variable.
 	int &currentMenu: Reference to the Store Mode / Menu.
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
 */
-void StoreUtils::SideMenuHandle(u32 hDown, u32 hHeld, touchPosition touch, int &currentMenu, bool &fetch) {
+void StoreUtils::SideMenuHandle(u32 hDown, touchPosition touch, int &currentMenu, bool &fetch) {
 	if (hDown & KEY_TOUCH) {
 		for (int i = 0; i < 5; i++) {
 			if (touching(touch, sidePos[i])) {
@@ -83,16 +82,16 @@ void StoreUtils::SideMenuHandle(u32 hDown, u32 hHeld, touchPosition touch, int &
 		}
 	}
 
-	if (hDown & KEY_R) {
+	if (hRepeat & KEY_R) {
 		if (currentMenu < 4) {
-			if (currentMenu + 1 == 1) fetch = true;
+			if (currentMenu + 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu++;
 		}
 	}
 
-	if (hDown & KEY_L) {
+	if (hRepeat & KEY_L) {
 		if (currentMenu > 0) {
-			if (currentMenu - 1 == 1) fetch = true;
+			if (currentMenu - 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu--;
 		}
 	}

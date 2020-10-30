@@ -60,7 +60,6 @@ void Overlays::ShowCredits() {
 		C3D_FrameEnd(0);
 
 		hidScanInput();
-
-		if (hidKeysDown()) doOut = true;
+		if ((hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_A)) doOut = true;
 	}
 }

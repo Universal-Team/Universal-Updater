@@ -25,7 +25,7 @@
 */
 
 #include "common.hpp"
-#include "stringUtils.hpp"
+#include "stringutils.hpp"
 
 /*
 	To lowercase conversion.

@@ -25,8 +25,8 @@
 */
 
 #include "common.hpp"
+#include "fileBrowse.hpp"
 #include "meta.hpp"
-
 #include <unistd.h>
 
 /*
@@ -45,6 +45,35 @@ Meta::Meta() {
 	FILE *temp = fopen(_META_PATH, "rt");
 	this->metadataJson = nlohmann::json::parse(temp, nullptr, false);
 	fclose(temp);
+
+	if (config->metadata()) this->ImportMetadata();
+}
+
+/*
+	Import the old Metadata of the 'updates.json' file.
+*/
+void Meta::ImportMetadata() {
+	if (access("sdmc:/3ds/Universal-Updater/updates.json", F_OK) != 0) {
+		config->metadata(false);
+		return; // Not found.
+	}
+
+	Msg::DisplayMsg(Lang::get("FETCHING_METADATA"));
+	FILE *old = fopen("sdmc:/3ds/Universal-Updater/updates.json", "r");
+	nlohmann::json oldJson = nlohmann::json::parse(old, nullptr, false);
+	fclose(old);
+
+	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
+
+	for (int i = 0; i < (int)info.size(); i++) {
+		if (info[i].Title != "" && oldJson.contains(info[i].FileName)) {
+			for(auto it = oldJson[info[i].FileName].begin(); it != oldJson[info[i].FileName].end(); ++it) {
+				this->SetUpdated(info[i].Title, it.key().c_str(), it.value().get<std::string>());
+			}
+		}
+	}
+
+	config->metadata(false);
 }
 
 /*

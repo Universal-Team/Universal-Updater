@@ -36,14 +36,13 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 54, 94, 262, 22 },
 	{ 54, 124, 262, 22 },
 	{ 54, 154, 262, 22 },
-	{ 54, 184, 262, 22 },
-	{ 54, 214, 262, 22 }
+	{ 54, 184, 262, 22 }
 };
 
 static const std::string autoupdate() { return (config->autoupdate() ? "DISABLE_AUTOUPDATE_UNISTORE" : "ENABLE_AUTOUPDATE_UNISTORE"); };
-static const std::string topStyle() { return (config->list() ? "TOP_MENU_GRID" : "TOP_MENU_LIST"); };
+static const std::string updateCheck() { return (config->updatecheck() ? "DISABLE_UPDATE_CHECK" : "ENABLE_UPDATE_CHECK"); };
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "CREDITS", "CHANGE_DIRECTORIES", "EXIT_APP" };
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "CHANGE_DIRECTORIES", "CREDITS", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
 /*
@@ -58,8 +57,8 @@ static void DrawSettingsMain(const int &selection) {
 
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(topStyle()), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(updateCheck()), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
 	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
@@ -82,7 +81,6 @@ static void DrawSettingsDir(const int &selection) {
 
 	- Change the Language.
 	- Access the UniStore Manage Handle.
-	- Change the Top Grid / List style.
 	- Enable UniStore auto update on boot.
 	- Show the Credits.
 	- Exit Universal-Updater.
@@ -99,8 +97,6 @@ static void DrawSettingsDir(const int &selection) {
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
 static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
-	u32 hRepeat = hidKeysDownRepeat();
-
 	if (hDown & KEY_B) {
 		selection = 0;
 		storeMode = 0;
@@ -108,10 +104,12 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 
 	if (hRepeat & KEY_DOWN) {
 		if (selection < 6) selection++;
+		else selection = 0;
 	}
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
+		else selection = mainStrings.size() + 1;
 	}
 
 	if (hRepeat & KEY_RIGHT) {
@@ -132,28 +130,23 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 			Overlays::SelectStore(store, entries, meta);
 
 		} else if (touching(touch, mainButtons[2])) {
-			config->list(!config->list());
-			store->SetEntry(0);
-			store->SetScreenIndx(0);
-			store->SetBox(0);
-
-		} else if (touching(touch, mainButtons[3])) {
 			config->autoupdate(!config->autoupdate());
 
-		} else if (touching(touch, mainButtons[4])) {
-			Overlays::ShowCredits();
+		} else if (touching(touch, mainButtons[3])) {
+			config->updatecheck(!config->updatecheck());
 
- 		} else if (touching(touch, mainButtons[5])) {
+		} else if (touching(touch, mainButtons[4])) {
 			selection = 0;
 			page = 1;
+
+ 		} else if (touching(touch, mainButtons[5])) {
+			Overlays::ShowCredits();
 
 		} else if (touching(touch, mainButtons[6])) {
 			exiting = true;
 
 		}
 	}
-
-
 
 	if (hDown & KEY_A) {
 		switch(selection) {
@@ -166,23 +159,20 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 				break;
 
 			case 2:
-				config->list(!config->list());
-				store->SetEntry(0);
-				store->SetScreenIndx(0);
-				store->SetBox(0);
-				break;
-
-			case 3:
 				config->autoupdate(!config->autoupdate());
 				break;
 
+			case 3:
+				config->updatecheck(!config->updatecheck());
+				break;
+
 			case 4:
-				Overlays::ShowCredits();
+				selection = 0;
+				page = 1;
 				break;
 
 			case 5:
-				selection = 0;
-				page = 1;
+				Overlays::ShowCredits();
 				break;
 
 			case 6:
@@ -206,19 +196,19 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 	int &selection: Reference to the Selection.
 */
 static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
-	u32 hRepeat = hidKeysDownRepeat();
-
 	if (hDown & KEY_B) {
 		page = 0;
-		selection = 5;
+		selection = 4;
 	}
 
 	if (hRepeat & KEY_DOWN) {
 		if (selection < 2) selection++;
+		else selection = 0;
 	}
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
+		else selection = dirStrings.size()-1;
 	}
 
 	if (hRepeat & KEY_RIGHT) {

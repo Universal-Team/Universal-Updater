@@ -26,7 +26,6 @@
 
 #include "extract.hpp"
 #include "scriptUtils.hpp"
-
 #include <archive.h>
 #include <archive_entry.h>
 #include <regex>

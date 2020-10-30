@@ -66,11 +66,15 @@ static void DeleteStore(const std::string &file) {
 	if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
 		const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
 
+
+
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
 			if ((std::string(_STORE_PATH) + sht[i]) != "") {
-				if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
-					deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
+				if (!(StringUtils::lower_case(sht[i]).find(StringUtils::lower_case("/")) != std::string::npos)) {
+					if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
+						deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
+					}
 				}
 			}
 		}
@@ -80,8 +84,10 @@ static void DeleteStore(const std::string &file) {
 		const std::string fl = storeJson["storeInfo"]["sheet"];
 
 		if ((std::string(_STORE_PATH) + fl) != "") {
-			if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
-				deleteFile((std::string(_STORE_PATH) + fl).c_str());
+			if (!(StringUtils::lower_case(fl).find(StringUtils::lower_case("/")) != std::string::npos)) {
+				if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
+					deleteFile((std::string(_STORE_PATH) + fl).c_str());
+				}
 			}
 		}
 	}
@@ -92,9 +98,9 @@ static void DeleteStore(const std::string &file) {
 /*
 	Download a Store.. including the SpriteSheets, if found.
 
-	const bool &Cam: Const Reference, if cam should be used.
+	bool Cam: if cam should be used.
 */
-static bool DownloadStore(const bool &Cam = true) {
+static bool DownloadStore(bool Cam = true) {
 	bool doSheet = false;
 	std::string file = "";
 
@@ -114,10 +120,15 @@ static bool DownloadStore(const bool &Cam = true) {
 
 					if (locs.size() == sht.size()) {
 						for (int i = 0; i < (int)sht.size(); i++) {
-							char msg[150];
-							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-							Msg::DisplayMsg(msg);
-							DownloadSpriteSheet(locs[i], sht[i]);
+							if (!(sht[i].find("/") != std::string::npos)) {
+								char msg[150];
+								snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+								Msg::DisplayMsg(msg);
+								DownloadSpriteSheet(locs[i], sht[i]);
+
+							} else {
+								Msg::waitMsg(Lang::get("SHEET_SLASH"));
+							}
 						}
 					}
 				}
@@ -126,8 +137,14 @@ static bool DownloadStore(const bool &Cam = true) {
 				if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
 					const std::string fl = storeJson["storeInfo"]["sheetURL"];
 					const std::string fl2 = storeJson["storeInfo"]["sheet"];
-					Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
-					DownloadSpriteSheet(fl, fl2);
+
+					if (!(fl2.find("/") != std::string::npos)) {
+						Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
+						DownloadSpriteSheet(fl, fl2);
+
+					} else {
+						Msg::waitMsg(Lang::get("SHEET_SLASH"));
+					}
 				}
 			}
 		}
@@ -168,11 +185,24 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			if (info[selection].StoreSize != -1) {
 				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Title, 370);
 				Gui::DrawStringCentered(0, 60, 0.5f, TEXT_COLOR, info[selection].Author, 370);
-				if (info[selection].Description != "") Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 390, 0, nullptr, C2D_WordWrap);
+
+				if (info[selection].Description != "") {
+					/* "\n\n" breaks C2D_WordWrap, so check here. */
+					if (!(info[selection].Description.find("\n\n") != std::string::npos)) {
+						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 390, 95, nullptr, C2D_WordWrap);
+
+					} else {
+						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 390, 95);
+					}
+				}
 
 			} else {
 				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370);
 			}
+
+			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize));
+			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version));
+			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision));
 
 			GFX::DrawBottom();
 
@@ -198,10 +228,12 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		if (info.size() > 0) {
 			if (hRepeat & KEY_DOWN) {
 				if (selection < (int)info.size() - 1) selection++;
+				else selection = 0;
 			}
 
 			if (hRepeat & KEY_UP) {
 				if (selection > 0) selection--;
+				else selection = info.size() - 1;
 			}
 
 			if (hRepeat & KEY_RIGHT) {
@@ -216,7 +248,10 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 			if (hidKeysDown() & KEY_A) {
 				/* Load selected one. */
-				if (info[selection].StoreSize > 0) {
+				if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+				else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+				else if (info[selection].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+				else {
 					store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
 					StoreUtils::ResetAll(store, meta, entries);
 					config->lastStore(info[selection].FileName);
@@ -229,7 +264,10 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)info.size()) {
-							if (info[i + sPos].StoreSize > 0) {
+							if (info[i + sPos].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+							else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+							else if (info[i + sPos].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+							else {
 								store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName);
 								StoreUtils::ResetAll(store, meta, entries);
 								config->lastStore(info[i + sPos].FileName);
@@ -266,9 +304,6 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				if (DownloadStore(false)) {
 					selection = 0;
 					info = GetUniStoreInfo(_STORE_PATH);
-
-				} else {
-					Msg::waitMsg(Lang::get("INVALID_UNISTORE"));
 				}
 			}
 		}
@@ -278,9 +313,6 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				if (DownloadStore()) {
 					selection = 0;
 					info = GetUniStoreInfo(_STORE_PATH);
-
-				} else {
-					Msg::waitMsg(Lang::get("INVALID_UNISTORE"));
 				}
 			}
 		}

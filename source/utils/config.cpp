@@ -27,8 +27,6 @@
 #include "common.hpp"
 #include "config.hpp"
 #include "json.hpp"
-
-#include <3ds.h>
 #include <string>
 #include <unistd.h>
 
@@ -114,19 +112,16 @@ Config::Config() {
 
 	/* Let us create a new one. */
 	if (!this->json.contains("Version")) this->initialize();
-
 	if (!this->json.contains("Language")) this->sysLang();
 	else this->language(this->getString("Language"));
-
 	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
-
 	if (this->json.contains("List")) this->list(this->getBool("List"));
-
 	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
-
 	if (this->json.contains("_3DSX_Path")) this->_3dsxPath(this->getString("_3DSX_Path"));
 	if (this->json.contains("NDS_Path")) this->ndsPath(this->getString("NDS_Path"));
 	if (this->json.contains("Archive_Path")) this->archPath(this->getString("Archive_Path"));
+	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
+	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -145,6 +140,8 @@ void Config::save() {
 		this->setString("_3DSX_Path", this->_3dsxPath());
 		this->setString("NDS_Path", this->ndsPath());
 		this->setString("Archive_Path", this->archPath());
+		this->setBool("MetaData", this->metadata());
+		this->setBool("UpdateCheck", this->updatecheck());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

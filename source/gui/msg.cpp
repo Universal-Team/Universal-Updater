@@ -84,8 +84,8 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CONFIRM_OR_CANCEL"), 400);
 	C3D_FrameEnd(0);
 
+	for (int i = 0; i < 20; i++) gspWaitForVBlank();
 	while(1) {
-		gspWaitForVBlank();
 		hidScanInput();
 
 		if (hidKeysDown() & KEY_A) return true;
@@ -113,6 +113,7 @@ void Msg::waitMsg(const std::string &msg) {
 	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("KEY_CONTINUE"), 400);
 	C3D_FrameEnd(0);
 
+	for (int i = 0; i < 20; i++) gspWaitForVBlank();
 	while(!doOut) {
 		hidScanInput();
 

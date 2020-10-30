@@ -10,6 +10,8 @@ sprites/qr_code.png
 sprites/search.png
 sprites/settings.png
 sprites/sort.png
+sprites/sort_checked.png
+sprites/sort_unchecked.png
 sprites/unchecked.png
 sprites/universal-updater.png
 sprites/universal-core.png

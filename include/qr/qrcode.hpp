@@ -54,9 +54,7 @@
 #define _UNIVERSAL_UPDATER_QR_CODE_HPP
 
 #include "common.hpp"
-
 #include "quirc.hpp"
-
 #include <atomic>
 #include <3ds.h>
 #include <array>

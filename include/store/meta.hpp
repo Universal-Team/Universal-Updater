@@ -55,6 +55,7 @@ public:
 		this->metadataJson[unistoreName][entry]["marks"] = marks;
 	};
 
+	void ImportMetadata();
 	void SaveCall();
 private:
 	nlohmann::json metadataJson = nullptr;

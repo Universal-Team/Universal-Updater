@@ -40,7 +40,6 @@ extern char progressBarMsg[128];
 extern int filesExtracted;
 
 extern void downloadFailed();
-
 static Thread thread;
 
 bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &tested) {

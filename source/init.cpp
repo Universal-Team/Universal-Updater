@@ -25,17 +25,27 @@
 */
 
 #include "common.hpp"
+#include "download.hpp"
 #include "init.hpp"
 #include "mainScreen.hpp"
 
 #include <dirent.h>
 #include <unistd.h>
 
-bool exiting = false;
+bool exiting = false, is3DSX = false;
 touchPosition touch;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
-u32 old_time_limit;
+u32 old_time_limit, hDown = 0;
+
+/*
+	Set, if 3DSX or CIA.
+*/
+static void getCurrentUsage(){
+	u64 id;
+	APT_GetProgramID(&id);
+	is3DSX = (id != 0x0004000004391700);
+}
 
 /*
 	If button Position pressed -> Do something.
@@ -60,8 +70,10 @@ Result Init::Initialize() {
 	amInit();
 	acInit();
 
-    APT_GetAppCpuTimeLimit(&old_time_limit);
-    APT_SetAppCpuTimeLimit(30);
+	APT_GetAppCpuTimeLimit(&old_time_limit);
+	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
+	getCurrentUsage();
+	aptSetSleepAllowed(false);
 
 	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
@@ -73,7 +85,16 @@ Result Init::Initialize() {
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 
+
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
+
+	/* Check here for updates. */
+	if (config->updatecheck()) {
+		if (IsUUUpdateAvailable()) UpdateAction();
+	}
+
+	if (exiting) return -1; // In case the update was successful.
+
 	Gui::setScreen(std::make_unique<MainScreen>(), false, false);
 	return 0;
 }
@@ -84,14 +105,15 @@ Result Init::Initialize() {
 Result Init::MainLoop() {
 	bool fullExit = false;
 
-	Initialize();
+	if (Initialize() == -1) fullExit = true;
 	hidSetRepeatParameters(20, 10);
 
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
 		u32 hHeld = hidKeysHeld();
-		u32 hDown = hidKeysDown();
+		hDown = hidKeysDown();
+		hRepeat = hidKeysDownRepeat();
 		hidTouchRead(&touch);
 
 		Gui::clearTextBufs();
@@ -130,11 +152,11 @@ Result Init::Exit() {
 	gfxExit();
 	cfguExit();
 	config->save();
-
 	acExit();
 	amExit();
 
-    if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit);
+    if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit); // Restore old limit.
+	aptSetSleepAllowed(true);
 
 	romfsExit();
 	return 0;

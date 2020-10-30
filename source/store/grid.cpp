@@ -96,10 +96,11 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	const int &currentMode: Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
+	bool &fetch: Reference to fetch.
+	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode) {
+void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (store) { // Ensure, store is not a nullptr.
-		u32 hRepeat = hidKeysDownRepeat();
 		bool needUpdate = false;
 
 		if (hRepeat & KEY_DOWN) {
@@ -149,6 +150,8 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 		}
 
 		if (hDown & KEY_A) {
+			fetch = true;
+			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;
 		}

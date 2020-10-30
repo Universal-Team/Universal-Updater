@@ -177,6 +177,9 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 			searchIncludes[i] = false;
 		searchResult = "";
 
-		if (store && store->GetValid()) StoreUtils::ResetAll(store, meta, entries);
+		if (store && store->GetValid()) {
+			StoreUtils::ResetAll(store, meta, entries);
+			StoreUtils::SortEntries(ascending, sorttype, entries);
+		}
 	}
 }
