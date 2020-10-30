@@ -247,31 +247,43 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 
 			if (hidKeysDown() & KEY_A) {
-				/* Load selected one. */
-				if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
-				else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-				else if (info[selection].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-				else {
-					store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
-					StoreUtils::ResetAll(store, meta, entries);
-					config->lastStore(info[selection].FileName);
-					StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
-					doOut = true;
+				if (info[selection].File != "") { // Ensure to check for this.
+					if (!(info[selection].File.find("/") != std::string::npos)) {
+						/* Load selected one. */
+						if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+						else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+						else if (info[selection].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+						else {
+							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
+							StoreUtils::ResetAll(store, meta, entries);
+							config->lastStore(info[selection].FileName);
+							StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
+							doOut = true;
+						}
+
+					} else {
+						Msg::waitMsg(Lang::get("FILE_SLASH"));
+					}
 				}
 			}
 
 			if (hidKeysDown() & KEY_TOUCH) {
 				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
-						if (i + sPos < (int)info.size()) {
-							if (info[i + sPos].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
-							else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-							else if (info[i + sPos].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-							else {
-								store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName);
-								StoreUtils::ResetAll(store, meta, entries);
-								config->lastStore(info[i + sPos].FileName);
-								doOut = true;
+						if (i + sPos < (int)info.size() && info[i + sPos].File != "") { // Ensure to check for this.
+							if (!(info[i + sPos].File.find("/") != std::string::npos)) {
+								if (info[i + sPos].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+								else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+								else if (info[i + sPos].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+								else {
+									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName);
+									StoreUtils::ResetAll(store, meta, entries);
+									config->lastStore(info[i + sPos].FileName);
+									doOut = true;
+								}
+
+							} else {
+								Msg::waitMsg(Lang::get("FILE_SLASH"));
 							}
 						}
 					}

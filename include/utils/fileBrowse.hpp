@@ -45,6 +45,7 @@ struct UniStoreInfo {
 	std::string Title;
 	std::string Author;
 	std::string URL;
+	std::string File; // Used to check, if File does NOT contain a slash or so.
 	std::string FileName;
 	std::string Description;
 	int Version;

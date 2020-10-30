@@ -33,7 +33,7 @@
 extern bool checkWifiStatus();
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "日本語" };
-static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp "};
+static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp"};
 
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 4, 300, 22 },

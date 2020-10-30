@@ -110,7 +110,7 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	const std::string &fieName: Const Reference to the filename, without path.
 */
 UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
-	UniStoreInfo Temp = { "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, FileName, Desc, Version, Revision, Entries.
+	UniStoreInfo Temp = { "", "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, Entries.
 	nlohmann::json JSON = nullptr;
 
 	FILE *temp = fopen(file.c_str(), "r");
@@ -121,6 +121,10 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 
 	if (JSON["storeInfo"].contains("title") && JSON["storeInfo"]["title"].is_string()) {
 		Temp.Title = JSON["storeInfo"]["title"];
+	}
+
+	if (JSON["storeInfo"].contains("file") && JSON["storeInfo"]["file"].is_string()) {
+		Temp.File = JSON["storeInfo"]["file"];
 	}
 
 	if (JSON["storeInfo"].contains("author") && JSON["storeInfo"]["author"].is_string()) {
