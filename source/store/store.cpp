@@ -383,6 +383,7 @@ std::string Store::GetLicenseEntry(const int &index) const {
 */
 C2D_Image Store::GetIconEntry(const int &index) const {
 	if (!this->valid) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (this->sheets.empty()) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 	int iconIndex = -1, sheetIndex = 0;
 
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);

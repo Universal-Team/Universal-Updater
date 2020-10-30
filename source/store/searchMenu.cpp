@@ -66,16 +66,16 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 		GFX::DrawCheckbox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, searchIncludes[i]);
 	}
 
-	Gui::DrawString(84, 60, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"));
+	Gui::DrawString(84, 60, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"), 265);
 
-	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"));
-	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"));
+	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"), 90);
+	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"), 90);
 
-	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, TEXT_COLOR, Lang::get("CATEGORY"));
-	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"));
+	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, TEXT_COLOR, Lang::get("CATEGORY"), 90);
+	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"), 90);
 
 	/* Filters. */
-	Gui::DrawString(84, 150, 0.5, TEXT_COLOR, Lang::get("FILTER_TO"));
+	Gui::DrawString(84, 150, 0.5, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
 
 	GFX::drawBox(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, marks & favoriteMarks::STAR);
 	GFX::drawBox(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, marks & favoriteMarks::HEART);

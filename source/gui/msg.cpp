@@ -39,7 +39,7 @@ void Msg::DisplayMsg(const std::string &Text) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, TEXT_COLOR, Text, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, TEXT_COLOR, Text, 395);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -56,7 +56,7 @@ void Msg::DisplayWarnMsg(const std::string &Text) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 1, 0.6f, TEXT_COLOR, Text, 400);
+	Gui::DrawStringCentered(0, 1, 0.6f, TEXT_COLOR, Text, 390);
 
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -79,15 +79,16 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	GFX::DrawTop();
 	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, TEXT_COLOR, promptMsg, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, TEXT_COLOR, promptMsg, 395);
 
-	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CONFIRM_OR_CANCEL"), 400);
+	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CONFIRM_OR_CANCEL"), 390);
 	C3D_FrameEnd(0);
 
-	for (int i = 0; i < 20; i++) gspWaitForVBlank();
+	for (int i = 0; i < 3; i++) gspWaitForVBlank();
+	hidScanInput();
+
 	while(1) {
 		hidScanInput();
-
 		if (hidKeysDown() & KEY_A) return true;
 		else if (hidKeysDown() & KEY_B) return false;
 	}
@@ -106,17 +107,18 @@ void Msg::waitMsg(const std::string &msg) {
 	C2D_TargetClear(Top, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, TEXT_COLOR, msg, 395, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, TEXT_COLOR, msg, 395);
 
 	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("KEY_CONTINUE"), 400);
+	Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("KEY_CONTINUE"), 390);
 	C3D_FrameEnd(0);
 
-	for (int i = 0; i < 20; i++) gspWaitForVBlank();
+	for (int i = 0; i < 3; i++) gspWaitForVBlank();
+	hidScanInput();
+
 	while(!doOut) {
 		hidScanInput();
-
 		if (hidKeysDown()) doOut = !doOut;
 	}
 }

@@ -53,6 +53,8 @@ bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &te
 Result ScriptUtils::removeFile(const std::string &file, const std::string &message) {
 	std::string out;
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
@@ -94,11 +96,19 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	Result ret = NONE;
 	if (access(source.c_str(), F_OK) != 0) return COPY_ERROR;
 
-	Msg::DisplayMsg(message);
-	/* If destination does not exist, create dirs. */
-	if (access(destination.c_str(), F_OK) != 0) makeDirs(destination.c_str());
+	std::string _source, _dest;
+	_source = std::regex_replace(source, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	_source = std::regex_replace(_source, std::regex("%3DSX%"), config->_3dsxPath());
+	_source = std::regex_replace(_source, std::regex("%NDS%"), config->ndsPath());
+	_dest = std::regex_replace(destination, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	_dest = std::regex_replace(_dest, std::regex("%3DSX%"), config->_3dsxPath());
+	_dest = std::regex_replace(_dest, std::regex("%NDS%"), config->ndsPath());
 
-	fcopy(source.c_str(), destination.c_str());
+	Msg::DisplayMsg(message);
+
+	/* If destination does not exist, create dirs. */
+	if (access(_dest.c_str(), F_OK) != 0) makeDirs(_dest.c_str());
+	fcopy(_source.c_str(), _dest.c_str());
 	return ret;
 }
 
@@ -106,14 +116,23 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	Rename / Move a file.
 */
 Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message) {
+
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
+
+	std::string old, _new;
+	old = std::regex_replace(oldName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	old = std::regex_replace(old, std::regex("%3DSX%"), config->_3dsxPath());
+	old = std::regex_replace(old, std::regex("%NDS%"), config->ndsPath());
+	_new = std::regex_replace(newName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	_new = std::regex_replace(_new, std::regex("%3DSX%"), config->_3dsxPath());
+	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
 
 	Msg::DisplayMsg(message);
 
 	/* TODO: Kinda avoid that? */
-	makeDirs(newName.c_str());
-	rename(oldName.c_str(), newName.c_str());
+	makeDirs(_new.c_str());
+	rename(old.c_str(), _new.c_str());
 	return ret;
 }
 
@@ -188,6 +207,11 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 	Install CIA files.
 */
 void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf, const std::string &message) {
+	std::string in;
+	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
+	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
+
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
 	progressbarType = ProgressBar::Installing;
@@ -196,7 +220,7 @@ void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf,
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
-	installCia(file.c_str(), updatingSelf);
+	installCia(in.c_str(), updatingSelf);
 	showProgressBar = false;
 	threadJoin(thread, U64_MAX);
 	threadFree(thread);
@@ -208,7 +232,11 @@ void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf,
 void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
 	std::string out, in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
+	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
 	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
+	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 
 	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
 	showProgressBar = true;
@@ -391,18 +419,27 @@ Result ScriptUtils::runFunctions(const nlohmann::json &storeJson, const int &sel
 
 				else ret = SYNTAX_ERROR;
 
-			} else if (type == "promptMessage") {
+			} else if (type == "promptMessage" || type == "promptMsg") {
 				std::string Message = "";
+				int skipCount = -1;
+
 				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
 					Message = storeJson["storeContent"][selection][entry][i]["message"];
 				}
 
+				if (storeJson["storeContent"][selection][entry][i].contains("count") && storeJson["storeContent"][selection][entry][i]["count"].is_number()) {
+					skipCount = storeJson["storeContent"][selection][entry][i]["count"];
+				}
+
 				ret = ScriptUtils::prompt(Message);
 
-				if (ret == SCRIPT_CANCELED) {
+				if (skipCount > -1 && ret == SCRIPT_CANCELED) {
 					ret = NONE;
-					i++; // Skip.
+					i += skipCount; // Skip.
 				}
+
+			} else if (type == "exit") {
+				break;
 
 			} else if (type == "copy") {
 				std::string Message = "", source = "", destination = "";
@@ -449,7 +486,7 @@ Result ScriptUtils::runFunctions(const nlohmann::json &storeJson, const int &sel
 		}
 	}
 
-	if (ret == NONE) doneMsg();
+	if (ret == NONE || ret == SCRIPT_CANCELED) doneMsg();
 	else if (ret == FAILED_DOWNLOAD) Msg::waitMsg(Lang::get("DOWNLOAD_ERROR"));
 	else if (ret == SYNTAX_ERROR) Msg::waitMsg(Lang::get("SYNTAX_ERROR"));
 	else if (ret == COPY_ERROR) Msg::waitMsg(Lang::get("COPY_ERROR"));

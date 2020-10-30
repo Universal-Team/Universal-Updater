@@ -74,28 +74,28 @@ static const uint8_t GetType(const SortType &st) {
 */
 void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
 	/* Sort By. */
-	Gui::DrawString(buttons[0].x + 5, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"));
+	Gui::DrawString(buttons[0].x + 5, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"), 90);
 	for (int i = 0; i < 3; i++) {
 		DrawCheck(i, i == GetType(st));
 	}
 
-	Gui::DrawString(buttons[0].x + 25, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"));
-	Gui::DrawString(buttons[1].x + 25, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"));
-	Gui::DrawString(buttons[2].x + 25, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"));
+	Gui::DrawString(buttons[0].x + 25, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"), 80);
+	Gui::DrawString(buttons[1].x + 25, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"), 80);
+	Gui::DrawString(buttons[2].x + 25, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"), 80);
 
 	/* Direction. */
-	Gui::DrawString(buttons[3].x + 5, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"));
+	Gui::DrawString(buttons[3].x + 5, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"), 80);
 	DrawCheck(3, asc);
 	DrawCheck(4, !asc);
-	Gui::DrawString(buttons[3].x + 25, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"));
-	Gui::DrawString(buttons[4].x + 25, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"));
+	Gui::DrawString(buttons[3].x + 25, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"), 80);
+	Gui::DrawString(buttons[4].x + 25, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"), 80);
 
 	/* Top Style. */
-	Gui::DrawString(buttons[5].x + 5, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"));
+	Gui::DrawString(buttons[5].x + 5, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"), 90);
 	DrawCheck(5, config->list());
 	DrawCheck(6, !config->list());
-	Gui::DrawString(buttons[5].x + 25, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"));
-	Gui::DrawString(buttons[6].x + 25, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"));
+	Gui::DrawString(buttons[5].x + 25, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"), 90);
+	Gui::DrawString(buttons[6].x + 25, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"), 90);
 }
 
 /*

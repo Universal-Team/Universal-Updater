@@ -36,14 +36,14 @@ static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", 
 static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "pl", "pt", "ru", "jp "};
 
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{ 85, 4, 150, 22 },
-	{ 85, 34, 150, 22 },
-	{ 85, 64, 150, 22 },
-	{ 85, 94, 150, 22 },
-	{ 85, 124, 150, 22 },
-	{ 85, 154, 150, 22 },
-	{ 85, 184, 150, 22 },
-	{ 85, 214, 150, 22 }
+	{ 10, 4, 300, 22 },
+	{ 10, 34, 300, 22 },
+	{ 10, 64, 300, 22 },
+	{ 10, 94, 300, 22 },
+	{ 10, 124, 300, 22 },
+	{ 10, 154, 300, 22 },
+	{ 10, 184, 300, 22 },
+	{ 10, 214, 300, 22 }
 };
 
 /*
@@ -66,7 +66,7 @@ void Overlays::SelectLanguage() {
 		GFX::DrawBottom();
 
 		for(int i = 0; i < 8 && i < (int)languages.size(); i++) {
-			GFX::drawBox(85, mainButtons[i].y, 150, 22, sPos + i == selection);
+			GFX::drawBox(10, mainButtons[i].y, 300, 22, sPos + i == selection);
 			Gui::DrawStringCentered(0, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280);
 		}
 		C3D_FrameEnd(0);

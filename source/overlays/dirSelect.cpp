@@ -79,7 +79,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 		Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 390);
+		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 310);
 
 		if (dirContents.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {

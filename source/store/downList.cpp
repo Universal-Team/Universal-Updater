@@ -57,7 +57,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 			}
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(25, downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 260);
+			Gui::DrawStringCentered(25, downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255);
 		}
 	}
 }

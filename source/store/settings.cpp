@@ -55,13 +55,13 @@ static void DrawSettingsMain(const int &selection) {
 		GFX::drawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection);
 	}
 
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(updateCheck()), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 260);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 260);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(updateCheck()), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 255);
+	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 255);
 }
 
 /*

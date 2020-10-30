@@ -179,30 +179,30 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"));
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 390);
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Title, 370);
-				Gui::DrawStringCentered(0, 60, 0.5f, TEXT_COLOR, info[selection].Author, 370);
+				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Title, 380);
+				Gui::DrawStringCentered(0, 60, 0.5f, TEXT_COLOR, info[selection].Author, 380);
 
 				if (info[selection].Description != "") {
 					/* "\n\n" breaks C2D_WordWrap, so check here. */
 					if (!(info[selection].Description.find("\n\n") != std::string::npos)) {
-						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 390, 95, nullptr, C2D_WordWrap);
+						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 380, 95, nullptr, C2D_WordWrap);
 
 					} else {
-						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 390, 95);
+						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 380, 95);
 					}
 				}
 
 			} else {
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370);
+				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 380);
 			}
 
-			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize));
-			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version));
-			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision));
+			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150);
+			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150);
+			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150);
 
 			GFX::DrawBottom();
 

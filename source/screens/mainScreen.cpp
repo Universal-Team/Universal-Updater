@@ -68,7 +68,7 @@ MainScreen::MainScreen() {
 */
 void MainScreen::Draw(void) const {
 	GFX::DrawTop();
-	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7, TEXT_COLOR, this->store->GetUniStoreTitle());
+	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, this->store->GetUniStoreTitle(), 370);
 	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370);
 	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
 

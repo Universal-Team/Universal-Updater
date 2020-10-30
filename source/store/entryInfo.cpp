@@ -47,10 +47,10 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		if (entry->GetDescription() != "") {
 			/* "\n\n" breaks C2D_WordWrap, so check here. */
 			if (!(entry->GetDescription().find("\n\n") != std::string::npos)) {
-				Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 220, 0, nullptr, C2D_WordWrap);
+				Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 240, 0, nullptr, C2D_WordWrap);
 
 			} else {
-				Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 220, 0);
+				Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 240, 0);
 			}
 		}
 
