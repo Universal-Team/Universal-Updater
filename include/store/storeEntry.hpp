@@ -29,7 +29,7 @@
 
 #include "meta.hpp"
 #include "store.hpp"
-#include "stringUtils.hpp"
+#include "stringutils.hpp"
 
 class StoreEntry {
 public:
