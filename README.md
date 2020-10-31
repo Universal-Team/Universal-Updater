@@ -39,7 +39,7 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 ## Credits
 
-- [StackZ](https://github.com/StackZ) - Lead developer, reworked quirc to C++
+- [StackZ](https://github.com/SuperSaiyajinStackZ) - Lead developer, reworked quirc to C++
 - [Pk11](https://github.com/Epicpkmn11) - Mockup Designer, Website Maintainer
 - [NightScript](https://github.com/NightYoshi370) - Concept Creator & Planner
 - [dlbeer](https://github.com/dlbeer) - Original developer of [quirc](https://github.com/dlbeer/quirc)
