@@ -58,12 +58,7 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 		for (int i = 0, i2 = 0 + (store->GetScreenIndx() * 5); i2 < 15 + (store->GetScreenIndx() * 5) && i2 < (int)entries.size(); i2++, i++) {
 
 			/* Boxes. */
-			if (i == store->GetBox()) {
-				GFX::drawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, true);
-
-			} else {
-				GFX::drawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, false);
-			}
+			if (i == store->GetBox()) GFX::DrawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, true);
 
 			/* Ensure, entries is larger than the index. */
 			if ((int)entries.size() > i2) {
@@ -123,6 +118,11 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 				if (store->GetBox() < 14) {
 					store->SetBox(store->GetBox() + 1);
 					store->SetEntry(store->GetEntry() + 1);
+
+				} else {
+					store->SetBox(10);
+					store->SetEntry(store->GetEntry() + 1);
+					needUpdate = true;
 				}
 			}
 		}
@@ -132,6 +132,11 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 				if (store->GetBox() > 0) {
 					store->SetBox(store->GetBox() - 1);
 					store->SetEntry(store->GetEntry() - 1);
+
+				} else {
+					store->SetBox(4);
+					store->SetEntry(store->GetEntry() - 1);
+					needUpdate = true;
 				}
 			}
 		}

@@ -66,7 +66,7 @@ void Overlays::SelectLanguage() {
 		GFX::DrawBottom();
 
 		for(int i = 0; i < 8 && i < (int)languages.size(); i++) {
-			GFX::drawBox(10, mainButtons[i].y, 300, 22, sPos + i == selection);
+			if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 			Gui::DrawStringCentered(0, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280);
 		}
 		C3D_FrameEnd(0);

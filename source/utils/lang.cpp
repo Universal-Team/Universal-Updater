@@ -31,7 +31,7 @@
 static nlohmann::json appJson;
 
 std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
+	if (!appJson.contains(key)) return key;
 
 	return appJson.at(key).get_ref<const std::string&>();
 }

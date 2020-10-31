@@ -60,7 +60,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		Gui::DrawString(61, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 240);
 		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240);
 
-		GFX::drawBox(btn.x, btn.y, btn.w, btn.h, false);
+		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		Gui::DrawString(btn.x + 3, btn.y, 0.6f, TEXT_COLOR, "★");
 	}
 }

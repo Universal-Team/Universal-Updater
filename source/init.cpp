@@ -106,7 +106,7 @@ Result Init::MainLoop() {
 	bool fullExit = false;
 
 	if (Initialize() == -1) fullExit = true;
-	hidSetRepeatParameters(20, 10);
+	hidSetRepeatParameters(20, 8);
 
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
@@ -129,7 +129,7 @@ Result Init::MainLoop() {
 			if (hDown & KEY_START) fullExit = true; // Make it optionally faster.
 
 			if (fadeAlpha < 255) {
-				fadeAlpha += 2;
+				fadeAlpha += 4;
 				if (fadeAlpha >= 255) {
 					fullExit = true;
 				}

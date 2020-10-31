@@ -44,8 +44,9 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 		if (entries.size() > 0) {
 			for (int i = 0; i < 3 && i < (int)entries.size(); i++) {
 
-				/* Boxes. */
-				GFX::drawBox(StoreBoxesList[i].x, StoreBoxesList[i].y, StoreBoxesList[i].w, StoreBoxesList[i].h, i + store->GetScreenIndx() == store->GetEntry());
+				if (i + store->GetScreenIndx() == store->GetEntry()) {
+					GFX::DrawBox(StoreBoxesList[i].x, StoreBoxesList[i].y, StoreBoxesList[i].w, StoreBoxesList[i].h, false);
+				}
 
 				/* Ensure, entries is larger than the index. */
 				if ((int)entries.size() > i + store->GetScreenIndx()) {

@@ -83,7 +83,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 		if (dirContents.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
-				GFX::drawBox(10, mainButtons[i].y, 300, 22, sPos + i == selection);
+				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, dirContents[sPos + i].name, 295);
 			}
 		}

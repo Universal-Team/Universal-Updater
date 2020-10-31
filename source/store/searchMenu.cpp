@@ -75,21 +75,32 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"), 90);
 
 	/* Filters. */
-	Gui::DrawString(84, 150, 0.5, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
+	Gui::DrawString(84, 150, 0.5f, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
 
-	GFX::drawBox(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, marks & favoriteMarks::STAR);
-	GFX::drawBox(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, marks & favoriteMarks::HEART);
-	GFX::drawBox(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, marks & favoriteMarks::DIAMOND);
-	GFX::drawBox(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, marks & favoriteMarks::CLUBS);
-	GFX::drawBox(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, marks & favoriteMarks::SPADE);
-	GFX::drawBox(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, updateFilter);
+	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, (marks & favoriteMarks::STAR ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, (marks & favoriteMarks::HEART ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, (marks & favoriteMarks::DIAMOND ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, (marks & favoriteMarks::CLUBS ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, (marks & favoriteMarks::SPADE ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, (updateFilter ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::DrawString(SearchMenu[5].x + 9, SearchMenu[5].y + 7, 0.5f, TEXT_COLOR, "★");
+	Gui::DrawString(SearchMenu[6].x + 9, SearchMenu[6].y + 7, 0.5f, TEXT_COLOR, "♥");
+	Gui::DrawString(SearchMenu[7].x + 9, SearchMenu[7].y + 7, 0.5f, TEXT_COLOR, "♦");
+	Gui::DrawString(SearchMenu[8].x + 9, SearchMenu[8].y + 7, 0.5f, TEXT_COLOR, "♣");
+	Gui::DrawString(SearchMenu[9].x + 9, SearchMenu[9].y + 7, 0.5f, TEXT_COLOR, "♠");
 	GFX::DrawSprite(sprites_update_filter_idx, SearchMenu[10].x + 8, SearchMenu[10].y + 8);
-
-	Gui::DrawString(SearchMenu[5].x + 8, SearchMenu[5].y + 8, 0.5, TEXT_COLOR, "★");
-	Gui::DrawString(SearchMenu[6].x + 8, SearchMenu[6].y + 8, 0.5, TEXT_COLOR, "♥");
-	Gui::DrawString(SearchMenu[7].x + 8, SearchMenu[7].y + 8, 0.5, TEXT_COLOR, "♦");
-	Gui::DrawString(SearchMenu[8].x + 8, SearchMenu[8].y + 8, 0.5, TEXT_COLOR, "♣");
-	Gui::DrawString(SearchMenu[9].x + 8, SearchMenu[9].y + 8, 0.5, TEXT_COLOR, "♠");
 }
 
 /*

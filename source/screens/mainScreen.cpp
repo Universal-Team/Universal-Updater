@@ -25,12 +25,15 @@
 */
 
 #include "download.hpp"
+#include "fileBrowse.hpp"
 #include "mainScreen.hpp"
 #include "storeUtils.hpp"
 #include <unistd.h>
 
 extern int fadeAlpha;
 extern u32 hRepeat;
+
+extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
 
 /*
 	MainScreen Constructor.
@@ -46,13 +49,27 @@ MainScreen::MainScreen() {
 	if (config->lastStore() != "universal-db-beta.unistore" || config->lastStore() != "") {
 		if (access((std::string(_STORE_PATH) + config->lastStore()).c_str(), F_OK) != 0) {
 			config->lastStore("universal-db-beta.unistore");
+
+		} else {
+			/* check version and file here. */
+			const UniStoreInfo info = GetInfo((std::string(_STORE_PATH) + config->lastStore()), config->lastStore());
+
+			if (info.Version != 3) {
+				config->lastStore("universal-db-beta.unistore");
+			}
+
+			if (info.File != "") { // Ensure to check for this.
+				if ((info.File.find("/") != std::string::npos)) {
+					config->lastStore("universal-db-beta.unistore"); // It does contain a '/' which is invalid.
+				}
+			}
 		}
 	}
 
 	/* If Universal DB --> Get! */
 	if (config->lastStore() == "universal-db-beta.unistore" || config->lastStore() == "") {
 		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db-beta.unistore", F_OK) != 0) {
-			std::string tmp = "";
+			std::string tmp = ""; // Just a temp.
 			DownloadUniStore("https://db.universal-team.net/unistore/universal-db-beta.unistore", -1, tmp, true, true);
 			DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
 		}

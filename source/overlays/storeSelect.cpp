@@ -207,7 +207,8 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			GFX::DrawBottom();
 
 			for(int i = 0; i < 7 && i < (int)info.size(); i++) {
-				GFX::drawBox(10, mainButtons[i].y, 300, 22, sPos + i == selection);
+				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
+
 				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, info[sPos + i].FileName, 295);
 			}
 		}

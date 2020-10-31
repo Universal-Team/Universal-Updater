@@ -48,18 +48,18 @@
 #define BAR_OUTL_COLOR C2D_Color32(25, 30, 53, 255)
 #define BG_COLOR C2D_Color32(38, 44, 77, 255)
 
-/* Progressbar Colors. */
-#define PROGRESSBAR_OUT_COLOR BLACK
-#define PROGRESSBAR_IN_COLOR WHITE
-
 /* Entry Colors. */
 #define ENTRY_BAR_COLOR BAR_COLOR
 #define ENTRY_BAR_OUTL_COLOR BAR_OUTL_COLOR
 
 /* Entry Box Colors. */
-#define BOX_INSIDE_COLOR C2D_Color32(49, 49, 49, 255)
-#define BOX_SELECTED_COLOR C2D_Color32(240, 0, 0, 255)
+#define BOX_INSIDE_COLOR C2D_Color32(28, 33, 58, 255)
+#define BOX_SELECTED_COLOR C2D_Color32(108, 130, 155, 255)
 #define BOX_UNSELECTED_COLOR BLACK
+
+/* Progressbar Colors. */
+#define PROGRESSBAR_OUT_COLOR BOX_INSIDE_COLOR
+#define PROGRESSBAR_IN_COLOR SIDEBAR_UNSELECTED_COLOR
 
 /* Search Menu Colors. */
 #define SEARCH_BAR_COLOR C2D_Color32(51, 75, 102, 255)
@@ -73,9 +73,10 @@ namespace GFX {
 	void DrawTop(void);
 	void DrawBottom();
 	void DrawSprite(const int &img, const int &x, const int &y, const float &ScaleX = 1, const float &ScaleY = 1);
-	void drawBox(const float &xPos, const float &yPos, const float &width = 50, const float &height = 50, const bool &selected = false, const uint32_t &clr = BOX_INSIDE_COLOR);
+	void DrawBox(const float &xPos, const float &yPos, const float &width = 50, const float &height = 50, const bool &selected = false, const uint32_t &clr = BOX_INSIDE_COLOR);
 	void DrawButton(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const std::string &Text = "");
 	void DrawCheckbox(const float &xPos, const float &yPos, const bool &selected);
+	void DrawToggle(float xPos, float yPos, bool toggled);
 };
 
 #endif

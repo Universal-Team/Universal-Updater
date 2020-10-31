@@ -55,16 +55,17 @@ void GFX::DrawBottom() {
 	const bool &selected: Const Reference, if outline is selected (Red) or not (Black).
 	const uint32_t &clr: (Optional) The color of the inside of the box.
 */
-void GFX::drawBox(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const uint32_t &clr) {
-	static constexpr int w	= 1;
-	const uint32_t outlineColor = selected ? BOX_SELECTED_COLOR : BOX_UNSELECTED_COLOR; // Get Selected | Unselected color.
+void GFX::DrawBox(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const uint32_t &clr) {
+	Gui::Draw_Rect(xPos, yPos, width, height, BOX_INSIDE_COLOR); // Draw middle BG.
 
-	Gui::Draw_Rect(xPos, yPos, width, height, clr); // Draw middle BG.
+	if (selected) {
+		static constexpr int depth = 2;
 
-	Gui::Draw_Rect(xPos, yPos, width, w, outlineColor); // Top.
-	Gui::Draw_Rect(xPos, yPos + w, w, height - 2 * w, outlineColor); // Left.
-	Gui::Draw_Rect(xPos + width - w, yPos + w, w, height - 2 * w, outlineColor); // Right.
-	Gui::Draw_Rect(xPos, yPos + height - w, width, w, outlineColor); // Bottom.
+		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, BOX_SELECTED_COLOR); // Top.
+		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, BOX_SELECTED_COLOR); // Left.
+		Gui::Draw_Rect(xPos + width, yPos - depth, depth, height + depth * 2, BOX_SELECTED_COLOR); // Right.
+		Gui::Draw_Rect(xPos - depth, yPos + height, width + depth * 2, depth, BOX_SELECTED_COLOR); // Bottom.
+	}
 }
 
 extern C2D_SpriteSheet sprites;
@@ -83,22 +84,6 @@ void GFX::DrawSprite(const int &img, const int &x, const int &y, const float &Sc
 }
 
 /*
-	Draw a button (actually the box) with a centered string in it.
-
-	const float &xPos: Const Reference to the X-Position where to draw the box.
-	const float &yPos: Const Reference to the Y-Position where to draw the box.
-	const float &width: Const Reference to the Width of the button.
-	const float &height: Const Reference to the Height of the button.
-	const bool &selected: Const Reference, if outline is selected (Red) or not (Black).
-	const std::string &Text: Const Reference of the Text which should be drawn.
-*/
-void GFX::DrawButton(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const std::string &Text) {
-	drawBox(xPos, yPos, width, height, selected);
-
-	Gui::DrawStringCentered(xPos - 160 + (width / 2), yPos + (height / 2) - (Gui::GetStringHeight(0.4f, Text) / 2), 0.4f, TEXT_COLOR, Text, width - 4, height - 4);
-}
-
-/*
 	Draw the checkbox.
 
 	const float &xPos: Const Reference to the X-Position where to draw the box.
@@ -107,4 +92,15 @@ void GFX::DrawButton(const float &xPos, const float &yPos, const float &width, c
 */
 void GFX::DrawCheckbox(const float &xPos, const float &yPos, const bool &selected) {
 	GFX::DrawSprite((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos);
+}
+
+/*
+	Draw the toggle box.
+
+	float xPos: The X-Position where to draw the toggle.
+	float yPos: The Y-Position where to draw the toggle.
+	bool toggled: If toggled or not.
+*/
+void GFX::DrawToggle(float xPos, float yPos, bool toggled) {
+	GFX::DrawSprite((toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), xPos, yPos);
 }

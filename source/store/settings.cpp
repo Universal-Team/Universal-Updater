@@ -39,10 +39,14 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 54, 184, 262, 22 }
 };
 
-static const std::string autoupdate() { return (config->autoupdate() ? "DISABLE_AUTOUPDATE_UNISTORE" : "ENABLE_AUTOUPDATE_UNISTORE"); };
-static const std::string updateCheck() { return (config->updatecheck() ? "DISABLE_UPDATE_CHECK" : "ENABLE_UPDATE_CHECK"); };
+static const std::vector<Structs::ButtonPos> toggleAbles = {
+	{ 52, 6, 24, 24 }, // Back arrow.
+	{ 288, 64, 24, 24 },
+	{ 288, 140, 24, 24 }
+};
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "CHANGE_DIRECTORIES", "CREDITS", "EXIT_APP" };
+
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "CHANGE_DIRECTORIES", "CREDITS", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
 /*
@@ -51,17 +55,10 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE
 	const int &selection: Const Reference to the Settings Selection.
 */
 static void DrawSettingsMain(const int &selection) {
-	for (int i = 0; i < 7; i++) {
-		GFX::drawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection);
+	for (int i = 0; i < 6; i++) {
+		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255);
 	}
-
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[0].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[0]), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[1].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[1]), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[2].y + 4, 0.45f, TEXT_COLOR, Lang::get(autoupdate()), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[3].y + 4, 0.45f, TEXT_COLOR, Lang::get(updateCheck()), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[4].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[2]), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[5].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[3]), 255);
-	Gui::DrawStringCentered(54 - 160 + (262 / 2), mainButtons[6].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[4]), 255);
 }
 
 /*
@@ -71,9 +68,33 @@ static void DrawSettingsMain(const int &selection) {
 */
 static void DrawSettingsDir(const int &selection) {
 	for (int i = 0; i < 3; i++) {
-		GFX::DrawButton(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, i == selection, Lang::get(dirStrings[i]));
+		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255);
 	}
 }
+
+/*
+	Draw Auto-Update Settings page.
+*/
+static void DrawAutoUpdate() {
+	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
+
+	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240);
+
+	/* Toggle Boxes. */
+	GFX::DrawBox(48, 64, 273, 24, false);
+	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210);
+	GFX::DrawToggle(288, 64, config->autoupdate());
+	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, nullptr, C2D_WordWrap);
+
+	GFX::DrawBox(48, 140, 273, 24, false);
+	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210);
+	GFX::DrawToggle(288, 140, config->updatecheck());
+	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, nullptr, C2D_WordWrap);
+}
+
 
 /*
 	Settings Main Handle.
@@ -103,18 +124,18 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 6) selection++;
+		if (selection < 5) selection++;
 		else selection = 0;
 	}
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
-		else selection = mainStrings.size() + 1;
+		else selection = mainStrings.size() - 1;
 	}
 
 	if (hRepeat & KEY_RIGHT) {
-		if (selection + 8 < (int)mainStrings.size() + 1) selection += 8;
-		else selection = mainStrings.size() + 1;
+		if (selection + 8 < (int)mainStrings.size()) selection += 8;
+		else selection = mainStrings.size() - 1;
 	}
 
 	if (hRepeat & KEY_LEFT) {
@@ -130,21 +151,18 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 			Overlays::SelectStore(store, entries, meta);
 
 		} else if (touching(touch, mainButtons[2])) {
-			config->autoupdate(!config->autoupdate());
+			selection = 0;
+			page = 2;
 
 		} else if (touching(touch, mainButtons[3])) {
-			config->updatecheck(!config->updatecheck());
-
-		} else if (touching(touch, mainButtons[4])) {
 			selection = 0;
 			page = 1;
 
- 		} else if (touching(touch, mainButtons[5])) {
+ 		} else if (touching(touch, mainButtons[4])) {
 			Overlays::ShowCredits();
 
-		} else if (touching(touch, mainButtons[6])) {
+		} else if (touching(touch, mainButtons[5])) {
 			exiting = true;
-
 		}
 	}
 
@@ -159,23 +177,20 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 				break;
 
 			case 2:
-				config->autoupdate(!config->autoupdate());
+				selection = 0;
+				page = 2;
 				break;
 
 			case 3:
-				config->updatecheck(!config->updatecheck());
-				break;
-
-			case 4:
 				selection = 0;
 				page = 1;
 				break;
 
-			case 5:
+			case 4:
 				Overlays::ShowCredits();
 				break;
 
-			case 6:
+			case 5:
 				exiting = true;
 				break;
 		}
@@ -198,7 +213,7 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
-		selection = 4;
+		selection = 3;
 	}
 
 	if (hRepeat & KEY_DOWN) {
@@ -258,6 +273,26 @@ static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &pa
 	}
 }
 
+static void SettingsToggleLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
+	if (hDown & KEY_B) {
+		page = 0;
+		selection = 2;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, toggleAbles[0])) {
+			page = 0;
+			selection = 2;
+
+		} else if (touching(touch, toggleAbles[1])) {
+			config->autoupdate(!config->autoupdate());
+
+		} else if (touching(touch, toggleAbles[2])) {
+			config->updatecheck(!config->updatecheck());
+		}
+	}
+}
+
 /*
 	Draw the Settings.
 
@@ -272,6 +307,10 @@ void StoreUtils::DrawSettings(const int &page, const int &selection) {
 
 		case 1:
 			DrawSettingsDir(selection);
+			break;
+
+		case 2:
+			DrawAutoUpdate();
 			break;
 	}
 }
@@ -298,6 +337,10 @@ void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &
 
 		case 1:
 			SettingsHandleDir(hDown, hHeld, touch, page, selection);
+			break;
+
+		case 2:
+			SettingsToggleLogic(hDown, hHeld, touch, page, selection);
 			break;
 	}
 }

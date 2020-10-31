@@ -52,7 +52,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	if (store && !fetch) {
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
-				GFX::drawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, store->GetDownloadIndex() == i + store->GetDownloadSIndex());
+				if (store->GetDownloadIndex() == i + store->GetDownloadSIndex()) GFX::DrawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
 				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260);
 			}
 

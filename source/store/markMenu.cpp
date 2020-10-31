@@ -46,19 +46,28 @@ static const std::vector<Structs::ButtonPos> markBox = {
 void StoreUtils::DisplayMarkBox(const int &marks) {
 	Gui::Draw_Rect(0, 0, 320, 240, DIM_COLOR); // Darken.
 
-	GFX::drawBox(markBox[0].x, markBox[0].y, markBox[0].w, markBox[0].h, marks & favoriteMarks::STAR);
-	GFX::drawBox(markBox[1].x, markBox[1].y, markBox[1].w, markBox[1].h, marks & favoriteMarks::HEART);
-	GFX::drawBox(markBox[2].x, markBox[2].y, markBox[2].w, markBox[2].h, marks & favoriteMarks::DIAMOND);
-	GFX::drawBox(markBox[3].x, markBox[3].y, markBox[3].w, markBox[3].h, marks & favoriteMarks::CLUBS);
-	GFX::drawBox(markBox[4].x, markBox[4].y, markBox[4].w, markBox[4].h, marks & favoriteMarks::SPADE);
+	Gui::Draw_Rect(markBox[0].x, markBox[0].y, markBox[0].w, markBox[0].h, (marks & favoriteMarks::STAR ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
 
-	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 12, 0.9, TEXT_COLOR, "★");
-	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 12, 0.9, TEXT_COLOR, "♥");
-	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 12, 0.9, TEXT_COLOR, "♦");
-	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 12, 0.9, TEXT_COLOR, "♣");
-	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 12, 0.9, TEXT_COLOR, "♠");
+	Gui::Draw_Rect(markBox[1].x, markBox[1].y, markBox[1].w, markBox[1].h, (marks & favoriteMarks::HEART ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
 
-	GFX::drawBox(markBox[5].x, markBox[5].y, markBox[5].w, markBox[5].h, false);
+	Gui::Draw_Rect(markBox[2].x, markBox[2].y, markBox[2].w, markBox[2].h, (marks & favoriteMarks::DIAMOND ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(markBox[3].x, markBox[3].y, markBox[3].w, markBox[3].h, (marks & favoriteMarks::CLUBS ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::Draw_Rect(markBox[4].x, markBox[4].y, markBox[4].w, markBox[4].h, (marks & favoriteMarks::SPADE ?
+		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+
+	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 11, 0.9, TEXT_COLOR, "★");
+	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 11, 0.9, TEXT_COLOR, "♥");
+	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 11, 0.9, TEXT_COLOR, "♦");
+	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 11, 0.9, TEXT_COLOR, "♣");
+	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 11, 0.9, TEXT_COLOR, "♠");
+
+	GFX::DrawBox(markBox[5].x, markBox[5].y, markBox[5].w, markBox[5].h, false);
 	Gui::DrawString(markBox[5].x + 3, markBox[5].y, 0.6f, TEXT_COLOR, "★");
 }
 

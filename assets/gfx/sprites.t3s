@@ -1,6 +1,7 @@
 --atlas -f rgba -z auto
 
 sprites/add.png
+sprites/arrow.png
 sprites/checked.png
 sprites/delete.png
 sprites/download.png
@@ -12,6 +13,8 @@ sprites/settings.png
 sprites/sort.png
 sprites/sort_checked.png
 sprites/sort_unchecked.png
+sprites/toggle_off.png
+sprites/toggle_on.png
 sprites/unchecked.png
 sprites/universal-updater.png
 sprites/universal-core.png
