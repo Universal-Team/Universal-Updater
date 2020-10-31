@@ -79,7 +79,7 @@
 	"SYNTAX_ERROR": "Syntax-Fehler!",
 	"TITLE": "Titel",
 	"TOP_STYLE": "Top-Stil",
-	"UNISTORE_INVALID_ERROR": "Dieser UniStore ist ungültig und kann nicht\ngeladen werden mit Universal-Updater.\nÜberprüfe ob eventuell ein Syntax-Fehler vorliegt?",
+	"UNISTORE_INVALID_ERROR": "Dieser UniStore ist ungültig und kann nicht\nmit Universal-Updater geladen werden.\nÜberprüfe ob eventuell ein Syntax-Fehler vorliegt?",
 	"UNISTORE_TOO_NEW": "Diese Version von Universal-Updater ist\nzu alt um diesen UniStore zu benutzen.\nBitte aktualisiere zur neusten Version.",
 	"UNISTORE_TOO_OLD": "Dieser UniStore ist veraltet und kann nicht\nmit dieser Version von Universal-Updater benutzt werden.\nBitte frage den Ersteller um dies zu aktualisieren.",
 	"UNSUPPORTED_UNISTORE_VERSION": "Die Version dieses UniStores wird nicht unterstützt.",
