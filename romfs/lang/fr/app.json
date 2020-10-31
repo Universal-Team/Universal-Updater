@@ -1,9 +1,9 @@
 {
 	"ASCENDING": "Croissant",
 	"AUTHOR": "Auteur",
-	"AUTO_UPDATE_SETTINGS": "Paramètres d'auto-mise a jour",
-	"AUTO_UPDATE_SETTINGS_BTN": "Paramètres d'auto-mise a jour...",
-	"AUTO_UPDATE_UNISTORE": "Auto-mettre a jour les UniStores",
+	"AUTO_UPDATE_SETTINGS": "Paramètres de mise à jour auto",
+	"AUTO_UPDATE_SETTINGS_BTN": "Paramètres de mise à jour auto...",
+	"AUTO_UPDATE_UNISTORE": "Mettre à jour automatiquement les UniStores",
 	"AUTO_UPDATE_UNISTORE_DESC": "Avec cela, le dernier UniStore utilisé sera mis à jour automatiquement lors du lancement de Universal-Updater.",
 	"AUTO_UPDATE_UU": "Auto-mettre à jour d'Universal-Updater",
 	"AUTO_UPDATE_UU_DESC": "Lorsque l'option est activée, Universal-Updater vérifiera les mises à jour à chaque démarrage.",
