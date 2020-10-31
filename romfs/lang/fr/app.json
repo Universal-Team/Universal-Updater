@@ -88,7 +88,7 @@
 	"UPDATE_NOT_AVAILABLE": "Aucune mise à jour n'est disponible!",
 	"UPDATING_SPRITE_SHEET": "Mise à jour des Sprites...",
 	"UPDATING_SPRITE_SHEET2": "Mise a jour des sprites: %i/%i...",
-	"UPDATING_UNISTORE": "Mise à jour de l'unistore...",
+	"UPDATING_UNISTORE": "Mise à jour de l'UniStore...",
 	"VERSION": "Version",
 	"YES": "Oui"
 }
