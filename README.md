@@ -1,7 +1,7 @@
 <p align="center">
 	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/blob/master/app/banner.png"></a><br>
 	<b>An easy to use app for installing and updating 3DS homebrew</b><br>
-	<a href="https://discord.gg/KDJCfGF" style="padding-right: 5px;">
+	<a href="https://universal-team.net/discord" style="padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord%20Server-%23universal--updater-green.svg" alt="Discord Server">
 	</a>
 	<a href="https://gbatemp.net/threads/release-universal-updater-a-universally-good-updater.551824/" style="padding-left: 5px; padding-right: 5px;">
@@ -35,7 +35,7 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 ## Screenshots
 
-![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/Credits.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySelection.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DownloadList.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/EntryInfo.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/LanguageSelection.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ListStyle.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/MarkMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SearchMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SettingsMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SortMenu.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/StoreSelection.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ToggleMenu.png)
+![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/Credits.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DownloadList.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/EntryInfo.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/LanguageSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ListStyle.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/MarkMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SearchMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SettingsMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SortMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/StoreSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ToggleMenu.png)
 
 ## Credits
 
