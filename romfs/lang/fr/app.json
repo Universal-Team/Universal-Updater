@@ -73,7 +73,7 @@
 	"SELECT_LANG": "Choisir la langue",
 	"SELECT_UNISTORE": "Sélectionner l'UniStore",
 	"SELECT_UNISTORE_2": "Sélectionner un UniStore",
-	"SHEET_SLASH": "On dirait qu'un '/' est inclus, ce qui n'est pas pris en charge.\nMerci de changer 'file' au nom du fichier seul.",
+	"SHEET_SLASH": "On dirait qu'un '/' est inclus, ce qui n'est pas pris en charge.\nMerci de changer 'sheet' au nom du fichier seul.",
 	"SORT_BY": "Trier par",
 	"START_SELECT": "Appuyee sur START pour sélectionner le dossier actuel",
 	"SYNTAX_ERROR": "Erreur syntaxe!",
