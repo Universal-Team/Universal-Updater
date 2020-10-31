@@ -1,8 +1,8 @@
 {
 	"ASCENDING": "Croissant",
 	"AUTHOR": "Auteur",
-	"AUTO_UPDATE_SETTINGS": "Auto-update Settings",
-	"AUTO_UPDATE_SETTINGS_BTN": "Auto-update settings...",
+	"AUTO_UPDATE_SETTINGS": "Paramètres d'auto-mise a jour",
+	"AUTO_UPDATE_SETTINGS_BTN": "Paramètres d'auto-mise a jour...",
 	"AUTO_UPDATE_UNISTORE": "Auto-update UniStores",
 	"AUTO_UPDATE_UNISTORE_DESC": "With this, the last used UniStore will be updated automatically when launching Universal-Updater.",
 	"AUTO_UPDATE_UU": "Auto-update Universal-Updater",
