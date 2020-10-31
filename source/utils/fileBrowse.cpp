@@ -193,6 +193,7 @@ void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePat
 	if (((int)dirContents.size()) != 1)	fcopy((sourcePath + ("/" + entry->name)).c_str(), (destinationPath + ("/" + entry->name)).c_str());
 }
 
+u32 copyOffset = 0, copySize = 0;
 /*
 	The copy operation.
 
@@ -200,6 +201,8 @@ void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePat
 	const char *sourcePath: Pointer to the source path.
 */
 int fcopy(const char *sourcePath, const char *destinationPath) {
+	copyOffset = 0, copySize = 0;
+
 	DIR *isDir = opendir(sourcePath);
 
 	if (isDir != NULL) {
@@ -227,10 +230,11 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 		/* Source path is a file. */
 		FILE *sourceFile = fopen(sourcePath, "rb");
-		off_t fsize = 0;
+		copySize = 0, copyOffset = 0;
+
 		if (sourceFile) {
 			fseek(sourceFile, 0, SEEK_END);
-			fsize = ftell(sourceFile); // Get source file's size.
+			copySize = ftell(sourceFile); // Get source file's size.
 			fseek(sourceFile, 0, SEEK_SET);
 
 		} else {
@@ -238,7 +242,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			return -1;
 		}
 
-		FILE* destinationFile = fopen(destinationPath, "wb");
+		FILE *destinationFile = fopen(destinationPath, "wb");
 		//if (destinationFile) {
 			fseek(destinationFile, 0, SEEK_SET);
 		/*} else {
@@ -247,7 +251,6 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			return -1;
 		}*/
 
-		off_t offset = 0;
 		int numr;
 		while(1) {
 			scanKeys();
@@ -261,19 +264,19 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 			printf("\x1b[16;0H");
 			printf("Progress:\n");
-			printf("%i/%i Bytes					   ", (int)offset, (int)fsize);
+			printf("%i/%i Bytes					   ", (int)copyOffset, (int)copySize);
 
 			/* Copy file to destination path. */
 			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);
-			offset += copyBufSize;
+			copyOffset += copyBufSize;
 
-			if (offset > fsize) {
+			if (copyOffset > copySize) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 
 				printf("\x1b[17;0H");
-				printf("%i/%i Bytes					   ", (int)fsize, (int)fsize);
+				printf("%i/%i Bytes					   ", (int)copyOffset, (int)copySize);
 				for(int i = 0; i < 30; i++) gspWaitForVBlank();
 
 				return 1;

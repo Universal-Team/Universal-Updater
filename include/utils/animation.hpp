@@ -33,11 +33,13 @@
 enum class ProgressBar {
 	Downloading,
 	Extracting,
-	Installing
+	Installing,
+	Copying
 };
 
 namespace Animation {
 	void DrawProgressBar(const u64 &currentProgress, const u64 &totalProgress);
+	void displayProgressBar();
 };
 
 #endif

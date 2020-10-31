@@ -26,6 +26,21 @@
 
 #include "animation.hpp"
 #include "common.hpp"
+#include "stringutils.hpp"
+#include <curl/curl.h>
+
+extern int filesExtracted, extractFilesCount;
+extern std::string extractingFile;
+char progressBarMsg[128] = "";
+bool showProgressBar = false;
+ProgressBar progressbarType = ProgressBar::Downloading;
+
+extern u32 extractSize, writeOffset;
+extern u32 installSize, installOffset;
+extern u32 copyOffset, copySize;
+
+extern curl_off_t downloadTotal;
+extern curl_off_t downloadNow;
 
 /*
 	Draw the progressbar.
@@ -36,4 +51,80 @@
 void Animation::DrawProgressBar(const u64 &currentProgress, const u64 &totalProgress) {
 	Gui::Draw_Rect(30, 120, 340, 30, PROGRESSBAR_OUT_COLOR);
 	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, PROGRESSBAR_IN_COLOR);
+}
+
+/*
+	Display the progressbar.
+*/
+void Animation::displayProgressBar() {
+	char str[256];
+
+	while(showProgressBar) {
+		switch(progressbarType) {
+			case ProgressBar::Downloading:
+				if (downloadTotal < 1.0f) downloadTotal = 1.0f;
+				if (downloadTotal < downloadNow) downloadTotal = downloadNow;
+
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						StringUtils::formatBytes(downloadNow).c_str(),
+						StringUtils::formatBytes(downloadTotal).c_str(),
+						((float)downloadNow/(float)downloadTotal) * 100.0f);
+				break;
+
+			case ProgressBar::Extracting:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						StringUtils::formatBytes(writeOffset).c_str(),
+						StringUtils::formatBytes(extractSize).c_str(),
+						((float)writeOffset/(float)extractSize) * 100.0f);
+				break;
+
+			case ProgressBar::Installing:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						StringUtils::formatBytes(installOffset).c_str(),
+						StringUtils::formatBytes(installSize).c_str(),
+						((float)installOffset/(float)installSize) * 100.0f);
+				break;
+
+			case ProgressBar::Copying:
+				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
+						StringUtils::formatBytes(copyOffset).c_str(),
+						StringUtils::formatBytes(copySize).c_str(),
+						((float)copyOffset/(float)copySize) * 100.0f);
+				break;
+		}
+
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
+		GFX::DrawTop();
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 390);
+
+		switch(progressbarType) {
+			case ProgressBar::Downloading:
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Animation::DrawProgressBar(downloadNow, downloadTotal);
+				break;
+
+			case ProgressBar::Extracting:
+				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 390);
+				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390);
+				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 390);
+				Animation::DrawProgressBar(writeOffset, extractSize);
+				break;
+
+			case ProgressBar::Installing:
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Animation::DrawProgressBar(installOffset, installSize);
+				break;
+
+			case ProgressBar::Copying:
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Animation::DrawProgressBar(copyOffset, copySize);
+				break;
+		}
+
+		GFX::DrawBottom();
+		C3D_FrameEnd(0);
+	}
 }

@@ -65,7 +65,6 @@ void notImplemented(void);
 */
 void doneMsg(void);
 
-void displayProgressBar();
 bool IsUpdateAvailable(const std::string &URL, const int &revCurrent);
 bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload = false, const bool &isUDB = false);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);

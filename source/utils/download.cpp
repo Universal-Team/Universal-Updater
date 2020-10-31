@@ -68,15 +68,6 @@ static bool killThread = false;
 static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
 
-extern int filesExtracted, extractFilesCount;
-extern std::string extractingFile;
-char progressBarMsg[128] = "";
-bool showProgressBar = false;
-ProgressBar progressbarType = ProgressBar::Downloading;
-
-extern u64 extractSize, writeOffset;
-extern u64 installSize, installOffset;
-
 static int curlProgress(CURL *hnd,
 					curl_off_t dltotal, curl_off_t dlnow,
 					curl_off_t ultotal, curl_off_t ulnow)
@@ -372,22 +363,31 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 
 	printf("Looking for asset with matching name:\n%s\n", asset.c_str());
 	std::string assetUrl;
-	nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-	if (parsedAPI.size() == 0) return -2; // All were prereleases and those are being ignored.
-	if (includePrereleases) parsedAPI = parsedAPI[0];
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-	if (parsedAPI["assets"].is_array()) {
-		for (auto jsonAsset : parsedAPI["assets"]) {
-			if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
-				std::string assetName = jsonAsset["name"];
+		if (parsedAPI.size() == 0) ret = -2; // All were prereleases and those are being ignored.
 
-				if (ScriptUtils::matchPattern(asset, assetName)) {
-					assetUrl = jsonAsset["browser_download_url"];
-					break;
+		if (ret != -2) {
+			if (includePrereleases) parsedAPI = parsedAPI[0];
+
+			if (parsedAPI["assets"].is_array()) {
+				for (auto jsonAsset : parsedAPI["assets"]) {
+					if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
+						std::string assetName = jsonAsset["name"];
+
+						if (ScriptUtils::matchPattern(asset, assetName)) {
+							assetUrl = jsonAsset["browser_download_url"];
+							break;
+						}
+					}
 				}
 			}
 		}
+
+	} else {
+		ret = -3;
 	}
 
 	socExit();
@@ -397,7 +397,7 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	result_sz = 0;
 	result_written = 0;
 
-	if (assetUrl.empty()) {
+	if (assetUrl.empty() || ret != 0) {
 		ret = DL_ERROR_GIT;
 
 	} else {
@@ -428,70 +428,6 @@ void notImplemented(void) { Msg::waitMsg(Lang::get("NOT_IMPLEMENTED")); }
 void doneMsg(void) { Msg::waitMsg(Lang::get("DONE")); }
 
 void notConnectedMsg(void) { Msg::waitMsg(Lang::get("CONNECT_WIFI")); }
-
-/*
-	Display the progressbar.
-*/
-void displayProgressBar() {
-	char str[256];
-
-	while(showProgressBar) {
-		switch(progressbarType) {
-			case ProgressBar::Downloading:
-				if (downloadTotal < 1.0f) downloadTotal = 1.0f;
-				if (downloadTotal < downloadNow) downloadTotal = downloadNow;
-
-				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-						StringUtils::formatBytes(downloadNow).c_str(),
-						StringUtils::formatBytes(downloadTotal).c_str(),
-						((float)downloadNow/(float)downloadTotal) * 100.0f);
-				break;
-
-			case ProgressBar::Extracting:
-				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-						StringUtils::formatBytes(writeOffset).c_str(),
-						StringUtils::formatBytes(extractSize).c_str(),
-						((float)writeOffset/(float)extractSize) * 100.0f);
-				break;
-
-			case ProgressBar::Installing:
-				snprintf(str, sizeof(str), "%s / %s (%.2f%%)",
-						StringUtils::formatBytes(installOffset).c_str(),
-						StringUtils::formatBytes(installSize).c_str(),
-						((float)installOffset/(float)installSize) * 100.0f);
-				break;
-		}
-
-		Gui::clearTextBufs();
-		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(Top, TRANSPARENT);
-		C2D_TargetClear(Bottom, TRANSPARENT);
-		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 400);
-
-		switch(progressbarType) {
-			case ProgressBar::Downloading:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 400);
-				Animation::DrawProgressBar(downloadNow, downloadTotal);
-				break;
-
-			case ProgressBar::Extracting:
-				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 400);
-				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 400);
-				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 400);
-				Animation::DrawProgressBar(writeOffset, extractSize);
-				break;
-
-			case ProgressBar::Installing:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 400);
-				Animation::DrawProgressBar(installOffset, installSize);
-				break;
-		}
-
-		GFX::DrawBottom();
-		C3D_FrameEnd(0);
-	}
-}
 
 /*
 	Return, if an update is available.

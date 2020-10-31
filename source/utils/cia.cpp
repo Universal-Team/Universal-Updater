@@ -91,7 +91,7 @@ FS_MediaType getTitleDestination(const u64 &titleId) {
 	return platform == 0x0003 || (platform == 0x0004 && ((category & 0x8011) != 0 || (category == 0x0000 && variation == 0x02))) ? MEDIATYPE_NAND : MEDIATYPE_SD;
 }
 
-u64 installSize = 0, installOffset = 0;
+u32 installSize = 0, installOffset = 0;
 
 Result installCia(const char *ciaPath, const bool &updatingSelf) {
 	u32 bytes_read = 0, bytes_written;

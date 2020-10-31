@@ -104,11 +104,23 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	_dest = std::regex_replace(_dest, std::regex("%3DSX%"), config->_3dsxPath());
 	_dest = std::regex_replace(_dest, std::regex("%NDS%"), config->ndsPath());
 
-	Msg::DisplayMsg(message);
+	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+	showProgressBar = true;
+	progressbarType = ProgressBar::Copying;
+
+	s32 prio = 0;
+	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	/* If destination does not exist, create dirs. */
 	if (access(_dest.c_str(), F_OK) != 0) makeDirs(_dest.c_str());
-	fcopy(_source.c_str(), _dest.c_str());
+	ret = fcopy(_source.c_str(), _dest.c_str());
+
+	if (ret == -1) ret = COPY_ERROR;
+	else if (ret == 1) ret = NONE;
+	showProgressBar = false;
+	threadJoin(thread, U64_MAX);
+	threadFree(thread);
 	return ret;
 }
 
@@ -153,7 +165,7 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
 		showProgressBar = false;
@@ -186,7 +198,7 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	if (downloadToFile(file, out) != 0) {
 		showProgressBar = false;
@@ -218,7 +230,7 @@ void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf,
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	installCia(in.c_str(), updatingSelf);
 	showProgressBar = false;
@@ -245,7 +257,7 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	getExtractedSize(in, input);
 	extractArchive(in, input, out);
