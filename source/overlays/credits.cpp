@@ -53,7 +53,7 @@ void Overlays::ShowCredits() {
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390);
+		Gui::DrawStringCentered(0, 218, 0.6f, TEXT_COLOR, Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390);
 
 		GFX::DrawBottom();
 		GFX::DrawSprite(sprites_universal_core_idx, 0, 26);

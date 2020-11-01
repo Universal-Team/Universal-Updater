@@ -28,22 +28,42 @@
 #include "keyboard.hpp"
 #include "screenCommon.hpp"
 
+static std::vector<SwkbdDictWord> words;
+
 /*
 	Return a string of the keyboard.
 
-	const uint &maxLength: Const Reference to the max length.
+	uint maxLength: The max length.
 	const std::string &Text: Const Reference to the Text.
+	const std::vector<std::unique_ptr<StoreEntry>> &entries: Const Reference of all entries for the words to suggest.
 */
-std::string Input::setkbdString(const uint &maxLength, const std::string &Text) {
+std::string Input::setkbdString(uint maxLength, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	C3D_FrameEnd(0); // Needed, so the system will not freeze.
 
 	SwkbdState state;
 	swkbdInit(&state, SWKBD_TYPE_NORMAL, 2, maxLength);
-	char temp[maxLength] = { 0 };
+	char temp[maxLength + 1] = { 0 };
 	swkbdSetHintText(&state, Text.c_str());
 	swkbdSetValidation(&state, SWKBD_NOTBLANK_NOTEMPTY, SWKBD_FILTER_PROFANITY, 0);
+
+	if (entries.size()) {
+		words.clear();
+		words.resize(entries.size());
+
+		for (uint i = 0; i < entries.size(); i++) {
+			/* Checking for not nullptr. */
+			if (entries[i]) swkbdSetDictWord(&words[i], StringUtils::lower_case(entries[i]->GetTitle()).c_str(), entries[i]->GetTitle().c_str());
+			else swkbdSetDictWord(&words[i], "", "");
+		}
+
+		if (words.size() > 0) {
+			swkbdSetDictionary(&state, words.data(), entries.size());
+			swkbdSetFeatures(&state, SWKBD_PREDICTIVE_INPUT);
+		}
+	}
+
 	SwkbdButton ret = swkbdInputText(&state, temp, maxLength);
-	temp[maxLength - 1] = '\0';
+	temp[maxLength] = '\0';
 
 	return (ret == SWKBD_BUTTON_CONFIRM ? temp : "");
 }

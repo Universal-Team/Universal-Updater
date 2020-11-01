@@ -27,10 +27,11 @@
 #ifndef _UNIVERSAL_UPDATER_KEYBOARD_HPP
 #define _UNIVERSAL_UPDATER_KEYBOARD_HPP
 
+#include "storeEntry.hpp"
 #include <string>
 
 namespace Input {
-	std::string setkbdString(const uint &maxLength, const std::string &Text);
+	std::string setkbdString(uint maxLength, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries);
 };
 
 #endif

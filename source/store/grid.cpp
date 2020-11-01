@@ -55,6 +55,14 @@ static const std::vector<Structs::ButtonPos> GridBoxes = {
 */
 void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	if (store) { // Ensure, store is not a nullptr.
+
+		if (config->usebg() && store->customBG()) {
+			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+
+		} else {
+			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+		}
+
 		for (int i = 0, i2 = 0 + (store->GetScreenIndx() * 5); i2 < 15 + (store->GetScreenIndx() * 5) && i2 < (int)entries.size(); i2++, i++) {
 
 			/* Boxes. */

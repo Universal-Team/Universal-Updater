@@ -28,17 +28,16 @@
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
-#define DOWNLOAD_ENTRIES 8
+#define DOWNLOAD_ENTRIES 7
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
-	{ 54, 4, 262, 22 },
-	{ 54, 34, 262, 22 },
-	{ 54, 64, 262, 22 },
-	{ 54, 94, 262, 22 },
-	{ 54, 124, 262, 22 },
-	{ 54, 154, 262, 22 },
-	{ 54, 184, 262, 22 },
-	{ 54, 214, 262, 22 }
+	{ 54, 32, 262, 22 },
+	{ 54, 62, 262, 22 },
+	{ 54, 92, 262, 22 },
+	{ 54, 122, 262, 22 },
+	{ 54, 152, 262, 22 },
+	{ 54, 182, 262, 22 },
+	{ 54, 212, 262, 22 }
 };
 
 /*
@@ -50,6 +49,10 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 */
 void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, const bool &fetch) {
 	if (store && !fetch) {
+		Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+		Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+		Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265);
+
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
 				if (store->GetDownloadIndex() == i + store->GetDownloadSIndex()) GFX::DrawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
@@ -57,7 +60,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 			}
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(25, downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255);
+			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255);
 		}
 	}
 }

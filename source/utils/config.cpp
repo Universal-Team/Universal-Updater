@@ -122,6 +122,7 @@ Config::Config() {
 	if (this->json.contains("Archive_Path")) this->archPath(this->getString("Archive_Path"));
 	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
+	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -142,6 +143,7 @@ void Config::save() {
 		this->setString("Archive_Path", this->archPath());
 		this->setBool("MetaData", this->metadata());
 		this->setBool("UpdateCheck", this->updatecheck());
+		this->setBool("UseBG", this->usebg());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

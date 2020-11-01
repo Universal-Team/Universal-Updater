@@ -76,10 +76,16 @@ public:
 
 	nlohmann::json &GetJson() { return this->storeJson; };
 	bool GetValid() const { return this->valid; };
+
+	/* Both of these things are used for custom BG support. */
+	C2D_Image GetStoreImg() const { return this->storeBG; };
+	bool customBG() const { return this->hasCustomBG; };
 private:
+	void SetC2DBGImage();
 	nlohmann::json storeJson = nullptr;
 	std::vector<C2D_SpriteSheet> sheets;
-	bool valid = false;
+	C2D_Image storeBG = { nullptr };
+	bool valid = false, hasSheet = false, hasCustomBG = false;
 	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0;
 };
 

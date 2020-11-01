@@ -41,6 +41,14 @@ static const std::vector<Structs::ButtonPos> StoreBoxesList = {
 */
 void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	if (store) { // Ensure, store is not a nullptr.
+
+		if (config->usebg() && store->customBG()) {
+			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+
+		} else {
+			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+		}
+
 		if (entries.size() > 0) {
 			for (int i = 0; i < 3 && i < (int)entries.size(); i++) {
 

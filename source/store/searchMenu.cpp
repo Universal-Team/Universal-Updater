@@ -30,21 +30,21 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> SearchMenu = {
-	{ 55, 5, 258, 30 }, // Search bar.
+	{ 55, 45, 258, 30 }, // Search bar.
 
 	/* Includes. */
-	{ 85, 84, 10, 10 },
-	{ 85, 100, 10, 10 },
-	{ 167, 84, 10, 10 },
-	{ 167, 100, 10, 10 },
+	{ 85, 109, 50, 10 },
+	{ 85, 125, 50, 10 },
+	{ 167, 109, 50, 10 },
+	{ 167, 125, 50, 10 },
 
 	/* Filters. */
-	{ 82, 170, 30, 30 },
-	{ 117, 170, 30, 30 },
-	{ 152, 170, 30, 30 },
-	{ 187, 170, 30, 30 },
-	{ 222, 170, 30, 30 },
-	{ 257, 170, 30, 30 }
+	{ 82, 195, 30, 30 },
+	{ 117, 195, 30, 30 },
+	{ 152, 195, 30, 30 },
+	{ 187, 195, 30, 30 },
+	{ 222, 195, 30, 30 },
+	{ 257, 195, 30, 30 }
 };
 
 /*
@@ -56,17 +56,21 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 	const bool &updateFilter: Const Reference to the update filter.
 */
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks, const bool &updateFilter) {
-	Gui::Draw_Rect(54, 4, 260, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 265);
+
+	Gui::Draw_Rect(54, 44, 260, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
 	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
 
-	Gui::DrawStringCentered(28, 10, 0.6, TEXT_COLOR, searchResult, 265);
+	Gui::DrawStringCentered(28, 50, 0.6, TEXT_COLOR, searchResult, 265);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
 		GFX::DrawCheckbox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, searchIncludes[i]);
 	}
 
-	Gui::DrawString(84, 60, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"), 265);
+	Gui::DrawString(84, 85, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"), 265);
 
 	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"), 90);
 	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"), 90);
@@ -75,7 +79,7 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"), 90);
 
 	/* Filters. */
-	Gui::DrawString(84, 150, 0.5f, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
+	Gui::DrawString(84, 175, 0.5f, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
 
 	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, (marks & favoriteMarks::STAR ?
 		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
@@ -139,8 +143,14 @@ void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::un
 		/* Search bar. */
 		if (!didTouch) {
 			if (touching(touch, SearchMenu[0])) {
-				searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"));
-				didTouch = true;
+				if (store) {
+					searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"), {});
+					didTouch = true;
+
+				} else {
+					searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"), {});
+					didTouch = true;
+				}
 			}
 		}
 

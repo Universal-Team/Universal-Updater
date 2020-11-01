@@ -31,15 +31,15 @@
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 static const std::vector<Structs::ButtonPos> buttons = {
-	{ 75, 50, 100, 16 },
-	{ 75, 70, 100, 16 },
-	{ 75, 90, 100, 16 },
+	{ 75, 60, 100, 16 },
+	{ 75, 80, 100, 16 },
+	{ 75, 100, 100, 16 },
 
-	{ 205, 50, 100, 16 },
-	{ 205, 70, 100, 16 },
+	{ 205, 60, 100, 16 },
+	{ 205, 80, 100, 16 },
 
-	{ 75, 160, 100, 16 },
-	{ 75, 180, 100, 16 }
+	{ 75, 170, 100, 16 },
+	{ 75, 190, 100, 16 }
 };
 
 static void DrawCheck(int pos, bool v) {
@@ -73,6 +73,10 @@ static const uint8_t GetType(const SortType &st) {
 	const SortType &st: Const Reference to the SortType variable.
 */
 void StoreUtils::DrawSorting(const bool &asc, const SortType &st) {
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SORTING"), 265);
+
 	/* Sort By. */
 	Gui::DrawString(buttons[0].x + 5, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"), 90);
 	for (int i = 0; i < 3; i++) {

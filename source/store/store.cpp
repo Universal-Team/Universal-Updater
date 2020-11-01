@@ -40,7 +40,10 @@ static bool firstStart = true;
 
 	const std::string &file: The UniStore file.
 */
-Store::Store(const std::string &file) { this->update(file); };
+Store::Store(const std::string &file) {
+	this->update(file);
+	this->SetC2DBGImage();
+};
 
 /*
 	Update an UniStore,, including SpriteSheet, if revision increased.
@@ -407,6 +410,37 @@ C2D_Image Store::GetIconEntry(const int &index) const {
 	if (temp.subtex->width < 49 && temp.subtex->height < 49) return temp; // up to 48x48 is valid.
 
 	return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+}
+
+/*
+	Set's the custom BG to the storeBG variable.
+*/
+void Store::SetC2DBGImage() {
+	if (!this->valid) return;
+	if (this->sheets.empty()) return;
+	int index = -1, sheetIndex = -1;
+
+	if (this->storeJson["storeInfo"].contains("bg_index") && this->storeJson["storeInfo"]["bg_index"].is_number()) {
+		index = this->storeJson["storeInfo"]["bg_index"];
+	}
+
+	if (this->storeJson["storeInfo"].contains("bg_sheet") && this->storeJson["storeInfo"]["bg_sheet"].is_number()) {
+		sheetIndex = this->storeJson["storeInfo"]["bg_sheet"];
+	}
+
+	if (index == -1 || sheetIndex == -1) return;
+
+	if (sheetIndex > (int)this->sheets.size()) return;
+	if (!this->sheets[sheetIndex]) return;
+
+	if (index > (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])-1) return;
+
+	C2D_Image temp = C2D_SpriteSheetGetImage(this->sheets[sheetIndex], index);
+
+	if (temp.subtex->width == 400 && temp.subtex->height == 214) {
+		this->hasCustomBG = true;
+		this->storeBG = temp; // Must be 400x214.
+	}
 }
 
 /*

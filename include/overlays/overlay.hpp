@@ -34,9 +34,9 @@
 
 namespace Overlays {
 	void SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
-	void SelectLanguage();
+	void SelectLanguage(const std::unique_ptr<Store> &store);
 	void ShowCredits();
-	std::string SelectDir(const std::string &oldDir, const std::string &msg);
+	std::string SelectDir(const std::string &oldDir, const std::string &msg, const std::unique_ptr<Store> &store);
 };
 
 #endif

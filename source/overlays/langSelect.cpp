@@ -51,7 +51,7 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 
 	Can be skipped with `B`.
 */
-void Overlays::SelectLanguage() {
+void Overlays::SelectLanguage(const std::unique_ptr<Store> &store) {
 	bool doOut = false;
 	int selection = 0, sPos = 0;
 
@@ -61,7 +61,16 @@ void Overlays::SelectLanguage() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		GFX::DrawTop();
+		if (store && config->usebg() && store->customBG()) {
+			Gui::ScreenDraw(Top);
+			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
+			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+
+		} else {
+			GFX::DrawTop();
+		}
+
 		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_LANG"));
 		GFX::DrawBottom();
 

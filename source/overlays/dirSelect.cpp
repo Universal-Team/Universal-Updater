@@ -42,7 +42,7 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 /*
 	Select a Directory.
 */
-std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg) {
+std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg, const std::unique_ptr<Store> &store) {
 	std::string currentPath = oldDir;
 	bool dirChanged = true;
 	int selection = 0, sPos = 0;
@@ -68,7 +68,16 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		GFX::DrawTop();
+		if (store && config->usebg() && store->customBG()) {
+			Gui::ScreenDraw(Top);
+			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
+			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+
+		} else {
+			GFX::DrawTop();
+		}
+
 		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, msg, 380);
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
@@ -142,7 +151,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			}
 
 			if (hidKeysDown() & KEY_TOUCH) {
-				for (int i = 0; i < 6; i++) {
+				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)dirContents.size()) {
 							if (dirContents[i + sPos].isDirectory) {

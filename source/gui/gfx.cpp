@@ -33,7 +33,7 @@
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-	Gui::Draw_Rect(0, 25, 400, 215, BG_COLOR);
+	Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
 	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
 }
 

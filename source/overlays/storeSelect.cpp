@@ -104,7 +104,7 @@ static bool DownloadStore(bool Cam = true) {
 	bool doSheet = false;
 	std::string file = "";
 
-	const std::string URL = Cam ? QR_Scanner::GetQRURL() : Input::setkbdString(150, Lang::get("ENTER_URL"));
+	const std::string URL = Cam ? QR_Scanner::GetQRURL() : Input::setkbdString(150, Lang::get("ENTER_URL"), { });
 	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
 
 	if (doSheet) {
@@ -178,7 +178,16 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		GFX::DrawTop();
+		if (store && config->usebg() && store->customBG()) {
+			Gui::ScreenDraw(Top);
+			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
+			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+
+		} else {
+			GFX::DrawTop();
+		}
+
 		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 390);
 
 		if (info.size() > 0) {
