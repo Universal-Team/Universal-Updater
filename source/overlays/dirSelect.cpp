@@ -53,7 +53,16 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		dirChanged = false;
 
 		dirContents.clear();
-		chdir(oldDir.c_str());
+
+		/* Make sure. */
+		if (access(oldDir.c_str(), F_OK) == 0) {
+			chdir(oldDir.c_str());
+
+		} else {
+			currentPath = "sdmc:/";
+			chdir("sdmc:/");
+		}
+
 		std::vector<DirEntry> dirContentsTemp;
 		getDirectoryContents(dirContentsTemp, {"/"});
 

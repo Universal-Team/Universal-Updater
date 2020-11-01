@@ -37,13 +37,13 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 <details><summary>Screenshots</summary>
 
-![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/Credits.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DownloadList.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/EntryInfo.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/LanguageSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ListStyle.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/MarkMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SearchMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SettingsMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SortMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/StoreSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ToggleMenu.png)
+![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/Credits.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DownloadList.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/EntryInfo.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/LanguageSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/ListStyle.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/MarkMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SearchMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SettingsMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/SortMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/StoreSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/AutoUpdateSettings.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/DirectorySettings.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/screenshots/GUISettings.png)
 
 </details>
 
 ## Credits
 
-- [StackZ](https://github.com/SuperSaiyajinStackZ) - Lead developer, reworked quirc to C++
+- [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ) - Lead developer, reworked quirc to C++
 - [Pk11](https://github.com/Epicpkmn11) - Mockup Designer, Website Maintainer
 - [NightScript](https://github.com/NightYoshi370) - Concept Creator & Planner
 - [dlbeer](https://github.com/dlbeer) - Original developer of [quirc](https://github.com/dlbeer/quirc)

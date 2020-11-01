@@ -161,6 +161,8 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	std::vector<UniStoreInfo> info;
 	std::vector<DirEntry> dirContents;
 
+	if (access(path.c_str(), F_OK) != 0) return {}; // Folder does not exist.
+
 	chdir(path.c_str());
 	getDirectoryContents(dirContents, { "unistore" });
 
