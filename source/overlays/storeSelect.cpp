@@ -46,10 +46,11 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 184, 300, 22 },
 
 	/* Add, Delete, Info.. */
-	{ 92, 215, 16, 16 },
-	{ 136, 215, 16, 16 },
-	{ 180, 215, 16, 16 },
-	{ 224, 215, 16, 16 }
+	{ 70, 215, 16, 16 },
+	{ 114, 215, 16, 16 },
+	{ 158, 215, 16, 16 },
+	{ 202, 215, 16, 16 },
+	{ 246, 215, 16, 16 }
 };
 
 /*
@@ -65,8 +66,6 @@ static void DeleteStore(const std::string &file) {
 	/* Check, if Spritesheet exist on UniStore. */
 	if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
 		const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
-
-
 
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
@@ -154,6 +153,56 @@ static bool DownloadStore(bool Cam = true) {
 }
 
 /*
+	Re-Download SpriteSheets optional.
+
+	const std::string &file: Const Reference to the UniStore filename.
+*/
+static bool DownloadSheet(const std::string &file) {
+	FILE *temp = fopen((std::string(_STORE_PATH) + file).c_str(), "rt");
+	nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
+	fclose(temp);
+
+	if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
+			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
+				const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
+				const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
+
+				if (locs.size() == sht.size()) {
+					for (int i = 0; i < (int)sht.size(); i++) {
+						if (!(sht[i].find("/") != std::string::npos)) {
+							char msg[150];
+							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+							Msg::DisplayMsg(msg);
+							DownloadSpriteSheet(locs[i], sht[i]);
+
+						} else {
+							Msg::waitMsg(Lang::get("SHEET_SLASH"));
+							return false;
+						}
+					}
+				}
+			}
+
+	} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
+		if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
+			const std::string fl = storeJson["storeInfo"]["sheetURL"];
+			const std::string fl2 = storeJson["storeInfo"]["sheet"];
+
+			if (!(fl2.find("/") != std::string::npos)) {
+				Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
+				DownloadSpriteSheet(fl, fl2);
+
+			} else {
+				Msg::waitMsg(Lang::get("SHEET_SLASH"));
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+/*
 	This is the UniStore Manage Handle.
 	Here you can..
 
@@ -226,8 +275,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		GFX::DrawSprite(sprites_delete_idx, mainButtons[7].x, mainButtons[7].y);
 		GFX::DrawSprite(sprites_update_idx, mainButtons[8].x, mainButtons[8].y);
-		GFX::DrawSprite(sprites_add_idx, mainButtons[9].x, mainButtons[9].y);
-		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[10].x, mainButtons[10].y);
+		GFX::DrawSprite(sprites_sheet_idx, mainButtons[9].x, mainButtons[9].y);
+		GFX::DrawSprite(sprites_add_idx, mainButtons[10].x, mainButtons[10].y);
+		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[11].x, mainButtons[11].y);
 		C3D_FrameEnd(0);
 
 		hidScanInput();
@@ -300,6 +350,16 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				}
 			}
 
+			/* Delete UniStore. */
+			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7])) {
+				if (info[selection].FileName != "") {
+					DeleteStore(info[selection].FileName);
+					selection = 0;
+					info = GetUniStoreInfo(_STORE_PATH);
+				}
+			}
+
+			/* Update checks. */
 			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[8])) {
 				if (checkWifiStatus()) {
 					if (info[selection].Revision > 0) {
@@ -309,11 +369,12 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				}
 			}
 
-			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7])) {
-				if (info[selection].FileName != "") {
-					DeleteStore(info[selection].FileName);
-					selection = 0;
-					info = GetUniStoreInfo(_STORE_PATH);
+			/* SpriteSheet Download. */
+			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9])) {
+				if (checkWifiStatus()) {
+					if (info[selection].FileName != "") {
+						DownloadSheet(info[selection].FileName);
+					}
 				}
 			}
 
@@ -321,7 +382,8 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
 		}
 
-		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
+		/* UniStore URL Download. */
+		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10]))) {
 			if (checkWifiStatus()) {
 				if (DownloadStore(false)) {
 					selection = 0;
@@ -330,7 +392,8 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 		}
 
-		if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10])) {
+		/* UniStore QR Code Download. */
+		if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[11])) {
 			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;

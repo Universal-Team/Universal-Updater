@@ -38,6 +38,7 @@
 #include <malloc.h>
 #include <regex>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 #define USER_AGENT APP_TITLE "-" VERSION_STRING
@@ -45,8 +46,6 @@
 static char *result_buf = nullptr;
 static size_t result_sz = 0;
 static size_t result_written = 0;
-std::vector<std::string> _topText;
-std::string jsonName;
 
 #define TIME_IN_US 1
 #define TIMETYPE curl_off_t
@@ -138,13 +137,13 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 }
 
 Result downloadToFile(const std::string &url, const std::string &path) {
+	bool needToDelete = false;
 	downloadTotal = 1;
 	downloadNow = 0;
 
 	CURLcode curlResult;
 	CURL *hnd;
 	Result retcode = 0;
-	downloadTotal = 1;
 	int res;
 
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
@@ -191,6 +190,7 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 
 	if (curlResult != CURLE_OK) {
 		retcode = -curlResult;
+		needToDelete = true;
 		goto exit;
 	}
 
@@ -203,6 +203,7 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 
 	if (!filecommit()) {
 		retcode = -3;
+		needToDelete = true;
 		goto exit;
 	}
 
@@ -240,6 +241,11 @@ exit:
 	file_buffer_pos = 0;
 	file_toCommit_size = 0;
 	writeError = false;
+
+	if (needToDelete) {
+		if (access(path.c_str(), F_OK) == 0) deleteFile(path.c_str()); // Delete file, cause not fully downloaded.
+	}
+
 	return retcode;
 }
 
