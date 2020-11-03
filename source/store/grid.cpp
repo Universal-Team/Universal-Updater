@@ -104,13 +104,24 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 */
 void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (store) { // Ensure, store is not a nullptr.
-		bool needUpdate = false;
-
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetBox() > 9) {
 				if (store->GetEntry() + 5 < (int)entries.size()) {
 					store->SetEntry(store->GetEntry() + 5);
-					needUpdate = true;
+
+					if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+						store->SetScreenIndx(store->GetScreenIndx() + 1);
+					}
+
+				} else {
+					if (store->GetEntry() < (int)entries.size() - 1) {
+						store->SetEntry(entries.size() - 1);
+						store->SetBox(10 + (store->GetEntry() % 5));
+
+						if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+							store->SetScreenIndx(store->GetScreenIndx() + 1);
+						}
+					}
 				}
 
 			} else {
@@ -130,7 +141,10 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 				} else {
 					store->SetBox(10);
 					store->SetEntry(store->GetEntry() + 1);
-					needUpdate = true;
+
+					if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+						store->SetScreenIndx(store->GetScreenIndx() + 1);
+					}
 				}
 			}
 		}
@@ -144,7 +158,10 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 				} else {
 					store->SetBox(4);
 					store->SetEntry(store->GetEntry() - 1);
-					needUpdate = true;
+
+					if (store->GetScreenIndx() > 0) {
+						store->SetScreenIndx(store->GetScreenIndx() - 1);
+					}
 				}
 			}
 		}
@@ -153,7 +170,10 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 			if (store->GetBox() < 5) {
 				if (store->GetEntry() > 4) {
 					store->SetEntry(store->GetEntry() - 5);
-					needUpdate = true;
+
+					if (store->GetScreenIndx() > 0) {
+						store->SetScreenIndx(store->GetScreenIndx() - 1);
+					}
 				}
 
 			} else {
@@ -167,22 +187,6 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;
-		}
-
-		if (needUpdate) {
-			needUpdate = false;
-
-			/* Scroll Logic. */
-			if (store->GetBox() > 9) {
-				if (store->GetEntry() < (int)entries.size()) {
-					store->SetScreenIndx(store->GetScreenIndx() + 1);
-				}
-
-			} else if (store->GetBox() < 5) {
-				if (store->GetScreenIndx() > 0) {
-					store->SetScreenIndx(store->GetScreenIndx() - 1);
-				}
-			}
 		}
 	}
 }
