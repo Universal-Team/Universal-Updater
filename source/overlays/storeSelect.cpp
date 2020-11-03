@@ -37,7 +37,6 @@
 extern bool checkWifiStatus();
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{ 10, 4, 300, 22 },
 	{ 10, 34, 300, 22 },
 	{ 10, 64, 300, 22 },
 	{ 10, 94, 300, 22 },
@@ -46,11 +45,11 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 184, 300, 22 },
 
 	/* Add, Delete, Info.. */
-	{ 70, 215, 16, 16 },
-	{ 114, 215, 16, 16 },
-	{ 158, 215, 16, 16 },
-	{ 202, 215, 16, 16 },
-	{ 246, 215, 16, 16 }
+	{ 92, 215, 16, 16 },
+	{ 136, 215, 16, 16 },
+	{ 180, 215, 16, 16 },
+	{ 224, 215, 16, 16 },
+	{ 4, 0, 24, 24 } // Back.
 };
 
 /*
@@ -152,54 +151,56 @@ static bool DownloadStore(bool Cam = true) {
 	return doSheet;
 }
 
-/*
-	Re-Download SpriteSheets optional.
+static bool UpdateStore(const std::string &URL) {
+	bool doSheet = false;
+	std::string file = "";
 
-	const std::string &file: Const Reference to the UniStore filename.
-*/
-static bool DownloadSheet(const std::string &file) {
-	FILE *temp = fopen((std::string(_STORE_PATH) + file).c_str(), "rt");
-	nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
-	fclose(temp);
+	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, false);
 
-	if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
-			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
-				const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-				const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
+	if (doSheet) {
+		FILE *temp = fopen(file.c_str(), "rt");
+		nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
+		fclose(temp);
 
-				if (locs.size() == sht.size()) {
-					for (int i = 0; i < (int)sht.size(); i++) {
-						if (!(sht[i].find("/") != std::string::npos)) {
-							char msg[150];
-							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-							Msg::DisplayMsg(msg);
-							DownloadSpriteSheet(locs[i], sht[i]);
+		if (doSheet) {
+			if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
+				if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
+					const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
+					const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
 
-						} else {
-							Msg::waitMsg(Lang::get("SHEET_SLASH"));
-							return false;
+					if (locs.size() == sht.size()) {
+						for (int i = 0; i < (int)sht.size(); i++) {
+							if (!(sht[i].find("/") != std::string::npos)) {
+								char msg[150];
+								snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+								Msg::DisplayMsg(msg);
+								DownloadSpriteSheet(locs[i], sht[i]);
+
+							} else {
+								Msg::waitMsg(Lang::get("SHEET_SLASH"));
+							}
 						}
 					}
 				}
-			}
 
-	} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
-		if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
-			const std::string fl = storeJson["storeInfo"]["sheetURL"];
-			const std::string fl2 = storeJson["storeInfo"]["sheet"];
+			} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
+				if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
+					const std::string fl = storeJson["storeInfo"]["sheetURL"];
+					const std::string fl2 = storeJson["storeInfo"]["sheet"];
 
-			if (!(fl2.find("/") != std::string::npos)) {
-				Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
-				DownloadSpriteSheet(fl, fl2);
+					if (!(fl2.find("/") != std::string::npos)) {
+						Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
+						DownloadSpriteSheet(fl, fl2);
 
-			} else {
-				Msg::waitMsg(Lang::get("SHEET_SLASH"));
-				return false;
+					} else {
+						Msg::waitMsg(Lang::get("SHEET_SLASH"));
+					}
+				}
 			}
 		}
 	}
 
-	return true;
+	return doSheet;
 }
 
 /*
@@ -237,25 +238,24 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 390);
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390);
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Title, 380);
-				Gui::DrawStringCentered(0, 60, 0.5f, TEXT_COLOR, info[selection].Author, 380);
+				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380);
 
 				if (info[selection].Description != "") {
 					/* "\n\n" breaks C2D_WordWrap, so check here. */
 					if (!(info[selection].Description.find("\n\n") != std::string::npos)) {
-						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 380, 95, nullptr, C2D_WordWrap);
+						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, nullptr, C2D_WordWrap);
 
 					} else {
-						Gui::DrawStringCentered(0, 100, 0.5f, TEXT_COLOR, info[selection].Description, 380, 95);
+						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130);
 					}
 				}
 
 			} else {
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 380);
+				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 390);
 			}
 
 			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150);
@@ -264,7 +264,12 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 			GFX::DrawBottom();
 
-			for(int i = 0; i < 7 && i < (int)info.size(); i++) {
+			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
+			GFX::DrawSprite(sprites_arrow_idx, mainButtons[10].x, mainButtons[10].y);
+			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 310);
+
+			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
 				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 
 				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, info[sPos + i].FileName, 295);
@@ -273,11 +278,10 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		if (info.size() <= 0) GFX::DrawBottom(); // Otherwise we'd draw on top.
 
-		GFX::DrawSprite(sprites_delete_idx, mainButtons[7].x, mainButtons[7].y);
-		GFX::DrawSprite(sprites_update_idx, mainButtons[8].x, mainButtons[8].y);
-		GFX::DrawSprite(sprites_sheet_idx, mainButtons[9].x, mainButtons[9].y);
-		GFX::DrawSprite(sprites_add_idx, mainButtons[10].x, mainButtons[10].y);
-		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[11].x, mainButtons[11].y);
+		GFX::DrawSprite(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y);
+		GFX::DrawSprite(sprites_update_idx, mainButtons[7].x, mainButtons[7].y);
+		GFX::DrawSprite(sprites_add_idx, mainButtons[8].x, mainButtons[8].y);
+		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[9].x, mainButtons[9].y);
 		C3D_FrameEnd(0);
 
 		hidScanInput();
@@ -297,12 +301,12 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 
 			if (hRepeat & KEY_RIGHT) {
-				if (selection + 7 < (int)info.size()-1) selection += 7;
-				else selection = info.size()-1;
+				if (selection + 6 < (int)info.size() - 1) selection += 6;
+				else selection = info.size() - 1;
 			}
 
 			if (hRepeat & KEY_LEFT) {
-				if (selection - 7 > 0) selection -= 8;
+				if (selection - 6 > 0) selection -= 6;
 				else selection = 0;
 			}
 
@@ -328,7 +332,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 
 			if (hidKeysDown() & KEY_TOUCH) {
-				for (int i = 0; i < 7; i++) {
+				for (int i = 0; i < 6; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)info.size() && info[i + sPos].File != "") { // Ensure to check for this.
 							if (!(info[i + sPos].File.find("/") != std::string::npos)) {
@@ -351,7 +355,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 
 			/* Delete UniStore. */
-			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7])) {
+			if ((hidKeysDown() & KEY_X) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[6]))) {
 				if (info[selection].FileName != "") {
 					DeleteStore(info[selection].FileName);
 					selection = 0;
@@ -359,31 +363,24 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 				}
 			}
 
-			/* Update checks. */
-			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[8])) {
+			/* Download latest UniStore. */
+			if ((hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7]))) {
 				if (checkWifiStatus()) {
-					if (info[selection].Revision > 0) {
-						const bool result = IsUpdateAvailable(info[selection].URL, info[selection].Revision);
-						Msg::waitMsg((result ? Lang::get("UPDATE_AVAILABLE") : Lang::get("UPDATE_NOT_AVAILABLE")));
-					}
-				}
-			}
-
-			/* SpriteSheet Download. */
-			if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9])) {
-				if (checkWifiStatus()) {
-					if (info[selection].FileName != "") {
-						DownloadSheet(info[selection].FileName);
+					if (info[selection].URL != "") {
+						if (UpdateStore(info[selection].URL)) {
+							selection = 0;
+							info = GetUniStoreInfo(_STORE_PATH);
+						}
 					}
 				}
 			}
 
 			if (selection < sPos) sPos = selection;
-			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
+			else if (selection > sPos + 6 - 1) sPos = selection - 6 + 1;
 		}
 
 		/* UniStore URL Download. */
-		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10]))) {
+		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[8]))) {
 			if (checkWifiStatus()) {
 				if (DownloadStore(false)) {
 					selection = 0;
@@ -393,7 +390,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		}
 
 		/* UniStore QR Code Download. */
-		if (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[11])) {
+		if ((hidKeysDown() & KEY_SELECT) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
 			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;
@@ -402,6 +399,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			}
 		}
 
-		if (hidKeysDown() & KEY_B) doOut = true;
+		/* Go out of the menu. */
+		if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10]))) {
+			doOut = true;
+		}
 	}
 }

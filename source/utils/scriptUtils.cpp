@@ -494,6 +494,17 @@ Result ScriptUtils::runFunctions(const nlohmann::json &storeJson, const int &sel
 
 				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message);
 				else ret = SYNTAX_ERROR;
+
+			} else if (type == "skip") {
+				int skipCount = -1;
+
+				if (storeJson["storeContent"][selection][entry][i].contains("count") && storeJson["storeContent"][selection][entry][i]["count"].is_number()) {
+					skipCount = storeJson["storeContent"][selection][entry][i]["count"];
+				}
+
+				if (skipCount > 0) {
+					i += skipCount; // Skip.
+				}
 			}
 		}
 	}

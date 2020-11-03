@@ -44,31 +44,26 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 */
 std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg, const std::unique_ptr<Store> &store) {
 	std::string currentPath = oldDir;
-	bool dirChanged = true;
+	bool dirChanged = false;
 	int selection = 0, sPos = 0;
 
 	std::vector<DirEntry> dirContents;
+	dirContents.clear();
 
-	if (dirChanged) {
-		dirChanged = false;
+	/* Make sure. */
+	if (access((oldDir + std::string("/")).c_str(), F_OK) == 0) {
+		chdir((oldDir + std::string("/")).c_str());
 
-		dirContents.clear();
+	} else {
+		currentPath = "sdmc:/";
+		chdir("sdmc:/");
+	}
 
-		/* Make sure. */
-		if (access(oldDir.c_str(), F_OK) == 0) {
-			chdir(oldDir.c_str());
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp, {"/"});
 
-		} else {
-			currentPath = "sdmc:/";
-			chdir("sdmc:/");
-		}
-
-		std::vector<DirEntry> dirContentsTemp;
-		getDirectoryContents(dirContentsTemp, {"/"});
-
-		for(uint i = 0; i < dirContentsTemp.size(); i++) {
-			dirContents.push_back(dirContentsTemp[i]);
-		}
+	for(uint i = 0; i < dirContentsTemp.size(); i++) {
+		dirContents.push_back(dirContentsTemp[i]);
 	}
 
 	while(1) {

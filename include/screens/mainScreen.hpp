@@ -53,7 +53,7 @@ private:
 	std::vector<std::unique_ptr<StoreEntry>> entries;
 	std::vector<std::string> dwnldList;
 	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false, ascending = false, updateFilter = false;
-	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0, lastMode = 0, smallDelay = 0;
+	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0, lastMode = 0, smallDelay = 0, sPos = 0;
 	SortType sorttype = SortType::LAST_UPDATED;
 
 	/* Title, Author, Category, Console. */

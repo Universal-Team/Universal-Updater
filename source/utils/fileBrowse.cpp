@@ -32,9 +32,6 @@
 #include <functional>
 #include <unistd.h>
 
-extern bool touching(touchPosition touch, Structs::ButtonPos button);
-extern touchPosition touch;
-
 bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList) {
 	if (name.substr(0, 2) == "._") return false;
 

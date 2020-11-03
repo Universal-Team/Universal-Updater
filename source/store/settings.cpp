@@ -39,6 +39,18 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 54, 212, 262, 22 }
 };
 
+static const std::vector<Structs::ButtonPos> langButtons = {
+	{ 10, 34, 300, 22 },
+	{ 10, 64, 300, 22 },
+	{ 10, 94, 300, 22 },
+	{ 10, 124, 300, 22 },
+	{ 10, 154, 300, 22 },
+	{ 10, 184, 300, 22 },
+	{ 10, 214, 300, 22 },
+
+	{ 52, 6, 24, 24 } // Back arrow.
+};
+
 static const std::vector<Structs::ButtonPos> toggleAbles = {
 	{ 52, 6, 24, 24 }, // Back arrow.
 	{ 288, 64, 24, 24 },
@@ -50,6 +62,9 @@ static const Structs::ButtonPos back = { 52, 0, 24, 24 }; // Back arrow for dire
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
+
+static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "日本語" };
+static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "jp"};
 
 /*
 	Main Settings.
@@ -64,6 +79,24 @@ static void DrawSettingsMain(const int &selection) {
 	for (int i = 0; i < 7; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255);
+	}
+}
+
+/*
+	Draw the Language Selection.
+
+	const int &selection: Const Reference to the Language Selection.
+	const int &sPos: Const Reference to the Screen Position.
+*/
+static void DrawLanguageSettings(const int &selection, const int &sPos) {
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
+	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 240);
+
+	for(int i = 0; i < 7 && i < (int)languages.size(); i++) {
+		if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280);
 	}
 }
 
@@ -106,6 +139,11 @@ static void DrawAutoUpdate(const int &selection) {
 	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, nullptr, C2D_WordWrap);
 }
 
+/*
+	Draw the GUI Settings.
+
+	const int &selection: Const Reference to the Settings Selection.
+*/
 static void DrawGUISettings(const int &selection) {
 	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
@@ -169,7 +207,8 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Overlays::SelectLanguage(store);
+			selection = 0;
+			page = 4;
 
 		} else if (touching(touch, mainButtons[1])) {
 			Overlays::SelectStore(store, entries, meta);
@@ -197,7 +236,8 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 	if (hDown & KEY_A) {
 		switch(selection) {
 			case 0:
-				Overlays::SelectLanguage(store);
+				selection = 0;
+				page = 4;
 				break;
 
 			case 1:
@@ -310,6 +350,20 @@ static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &pa
 	}
 }
 
+/*
+	Logic of the Auto-Update Settings.
+
+	Here you can..
+
+	- Enable / Disable Automatically updating the UniStore on boot.
+	- Enable / Disable Automatically check for Universal-Updater updates on boot.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	int &selection: Reference to the Selection.
+*/
 static void AutoUpdateLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
@@ -350,7 +404,20 @@ static void AutoUpdateLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page
 	}
 }
 
-static void GUISettingsLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection, const std::unique_ptr<Store> &store) {
+/*
+	Logic of the GUI Settings.
+
+	Here you can..
+
+	- Enable / Disable using the SpriteSheet Background Image, if exist.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	int &selection: Reference to the Selection.
+*/
+static void GUISettingsLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 3;
@@ -376,12 +443,81 @@ static void GUISettingsLogic(u32 hDown, u32 hHeld, touchPosition touch, int &pag
 }
 
 /*
+	Logic of the Language Settings.
+
+	Here you can..
+
+	- Select the language, which should be used with the app.
+
+	u32 hDown: The hidKeysDown() variable.
+	u32 hHeld: The hidKeysHeld() variable.
+	touchPosition touch: The TouchPosition variable.
+	int &page: Reference to the page.
+	int &selection: Reference to the Selection.
+	int &sPos: Reference to the ScreenPos variable.
+*/
+static void LanguageLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection, int &sPos) {
+	if (hRepeat & KEY_DOWN) {
+		if (selection < (int)languages.size() - 1) selection++;
+		else selection = 0;
+	}
+
+	if (hRepeat & KEY_UP) {
+		if (selection > 0) selection--;
+		else selection = languages.size() - 1;
+	}
+
+	if (hRepeat & KEY_RIGHT) {
+		if (selection + 7 < (int)languages.size()-1) selection += 7;
+		else selection = languages.size()-1;
+	}
+
+	if (hRepeat & KEY_LEFT) {
+		if (selection - 7 > 0) selection -= 7;
+		else selection = 0;
+	}
+
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, langButtons[7]))) {
+		selection = 0;
+		sPos = 0;
+		page = 0;
+	}
+
+	if (hDown & KEY_A) {
+		const std::string l = langsTemp[selection];
+		config->language(l);
+		Lang::load(config->language());
+		selection = 0;
+		sPos = 0;
+		page = 0;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		for (int i = 0; i < 7; i++) {
+			if (touching(touch, mainButtons[i])) {
+				if (i + sPos < (int)languages.size()) {
+					const std::string l = langsTemp[i + sPos];
+					config->language(l);
+					Lang::load(config->language());
+					selection = 0;
+					sPos = 0;
+					page = 0;
+				}
+			}
+		}
+	}
+
+	if (selection < sPos) sPos = selection;
+	else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
+}
+
+/*
 	Draw the Settings.
 
 	const int &page: Const Reference to the page.
 	const int &selection: Const Reference to the selection.
 */
-void StoreUtils::DrawSettings(const int &page, const int &selection) {
+void StoreUtils::DrawSettings(const int &page, const int &selection, const int &sPos) {
 	switch(page) {
 		case 0:
 			DrawSettingsMain(selection);
@@ -397,6 +533,10 @@ void StoreUtils::DrawSettings(const int &page, const int &selection) {
 
 		case 3:
 			DrawGUISettings(selection);
+			break;
+
+		case 4:
+			DrawLanguageSettings(selection, sPos);
 			break;
 	}
 }
@@ -415,7 +555,7 @@ void StoreUtils::DrawSettings(const int &page, const int &selection) {
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
+void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos) {
 	switch(page) {
 		case 0:
 			SettingsHandleMain(hDown, hHeld, touch, page, dspSettings, storeMode, selection, store, entries, meta);
@@ -430,7 +570,11 @@ void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &
 			break;
 
 		case 3:
-			GUISettingsLogic(hDown, hHeld, touch, page, selection, store);
+			GUISettingsLogic(hDown, hHeld, touch, page, selection);
+			break;
+
+		case 4:
+			LanguageLogic(hDown, hHeld, touch, page, selection, sPos);
 			break;
 	}
 }

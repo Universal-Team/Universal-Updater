@@ -71,8 +71,8 @@ namespace StoreUtils {
 	void DrawCredits();
 
 	/* Settings. */
-	void DrawSettings(const int &page, const int &selection);
-	void SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
+	void DrawSettings(const int &page, const int &selection, const int &sPos);
+	void SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos);
 
 	/* Sorting. */
 	void DrawSorting(const bool &asc, const SortType &st);

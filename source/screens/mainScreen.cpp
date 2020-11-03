@@ -118,7 +118,7 @@ void MainScreen::Draw(void) const {
 
 		case 4:
 			/* Settings. */
-			StoreUtils::DrawSettings(this->sPage, this->sSelection);
+			StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
 			break;
 	}
 
@@ -174,7 +174,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 4:
-				StoreUtils::SettingsHandle(hDown, hHeld, touch, this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta);
+				StoreUtils::SettingsHandle(hDown, hHeld, touch, this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta, this->sPos);
 				break;
 		}
 	}
