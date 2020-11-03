@@ -68,7 +68,7 @@ static void DeleteStore(const std::string &file) {
 
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
-			if ((std::string(_STORE_PATH) + sht[i]) != "") {
+			if (sht[i] != "") {
 				if (!(StringUtils::lower_case(sht[i]).find(StringUtils::lower_case("/")) != std::string::npos)) {
 					if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
 						deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
@@ -78,10 +78,10 @@ static void DeleteStore(const std::string &file) {
 		}
 
 	/* Else, if it's just a string.. check and delete single Spritesheet. */
-	} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
+	} else if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
 		const std::string fl = storeJson["storeInfo"]["sheet"];
 
-		if ((std::string(_STORE_PATH) + fl) != "") {
+		if (fl != "") {
 			if (!(StringUtils::lower_case(fl).find(StringUtils::lower_case("/")) != std::string::npos)) {
 				if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
 					deleteFile((std::string(_STORE_PATH) + fl).c_str());
@@ -238,10 +238,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390);
-
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
+				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390);
 				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380);
 
 				if (info[selection].Description != "") {
