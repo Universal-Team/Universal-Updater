@@ -147,7 +147,6 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	int res;
 
 	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
-	const char *filepath = path.c_str();
 
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf) {
@@ -161,9 +160,17 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 		goto exit;
 	}
 
-	makeDirs(strdup(filepath));
+	/* make directories. */
+	for (char *slashpos = strchr(path.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
+		char bak = *(slashpos);
+		*(slashpos) = '\0';
 
-	downfile = fopen(filepath, "wb");
+		mkdir(path.c_str(), 0777);
+
+		*(slashpos) = bak;
+	}
+
+	downfile = fopen(path.c_str(), "wb");
 	if (!downfile) {
 		retcode = -2;
 		goto exit;

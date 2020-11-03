@@ -87,7 +87,7 @@ private:
 	nlohmann::json json;
 	bool changesMade = false;
 
-	std::string v_language = "en", v_lastStore = "universal-db-beta.unistore",
+	std::string v_language = "en", v_lastStore = "universal-db.unistore",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_showBg = false;
 };

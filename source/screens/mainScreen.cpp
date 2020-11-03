@@ -46,31 +46,31 @@ MainScreen::MainScreen() {
 	this->meta = std::make_unique<Meta>();
 
 	/* Check if lastStore is accessible. */
-	if (config->lastStore() != "universal-db-beta.unistore" || config->lastStore() != "") {
+	if (config->lastStore() != "universal-db.unistore" || config->lastStore() != "") {
 		if (access((std::string(_STORE_PATH) + config->lastStore()).c_str(), F_OK) != 0) {
-			config->lastStore("universal-db-beta.unistore");
+			config->lastStore("universal-db.unistore");
 
 		} else {
 			/* check version and file here. */
 			const UniStoreInfo info = GetInfo((std::string(_STORE_PATH) + config->lastStore()), config->lastStore());
 
 			if (info.Version != 3) {
-				config->lastStore("universal-db-beta.unistore");
+				config->lastStore("universal-db.unistore");
 			}
 
 			if (info.File != "") { // Ensure to check for this.
 				if ((info.File.find("/") != std::string::npos)) {
-					config->lastStore("universal-db-beta.unistore"); // It does contain a '/' which is invalid.
+					config->lastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
 				}
 			}
 		}
 	}
 
 	/* If Universal DB --> Get! */
-	if (config->lastStore() == "universal-db-beta.unistore" || config->lastStore() == "") {
-		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db-beta.unistore", F_OK) != 0) {
+	if (config->lastStore() == "universal-db.unistore" || config->lastStore() == "") {
+		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", F_OK) != 0) {
 			std::string tmp = ""; // Just a temp.
-			DownloadUniStore("https://db.universal-team.net/unistore/universal-db-beta.unistore", -1, tmp, true, true);
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
 			DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
 		}
 	}
