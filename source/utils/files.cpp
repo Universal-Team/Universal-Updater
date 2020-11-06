@@ -76,7 +76,7 @@ Result makeDirs(const char *path) {
 	return ret;
 }
 
-Result openFile(Handle *fileHandle, const char *path, const bool &write) {
+Result openFile(Handle *fileHandle, const char *path, bool write) {
 	FS_ArchiveID archive;
 	FS_Path filePath = getPathInfo(path, &archive);
 	u32 flags = (write ? (FS_OPEN_CREATE | FS_OPEN_WRITE) : FS_OPEN_READ);

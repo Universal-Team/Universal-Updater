@@ -45,16 +45,16 @@ namespace ScriptUtils {
 	bool matchPattern(const std::string &pattern, const std::string &tested);
 
 	Result removeFile(const std::string &file, const std::string &message);
-	void bootTitle(const std::string &TitleID, const bool &isNAND, const std::string &message);
+	void bootTitle(const std::string &TitleID, bool isNAND, const std::string &message);
 	Result prompt(const std::string &message);
 	Result copyFile(const std::string &source, const std::string &destination, const std::string &message);
 	Result renameFile(const std::string &oldName, const std::string &newName, const std::string &message);
-	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, const bool &includePrereleases, const std::string &message);
+	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message);
 	Result downloadFile(const std::string &file, const std::string &output, const std::string &message);
-	void installFile(const std::string &file, const bool &updatingSelf, const std::string &message);
+	void installFile(const std::string &file, bool pdatingSelf, const std::string &message);
 	void extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message);
 
-	Result runFunctions(const nlohmann::json &storeJson, const int &selection, const std::string &entry);
+	Result runFunctions(nlohmann::json storeJson, int selection, const std::string &entry);
 };
 
 #endif

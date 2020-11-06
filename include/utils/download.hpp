@@ -42,7 +42,7 @@ enum DownloadError {
 };
 
 Result downloadToFile(const std::string &url, const std::string &path);
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, const bool &includePrereleases);
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases);
 
 /*
 	Check Wi-Fi status.
@@ -65,8 +65,8 @@ void notImplemented(void);
 */
 void doneMsg(void);
 
-bool IsUpdateAvailable(const std::string &URL, const int &revCurrent);
-bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload = false, const bool &isUDB = false);
+bool IsUpdateAvailable(const std::string &URL, int revCurrent);
+bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, bool isDownload = false, bool isUDB = false);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 bool IsUUUpdateAvailable();
 void UpdateAction();

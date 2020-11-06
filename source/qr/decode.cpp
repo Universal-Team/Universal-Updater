@@ -15,7 +15,6 @@
  */
 
 #include "quirc_internal.hpp"
-
 #include <string.h>
 #include <stdlib.h>
 

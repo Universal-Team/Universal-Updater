@@ -41,42 +41,42 @@ enum class SortType : uint8_t {
 namespace StoreUtils {
 	/* Grid. */
 	void DrawGrid(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
-	void GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
+	void GridLogic(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
 
 	/* Top List. */
 	void DrawList(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries);
-	void ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
+	void ListLogic(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
-	void EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, bool &fetch);
+	void EntryHandle(bool &showMark, bool &fetch);
 
 	/* Side Menu. */
-	void DrawSideMenu(const int &currentMenu);
-	void SideMenuHandle(u32 hDown, touchPosition touch, int &currentMenu, bool &fetch);
+	void DrawSideMenu(int currentMenu);
+	void SideMenuHandle(int &currentMenu, bool &fetch);
 
 	/* Download Entries. */
-	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, const bool &fetch);
-	void DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay);
+	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch);
+	void DownloadHandle(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay);
 
 	/* Search + Favorite Menu. */
-	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks, const bool &updateFilter);
-	void SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype);
+	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter);
+	void SearchHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype);
 
 	/* Mark Menu. */
-	void DisplayMarkBox(const int &marks);
-	void MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta);
+	void DisplayMarkBox(int marks);
+	void MarkHandle(std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta);
 
 	/* Credits. */
 	void DrawCredits();
 
 	/* Settings. */
-	void DrawSettings(const int &page, const int &selection, const int &sPos);
-	void SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos);
+	void DrawSettings(int page, int selection, int sPos);
+	void SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos);
 
 	/* Sorting. */
-	void DrawSorting(const bool &asc, const SortType &st);
-	void SortHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st);
+	void DrawSorting(bool asc, SortType st);
+	void SortHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st);
 
 	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
@@ -87,7 +87,7 @@ namespace StoreUtils {
 	bool compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 
-	void SortEntries(const bool &Ascending, const SortType &sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries);
+	void SortEntries(bool Ascending, SortType sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries);
 
 	void search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl);
 

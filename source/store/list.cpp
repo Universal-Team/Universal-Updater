@@ -82,9 +82,6 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 
 	- Scroll through the Grid with the D-Pad Up / Down and skip 3 Entries with Left / Right.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<Store> &store: Reference to the Store class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	int &currentMode: Const Reference to the current Mode.
@@ -92,7 +89,7 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::ListLogic(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetEntry() < (int)entries.size() - 1) store->SetEntry(store->GetEntry() + 1);

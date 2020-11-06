@@ -27,6 +27,7 @@
 #ifndef _UNIVERSAL_UPDATER_COMMON_HPP
 #define _UNIVERSAL_UPDATER_COMMON_HPP
 
+#include <3ds.h>
 #include "config.hpp"
 #include "gfx.hpp"
 #include "lang.hpp"
@@ -37,6 +38,7 @@ inline std::unique_ptr<Config> config;
 
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
 #define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
-inline uint32_t hRepeat;
+inline uint32_t hRepeat, hDown, hHeld;
+inline touchPosition touch;
 
 #endif

@@ -314,9 +314,9 @@ static Result setupContext(CURL *hnd, const char *url) {
 	const std::string &url: Const Reference to the URL. (https://github.com/Owner/Repo)
 	const std::string &asset: Const Reference to the Asset. (File.filetype)
 	const std::string &path: Const Reference, where to store. (sdmc:/File.filetype)
-	const bool &includePrereleases: Const Reference, if including Pre-Releases.
+	bool includePrereleases: If including Pre-Releases.
 */
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, const bool &includePrereleases) {
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases) {
 	Result ret = 0;
 	CURL *hnd;
 
@@ -446,9 +446,9 @@ void notConnectedMsg(void) { Msg::waitMsg(Lang::get("CONNECT_WIFI")); }
 	Return, if an update is available.
 
 	const std::string &URL: Const Reference to the URL of the UniStore.
-	const int &revCurrent: Const Reference to the current Revision. (-1 if unused)
+	int revCurrent: The current Revision. (-1 if unused)
 */
-bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
+bool IsUpdateAvailable(const std::string &URL, int revCurrent) {
 	Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
 	Result ret = 0;
 
@@ -524,11 +524,12 @@ bool IsUpdateAvailable(const std::string &URL, const int &revCurrent) {
 	Download a UniStore and return, if revision is higher than current.
 
 	const std::string &URL: Const Reference to the URL of the UniStore.
-	const int &currentRev: Const Reference to the current Revision. (-1 if unused)
-	const bool &isDownload: Const Reference, if download or updating.
-	const bool &isUDB: Const Reference, if Universal-DB download or not.
+	int currentRev: Const Reference to the current Revision. (-1 if unused)
+	std::string &fl: Output for the filepath.
+	bool isDownload: If download or updating.
+	bool isUDB: If Universal-DB download or not.
 */
-bool DownloadUniStore(const std::string &URL, const int &currentRev, std::string &fl, const bool &isDownload, const bool &isUDB) {
+bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, bool isDownload, bool isUDB) {
 	if (isUDB) Msg::DisplayMsg(Lang::get("DOWNLOADING_UNIVERSAL_DB"));
 	else {
 		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));

@@ -41,9 +41,9 @@ static const std::vector<Structs::ButtonPos> markBox = {
 /*
 	Draw the Marking part.
 
-	const int &marks: A Reference to the active mark flags.
+	int marks: The active mark flags.
 */
-void StoreUtils::DisplayMarkBox(const int &marks) {
+void StoreUtils::DisplayMarkBox(int marks) {
 	Gui::Draw_Rect(0, 0, 320, 240, DIM_COLOR); // Darken.
 
 	Gui::Draw_Rect(markBox[0].x, markBox[0].y, markBox[0].w, markBox[0].h, (marks & favoriteMarks::STAR ?
@@ -78,15 +78,12 @@ void StoreUtils::DisplayMarkBox(const int &marks) {
 	- Mark the selected app.
 	- Return to EntryInfo with `B`.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<StoreEntry> &entry: Reference to the current StoreEntry.
 	const std::unique_ptr<Store> &store: Const Reference to the Store, since we do not modify anything there.
 	bool &showMark: Reference to showMark, so we know, if we should stay here or not.
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-void StoreUtils::MarkHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta) {
+void StoreUtils::MarkHandle(std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store, bool &showMark, std::unique_ptr<Meta> &meta) {
 	hidScanInput();
 	touchPosition t;
 	hidTouchRead(&t);

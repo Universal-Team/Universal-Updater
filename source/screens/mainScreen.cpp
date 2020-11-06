@@ -31,7 +31,6 @@
 #include <unistd.h>
 
 extern int fadeAlpha;
-extern u32 hRepeat;
 
 extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
 
@@ -131,14 +130,14 @@ void MainScreen::Draw(void) const {
 	MainScreen Logic.
 */
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (this->showMarks) StoreUtils::MarkHandle(hDown, hHeld, touch, this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
+	if (this->showMarks) StoreUtils::MarkHandle(this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 
 	if (!this->showMarks) {
 		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
-			config->list() ? StoreUtils::ListLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(hDown, hHeld, touch, this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay);
+			config->list() ? StoreUtils::ListLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay);
 		}
 
-		StoreUtils::SideMenuHandle(hDown, touch, this->storeMode, this->fetchDown);
+		StoreUtils::SideMenuHandle(this->storeMode, this->fetchDown);
 
 		/* Fetch Download list. */
 		if (this->fetchDown) {
@@ -158,23 +157,23 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		switch(this->storeMode) {
 			case 0:
-				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(hDown, hHeld, touch, this->showMarks, this->fetchDown);
+				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(this->showMarks, this->fetchDown);
 				break;
 
 			case 1:
-				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(hDown, hHeld, touch, this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode, this->smallDelay);
+				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode, this->smallDelay);
 				break;
 
 			case 2:
-				StoreUtils::SearchHandle(hDown, hHeld, touch, this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks, this->updateFilter, this->ascending, this->sorttype);
+				StoreUtils::SearchHandle(this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks, this->updateFilter, this->ascending, this->sorttype);
 				break;
 
 			case 3:
-				StoreUtils::SortHandle(hDown, hHeld, touch, this->store, this->entries, this->ascending, this->sorttype);
+				StoreUtils::SortHandle(this->store, this->entries, this->ascending, this->sorttype);
 				break;
 
 			case 4:
-				StoreUtils::SettingsHandle(hDown, hHeld, touch, this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta, this->sPos);
+				StoreUtils::SettingsHandle(this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta, this->sPos);
 				break;
 		}
 	}

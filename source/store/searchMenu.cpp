@@ -52,10 +52,10 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 
 	const std::vector<bool> &searchIncludes: Const Reference to the searchIncludes.
 	const std::string &searchResult: Const Reference to the searchResult.
-	const int &marks: Const Reference to the filter mark flags.
-	const bool &updateFilter: Const Reference to the update filter.
+	int marks: The filter mark flags.
+	bool updateFilter: The update filter.
 */
-void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, const int &marks, const bool &updateFilter) {
+void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 265);
@@ -115,9 +115,6 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	- Search the UniStore.
 	- Include stuff into the search.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<Store> &store: Reference to the Store class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Store Entries.
 	std::vector<bool> &searchIncludes: Reference to the searchIncludes.
@@ -126,7 +123,7 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	int &marks: Reference to the mark flags.
 	bool &updateFilter: Reference to the update filter.
 */
-void StoreUtils::SearchHandle(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype) {
+void StoreUtils::SearchHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype) {
 	/* Checkboxes. */
 	if (hDown & KEY_TOUCH) {
 		bool didTouch = false;

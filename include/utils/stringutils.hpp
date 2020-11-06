@@ -34,7 +34,7 @@
 namespace StringUtils {
 	std::string lower_case(const std::string &str);
 	std::string FetchStringsFromVector(const std::vector<std::string> &fetch);
-	std::string formatBytes(const int bytes);
+	std::string formatBytes(int bytes);
 	std::string GetMarkString(int marks);
 	std::vector<std::string> GetMarks(int marks);
 };

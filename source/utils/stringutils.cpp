@@ -64,7 +64,7 @@ std::string StringUtils::FetchStringsFromVector(const std::vector<std::string> &
 /*
 	adapted from GM9i's byte parsing.
 */
-std::string StringUtils::formatBytes(const int bytes) {
+std::string StringUtils::formatBytes(int bytes) {
 	char out[32];
 
 	if (bytes == 1)							snprintf(out, sizeof(out), "%d Byte", bytes);

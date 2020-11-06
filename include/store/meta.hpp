@@ -43,15 +43,15 @@ public:
 	Meta();
 	~Meta() { this->SaveCall(); };
 
-	std::string GetUpdated(std::string unistoreName, std::string entry) const;
-	int GetMarks(std::string unistoreName, std::string entry) const;
-	bool UpdateAvailable(std::string unistoreName, std::string entry, std::string updated) const;
+	std::string GetUpdated(const std::string &unistoreName, const std::string &entry) const;
+	int GetMarks(const std::string &unistoreName, const std::string &entry) const;
+	bool UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const;
 
-	void SetUpdated(std::string unistoreName, std::string entry, std::string updated) {
+	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
 		this->metadataJson[unistoreName][entry]["updated"] = updated;
 	};
 
-	void SetMarks(std::string unistoreName, std::string entry, int marks) {
+	void SetMarks(const std::string &unistoreName, const std::string &entry, int marks) {
 		this->metadataJson[unistoreName][entry]["marks"] = marks;
 	};
 

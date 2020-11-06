@@ -33,10 +33,9 @@
 #include <unistd.h>
 
 bool exiting = false, is3DSX = false;
-touchPosition touch;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
-u32 old_time_limit, hDown = 0;
+u32 old_time_limit;
 
 /*
 	Set, if 3DSX or CIA.
@@ -111,7 +110,7 @@ Result Init::MainLoop() {
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
-		u32 hHeld = hidKeysHeld();
+		hHeld = hidKeysHeld();
 		hDown = hidKeysDown();
 		hRepeat = hidKeysDownRepeat();
 		hidTouchRead(&touch);

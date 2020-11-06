@@ -69,9 +69,9 @@ static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it
 /*
 	Main Settings.
 
-	const int &selection: Const Reference to the Settings Selection.
+	int selection: The Settings Selection.
 */
-static void DrawSettingsMain(const int &selection) {
+static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 265);
@@ -85,10 +85,10 @@ static void DrawSettingsMain(const int &selection) {
 /*
 	Draw the Language Selection.
 
-	const int &selection: Const Reference to the Language Selection.
-	const int &sPos: Const Reference to the Screen Position.
+	int selection: The Language Selection.
+	int sPos: The Screen Position.
 */
-static void DrawLanguageSettings(const int &selection, const int &sPos) {
+static void DrawLanguageSettings(int selection, int sPos) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
@@ -103,9 +103,9 @@ static void DrawLanguageSettings(const int &selection, const int &sPos) {
 /*
 	Directory Change Draw.
 
-	const int &selection: Const Reference to the Settings Selection.
+	int selection: The Settings Selection.
 */
-static void DrawSettingsDir(const int &selection) {
+static void DrawSettingsDir(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
@@ -120,7 +120,7 @@ static void DrawSettingsDir(const int &selection) {
 /*
 	Draw Auto-Update Settings page.
 */
-static void DrawAutoUpdate(const int &selection) {
+static void DrawAutoUpdate(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
@@ -142,9 +142,9 @@ static void DrawAutoUpdate(const int &selection) {
 /*
 	Draw the GUI Settings.
 
-	const int &selection: Const Reference to the Settings Selection.
+	int selection: The Settings Selection.
 */
-static void DrawGUISettings(const int &selection) {
+static void DrawGUISettings(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
@@ -168,9 +168,6 @@ static void DrawGUISettings(const int &selection) {
 	- Show the Credits.
 	- Exit Universal-Updater.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	bool &dspSettings: Reference to the display Settings.
 	int &storeMode: Reference to the Store Mode.
@@ -179,7 +176,7 @@ static void DrawGUISettings(const int &selection) {
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
+static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
 	if (hDown & KEY_B) {
 		selection = 0;
 		storeMode = 0;
@@ -277,13 +274,10 @@ static void SettingsHandleMain(u32 hDown, u32 hHeld, touchPosition touch, int &p
 	- Change the Directory of...
 		- 3DSX, NDS & Archives.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection, const std::unique_ptr<Store> &store) {
+static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<Store> &store) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 4;
@@ -358,13 +352,10 @@ static void SettingsHandleDir(u32 hDown, u32 hHeld, touchPosition touch, int &pa
 	- Enable / Disable Automatically updating the UniStore on boot.
 	- Enable / Disable Automatically check for Universal-Updater updates on boot.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void AutoUpdateLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
+static void AutoUpdateLogic(int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 2;
@@ -411,13 +402,10 @@ static void AutoUpdateLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page
 
 	- Enable / Disable using the SpriteSheet Background Image, if exist.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void GUISettingsLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection) {
+static void GUISettingsLogic(int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 3;
@@ -449,14 +437,11 @@ static void GUISettingsLogic(u32 hDown, u32 hHeld, touchPosition touch, int &pag
 
 	- Select the language, which should be used with the app.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 	int &sPos: Reference to the ScreenPos variable.
 */
-static void LanguageLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, int &selection, int &sPos) {
+static void LanguageLogic(int &page, int &selection, int &sPos) {
 	if (hRepeat & KEY_DOWN) {
 		if (selection < (int)languages.size() - 1) selection++;
 		else selection = 0;
@@ -514,10 +499,10 @@ static void LanguageLogic(u32 hDown, u32 hHeld, touchPosition touch, int &page, 
 /*
 	Draw the Settings.
 
-	const int &page: Const Reference to the page.
-	const int &selection: Const Reference to the selection.
+	int page: The page.
+	int selection: The selection.
 */
-void StoreUtils::DrawSettings(const int &page, const int &selection, const int &sPos) {
+void StoreUtils::DrawSettings(int page, int selection, int sPos) {
 	switch(page) {
 		case 0:
 			DrawSettingsMain(selection);
@@ -544,9 +529,6 @@ void StoreUtils::DrawSettings(const int &page, const int &selection, const int &
 /*
 	Settings Handle.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &page: Reference to the page.
 	bool &dspSettings: Reference to the display Settings.
 	int &storeMode: Reference to the Store Mode.
@@ -555,26 +537,26 @@ void StoreUtils::DrawSettings(const int &page, const int &selection, const int &
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-void StoreUtils::SettingsHandle(u32 hDown, u32 hHeld, touchPosition touch, int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos) {
+void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos) {
 	switch(page) {
 		case 0:
-			SettingsHandleMain(hDown, hHeld, touch, page, dspSettings, storeMode, selection, store, entries, meta);
+			SettingsHandleMain(page, dspSettings, storeMode, selection, store, entries, meta);
 			break;
 
 		case 1:
-			SettingsHandleDir(hDown, hHeld, touch, page, selection, store);
+			SettingsHandleDir(page, selection, store);
 			break;
 
 		case 2:
-			AutoUpdateLogic(hDown, hHeld, touch, page, selection);
+			AutoUpdateLogic(page, selection);
 			break;
 
 		case 3:
-			GUISettingsLogic(hDown, hHeld, touch, page, selection);
+			GUISettingsLogic(page, selection);
 			break;
 
 		case 4:
-			LanguageLogic(hDown, hHeld, touch, page, selection, sPos);
+			LanguageLogic(page, selection, sPos);
 			break;
 	}
 }

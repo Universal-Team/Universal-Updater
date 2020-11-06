@@ -238,9 +238,9 @@ std::string Store::GetUniStoreTitle() const {
 /*
 	Return the Title of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetTitleEntry(const int &index) const {
+std::string Store::GetTitleEntry(int index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -254,9 +254,9 @@ std::string Store::GetTitleEntry(const int &index) const {
 /*
 	Return the Author name of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetAuthorEntry(const int &index) const {
+std::string Store::GetAuthorEntry(int index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -270,9 +270,9 @@ std::string Store::GetAuthorEntry(const int &index) const {
 /*
 	Return the Description of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetDescriptionEntry(const int &index) const {
+std::string Store::GetDescriptionEntry(int index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -286,9 +286,9 @@ std::string Store::GetDescriptionEntry(const int &index) const {
 /*
 	Return the Category of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::vector<std::string> Store::GetCategoryIndex(const int &index) const {
+std::vector<std::string> Store::GetCategoryIndex(int index) const {
 	if (!this->valid) return { "" };
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { "" }; // Empty.
 
@@ -309,9 +309,9 @@ std::vector<std::string> Store::GetCategoryIndex(const int &index) const {
 /*
 	Return the Version of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetVersionEntry(const int &index) const {
+std::string Store::GetVersionEntry(int index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -325,9 +325,9 @@ std::string Store::GetVersionEntry(const int &index) const {
 /*
 	Return the Console of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::vector<std::string> Store::GetConsoleEntry(const int &index) const {
+std::vector<std::string> Store::GetConsoleEntry(int index) const {
 	if (!this->valid) return { "" };
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { "" }; // Empty.
 
@@ -348,9 +348,9 @@ std::vector<std::string> Store::GetConsoleEntry(const int &index) const {
 /*
 	Return the Last updated date of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetLastUpdatedEntry(const int &index) const {
+std::string Store::GetLastUpdatedEntry(int index) const {
 	if (!this->valid) return "";
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
 
@@ -364,9 +364,9 @@ std::string Store::GetLastUpdatedEntry(const int &index) const {
 /*
 	Return the License of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::string Store::GetLicenseEntry(const int &index) const {
+std::string Store::GetLicenseEntry(int index) const {
 	if (!this->valid) return Lang::get("NO_LICENSE");
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return Lang::get("NO_LICENSE"); // Empty.
 
@@ -382,9 +382,9 @@ std::string Store::GetLicenseEntry(const int &index) const {
 /*
 	Return a C2D_Image of an index.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-C2D_Image Store::GetIconEntry(const int &index) const {
+C2D_Image Store::GetIconEntry(int index) const {
 	if (!this->valid) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 	if (this->sheets.empty()) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 	int iconIndex = -1, sheetIndex = 0;
@@ -446,9 +446,9 @@ void Store::SetC2DBGImage() {
 /*
 	Return the download list of an entry.
 
-	const int &index: Const Reference to the index.
+	int index: The index.
 */
-std::vector<std::string> Store::GetDownloadList(const int &index) const {
+std::vector<std::string> Store::GetDownloadList(int index) const {
 	if (!this->valid) return { "" };
 	std::vector<std::string> temp;
 

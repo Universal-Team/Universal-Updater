@@ -31,9 +31,9 @@
 
 	const std::unique_ptr<Store> &store: Const Reference to the Store class.
 	const std::unique_ptr<Meta> &meta: Const Reference to the Meta class.
-	const int &index: Const Reference Index of the entry.
+	int index: Index of the entry.
 */
-StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, const int &index) {
+StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, int index) {
 	this->Title = store->GetTitleEntry(index);
 	this->Author = store->GetAuthorEntry(index);
 

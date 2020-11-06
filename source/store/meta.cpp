@@ -79,10 +79,10 @@ void Meta::ImportMetadata() {
 /*
 	Get Last Updated.
 
-	std::string unistoreName: The UniStore name.
-	std::string entry: The Entry name.
+	const std::string &unistoreName: The UniStore name.
+	const std::string &entry: The Entry name.
 */
-std::string Meta::GetUpdated(std::string unistoreName, std::string entry) const {
+std::string Meta::GetUpdated(const std::string &unistoreName, const std::string &entry) const {
 	if (!this->metadataJson.contains(unistoreName)) return ""; // UniStore Name does not exist.
 
 	if (!this->metadataJson[unistoreName].contains(entry)) return ""; // Entry does not exist.
@@ -96,10 +96,10 @@ std::string Meta::GetUpdated(std::string unistoreName, std::string entry) const 
 /*
 	Get the marks.
 
-	std::string unistoreName: The UniStore name.
-	std::string entry: The Entry name.
+	const std::string &unistoreName: The UniStore name.
+	const std::string &entry: The Entry name.
 */
-int Meta::GetMarks(std::string unistoreName, std::string entry) const {
+int Meta::GetMarks(const std::string &unistoreName, const std::string &entry) const {
 	int temp = 0;
 
 	if (!this->metadataJson.contains(unistoreName)) return temp; // UniStore Name does not exist.
@@ -115,11 +115,11 @@ int Meta::GetMarks(std::string unistoreName, std::string entry) const {
 /*
 	Return, if update available.
 
-	std::string unistoreName: The UniStore name.
-	std::string entry: The Entry name.
-	std::string updated: Compare for the update.
+	const std::string &unistoreName: The UniStore name.
+	const std::string &entry: The Entry name.
+	const std::string &updated: Compare for the update.
 */
-bool Meta::UpdateAvailable(std::string unistoreName, std::string entry, std::string updated) const {
+bool Meta::UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const {
 	if (this->GetUpdated(unistoreName, entry) != "" && updated != "") {
 		return strcasecmp(updated.c_str(), this->GetUpdated(unistoreName, entry).c_str()) > 0;
 	}

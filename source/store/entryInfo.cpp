@@ -72,12 +72,9 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 	- Go to the download list, by pressing `A`.
 	- Show the MarkMenu with START.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	bool &showMark: Reference to showMark.. to show the mark menu.
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 */
-void StoreUtils::EntryHandle(u32 hDown, u32 hHeld, touchPosition touch, bool &showMark, bool &fetch) {
+void StoreUtils::EntryHandle(bool &showMark, bool &fetch) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 }

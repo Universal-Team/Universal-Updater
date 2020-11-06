@@ -31,8 +31,8 @@
 
 #include <3ds.h>
 
-Result CIA_LaunchTitle(const u64 &titleId, const FS_MediaType &mediaType);
-Result deletePrevious(const u64 &titleid, const FS_MediaType &media);
-Result installCia(const char *ciaPath, const bool &updateSelf);
+Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType);
+Result deletePrevious(u64 titleid, FS_MediaType media);
+Result installCia(const char *ciaPath, bool updateSelf);
 
 #endif

@@ -48,14 +48,14 @@ void GFX::DrawBottom() {
 /*
 	Draw the box.
 
-	const float &xPos: Const Reference to the X-Position where to draw the box.
-	const float &yPos: Const Reference to the Y-Position where to draw the box.
-	const float &width: Const Reference to the Width of the button.
-	const float &height: Const Reference to the Height of the button.
-	const bool &selected: Const Reference, if outline is selected (Red) or not (Black).
-	const uint32_t &clr: (Optional) The color of the inside of the box.
+	float xPos: The X-Position where to draw the box.
+	float yPos: The Y-Position where to draw the box.
+	float width: The Width of the button.
+	float height: The Height of the button.
+	bool selected: If selected, or not.
+	uint32_t clr: (Optional) The color of the inside of the box.
 */
-void GFX::DrawBox(const float &xPos, const float &yPos, const float &width, const float &height, const bool &selected, const uint32_t &clr) {
+void GFX::DrawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr) {
 	Gui::Draw_Rect(xPos, yPos, width, height, BOX_INSIDE_COLOR); // Draw middle BG.
 
 	if (selected) {
@@ -73,24 +73,24 @@ extern C2D_SpriteSheet sprites;
 /*
 	Draw a Sprite of the sprites SpriteSheet.
 
-	const int &img: Const Reference to the Image index.
-	const int &x: Const Reference to the X-Position where to draw.
-	const int &y: Const Reference to the Y-Position where to draw.
-	const float &ScaleX: (Optional) Const Reference to the X-Scale of the Sprite. (1 by default)
-	const float &ScaleY: (Optional) Const Reference to the Y-Scale of the Sprite. (1 by default)
+	int img: The Image index.
+	int x: The X-Position where to draw.
+	int y: The Y-Position where to draw.
+	float ScaleX: (Optional) The X-Scale of the Sprite. (1 by default)
+	float ScaleY: (Optional) The Y-Scale of the Sprite. (1 by default)
 */
-void GFX::DrawSprite(const int &img, const int &x, const int &y, const float &ScaleX, const float &ScaleY) {
+void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	Gui::DrawSprite(sprites, img, x, y, ScaleX, ScaleY);
 }
 
 /*
 	Draw the checkbox.
 
-	const float &xPos: Const Reference to the X-Position where to draw the box.
-	const float &yPos: Const Reference to the Y-Position where to draw the box.
-	const bool &selected: Const Reference, checked or not.
+	float xPos: The X-Position where to draw the box.
+	float yPos: The Y-Position where to draw the box.
+	bool selected: if checked, or not.
 */
-void GFX::DrawCheckbox(const float &xPos, const float &yPos, const bool &selected) {
+void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
 	GFX::DrawSprite((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos);
 }
 

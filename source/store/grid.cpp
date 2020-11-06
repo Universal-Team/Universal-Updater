@@ -92,9 +92,6 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 
 	- Scroll through the Grid with the D-Pad.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	std::unique_ptr<Store> &store: Reference to the Store class.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	const int &currentMode: Reference to the current Mode.
@@ -102,14 +99,14 @@ void StoreUtils::DrawGrid(const std::unique_ptr<Store> &store, const std::vector
 	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::GridLogic(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetBox() > 9) {
 				if (store->GetEntry() + 5 < (int)entries.size()) {
 					store->SetEntry(store->GetEntry() + 5);
 
-					if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+					if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
 						store->SetScreenIndx(store->GetScreenIndx() + 1);
 					}
 
@@ -118,7 +115,7 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 						store->SetEntry(entries.size() - 1);
 						store->SetBox(10 + (store->GetEntry() % 5));
 
-						if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+						if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
 							store->SetScreenIndx(store->GetScreenIndx() + 1);
 						}
 					}
@@ -142,7 +139,7 @@ void StoreUtils::GridLogic(u32 hDown, u32 hHeld, touchPosition touch, std::uniqu
 					store->SetBox(10);
 					store->SetEntry(store->GetEntry() + 1);
 
-					if (store->GetScreenIndx() < ((entries.size() / 5) - 2)) {
+					if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
 						store->SetScreenIndx(store->GetScreenIndx() + 1);
 					}
 				}

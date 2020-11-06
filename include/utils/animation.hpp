@@ -38,7 +38,7 @@ enum class ProgressBar {
 };
 
 namespace Animation {
-	void DrawProgressBar(const u64 &currentProgress, const u64 &totalProgress);
+	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
 	void displayProgressBar();
 };
 

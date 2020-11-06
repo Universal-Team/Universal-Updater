@@ -67,7 +67,7 @@ Result ScriptUtils::removeFile(const std::string &file, const std::string &messa
 /*
 	Boot a title.
 */
-void ScriptUtils::bootTitle(const std::string &TitleID, const bool &isNAND, const std::string &message) {
+void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
@@ -151,7 +151,7 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 /*
 	Download from GitHub Release.
 */
-Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, const bool &includePrereleases, const std::string &message) {
+Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
@@ -218,7 +218,7 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 /*
 	Install CIA files.
 */
-void ScriptUtils::installFile(const std::string &file, const bool &updatingSelf, const std::string &message) {
+void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const std::string &message) {
 	std::string in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
@@ -269,7 +269,7 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 /*
 	Execute | run the script.
 */
-Result ScriptUtils::runFunctions(const nlohmann::json &storeJson, const int &selection, const std::string &entry) {
+Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const std::string &entry) {
 	Result ret = NONE; // No Error as of yet.
 
 	if (!storeJson.contains("storeContent")) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };

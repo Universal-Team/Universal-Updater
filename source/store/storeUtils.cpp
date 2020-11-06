@@ -80,11 +80,11 @@ bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, co
 /*
 	Sort the entries.
 
-	const bool &Ascending: Const Reference to Ascending.
-	const SortType &sorttype: Const Reference to the sort type.
+	bool Ascending: If Ascending.
+	SortType sorttype: The sort type.
 	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Entries, which should be sorted.
 */
-void StoreUtils::SortEntries(const bool &Ascending, const SortType &sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::SortEntries(bool Ascending, SortType sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	switch(sorttype) {
 		case SortType::TITLE:
 			Ascending ? std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleAscending) : std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleDescending);

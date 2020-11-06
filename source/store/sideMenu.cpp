@@ -39,9 +39,9 @@ static const std::vector<Structs::ButtonPos> sidePos = {
 /*
 	Draw the Side Menu part.
 
-	const int &currentMenu: Const Reference to the current Store Mode / Menu.
+	int currentMenu: The current Store Mode / Menu.
 */
-void StoreUtils::DrawSideMenu(const int &currentMenu) {
+void StoreUtils::DrawSideMenu(int currentMenu) {
 	for (int i = 0; i < 5; i++) {
 		if (i == currentMenu) {
 			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, SIDEBAR_SELECTED_COLOR);
@@ -66,12 +66,10 @@ void StoreUtils::DrawSideMenu(const int &currentMenu) {
 
 	- Switch between the Menus through the sidebar.
 
-	u32 hDown: The hidKeysDown() variable.
-	touchPosition touch: The TouchPosition variable.
 	int &currentMenu: Reference to the Store Mode / Menu.
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
 */
-void StoreUtils::SideMenuHandle(u32 hDown, touchPosition touch, int &currentMenu, bool &fetch) {
+void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch) {
 	if (hDown & KEY_TOUCH) {
 		for (int i = 0; i < 5; i++) {
 			if (touching(touch, sidePos[i])) {

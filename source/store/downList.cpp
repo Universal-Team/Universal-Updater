@@ -45,9 +45,9 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 
 	const std::unique_ptr<Store> &store: Const Reference to the Store class.
 	const std::vector<std::string> &entries: Const Reference to the download list as a vector of strings.
-	const bool &fetch: Const Reference to Fetch.
+	bool fetch: if fetching or not.
 */
-void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, const bool &fetch) {
+void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch) {
 	if (store && !fetch) {
 		Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 		Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
@@ -73,9 +73,6 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	- Execute an Entry of the download list.
 	- Return back to EntryInfo through `B`.
 
-	u32 hDown: The hidKeysDown() variable.
-	u32 hHeld: The hidKeysHeld() variable.
-	touchPosition touch: The TouchPosition variable.
 	const std::unique_ptr<Store> &store: Const Reference to the Store class, since we do not modify anything in it.
 	const std::unique_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
 	const std::vector<std::string> &entries: Const Reference to the download list, since we do not modify anything in it.
@@ -84,7 +81,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	const int &lastMode: Const Reference to the last mode.
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 */
-void StoreUtils::DownloadHandle(u32 hDown, u32 hHeld, touchPosition touch, const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay) {
+void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay) {
 	if (store && entry) { // Ensure, store & entry is not a nullptr.
 		if (smallDelay > 0) {
 			smallDelay--;

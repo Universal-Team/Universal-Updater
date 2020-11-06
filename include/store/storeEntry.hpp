@@ -33,7 +33,7 @@
 
 class StoreEntry {
 public:
-	StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, const int &index);
+	StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, int index);
 
 	std::string GetTitle() const { return this->Title; };
 	std::string GetAuthor() const { return this->Author; };
@@ -54,9 +54,9 @@ public:
 	std::vector<std::string> GetConsoleFull() const { return this->FullConsole; };
 
 	bool GetUpdateAvl() const { return this->UpdateAvailable; };
-	void SetUpdateAvl(const bool &v) { this->UpdateAvailable = v; };
+	void SetUpdateAvl(bool v) { this->UpdateAvailable = v; };
 
-	void SetMark(const int &marks) {
+	void SetMark(int marks) {
 		this->Marks = marks;
 		this->MarkString = StringUtils::GetMarkString(this->Marks);
 	};

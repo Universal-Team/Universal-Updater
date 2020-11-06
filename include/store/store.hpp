@@ -45,17 +45,17 @@ public:
 	std::string GetUniStoreAuthor() const;
 
 	/* Get Information of the UniStore Entries. */
-	std::string GetTitleEntry(const int &index) const;
-	std::string GetAuthorEntry(const int &index) const;
-	std::string GetDescriptionEntry(const int &index) const;
-	std::vector<std::string> GetCategoryIndex(const int &index) const;
-	std::string GetVersionEntry(const int &index) const;
-	std::vector<std::string> GetConsoleEntry(const int &index) const;
-	std::string GetLastUpdatedEntry(const int &index) const;
-	std::string GetLicenseEntry(const int &index) const;
-	C2D_Image GetIconEntry(const int &index) const;
+	std::string GetTitleEntry(int index) const;
+	std::string GetAuthorEntry(int index) const;
+	std::string GetDescriptionEntry(int index) const;
+	std::vector<std::string> GetCategoryIndex(int index) const;
+	std::string GetVersionEntry(int index) const;
+	std::vector<std::string> GetConsoleEntry(int index) const;
+	std::string GetLastUpdatedEntry(int index) const;
+	std::string GetLicenseEntry(int index) const;
+	C2D_Image GetIconEntry(int index) const;
 
-	std::vector<std::string> GetDownloadList(const int &index) const;
+	std::vector<std::string> GetDownloadList(int index) const;
 
 	int GetStoreSize() const { return (int)this->storeJson["storeContent"].size(); };
 
