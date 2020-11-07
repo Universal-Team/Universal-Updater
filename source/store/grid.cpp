@@ -103,11 +103,13 @@ void StoreUtils::GridLogic(std::unique_ptr<Store> &store, std::vector<std::uniqu
 	if (store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (store->GetBox() > 9) {
-				if (store->GetEntry() + 5 < (int)entries.size()) {
+				if (store->GetEntry() + 5 < (int)entries.size() - 1) {
 					store->SetEntry(store->GetEntry() + 5);
 
-					if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
-						store->SetScreenIndx(store->GetScreenIndx() + 1);
+					if (entries.size() > 15) {
+						if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
+							store->SetScreenIndx(store->GetScreenIndx() + 1);
+						}
 					}
 
 				} else {
@@ -115,8 +117,10 @@ void StoreUtils::GridLogic(std::unique_ptr<Store> &store, std::vector<std::uniqu
 						store->SetEntry(entries.size() - 1);
 						store->SetBox(10 + (store->GetEntry() % 5));
 
-						if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
-							store->SetScreenIndx(store->GetScreenIndx() + 1);
+						if (entries.size() > 15) {
+							if (store->GetScreenIndx() < (((int)entries.size() / 5) - 2)) {
+								store->SetScreenIndx(store->GetScreenIndx() + 1);
+							}
 						}
 					}
 				}

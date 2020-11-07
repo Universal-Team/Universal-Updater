@@ -219,9 +219,9 @@ void Store::LoadFromFile(const std::string &file) {
 	/* Check, if valid. */
 	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) {
 		if (this->storeJson["storeInfo"].contains("version") && this->storeJson["storeInfo"]["version"].is_number()) {
-			if (this->storeJson["storeInfo"]["version"] < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-			else if (this->storeJson["storeInfo"]["version"] > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-			this->valid = this->storeJson["storeInfo"]["version"] == 3;
+			if (this->storeJson["storeInfo"]["version"] < _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+			else if (this->storeJson["storeInfo"]["version"] > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+			this->valid = this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION;
 		}
 
 	} else {

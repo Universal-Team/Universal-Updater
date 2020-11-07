@@ -77,6 +77,20 @@ MainScreen::MainScreen() {
 			} else {
 				notConnectedMsg();
 			}
+
+		} else {
+			const UniStoreInfo info = GetInfo("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", "universal-db.unistore");
+
+			if (info.Version != _UNISTORE_VERSION) {
+				if (checkWifiStatus()) {
+					std::string tmp = ""; // Just a temp.
+					DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
+					DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
+
+				} else {
+					notConnectedMsg();
+				}
+			}
 		}
 	}
 

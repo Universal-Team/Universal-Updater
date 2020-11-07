@@ -103,6 +103,7 @@ void StoreUtils::ListLogic(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		if (hRepeat & KEY_LEFT) {
 			if (store->GetEntry() - 2 > 0) store->SetEntry(store->GetEntry() - 3);
+			else store->SetEntry(0);
 		}
 
 		if (hRepeat & KEY_UP) {
