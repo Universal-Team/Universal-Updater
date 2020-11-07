@@ -33,6 +33,7 @@
 extern int fadeAlpha;
 
 extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
+extern void notConnectedMsg();
 
 /*
 	MainScreen Constructor.
@@ -68,9 +69,14 @@ MainScreen::MainScreen() {
 	/* If Universal DB --> Get! */
 	if (config->lastStore() == "universal-db.unistore" || config->lastStore() == "") {
 		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", F_OK) != 0) {
-			std::string tmp = ""; // Just a temp.
-			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
-			DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
+			if (checkWifiStatus()) {
+				std::string tmp = ""; // Just a temp.
+				DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
+				DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
+
+			} else {
+				notConnectedMsg();
+			}
 		}
 	}
 
@@ -137,7 +143,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			config->list() ? StoreUtils::ListLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay);
 		}
 
-		StoreUtils::SideMenuHandle(this->storeMode, this->fetchDown);
+		StoreUtils::SideMenuHandle(this->storeMode, this->fetchDown, this->lastMode);
 
 		/* Fetch Download list. */
 		if (this->fetchDown) {

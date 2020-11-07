@@ -53,7 +53,7 @@ namespace StoreUtils {
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
-	void SideMenuHandle(int &currentMenu, bool &fetch);
+	void SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu);
 
 	/* Download Entries. */
 	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch);

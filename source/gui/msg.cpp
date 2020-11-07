@@ -105,13 +105,14 @@ void Msg::waitMsg(const std::string &msg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, TEXT_COLOR, msg, 395);
-
 	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
 	Gui::DrawStringCentered(0, 218, 0.6f, TEXT_COLOR, Lang::get("KEY_CONTINUE"), 390);
+	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 
 	for (int i = 0; i < 3; i++) gspWaitForVBlank();

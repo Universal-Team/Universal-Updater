@@ -208,6 +208,11 @@ void Store::loadSheets() {
 */
 void Store::LoadFromFile(const std::string &file) {
 	FILE *in = fopen(file.c_str(), "rt");
+	if (!in) {
+		this->valid = false;
+		return;
+	}
+
 	this->storeJson = nlohmann::json::parse(in, nullptr, false);
 	fclose(in);
 

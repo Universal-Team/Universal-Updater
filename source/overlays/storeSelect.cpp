@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 extern bool checkWifiStatus();
+extern void notConnectedMsg();
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 34, 300, 22 },
@@ -371,6 +372,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 							info = GetUniStoreInfo(_STORE_PATH);
 						}
 					}
+
+				} else {
+					notConnectedMsg();
 				}
 			}
 
@@ -385,6 +389,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 					selection = 0;
 					info = GetUniStoreInfo(_STORE_PATH);
 				}
+
+			} else {
+				notConnectedMsg();
 			}
 		}
 
@@ -395,6 +402,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 					selection = 0;
 					info = GetUniStoreInfo(_STORE_PATH);
 				}
+
+			} else {
+				notConnectedMsg();
 			}
 		}
 

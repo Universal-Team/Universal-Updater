@@ -68,11 +68,13 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 
 	int &currentMenu: Reference to the Store Mode / Menu.
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
+	int &lastMenu: Reference to the last menu.
 */
-void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch) {
+void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu) {
 	if (hDown & KEY_TOUCH) {
 		for (int i = 0; i < 5; i++) {
 			if (touching(touch, sidePos[i])) {
+				lastMenu = currentMenu;
 				if (i == 1) fetch = true; // Fetch download list, if 1.
 				currentMenu = i;
 				break;
@@ -82,6 +84,7 @@ void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch) {
 
 	if (hRepeat & KEY_R) {
 		if (currentMenu < 4) {
+			lastMenu = currentMenu;
 			if (currentMenu + 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu++;
 		}
@@ -89,6 +92,7 @@ void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch) {
 
 	if (hRepeat & KEY_L) {
 		if (currentMenu > 0) {
+			lastMenu = currentMenu;
 			if (currentMenu - 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu--;
 		}
