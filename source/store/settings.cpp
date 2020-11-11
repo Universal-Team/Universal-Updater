@@ -65,7 +65,8 @@ static const Structs::ButtonPos back = { 52, 0, 24, 24 }; // Back arrow for dire
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
-static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Українська", "日本語" };
+/* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
+static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
 static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
 
 /*
