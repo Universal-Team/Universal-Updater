@@ -24,7 +24,7 @@
 	"CURRENT_VERSION": "Versión Actual: ",
 	"CURRENTLY_EXTRACTING": "Extracción actual:\n",
 	"CUSTOM_FONT": "Usar fuente personalizada",
-	"CUSTOM_FONT_DESC": "If enabled, 'sdmc:/3ds/Universal-Updater/font.bcfnt' will be used instead of the system font, if found.",
+	"CUSTOM_FONT_DESC": "Si se activa, la fuente 'sdmc:/3ds/Universal-Updater/font.bcfnt' será empleada en lugar de la del sistema (si es encontrada).",
 	"DELETE_ERROR": "¡Eliminar error!",
 	"DELETE_PROMPT": "¿Seguro quiere eliminar este directorio?",
 	"DELETE_UNNEEDED_FILE": "Eliminando archivo innecesario...",
