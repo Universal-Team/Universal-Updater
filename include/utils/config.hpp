@@ -75,6 +75,10 @@ public:
 	/* U-U Update check on startup. */
 	bool usebg() const { return this->v_showBg; };
 	void usebg(bool v) { this->v_showBg = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* If using custom Font. */
+	bool customfont() const { return this->v_customFont; };
+	void customfont(bool v) { this->v_customFont = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -89,7 +93,7 @@ private:
 
 	std::string v_language = "en", v_lastStore = "universal-db.unistore",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
-	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_showBg = false;
+	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_showBg = false, v_customFont = false;
 };
 
 #endif

@@ -67,8 +67,8 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 					}
 
 					if (entries[i + store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetTitle(), 300);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetAuthor(), 300);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}

@@ -241,38 +241,38 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390);
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380);
+				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390, 0, font);
+				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380, 0, font);
 
 				if (info[selection].Description != "") {
 					/* "\n\n" breaks C2D_WordWrap, so check here. */
 					if (!(info[selection].Description.find("\n\n") != std::string::npos)) {
-						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, nullptr, C2D_WordWrap);
+						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font, C2D_WordWrap);
 
 					} else {
-						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130);
+						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font);
 					}
 				}
 
 			} else {
-				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 390);
+				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 390, 0, font);
 			}
 
-			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150);
-			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150);
-			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150);
+			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
 
 			GFX::DrawBottom();
 
 			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
 			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
 			GFX::DrawSprite(sprites_arrow_idx, mainButtons[10].x, mainButtons[10].y);
-			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 310);
+			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
 				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, info[sPos + i].FileName, 295);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, info[sPos + i].FileName, 295, 0, font);
 			}
 		}
 

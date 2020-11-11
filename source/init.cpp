@@ -32,7 +32,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-bool exiting = false, is3DSX = false;
+bool exiting = false, is3DSX = false, needUnloadFont = false;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
 u32 old_time_limit;
@@ -55,6 +55,31 @@ static void getCurrentUsage(){
 bool touching(touchPosition touch, Structs::ButtonPos button) {
 	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h)) return true;
 	return false;
+}
+
+/*
+	Load the custom font and use it instead of SysFont, if found.
+*/
+void Init::LoadFont() {
+	if (config->customfont()) {
+		if (!needUnloadFont) {
+			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) == 0) {
+				Gui::loadFont(font, "sdmc:/3ds/Universal-Updater/font.bcfnt");
+				needUnloadFont = true;
+			}
+		}
+	}
+}
+
+/*
+	Unload the custom font and switch back to SysFont.
+*/
+void Init::UnloadFont() {
+	if (needUnloadFont) {
+		Gui::unloadFont(font);
+		font = nullptr;
+		needUnloadFont = false;
+	}
 }
 
 /*
@@ -83,7 +108,7 @@ Result Init::Initialize() {
 	Lang::load(config->language());
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
-
+	LoadFont();
 
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 
@@ -129,9 +154,7 @@ Result Init::MainLoop() {
 
 			if (fadeAlpha < 255) {
 				fadeAlpha += 4;
-				if (fadeAlpha >= 255) {
-					fullExit = true;
-				}
+				if (fadeAlpha >= 255) fullExit = true;
 			}
 		}
 	}
@@ -147,7 +170,7 @@ Result Init::MainLoop() {
 Result Init::Exit() {
 	Gui::exit();
 	Gui::unloadSheet(sprites);
-
+	UnloadFont();
 	gfxExit();
 	cfguExit();
 	config->save();

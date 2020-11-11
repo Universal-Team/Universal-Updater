@@ -51,16 +51,16 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	if (store && !fetch) {
 		Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 		Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265);
+		Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265, 0, font);
 
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
 				if (store->GetDownloadIndex() == i + store->GetDownloadSIndex()) GFX::DrawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
-				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260);
+				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260, 0, font);
 			}
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255);
+			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255, 0, font);
 		}
 	}
 }

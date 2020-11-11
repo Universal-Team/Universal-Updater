@@ -40,20 +40,20 @@ void Overlays::ShowCredits() {
 
 		GFX::DrawTop();
 		GFX::DrawSprite(sprites_universal_updater_idx, 220, 30);
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater - " + Lang::get("CREDITS"));
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
 
-		Gui::DrawString(10, 30, 0.5f, TEXT_COLOR, "- Universal-Team");
-		Gui::DrawString(10, 50, 0.5f, TEXT_COLOR, "- devkitPro");
-		Gui::DrawString(10, 70, 0.5f, TEXT_COLOR, "- dlbeer");
-		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- FlagBrew");
-		Gui::DrawString(10, 110, 0.5f, TEXT_COLOR, "- https://icons8.com/");
-		Gui::DrawString(10, 130, 0.5f, TEXT_COLOR, "- PabloMK7");
-		Gui::DrawString(10, 150, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"), 210);
-		Gui::DrawString(10, 197, 0.5f, TEXT_COLOR, Lang::get("GITHUB"), 390);
+		Gui::DrawString(10, 30, 0.5f, TEXT_COLOR, "- Universal-Team", 0, 0, font);
+		Gui::DrawString(10, 50, 0.5f, TEXT_COLOR, "- devkitPro", 0, 0, font);
+		Gui::DrawString(10, 70, 0.5f, TEXT_COLOR, "- dlbeer", 0, 0, font);
+		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- FlagBrew", 0, 0, font);
+		Gui::DrawString(10, 110, 0.5f, TEXT_COLOR, "- https://icons8.com/", 0, 0, font);
+		Gui::DrawString(10, 130, 0.5f, TEXT_COLOR, "- PabloMK7", 0, 0, font);
+		Gui::DrawString(10, 150, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
+		Gui::DrawString(10, 197, 0.5f, TEXT_COLOR, Lang::get("GITHUB"), 390, 0, font);
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 218, 0.6f, TEXT_COLOR, Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390);
+		Gui::DrawStringCentered(0, 218, 0.6f, TEXT_COLOR, Lang::get("CURRENT_VERSION") + std::string(V_STRING), 390, 0, font);
 
 		GFX::DrawBottom();
 		GFX::DrawSprite(sprites_universal_core_idx, 0, 26);

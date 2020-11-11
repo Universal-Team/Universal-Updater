@@ -24,8 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "init.hpp"
 #include "overlay.hpp"
+#include "scriptUtils.hpp"
 #include "storeUtils.hpp"
+#include <unistd.h>
 
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -46,9 +49,8 @@ static const std::vector<Structs::ButtonPos> langButtons = {
 	{ 10, 124, 300, 22 },
 	{ 10, 154, 300, 22 },
 	{ 10, 184, 300, 22 },
-	{ 10, 214, 300, 22 },
 
-	{ 52, 6, 24, 24 } // Back arrow.
+	{ 52, 220, 16, 16 } // Add Font.
 };
 
 static const std::vector<Structs::ButtonPos> toggleAbles = {
@@ -63,8 +65,8 @@ static const Structs::ButtonPos back = { 52, 0, 24, 24 }; // Back arrow for dire
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
 
-static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "日本語" };
-static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "jp"};
+static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Українська", "日本語" };
+static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
 
 /*
 	Main Settings.
@@ -74,11 +76,11 @@ static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it
 static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 265);
+	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 265, 0, font);
 
 	for (int i = 0; i < 7; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255, 0, font);
 	}
 }
 
@@ -92,11 +94,12 @@ static void DrawLanguageSettings(int selection, int sPos) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 240);
+	GFX::DrawSprite(sprites_add_font_idx, langButtons[6].x, langButtons[6].y);
+	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 240, 0, font);
 
-	for(int i = 0; i < 7 && i < (int)languages.size(); i++) {
+	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
 		if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280, 0, font);
 	}
 }
 
@@ -109,11 +112,11 @@ static void DrawSettingsDir(int selection) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 240);
+	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 240, 0, font);
 
 	for (int i = 0; i < 3; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255);
+		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255, 0, font);
 	}
 }
 
@@ -125,18 +128,18 @@ static void DrawAutoUpdate(int selection) {
 	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
 
-	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240);
+	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
 	/* Toggle Boxes. */
 	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210);
+	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
 	GFX::DrawToggle(288, 64, config->autoupdate());
-	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, nullptr, C2D_WordWrap);
+	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
 
 	Gui::Draw_Rect(48, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210);
+	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
 	GFX::DrawToggle(288, 140, config->updatecheck());
-	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, nullptr, C2D_WordWrap);
+	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 /*
@@ -149,12 +152,17 @@ static void DrawGUISettings(int selection) {
 	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
 
-	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 240);
+	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 240, 0, font);
 
 	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210);
+	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210, 0, font);
 	GFX::DrawToggle(288, 64, config->usebg());
-	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("UNISTORE_BG_DESC"), 265, 0, nullptr, C2D_WordWrap);
+	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
+
+	Gui::Draw_Rect(48, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("CUSTOM_FONT"), 210, 0, font);
+	GFX::DrawToggle(288, 140, config->customfont());
+	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 
@@ -411,6 +419,14 @@ static void GUISettingsLogic(int &page, int &selection) {
 		selection = 3;
 	}
 
+	if (hRepeat & KEY_DOWN) {
+		if (selection < 1) selection++;
+	}
+
+	if (hRepeat & KEY_UP) {
+		if (selection > 0) selection--;
+	}
+
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, toggleAbles[0])) {
 			page = 0;
@@ -418,6 +434,11 @@ static void GUISettingsLogic(int &page, int &selection) {
 
 		} else if (touching(touch, toggleAbles[1])) {
 			config->usebg(!config->usebg());
+
+		} else if (touching(touch, toggleAbles[2])) {
+			config->customfont(!config->customfont());
+
+			(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
 		}
 	}
 
@@ -425,6 +446,12 @@ static void GUISettingsLogic(int &page, int &selection) {
 		switch(selection) {
 			case 0:
 				config->usebg(!config->usebg());
+				break;
+
+			case 1:
+				config->customfont(!config->customfont());
+
+				(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
 				break;
 		}
 	}
@@ -453,16 +480,16 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	}
 
 	if (hRepeat & KEY_RIGHT) {
-		if (selection + 7 < (int)languages.size()-1) selection += 7;
-		else selection = languages.size()-1;
+		if (selection + 6 < (int)languages.size() - 1) selection += 6;
+		else selection = languages.size() - 1;
 	}
 
 	if (hRepeat & KEY_LEFT) {
-		if (selection - 7 > 0) selection -= 7;
+		if (selection - 6 > 0) selection -= 6;
 		else selection = 0;
 	}
 
-	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, langButtons[7]))) {
+	if ((hDown & KEY_B) || (hDown & KEY_TOUCH && touching(touch, back))) {
 		selection = 0;
 		sPos = 0;
 		page = 0;
@@ -470,6 +497,17 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 
 	if (hDown & KEY_A) {
 		const std::string l = langsTemp[selection];
+
+		/* Check if is "uk". */
+		if (l == "uk") {
+			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
+				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+			}
+
+			config->customfont(true);
+			Init::LoadFont();
+		}
+
 		config->language(l);
 		Lang::load(config->language());
 		selection = 0;
@@ -478,10 +516,21 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	}
 
 	if (hDown & KEY_TOUCH) {
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 6; i++) {
 			if (touching(touch, mainButtons[i])) {
 				if (i + sPos < (int)languages.size()) {
 					const std::string l = langsTemp[i + sPos];
+
+					/* Check if is "uk". */
+					if (l == "uk") {
+						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
+							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+						}
+
+						config->customfont(true);
+						Init::LoadFont();
+					}
+
 					config->language(l);
 					Lang::load(config->language());
 					selection = 0;
@@ -492,8 +541,17 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		}
 	}
 
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, langButtons[6])) {
+			/* Download Font. */
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+			config->customfont(true);
+			Init::LoadFont();
+		}
+	}
+
 	if (selection < sPos) sPos = selection;
-	else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
+	else if (selection > sPos + 6 - 1) sPos = selection - 6 + 1;
 }
 
 /*

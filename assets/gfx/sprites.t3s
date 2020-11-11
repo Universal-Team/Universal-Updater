@@ -1,6 +1,7 @@
 --atlas -f rgba -z auto
 
 sprites/add.png
+sprites/add_font.png
 sprites/arrow.png
 sprites/checked.png
 sprites/delete.png

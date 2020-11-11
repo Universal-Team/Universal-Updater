@@ -58,28 +58,28 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter) {
 	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
 	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 265);
+	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 265, 0, font);
 
 	Gui::Draw_Rect(54, 44, 260, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
 	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
 
-	Gui::DrawStringCentered(28, 50, 0.6, TEXT_COLOR, searchResult, 265);
+	Gui::DrawStringCentered(28, 50, 0.6, TEXT_COLOR, searchResult, 265, 0, font);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
 		GFX::DrawCheckbox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, searchIncludes[i]);
 	}
 
-	Gui::DrawString(84, 85, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"), 265);
+	Gui::DrawString(84, 85, 0.5, TEXT_COLOR, Lang::get("INCLUDE_IN_RESULTS"), 265, 0, font);
 
-	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"), 90);
-	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"), 90);
+	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, TEXT_COLOR, Lang::get("TITLE"), 90, 0, font);
+	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, TEXT_COLOR, Lang::get("AUTHOR"), 90, 0, font);
 
-	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, TEXT_COLOR, Lang::get("CATEGORY"), 90);
-	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"), 90);
+	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, TEXT_COLOR, Lang::get("CATEGORY"), 90, 0, font);
+	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, TEXT_COLOR, Lang::get("CONSOLE"), 90, 0, font);
 
 	/* Filters. */
-	Gui::DrawString(84, 175, 0.5f, TEXT_COLOR, Lang::get("FILTER_TO"), 265);
+	Gui::DrawString(84, 175, 0.5f, TEXT_COLOR, Lang::get("FILTER_TO"), 265, 0, font);
 
 	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, (marks & favoriteMarks::STAR ?
 		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
@@ -99,11 +99,11 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	Gui::Draw_Rect(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, (updateFilter ?
 		SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
 
-	Gui::DrawString(SearchMenu[5].x + 9, SearchMenu[5].y + 7, 0.5f, TEXT_COLOR, "★");
-	Gui::DrawString(SearchMenu[6].x + 9, SearchMenu[6].y + 7, 0.5f, TEXT_COLOR, "♥");
-	Gui::DrawString(SearchMenu[7].x + 9, SearchMenu[7].y + 7, 0.5f, TEXT_COLOR, "♦");
-	Gui::DrawString(SearchMenu[8].x + 9, SearchMenu[8].y + 7, 0.5f, TEXT_COLOR, "♣");
-	Gui::DrawString(SearchMenu[9].x + 9, SearchMenu[9].y + 7, 0.5f, TEXT_COLOR, "♠");
+	Gui::DrawString(SearchMenu[5].x + 9, SearchMenu[5].y + 7, 0.5f, TEXT_COLOR, "★", 0, 0, font);
+	Gui::DrawString(SearchMenu[6].x + 9, SearchMenu[6].y + 7, 0.5f, TEXT_COLOR, "♥", 0, 0, font);
+	Gui::DrawString(SearchMenu[7].x + 9, SearchMenu[7].y + 7, 0.5f, TEXT_COLOR, "♦", 0, 0, font);
+	Gui::DrawString(SearchMenu[8].x + 9, SearchMenu[8].y + 7, 0.5f, TEXT_COLOR, "♣", 0, 0, font);
+	Gui::DrawString(SearchMenu[9].x + 9, SearchMenu[9].y + 7, 0.5f, TEXT_COLOR, "♠", 0, 0, font);
 	GFX::DrawSprite(sprites_update_filter_idx, SearchMenu[10].x + 8, SearchMenu[10].y + 8);
 }
 

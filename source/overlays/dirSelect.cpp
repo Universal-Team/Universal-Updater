@@ -82,22 +82,22 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, msg, 380);
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, msg, 380, 0, font);
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, currentPath, 390);
+		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, currentPath, 390, 0, font);
 
 		GFX::DrawBottom();
 
 		Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
 		Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 310);
+		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 310, 0, font);
 
 		if (dirContents.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
 				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, dirContents[sPos + i].name, 295);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, dirContents[sPos + i].name, 295, 0, font);
 			}
 		}
 

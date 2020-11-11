@@ -34,7 +34,7 @@
 	Detects system language and is used later to set app language to system language.
 */
 void Config::sysLang() {
-	u8 language = 0;
+	u8 language = 1;
 	CFGU_GetSystemLanguage(&language);
 
 	switch(language) {
@@ -123,6 +123,7 @@ Config::Config() {
 	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
+	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -144,6 +145,7 @@ void Config::save() {
 		this->setBool("MetaData", this->metadata());
 		this->setBool("UpdateCheck", this->updatecheck());
 		this->setBool("UseBG", this->usebg());
+		this->setBool("CustomFont", this->customfont());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

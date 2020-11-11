@@ -98,28 +98,28 @@ void Animation::displayProgressBar() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 390);
+		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 390, 0, font);
 
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
 				Animation::DrawProgressBar(downloadNow, downloadTotal);
 				break;
 
 			case ProgressBar::Extracting:
-				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 390);
-				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390);
-				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 390);
+				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 390, 0, font);
+				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
+				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 390, 0, font);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;
 
 			case ProgressBar::Installing:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
 				Animation::DrawProgressBar(installOffset, installSize);
 				break;
 
 			case ProgressBar::Copying:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390);
+				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
 				Animation::DrawProgressBar(copyOffset, copySize);
 				break;
 		}

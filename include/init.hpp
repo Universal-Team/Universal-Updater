@@ -33,6 +33,9 @@ namespace Init {
 	Result Initialize();
 	Result MainLoop();
 	Result Exit();
+
+	void LoadFont();
+	void UnloadFont();
 };
 
 #endif
