@@ -45,7 +45,7 @@
 	"DOWNLOADING_UNISTORE": "Завантаження UniStore...",
 	"ENABLE_AUTOUPDATE_UNISTORE": "Увімкнути автооновлення UniStore під час запуску",
 	"ENABLE_UPDATE_CHECK": "Увімкнути самооновлення",
-	"ENTER_SEARCH": "Введіть те, що ви хочете знайти.",
+	"ENTER_SEARCH": "Введiть текст для пошуку.",
 	"ENTER_URL": "Введіть URL-адресу UniStore.",
 	"ENTRIES": "Записи",
 	"EXECUTE_ENTRY": "Виконати цей запис?",
