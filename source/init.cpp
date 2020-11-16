@@ -103,6 +103,7 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
 	Lang::load(config->language());

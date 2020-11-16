@@ -318,7 +318,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 						else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 						else if (info[selection].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
-							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName);
+							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
 							StoreUtils::ResetAll(store, meta, entries);
 							config->lastStore(info[selection].FileName);
 							StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
@@ -340,7 +340,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 								else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 								else if (info[i + sPos].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 								else {
-									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName);
+									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
 									StoreUtils::ResetAll(store, meta, entries);
 									config->lastStore(info[i + sPos].FileName);
 									doOut = true;

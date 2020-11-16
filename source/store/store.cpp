@@ -39,10 +39,19 @@ static bool firstStart = true;
 	Initialize a store.
 
 	const std::string &file: The UniStore file.
+	const std::string &file2: The UniStore file.. without full path.
+	bool ARGMode: If Argument mode.
 */
-Store::Store(const std::string &file) {
-	this->update(file);
-	this->SetC2DBGImage();
+Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
+	this->fileName = file2;
+
+	if (!ARGMode) {
+		this->update(file);
+		this->SetC2DBGImage();
+
+	} else {
+		this->LoadFromFile(file);
+	}
 };
 
 /*

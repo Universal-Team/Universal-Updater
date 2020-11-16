@@ -75,6 +75,7 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
 	Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
@@ -82,6 +83,7 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, TEXT_COLOR, promptMsg, 395, 0, font);
 
 	Gui::DrawStringCentered(0, 218, 0.6f, TEXT_COLOR, Lang::get("CONFIRM_OR_CANCEL"), 390, 0, font);
+	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 
 	for (int i = 0; i < 3; i++) gspWaitForVBlank();

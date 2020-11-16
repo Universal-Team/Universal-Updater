@@ -94,7 +94,7 @@ MainScreen::MainScreen() {
 		}
 	}
 
-	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore());
+	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 	StoreUtils::SortEntries(false, SortType::LAST_UPDATED, this->entries);
 };

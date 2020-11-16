@@ -33,7 +33,7 @@
 
 class Store {
 public:
-	Store(const std::string &file);
+	Store(const std::string &file, const std::string &file2, bool ARGMode = false);
 	~Store();
 	void LoadFromFile(const std::string &file);
 	void loadSheets();
@@ -80,6 +80,9 @@ public:
 	/* Both of these things are used for custom BG support. */
 	C2D_Image GetStoreImg() const { return this->storeBG; };
 	bool customBG() const { return this->hasCustomBG; };
+
+	/* Return filename of the UniStore. */
+	std::string GetFileName() const { return this->fileName; };
 private:
 	void SetC2DBGImage();
 	nlohmann::json storeJson = nullptr;
@@ -87,6 +90,7 @@ private:
 	C2D_Image storeBG = { nullptr };
 	bool valid = false, hasSheet = false, hasCustomBG = false;
 	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0;
+	std::string fileName = "";
 };
 
 #endif

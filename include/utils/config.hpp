@@ -79,6 +79,10 @@ public:
 	/* If using custom Font. */
 	bool customfont() const { return this->v_customFont; };
 	void customfont(bool v) { this->v_customFont = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* The shortcut path. */
+	std::string shortcut() const { return this->v_shortcutPath; };
+	void shortcut(const std::string &v) { this->v_shortcutPath = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -92,7 +96,8 @@ private:
 	bool changesMade = false;
 
 	std::string v_language = "en", v_lastStore = "universal-db.unistore",
-				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:";
+				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
+				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts";
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_showBg = false, v_customFont = false;
 };
 

@@ -24,11 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "keyboard.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
+#include <fstream>
 
 #define DOWNLOAD_ENTRIES 7
+extern std::string _3dsxPath;
+extern bool is3DSX;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{ 54, 32, 262, 22 },
@@ -39,6 +43,45 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{ 54, 182, 262, 22 },
 	{ 54, 212, 262, 22 }
 };
+
+/*
+	With this, we can create a shortcut. ;P
+
+	const std::string &entryName: The name of the Entry. AKA: The Title Name.
+	int index: The Download index.
+	const std::string &unistoreName: The name of the UniStore filename.
+	const std::string &author: The author of the app.
+*/
+static void CreateShortcut(const std::string &entryName, int index, const std::string &unistoreName, const std::string &author) {
+	std::string sName = Input::setkbdString(30, Lang::get("ENTER_SHORTCUT_FILENAME"), {});
+	if (sName == "") sName = "tmp";
+	std::ofstream out(config->shortcut() + "/" + sName + ".xml", std::ios::binary);
+
+	out << "<shortcut>" << std::endl;
+
+	/* Executable. */
+	const std::string executable = _3dsxPath.substr(5, _3dsxPath.size()); // It must be '/3ds/...'.
+	out << "	<executable>" << executable << "</executable>" << std::endl;
+
+	/* Arguments. */
+	out << "	<arg>\"" << unistoreName << "\" \"" << entryName << "\" \"" << std::to_string(index) << "\"" << "</arg>" << std::endl;
+
+	/* Title. */
+	const std::string title = Input::setkbdString(30, Lang::get("ENTER_TITLE_SHORTCUT"), {});
+	if (title != "") out << "	<name>" << title << "</name>" << std::endl;
+	else out << "	<name>" << entryName << "</name>" << std::endl;
+
+	/* Description. */
+	const std::string desc = Input::setkbdString(50, Lang::get("ENTER_DESC_SHORTCUT"), {});
+	if (desc != "") out << "	<description>" << desc << "</description>" << std::endl;
+	else out << "	<description>" << entryName << "</description>" << std::endl;
+
+	/* Author and end. */
+	out << "	<author>" << author << "</author>" << std::endl;
+	out << "</shortcut>" << std::endl;
+	out.close();
+}
+
 
 /*
 	Draw the Download Entries part.
@@ -87,6 +130,15 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 			smallDelay--;
 		}
 
+		if ((hDown & KEY_Y) || (hDown & KEY_START)) {
+			if (is3DSX) { // Only allow if 3DSX.
+				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"))) {
+					CreateShortcut(entry->GetTitle(), store->GetDownloadIndex(), store->GetFileName(), entry->GetAuthor());
+					Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
+				}
+			}
+		}
+
 		if (hRepeat & KEY_DOWN) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
@@ -122,9 +174,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + store->GetDownloadSIndex() < (int)entries.size()) {
-						const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + store->GetDownloadSIndex()];
-
-						if (Msg::promptMsg(tmp)) {
+						if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + store->GetDownloadSIndex()])) {
 							ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[i + store->GetDownloadSIndex()]);
 							if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
 							entry->SetUpdateAvl(false);
@@ -137,8 +187,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 		if (smallDelay == 0 && hDown & KEY_A) {
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
-			const std::string tmp = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()];
-			if (Msg::promptMsg(tmp)) {
+			if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()])) {
 				ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[store->GetDownloadIndex()]);
 				if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
 				entry->SetUpdateAvl(false);

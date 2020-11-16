@@ -124,6 +124,7 @@ Config::Config() {
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
+	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -146,6 +147,7 @@ void Config::save() {
 		this->setBool("UpdateCheck", this->updatecheck());
 		this->setBool("UseBG", this->usebg());
 		this->setBool("CustomFont", this->customfont());
+		this->setString("Shortcut_Path", this->shortcut());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');

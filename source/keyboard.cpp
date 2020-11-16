@@ -62,7 +62,7 @@ std::string Input::setkbdString(uint maxLength, const std::string &Text, const s
 		}
 	}
 
-	SwkbdButton ret = swkbdInputText(&state, temp, maxLength);
+	SwkbdButton ret = swkbdInputText(&state, temp, sizeof(temp));
 	temp[maxLength] = '\0';
 
 	return (ret == SWKBD_BUTTON_CONFIRM ? temp : "");

@@ -63,7 +63,7 @@ static const Structs::ButtonPos back = { 52, 0, 24, 24 }; // Back arrow for dire
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
-static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH" };
+static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH" };
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
@@ -115,7 +115,7 @@ static void DrawSettingsDir(int selection) {
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 240, 0, font);
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
 		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255, 0, font);
 	}
@@ -293,18 +293,18 @@ static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<S
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 2) selection++;
+		if (selection < 3) selection++;
 		else selection = 0;
 	}
 
 	if (hRepeat & KEY_UP) {
 		if (selection > 0) selection--;
-		else selection = dirStrings.size()-1;
+		else selection = dirStrings.size() - 1;
 	}
 
 	if (hRepeat & KEY_RIGHT) {
-		if (selection + 8 < (int)dirStrings.size()-1) selection += 8;
-		else selection = dirStrings.size()-1;
+		if (selection + 8 < (int)dirStrings.size() - 1) selection += 8;
+		else selection = dirStrings.size() - 1;
 	}
 
 	if (hRepeat & KEY_LEFT) {
@@ -328,6 +328,10 @@ static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<S
 		} else if (touching(touch, mainButtons[2])) {
 			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"), store);
 			if (path != "") config->archPath(path);
+
+		} else if (touching(touch, mainButtons[3])) {
+			const std::string path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"), store);
+			if (path != "") config->shortcut(path);
 		}
 	}
 
@@ -348,6 +352,11 @@ static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<S
 			case 2:
 				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"), store);
 				if (path != "") config->archPath(path);
+				break;
+
+			case 3:
+				path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"), store);
+				if (path != "") config->shortcut(path);
 				break;
 		}
 	}
