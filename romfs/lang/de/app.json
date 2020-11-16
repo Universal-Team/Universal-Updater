@@ -1,6 +1,6 @@
 {
 	"ASCENDING": "Aufsteigend",
-	"ARGUMENT_INVALID": "Argument invalid.\nPlease check the xml file for proper arguments.",
+	"ARGUMENT_INVALID": "Argument ungültig.\nBitte überprüfe die XML-Datei auf korrekte Argumente.",
 	"AUTHOR": "Autor",
 	"AUTO_UPDATE_SETTINGS": "Aktualisierungs-Einstellungen",
 	"AUTO_UPDATE_SETTINGS_BTN": "Aktualisierungs-Einstellungen...",
