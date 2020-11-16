@@ -39,7 +39,7 @@ void Overlays::ShowCredits() {
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
 		GFX::DrawTop();
-		GFX::DrawSprite(sprites_universal_updater_idx, 220, 30);
+		GFX::DrawSprite(sprites_universal_updater_idx, 220, 26);
 		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
 
 		Gui::DrawString(10, 30, 0.5f, TEXT_COLOR, "- Universal-Team", 0, 0, font);

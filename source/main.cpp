@@ -39,6 +39,7 @@ std::string _3dsxPath = "";
 static void InitForARG() {
 	gfxInitDefault();
 	romfsInit();
+	cfguInit();
 	Gui::init();
 	amInit();
 	acInit();

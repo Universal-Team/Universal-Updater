@@ -29,11 +29,11 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> markBox = {
-	{10, 94, 52, 52},
-	{72, 94, 52, 52},
-	{134, 94, 52, 52},
-	{196, 94, 52, 52},
-	{258, 94, 52, 52},
+	{ 10, 94, 52, 52 },
+	{ 72, 94, 52, 52 },
+	{ 134, 94, 52, 52 },
+	{ 196, 94, 52, 52 },
+	{ 258, 94, 52, 52 },
 
 	{ 53, 215, 20, 20 }
 };

@@ -186,10 +186,8 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			char path[PATH_MAX];
 			getcwd(path, PATH_MAX);
 
-			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
-				return "";
-
-			} else {
+			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) return "";
+			else {
 				chdir("..");
 				getcwd(path, PATH_MAX);
 				currentPath = path;

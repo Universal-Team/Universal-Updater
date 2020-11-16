@@ -89,7 +89,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents) {
 
 std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList) {
 	std::vector<std::string> dirContents;
-	DIR* pdir = opendir(name.c_str());
+	DIR *pdir = opendir(name.c_str());
 	struct dirent *pent;
 
 	while ((pent = readdir(pdir)) != NULL) {

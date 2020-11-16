@@ -156,18 +156,23 @@ void StoreUtils::SearchHandle(std::unique_ptr<Store> &store, std::vector<std::un
 			if (touching(touch, SearchMenu[5])) {
 				marks = marks ^ favoriteMarks::STAR;
 				didTouch = true;
+
 			} else if (touching(touch, SearchMenu[6])) {
 				marks = marks ^ favoriteMarks::HEART;
 				didTouch = true;
+
 			} else if (touching(touch, SearchMenu[7])) {
 				marks = marks ^ favoriteMarks::DIAMOND;
 				didTouch = true;
+
 			} else if (touching(touch, SearchMenu[8])) {
 				marks = marks ^ favoriteMarks::CLUBS;
 				didTouch = true;
+
 			} else if (touching(touch, SearchMenu[9])) {
 				marks = marks ^ favoriteMarks::SPADE;
 				didTouch = true;
+
 			} else if (touching(touch, SearchMenu[10])) {
 				updateFilter = !updateFilter;
 				didTouch = true;
@@ -191,8 +196,7 @@ void StoreUtils::SearchHandle(std::unique_ptr<Store> &store, std::vector<std::un
 	if (hDown & KEY_X) {
 		marks = 0;
 		updateFilter = false;
-		for(uint i = 0; i < searchIncludes.size(); i++)
-			searchIncludes[i] = false;
+		for(uint i = 0; i < searchIncludes.size(); i++) searchIncludes[i] = false;
 		searchResult = "";
 
 		if (store && store->GetValid()) {

@@ -27,7 +27,7 @@
 #include "cia.hpp"
 #include "files.hpp"
 
-Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
+Result Title::Launch(u64 titleId, FS_MediaType mediaType) {
 	Result ret = 0;
 	u8 param[0x300];
 	u8 hmac[0x20];
@@ -45,7 +45,7 @@ Result CIA_LaunchTitle(u64 titleId, FS_MediaType mediaType) {
 	return 0;
 }
 
-Result deletePrevious(u64 titleid, FS_MediaType media) {
+Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 	Result ret = 0;
 	u32 titles_amount = 0;
 
@@ -82,7 +82,7 @@ Result deletePrevious(u64 titleid, FS_MediaType media) {
 	return 0;
 }
 
-FS_MediaType getTitleDestination(u64 titleId) {
+static FS_MediaType getTitleDestination(u64 titleId) {
 	u16 platform = (u16) ((titleId >> 48) & 0xFFFF);
 	u16 category = (u16) ((titleId >> 32) & 0xFFFF);
 	u8 variation = (u8) (titleId & 0xFF);
@@ -93,7 +93,7 @@ FS_MediaType getTitleDestination(u64 titleId) {
 
 u32 installSize = 0, installOffset = 0;
 
-Result installCia(const char *ciaPath, bool updatingSelf) {
+Result Title::Install(const char *ciaPath, bool updatingSelf) {
 	u32 bytes_read = 0, bytes_written;
 	installSize = 0, installOffset = 0; u64 size = 0;
 	Handle ciaHandle, fileHandle;
@@ -116,7 +116,7 @@ Result installCia(const char *ciaPath, bool updatingSelf) {
 	media = getTitleDestination(info.titleID);
 
 	if (!updatingSelf) {
-		ret = deletePrevious(info.titleID, media);
+		ret = Title::DeletePrevious(info.titleID, media);
 		if (R_FAILED(ret)) return ret;
 	}
 
@@ -158,7 +158,7 @@ Result installCia(const char *ciaPath, bool updatingSelf) {
 	}
 
 	if (updatingSelf) {
-		if (R_FAILED(ret = CIA_LaunchTitle(info.titleID, MEDIATYPE_SD))) return ret;
+		if (R_FAILED(ret = Title::Launch(info.titleID, MEDIATYPE_SD))) return ret;
 	}
 
 	return 0;

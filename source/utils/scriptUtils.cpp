@@ -75,7 +75,7 @@ void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::
 	const u64 ID = std::stoull(TitleID, 0, 16);
 	if (Msg::promptMsg(MSG)) {
 		Msg::DisplayMsg(message);
-		CIA_LaunchTitle(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
+		Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
 	}
 }
 
@@ -232,7 +232,7 @@ void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const 
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
-	installCia(in.c_str(), updatingSelf);
+	Title::Install(in.c_str(), updatingSelf);
 	showProgressBar = false;
 	threadJoin(thread, U64_MAX);
 	threadFree(thread);
