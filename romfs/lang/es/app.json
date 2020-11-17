@@ -1,6 +1,6 @@
 {
 	"ASCENDING": "Ascendente",
-	"ARGUMENT_INVALID": "Argument invalid.\nPlease check the xml file for proper arguments.",
+	"ARGUMENT_INVALID": "Argumento inválido.\nPor favor, compruebe el archivo xml para los argumentos adecuados.",
 	"AUTHOR": "Autor",
 	"AUTO_UPDATE_SETTINGS": "Auto actualizar ajustes",
 	"AUTO_UPDATE_SETTINGS_BTN": "Auto actualizar ajustes...",
@@ -89,7 +89,7 @@
 	"SELECT_UNISTORE_2": "Seleccione una UniStore",
 	"SETTINGS": "Ajustes",
 	"SHEET_SLASH": "Parece que un '/' está incluido (no es compatible).\nPor favor, cambie 'sheet' a únicamente el nombre del archivo.",
-	"SHORTCUT_CREATED": "Shortcut created!",
+	"SHORTCUT_CREATED": "¡Acceso directo creado!",
 	"SORT_BY": "Ordenar por",
 	"SORTING": "Ordenando",
 	"START_SELECT": "Presione START para seleccionar la carpeta actual",
