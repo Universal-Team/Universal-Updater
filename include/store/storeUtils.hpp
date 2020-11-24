@@ -56,7 +56,7 @@ namespace StoreUtils {
 	void SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu);
 
 	/* Download Entries. */
-	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch);
+	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes);
 	void DownloadHandle(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay);
 
 	/* Search + Favorite Menu. */

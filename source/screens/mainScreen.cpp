@@ -54,7 +54,7 @@ MainScreen::MainScreen() {
 			/* check version and file here. */
 			const UniStoreInfo info = GetInfo((std::string(_STORE_PATH) + config->lastStore()), config->lastStore());
 
-			if (info.Version != 3) {
+			if (info.Version != 3 || info.Version != _UNISTORE_VERSION) {
 				config->lastStore("universal-db.unistore");
 			}
 
@@ -81,7 +81,8 @@ MainScreen::MainScreen() {
 		} else {
 			const UniStoreInfo info = GetInfo("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", "universal-db.unistore");
 
-			if (info.Version != _UNISTORE_VERSION) {
+			if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
+				Msg::waitMsg("Not passing the check!");
 				if (checkWifiStatus()) {
 					std::string tmp = ""; // Just a temp.
 					DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
@@ -111,34 +112,35 @@ void MainScreen::Draw(void) const {
 	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370, 0, font);
 	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
 
-	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
-	GFX::DrawBottom();
+	/* Download-ception. */
+	if (this->storeMode == 1) {
+		StoreUtils::DrawDownList(this->store, this->dwnldList, this->fetchDown, this->entries[this->store->GetEntry()], this->dwnldSizes);
 
-	switch(this->storeMode) {
-		case 0:
-			/* Entry Info. */
-			if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
-			break;
+	} else {
+		if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
+		GFX::DrawBottom();
 
-		case 1:
-			/* Download List. */
-			StoreUtils::DrawDownList(this->store, this->dwnldList, this->fetchDown);
-			break;
+		switch(this->storeMode) {
+			case 0:
+				/* Entry Info. */
+				if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::DrawEntryInfo(this->store, this->entries[this->store->GetEntry()]);
+				break;
 
-		case 2:
-			/* Search + Favorites. */
-			StoreUtils::DrawSearchMenu(this->searchIncludes, this->searchResult, this->marks, this->updateFilter);
-			break;
+			case 2:
+				/* Search + Favorites. */
+				StoreUtils::DrawSearchMenu(this->searchIncludes, this->searchResult, this->marks, this->updateFilter);
+				break;
 
-		case 3:
-			/* Sorting. */
-			StoreUtils::DrawSorting(this->ascending, this->sorttype);
-			break;
+			case 3:
+				/* Sorting. */
+				StoreUtils::DrawSorting(this->ascending, this->sorttype);
+				break;
 
-		case 4:
-			/* Settings. */
-			StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
-			break;
+			case 4:
+				/* Settings. */
+				StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
+				break;
+		}
 	}
 
 	StoreUtils::DrawSideMenu(this->storeMode);
@@ -162,6 +164,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		/* Fetch Download list. */
 		if (this->fetchDown) {
 			this->dwnldList.clear();
+			this->dwnldSizes.clear();
 
 			if (this->store && this->store->GetValid()) {
 				this->store->SetDownloadIndex(0); // Reset to 0.
@@ -169,6 +172,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 				if ((int)this->entries.size() > this->store->GetEntry()) {
 					this->dwnldList = this->store->GetDownloadList(this->entries[this->store->GetEntry()]->GetEntryIndex());
+					this->dwnldSizes = this->entries[this->store->GetEntry()]->GetSizes();
 				}
 			}
 

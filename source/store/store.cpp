@@ -228,9 +228,11 @@ void Store::LoadFromFile(const std::string &file) {
 	/* Check, if valid. */
 	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) {
 		if (this->storeJson["storeInfo"].contains("version") && this->storeJson["storeInfo"]["version"].is_number()) {
-			if (this->storeJson["storeInfo"]["version"] < _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
+			if (this->storeJson["storeInfo"]["version"] < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 			else if (this->storeJson["storeInfo"]["version"] > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-			this->valid = this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION;
+			else if (this->storeJson["storeInfo"]["version"] == 3 || this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION) {
+				this->valid = this->storeJson["storeInfo"]["version"] = true;
+			}
 		}
 
 	} else {
@@ -473,4 +475,18 @@ std::vector<std::string> Store::GetDownloadList(int index) const {
 	}
 
 	return temp;
+}
+
+std::string Store::GetFileSizes(int index, const std::string &entry) const {
+	if (!this->valid) return "";
+
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return "";
+
+	if (this->storeJson["storeContent"][index].contains(entry) && this->storeJson["storeContent"][index][entry].type() == nlohmann::json::value_t::object) {
+		if (this->storeJson["storeContent"][index][entry].contains("size") && this->storeJson["storeContent"][index][entry]["size"].is_string()) {
+			return this->storeJson["storeContent"][index][entry]["size"];
+		}
+	}
+
+	return "";
 }

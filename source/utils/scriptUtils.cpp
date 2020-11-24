@@ -276,12 +276,29 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 	if ((int)storeJson["storeContent"].size() < selection) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
 	if (!storeJson["storeContent"][selection].contains(entry)) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
 
-	for(int i = 0; i < (int)storeJson["storeContent"][selection][entry].size(); i++) {
+	nlohmann::json Script = nullptr;
+
+	/* Detect if array or new object thing. Else return Syntax error. :P */
+	if (storeJson["storeContent"][selection][entry].type() == nlohmann::json::value_t::array) {
+		Script = storeJson["storeContent"][selection][entry];
+
+	} else if (storeJson["storeContent"][selection][entry].type() == nlohmann::json::value_t::object) {
+		if (storeJson["storeContent"][selection][entry].contains("script") && storeJson["storeContent"][selection][entry]["script"].is_array()) {
+			Script = storeJson["storeContent"][selection][entry]["script"];
+
+		} else {
+			Msg::waitMsg(Lang::get("SYNTAX_ERROR"));
+			return SYNTAX_ERROR;
+		}
+	}
+
+
+	for(int i = 0; i < (int)Script.size(); i++) {
 		if (ret == NONE) {
 			std::string type = "";
 
-			if (storeJson["storeContent"][selection][entry][i].contains("type") && storeJson["storeContent"][selection][entry][i]["type"].is_string()) {
-				type = storeJson["storeContent"][selection][entry][i]["type"];
+			if (Script[i].contains("type") && Script[i]["type"].is_string()) {
+				type = Script[i]["type"];
 
 			} else {
 				ret = SYNTAX_ERROR;
@@ -292,13 +309,13 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				std::string file = "", message = "";
 
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
-					file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
+					file = Script[i]["file"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					message = Script[i]["message"];
 				}
 
 				if (!missing) ret = ScriptUtils::removeFile(file, message);
@@ -308,18 +325,18 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false;
 				std::string file = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
-					file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
+					file = Script[i]["file"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
-					output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
+					output = Script[i]["output"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					message = Script[i]["message"];
 				}
 
 				if (!missing) ret = ScriptUtils::downloadFile(file, output, message);
@@ -329,26 +346,26 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false, includePrereleases = false;
 				std::string repo = "", file = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("repo") && storeJson["storeContent"][selection][entry][i]["repo"].is_string()) {
-					repo = storeJson["storeContent"][selection][entry][i]["repo"];
+				if (Script[i].contains("repo") && Script[i]["repo"].is_string()) {
+					repo = Script[i]["repo"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
-					file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
+					file = Script[i]["file"];
 				}
 				else  missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
-					output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
+					output = Script[i]["output"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("includePrereleases") && storeJson["storeContent"][selection][entry][i]["includePrereleases"].is_boolean())
-					includePrereleases = storeJson["storeContent"][selection][entry][i]["includePrereleases"];
+				if (Script[i].contains("includePrereleases") && Script[i]["includePrereleases"].is_boolean())
+					includePrereleases = Script[i]["includePrereleases"];
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					message = Script[i]["message"];
 				}
 
 				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message);
@@ -358,23 +375,23 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false;
 				std::string file = "", input = "", output = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
-					file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
+					file = Script[i]["file"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("input") && storeJson["storeContent"][selection][entry][i]["input"].is_string()) {
-					input = storeJson["storeContent"][selection][entry][i]["input"];
+				if (Script[i].contains("input") && Script[i]["input"].is_string()) {
+					input = Script[i]["input"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("output") && storeJson["storeContent"][selection][entry][i]["output"].is_string()) {
-					output = storeJson["storeContent"][selection][entry][i]["output"];
+				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
+					output = Script[i]["output"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					message = Script[i]["message"];
 				}
 
 				if (!missing) ScriptUtils::extractFile(file, input, output, message);
@@ -384,17 +401,17 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false, updateSelf = false;
 				std::string file = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("file") && storeJson["storeContent"][selection][entry][i]["file"].is_string()) {
-					file = storeJson["storeContent"][selection][entry][i]["file"];
+				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
+					file = Script[i]["file"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("updateSelf") && storeJson["storeContent"][selection][entry][i]["updateSelf"].is_boolean()) {
-					updateSelf = storeJson["storeContent"][selection][entry][i]["updateSelf"];
+				if (Script[i].contains("updateSelf") && Script[i]["updateSelf"].is_boolean()) {
+					updateSelf = Script[i]["updateSelf"];
 				}
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					message = Script[i]["message"];
 				}
 
 				if (!missing) ScriptUtils::installFile(file, updateSelf, message);
@@ -404,8 +421,8 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false;
 				std::string directory = "", message = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("directory") && storeJson["storeContent"][selection][entry][i]["directory"].is_string()) {
-					directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
+					directory = Script[i]["directory"];
 				}
 				else missing = true;
 
@@ -416,8 +433,8 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				bool missing = false;
 				std::string directory = "", message = "", promptmsg = "";
 
-				if (storeJson["storeContent"][selection][entry][i].contains("directory") && storeJson["storeContent"][selection][entry][i]["directory"].is_string()) {
-					directory = storeJson["storeContent"][selection][entry][i]["directory"];
+				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
+					directory = Script[i]["directory"];
 				}
 				else missing = true;
 
@@ -435,12 +452,12 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				std::string Message = "";
 				int skipCount = -1;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					Message = Script[i]["message"];
 				}
 
-				if (storeJson["storeContent"][selection][entry][i].contains("count") && storeJson["storeContent"][selection][entry][i]["count"].is_number()) {
-					skipCount = storeJson["storeContent"][selection][entry][i]["count"];
+				if (Script[i].contains("count") && Script[i]["count"].is_number()) {
+					skipCount = Script[i]["count"];
 				}
 
 				ret = ScriptUtils::prompt(Message);
@@ -457,18 +474,18 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				std::string Message = "", source = "", destination = "";
 				bool missing = false;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("source") && storeJson["storeContent"][selection][entry][i]["source"].is_string()) {
-					source = storeJson["storeContent"][selection][entry][i]["source"];
+				if (Script[i].contains("source") && Script[i]["source"].is_string()) {
+					source = Script[i]["source"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("destination") && storeJson["storeContent"][selection][entry][i]["destination"].is_string()) {
-					destination = storeJson["storeContent"][selection][entry][i]["destination"];
+				if (Script[i].contains("destination") && Script[i]["destination"].is_string()) {
+					destination = Script[i]["destination"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					Message = Script[i]["message"];
 				}
 
 				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message);
@@ -478,18 +495,18 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				std::string Message = "", oldFile = "", newFile = "";
 				bool missing = false;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("old") && storeJson["storeContent"][selection][entry][i]["old"].is_string()) {
-					oldFile = storeJson["storeContent"][selection][entry][i]["old"];
+				if (Script[i].contains("old") && Script[i]["old"].is_string()) {
+					oldFile = Script[i]["old"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("new") && storeJson["storeContent"][selection][entry][i]["new"].is_string()) {
-					newFile = storeJson["storeContent"][selection][entry][i]["new"];
+				if (Script[i].contains("new") && Script[i]["new"].is_string()) {
+					newFile = Script[i]["new"];
 				}
 				else missing = true;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("message") && storeJson["storeContent"][selection][entry][i]["message"].is_string()) {
-					Message = storeJson["storeContent"][selection][entry][i]["message"];
+				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
+					Message = Script[i]["message"];
 				}
 
 				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message);
@@ -498,8 +515,8 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 			} else if (type == "skip") {
 				int skipCount = -1;
 
-				if (storeJson["storeContent"][selection][entry][i].contains("count") && storeJson["storeContent"][selection][entry][i]["count"].is_number()) {
-					skipCount = storeJson["storeContent"][selection][entry][i]["count"];
+				if (Script[i].contains("count") && Script[i]["count"].is_number()) {
+					skipCount = Script[i]["count"];
 				}
 
 				if (skipCount > 0) {

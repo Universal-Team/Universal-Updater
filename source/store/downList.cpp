@@ -41,7 +41,9 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{ 54, 122, 262, 22 },
 	{ 54, 152, 262, 22 },
 	{ 54, 182, 262, 22 },
-	{ 54, 212, 262, 22 }
+	{ 54, 212, 262, 22 },
+
+	{ 50, 216, 24, 24 }
 };
 
 /*
@@ -89,18 +91,43 @@ static void CreateShortcut(const std::string &entryName, int index, const std::s
 	const std::unique_ptr<Store> &store: Const Reference to the Store class.
 	const std::vector<std::string> &entries: Const Reference to the download list as a vector of strings.
 	bool fetch: if fetching or not.
+	const std::unique_ptr<StoreEntry> &entry: Const Reference to the StoreEntry.
+	const std::vector<std::string> &sizes: Const Reference to the download sizes as a vector of strings.
 */
-void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch) {
-	if (store && !fetch) {
-		Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-		Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265, 0, font);
+void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes) {
+	/* For the Top Screen. */
+	if (store && store->GetValid() && !fetch && entry) {
+		if (entries.size() > 0) {
+			Gui::Draw_Rect(0, 174, 400, 66, BOX_INSIDE_COLOR);
+			const C2D_Image tempImg = entry->GetIcon();
+			const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
+			const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 
+			C2D_DrawImageAt(tempImg, 9 + offsetW, 174 + 9 + offsetH, 0.5);
+
+			Gui::DrawString(70, 174 + 15, 0.45f, TEXT_COLOR, entries[store->GetDownloadIndex()], 310, 0, font);
+
+			if (!sizes.empty()) {
+				if (sizes[store->GetDownloadIndex()] != "") {
+					Gui::DrawString(70, 174 + 30, 0.45f, TEXT_COLOR, Lang::get("SIZE") + ": " +  sizes[store->GetDownloadIndex()], 310, 0, font);
+				}
+			}
+		}
+	}
+
+	GFX::DrawBottom();
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265, 0, font);
+
+	if (store && store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
 				if (store->GetDownloadIndex() == i + store->GetDownloadSIndex()) GFX::DrawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
 				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260, 0, font);
 			}
+
+			GFX::DrawSprite(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y);
 
 		} else { // If no downloads available..
 			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255, 0, font);
@@ -130,8 +157,10 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 			smallDelay--;
 		}
 
-		if ((hDown & KEY_Y) || (hDown & KEY_START)) {
+		if ((hDown & KEY_Y) || (hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) {
 			if (is3DSX) { // Only allow if 3DSX.
+				if (entries.size() <= 0) return; // Smaller than 0 -> No No.
+
 				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"))) {
 					CreateShortcut(entry->GetTitle(), store->GetDownloadIndex(), store->GetFileName(), entry->GetAuthor());
 					Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));

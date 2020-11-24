@@ -584,7 +584,7 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
 			/* Ensure, version == _UNISTORE_VERSION. */
 			if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
-				if (parsedAPI["storeInfo"]["version"] == _UNISTORE_VERSION) {
+				if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
 					if (currentRev > -1) {
 
 						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
@@ -644,7 +644,7 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 						}
 					}
 
-				} else if (parsedAPI["storeInfo"]["version"] < _UNISTORE_VERSION) {
+				} else if (parsedAPI["storeInfo"]["version"] < 3) {
 					Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 
 				} else if (parsedAPI["storeInfo"]["version"] > _UNISTORE_VERSION) {

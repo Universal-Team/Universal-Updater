@@ -55,4 +55,12 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 
 	this->UpdateAvailable = meta->UpdateAvailable(store->GetUniStoreTitle(), this->Title, store->GetLastUpdatedEntry(index));
 	this->Marks = meta->GetMarks(store->GetUniStoreTitle(), this->Title);
+
+	const std::vector<std::string> entries = store->GetDownloadList(index);
+
+	if (!entries.empty()) {
+		for (int i = 0; i < (int)entries.size(); i++) {
+			this->Sizes.push_back( store->GetFileSizes(index, entries[i]) );
+		}
+	}
 }

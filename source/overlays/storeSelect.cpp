@@ -316,7 +316,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 						/* Load selected one. */
 						if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
 						else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-						else if (info[selection].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
 							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
 							StoreUtils::ResetAll(store, meta, entries);
@@ -338,7 +338,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 							if (!(info[i + sPos].File.find("/") != std::string::npos)) {
 								if (info[i + sPos].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
 								else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-								else if (info[i + sPos].Version > 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
+								else if (info[i + sPos].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 								else {
 									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
 									StoreUtils::ResetAll(store, meta, entries);

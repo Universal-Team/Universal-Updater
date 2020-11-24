@@ -36,7 +36,7 @@
 
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
 #define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
-#define _UNISTORE_VERSION 3
+#define _UNISTORE_VERSION 4
 
 inline std::unique_ptr<Config> config;
 inline uint32_t hRepeat, hDown, hHeld;

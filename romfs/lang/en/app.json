@@ -90,6 +90,7 @@
 	"SETTINGS": "Settings",
 	"SHEET_SLASH": "Seems like a '/' is included, which is not supported.\nPlease change 'sheet' to filename only.",
 	"SHORTCUT_CREATED": "Shortcut created!",
+	"SIZE": "Size",
 	"SORT_BY": "Sort By",
 	"SORTING": "Sorting",
 	"START_SELECT": "Press START to select the current folder",
