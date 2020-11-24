@@ -90,6 +90,7 @@
 	"SETTINGS": "Configurações",
 	"SHEET_SLASH": "Uma '/' foi incluida no caminho da spritesheet — algo que não é compatível.\nAjuste a chave 'sheet' para que ela contenha somente o nome do arquivo.",
 	"SHORTCUT_CREATED": "Shortcut created!",
+	"SIZE": "Size",
 	"SORT_BY": "Classificar por",
 	"SORTING": "Ordem e Classificação",
 	"START_SELECT": "Pressione START para selecionar a pasta atual",
