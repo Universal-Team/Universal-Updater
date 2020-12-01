@@ -2,7 +2,7 @@ name: Build Universal-Updater
 
 on:
   push:
-    branches-ignore: [translation, full-rewrite]
+    branches-ignore: [translation, full-rewrite, PNG]
     paths-ignore:
       - 'README.md'
   pull_request:

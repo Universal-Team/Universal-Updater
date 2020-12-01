@@ -24,43 +24,40 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
-#define _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
+#include "lodepng.h"
+#include "msg.hpp"
+#include "screenshot.hpp"
 
-#include "common.hpp"
-#include "store.hpp"
-#include "storeEntry.hpp"
-#include "storeUtils.hpp"
+static constexpr Tex3DS_SubTexture subtex = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
 
-/*
-	Modes:
+C2D_Image Screenshot::Convert(const std::string &filename) {
+	std::vector<u8> ImageBuffer;
+	unsigned width, height;
+	C2D_Image img;
+	lodepng::decode(ImageBuffer, width, height, filename.c_str());
 
-	0: Entry Info.
-	1: Download List.
-	2: Search + Favorites.
-	3: Sorting.
-	4: Settings / Credits(?).
-*/
+	img.tex = new C3D_Tex;
+	img.subtex = &subtex;
 
-class MainScreen : public Screen {
-public:
-	MainScreen();
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-private:
-	std::unique_ptr<Store> store = nullptr;
-	std::unique_ptr<Meta> meta = nullptr;
-	std::vector<std::unique_ptr<StoreEntry>> entries;
-	std::vector<std::string> dwnldList, dwnldSizes;
-	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false, ascending = false, updateFilter = false;
-	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0, lastMode = 0, smallDelay = 0, sPos = 0;
-	SortType sorttype = SortType::LAST_UPDATED;
+	C3D_TexInit(img.tex, 512, 256, GPU_RGBA8);
+	C3D_TexSetFilter(img.tex, GPU_LINEAR, GPU_LINEAR);
+	img.tex->border = 0xFFFFFFFF;
+	C3D_TexSetWrap(img.tex, GPU_CLAMP_TO_BORDER, GPU_CLAMP_TO_BORDER);
 
-	/* Title, Author, Category, Console. */
-	std::vector<bool> searchIncludes = { false, false, false, false };
-	std::string searchResult = "";
 
-	C2D_Image Image = { nullptr, nullptr };
-};
 
-#endif
+	Msg::waitMsg("Width: " + std::to_string(width) + "\nheight: " + std::to_string(height));
+	for (u32 x = 0; x < width; x++) {
+		for (u32 y = 0; y < height; y++) {
+			const u32 dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
+								((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) |
+								((x & 4) << 2) | ((y & 4) << 3)));
+
+			const u32 srcPos = (y * width + x);
+			*((volatile uint8_t *) (((uint8_t*)img.tex->data) + dstPos)) = ImageBuffer.data()[srcPos];
+		}
+	}
+
+	Msg::waitMsg("Success!");
+	return img;
+}

@@ -68,8 +68,15 @@ public:
 	void drawThread();
 	void captureThread();
 	void handler(std::vector<u8>& out);
-	bool done() const { return finished; };
-	bool cancelled() const { return cancel; };
+	bool done() const { return this->finished; };
+	bool cancelled() const { return this->cancel; };
+	bool Mode() const { return this->mode; };
+	void Info(bool v) { this->displayInfo = v; };
+
+	int selectedStore = 0, sPos = 0;
+	std::vector<StoreList> stores = { };
+	bool FromList = false;
+	uint8_t timeout = 30;
 private:
 	void buffToImage();
 	void finish();
@@ -83,15 +90,16 @@ private:
 	std::atomic<bool> finished                = false;
 	bool capturing                            = false;
 	bool cancel                               = false;
+	bool mode								  = true; // True -> Camera, False -> URL.
+	bool displayInfo						  = false;
+
 };
 
 /*
 	This is, what should get called.
 */
 namespace QR_Scanner {
-    /* Empty == cancelled. */
-    std::vector<u8> scan();
-	std::string GetQRURL();
+	std::string StoreHandle();
 };
 
 #endif

@@ -127,7 +127,7 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260, 0, font);
 			}
 
-			GFX::DrawSprite(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y);
+			if (is3DSX) GFX::DrawSprite(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y);
 
 		} else { // If no downloads available..
 			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255, 0, font);

@@ -50,8 +50,21 @@
  *         reasonable ways as different from the original version.
  */
 
+#include "common.hpp"
+#include "download.hpp"
+#include "keyboard.hpp"
 #include "qrcode.hpp"
 #include <cstring>
+
+static const std::vector<Structs::ButtonPos> mainButtons = {
+	{ 10, 34, 300, 22 },
+	{ 10, 64, 300, 22 },
+	{ 10, 94, 300, 22 },
+	{ 10, 124, 300, 22 },
+	{ 10, 154, 300, 22 },
+	{ 10, 184, 300, 22 }
+};
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 /*
 	Initialize everything needed for the camera.
@@ -69,6 +82,8 @@ QRCode::QRCode() {
 	LightLock_Init(&this->imageLock);
 	svcCreateEvent(&this->exitEvent, RESET_STICKY);
 	quirc_resize(this->qrData, 400, 240);
+
+	if (checkWifiStatus()) this->stores = FetchStores(); // Fetching Stores here.
 }
 
 /*
@@ -125,10 +140,39 @@ void QRCode::drawThread() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		this->buffToImage(); // Fetch image.
-		Gui::ScreenDraw(Top);
-		C2D_DrawImageAt(this->image, 0, 0, 0.5, nullptr, 1.0f, 1.0f);
+		if (!this->displayInfo) {
+			this->buffToImage(); // Fetch image.
+			Gui::ScreenDraw(Top);
+			C2D_DrawImageAt(this->image, 0, 0, 0.5, nullptr, 1.0f, 1.0f);
+
+		} else {
+			GFX::DrawTop();
+			Gui::DrawStringCentered(0, 1, 0.7, TEXT_COLOR, Lang::get("STORE_INFO"), 390, 0, font);
+			Gui::DrawStringCentered(0, 30, 0.7f, TEXT_COLOR, this->stores[this->selectedStore].Title, 390, 0, font);
+			Gui::DrawStringCentered(0, 50, 0.6f, TEXT_COLOR, this->stores[this->selectedStore].Author, 380, 0, font);
+
+			if (this->stores[this->selectedStore].Description != "") {
+				/* "\n\n" breaks C2D_WordWrap, so check here. */
+				if (!(this->stores[this->selectedStore].Description.find("\n\n") != std::string::npos)) {
+					Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
+
+				} else {
+					Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font);
+				}
+			}
+		}
+
 		GFX::DrawBottom();
+		Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
+		Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
+		Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_UNISTORES"), 310, 0, font);
+
+		for(int i = 0; i < 6 && i < (int)this->stores.size(); i++) {
+			if (this->sPos + i == this->selectedStore) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
+
+			Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, this->stores[this->sPos + i].Title, 295, 0, font);
+		}
+
 		C3D_FrameEnd(0);
 	}
 
@@ -236,80 +280,142 @@ void captureHelper(void *arg) {
 */
 void QRCode::handler(std::vector<u8> &out) {
 	hidScanInput();
+	touchPosition t;
+	hidTouchRead(&t);
+	u32 keyDown = hidKeysDown();
+	u32 keyRepeat = hidKeysDownRepeat();
 
-	if (hidKeysDown() & KEY_B) { // Cancel with B.
+	if (keyDown & KEY_B) {
 		this->cancel = true;
 		this->finish();
 		return;
 	}
 
-	if (!this->capturing) {
-		/* create camera draw thread. */
-		if (threadCreate((ThreadFunc)&captureHelper, this, 0x10000, 0x1A, 1, true) != NULL) capturing = true;
-		else {
-			this->finish();
-			return;
+	if (this->displayInfo) {
+		if (this->timeout == 0) { // hidKeysDown() is pretty buggy, hence try to do it a timeout way.
+			if (keyDown & KEY_SELECT) {
+				this->timeout = 10;
+				keyDown = 0;
+				this->displayInfo = false;
+			}
 		}
+
+	} else {
+		if (this->stores.size() > 0) {
+			if (this->timeout == 0) {
+				if (keyDown & KEY_SELECT) {
+					this->timeout = 30;
+					keyDown = 0;
+					this->displayInfo = true;
+				}
+			}
+
+			if (keyRepeat & KEY_DOWN) {
+				if (this->selectedStore < (int)this->stores.size() - 1) this->selectedStore++;
+				else this->selectedStore = 0;
+			}
+
+			if (keyRepeat & KEY_UP) {
+				if (this->selectedStore > 0) this->selectedStore--;
+				else this->selectedStore = (int)this->stores.size() - 1;
+			}
+
+			if (keyDown & KEY_A) {
+				this->FromList = true;
+				this->finish();
+				return;
+			}
+
+			if (keyDown & KEY_TOUCH) {
+				for (int i = 0; i < 6; i++) {
+					if (touching(t, mainButtons[i])) {
+						if (i + this->sPos < (int)this->stores.size()) {
+							this->selectedStore = i + this->sPos;
+							this->FromList = true;
+							this->finish();
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (!this->capturing) {
+			/* create camera draw thread. */
+			if (threadCreate((ThreadFunc)&captureHelper, this, 0x10000, 0x1A, 1, true) != NULL) this->capturing = true;
+			else {
+				this->finish();
+				return;
+			}
+		}
+
+		if (this->done()) return;
+
+		int w, h;
+		u8 *image = (u8 *)quirc_begin(this->qrData, &w, &h);
+		LightLock_Lock(&bufferLock);
+
+		for (ssize_t x = 0; x < w; x++) {
+			for (ssize_t y = 0; y < h; y++) {
+				u16 px = this->cameraBuffer[y * 400 + x];
+				image[y * w + x] = (u8)(((((px >> 11) & 0x1F) << 3) + (((px >> 5) & 0x3F) << 2) + ((px & 0x1F) << 3)) / 3);
+			}
+		}
+
+		LightLock_Unlock(&this->bufferLock);
+		quirc_end(this->qrData);
+
+		if (quirc_count(this->qrData) > 0) {
+			struct quirc_code code;
+			struct quirc_data scan_data;
+			quirc_extract(this->qrData, 0, &code);
+
+			if (!quirc_decode(&code, &scan_data)) {
+				this->finish();
+				out.resize(scan_data.payload_len);
+				std::copy(scan_data.payload, scan_data.payload + scan_data.payload_len, out.begin());
+			}
+		}
+
+		if (this->selectedStore < this->sPos) this->sPos = this->selectedStore;
+		else if (this->selectedStore > this->sPos + 6 - 1) this->sPos = this->selectedStore - 6 + 1;
 	}
 
-	if (this->done()) return;
-
-	int w, h;
-	u8 *image = (u8 *)quirc_begin(this->qrData, &w, &h);
-	LightLock_Lock(&bufferLock);
-
-	for (ssize_t x = 0; x < w; x++) {
-		for (ssize_t y = 0; y < h; y++) {
-			u16 px = this->cameraBuffer[y * 400 + x];
-			image[y * w + x] = (u8)(((((px >> 11) & 0x1F) << 3) + (((px >> 5) & 0x3F) << 2) + ((px & 0x1F) << 3)) / 3);
-		}
-	}
-
-	LightLock_Unlock(&this->bufferLock);
-	quirc_end(this->qrData);
-
-	if (quirc_count(this->qrData) > 0) {
-		struct quirc_code code;
-		struct quirc_data scan_data;
-		quirc_extract(this->qrData, 0, &code);
-
-		if (!quirc_decode(&code, &scan_data)) {
-			this->finish();
-			out.resize(scan_data.payload_len);
-			std::copy(scan_data.payload, scan_data.payload + scan_data.payload_len, out.begin());
-		}
-	}
+	if (this->timeout > 0) this->timeout--;
 }
 
 /*
-	Return a vector of u8's from the QR Code.
+	The Store Add QR Code handle and such.
 */
-std::vector<u8> QR_Scanner::scan() {
-	std::vector<u8> out = { };
+std::string QR_Scanner::StoreHandle() {
+	std::vector<u8> data = { };
+
 	std::unique_ptr<QRCode> qrData = std::make_unique<QRCode>();
 	aptSetHomeAllowed(false); // Block the Home key.
 
 	threadCreate((ThreadFunc)&drawHelper, qrData.get(), 0x10000, 0x1A, 1, true);
-    while (!qrData->done()) qrData->handler(out); // Handle.
-
+    while (!qrData->done()) qrData->handler(data); // Handle.
     aptSetHomeAllowed(true); // Re-Allow it.
-    return out;
-}
 
-/*
-	Return the URL from the QR Code.
-*/
-std::string QR_Scanner::GetQRURL() {
-	std::vector<u8> qrData = QR_Scanner::scan();
-
-	if (qrData.empty()) return ""; // Because it is empty, return "".
-
-	if (qrData.back() == '\0') { // If Terminator, do -1.
-		return std::string((char *)qrData.data(), qrData.size() - 1);
-
-	} else {
-		return std::string((char *)qrData.data(), qrData.size());
+	/* Selected from list. */
+	if (qrData->FromList) {
+		return qrData->stores[qrData->selectedStore].URL;
 	}
 
-	return "";
+	/* False means Keyboard. */
+	if (!qrData->Mode()) {
+		const std::string out = Input::setkbdString(150, Lang::get("ENTER_URL"), { });
+		return out;
+
+	} else {
+		/* From scanned stuff. */
+		if (data.empty()) return "";
+
+		/* If Terminator, do -1. */
+		if (data.back() == '\0') return std::string((char *)data.data(), data.size() - 1);
+
+		else return std::string((char *)data.data(), data.size());
+	}
+
+    return "";
 }

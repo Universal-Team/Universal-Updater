@@ -27,6 +27,7 @@
 #include "download.hpp"
 #include "fileBrowse.hpp"
 #include "mainScreen.hpp"
+#include "screenshot.hpp"
 #include "storeUtils.hpp"
 #include <unistd.h>
 
@@ -98,6 +99,8 @@ MainScreen::MainScreen() {
 	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 	StoreUtils::SortEntries(false, SortType::LAST_UPDATED, this->entries);
+
+	this->Image = Screenshot::Convert("sdmc:/Test.png");
 };
 
 /*
@@ -111,6 +114,8 @@ void MainScreen::Draw(void) const {
 	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, this->store->GetUniStoreTitle(), 370, 0, font);
 	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370, 0, font);
 	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
+
+	C2D_DrawImageAt(this->Image, 0, 0, 1.0f, nullptr);
 
 	/* Download-ception. */
 	if (this->storeMode == 1) {
