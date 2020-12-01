@@ -51,10 +51,13 @@ C2D_Image Screenshot::Convert(const std::string &filename) {
 		for (u32 y = 0; y < height; y++) {
 			const u32 dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
 								((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) |
-								((x & 4) << 2) | ((y & 4) << 3)));
+								((x & 4) << 2) | ((y & 4) << 3))) * 4;
 
-			const u32 srcPos = (y * width + x);
-			*((volatile uint8_t *) (((uint8_t*)img.tex->data) + dstPos)) = ImageBuffer.data()[srcPos];
+			const u32 srcPos = (y * width + x) * 4;
+			((uint8_t*)img.tex->data)[dstPos + 1] = ((uint8_t *)ImageBuffer.data())[srcPos + 2];
+			((uint8_t*)img.tex->data)[dstPos + 2] = ((uint8_t *)ImageBuffer.data())[srcPos + 1];
+			((uint8_t*)img.tex->data)[dstPos + 3] = ((uint8_t *)ImageBuffer.data())[srcPos + 0];
+			((uint8_t*)img.tex->data)[dstPos + 4] = ((uint8_t *)ImageBuffer.data())[srcPos + 3];
 		}
 	}
 
