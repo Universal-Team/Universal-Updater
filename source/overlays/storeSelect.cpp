@@ -383,15 +383,15 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		/* UniStore QR Code / URL Download. */
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[8]))) {
-			//if (checkWifiStatus()) {
+			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;
 					info = GetUniStoreInfo(_STORE_PATH);
 				}
 
-			//} else {
-			//	notConnectedMsg();
-			//}
+			} else {
+				notConnectedMsg();
+			}
 		}
 
 		/* Go out of the menu. */

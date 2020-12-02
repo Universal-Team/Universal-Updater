@@ -880,8 +880,8 @@ std::vector<StoreList> FetchStores() {
 
 	CURL *hnd = curl_easy_init();
 
-	ret = setupContext(hnd, "https://cdn.discordapp.com/attachments/589882205556310076/783409205410791454/UniStores.json");
-	if (ret != 0) { // https://github.com/Universal-Team/Universal-Updater/raw/master/resources/UniStores.json
+	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/UniStores.json");
+	if (ret != 0) {
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -927,7 +927,9 @@ std::vector<StoreList> FetchStores() {
 }
 
 C2D_Image FetchScreenshot(const std::string &URL) {
-	C2D_Image img = { nullptr, nullptr };
+	if (URL == "") return { };
+
+	C2D_Image img = { };
 
 	Result ret = 0;
 	void *socubuf = memalign(0x1000, 0x100000);

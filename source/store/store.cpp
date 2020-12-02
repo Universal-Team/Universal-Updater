@@ -507,13 +507,18 @@ std::vector<std::string> Store::GetScreenshotList(int index) const {
 
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { };
 
+	std::vector<std::string> screenshots;
+
 	if (this->storeJson["storeContent"][index]["info"].contains("screenshots")) {
 		if (this->storeJson["storeContent"][index]["info"]["screenshots"].is_array()) {
-			return this->storeJson["storeContent"][index]["info"]["screenshots"].get<std::vector<std::string>>();
+			for(auto &item : this->storeJson["storeContent"][index]["info"]["screenshots"]) {
+				if (item.is_object() && item.contains("url")) screenshots.push_back(item["url"]);
+				else screenshots.push_back("");
+			}
 		}
 	}
 
-	return { };
+	return screenshots;
 }
 
 /*
@@ -526,11 +531,16 @@ std::vector<std::string> Store::GetScreenshotNames(int index) const {
 
 	if (index > (int)this->storeJson["storeContent"].size() - 1) return { };
 
-	if (this->storeJson["storeContent"][index]["info"].contains("screenshotnames")) {
-		if (this->storeJson["storeContent"][index]["info"]["screenshotnames"].is_array()) {
-			return this->storeJson["storeContent"][index]["info"]["screenshotnames"].get<std::vector<std::string>>();
+	std::vector<std::string> screenshotNames;
+
+	if (this->storeJson["storeContent"][index]["info"].contains("screenshots")) {
+		if (this->storeJson["storeContent"][index]["info"]["screenshots"].is_array()) {
+			for(auto &item : this->storeJson["storeContent"][index]["info"]["screenshots"]) {
+				if (item.is_object() && item.contains("description")) screenshotNames.push_back(item["description"]);
+				else screenshotNames.push_back("");
+			}
 		}
 	}
 
-	return { };
+	return screenshotNames;
 }
