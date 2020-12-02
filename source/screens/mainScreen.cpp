@@ -99,14 +99,18 @@ MainScreen::MainScreen() {
 	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 	StoreUtils::SortEntries(false, SortType::LAST_UPDATED, this->entries);
-
-	this->Image = Screenshot::Convert("sdmc:/Test.png");
 };
 
 /*
 	MainScreen Main Draw.
 */
 void MainScreen::Draw(void) const {
+	if (this->storeMode == 5) {
+		/* Screenshot Menu. */
+		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom);
+		return;
+	}
+
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
@@ -114,8 +118,6 @@ void MainScreen::Draw(void) const {
 	if (this->store && this->store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, this->store->GetUniStoreTitle(), 370, 0, font);
 	else Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 370, 0, font);
 	config->list() ? StoreUtils::DrawList(this->store, this->entries) : StoreUtils::DrawGrid(this->store, this->entries);
-
-	C2D_DrawImageAt(this->Image, 0, 0, 1.0f, nullptr);
 
 	/* Download-ception. */
 	if (this->storeMode == 1) {
@@ -157,6 +159,37 @@ void MainScreen::Draw(void) const {
 	MainScreen Logic.
 */
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (this->storeMode == 5) {
+		if (this->screenshotFetch) {
+			/* Delete Texture first. */
+			if (this->Screenshot.tex) {
+				C3D_TexDelete(this->Screenshot.tex);
+				this->Screenshot.tex = nullptr;
+				this->Screenshot.subtex = nullptr;
+			}
+
+			this->screenshotName = "";
+
+			if (this->screenshotIndex < (int)this->entries[this->store->GetEntry()]->GetScreenshotNames().size()) {
+				this->screenshotName = this->entries[this->store->GetEntry()]->GetScreenshotNames()[this->screenshotIndex];
+			}
+
+			this->sSize = 0;
+			this->sSize = this->entries[this->store->GetEntry()]->GetScreenshots().size();
+
+			if (this->screenshotIndex < this->sSize) {
+				if (this->sSize > 0) {
+					this->Screenshot = FetchScreenshot(this->entries[this->store->GetEntry()]->GetScreenshots()[this->screenshotIndex]);
+				}
+			}
+
+			this->screenshotFetch = false;
+		}
+
+		StoreUtils::ScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->storeMode, this->sSize, this->zoom);
+		return;
+	}
+
 	if (this->showMarks) StoreUtils::MarkHandle(this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 
 	if (!this->showMarks) {
@@ -186,7 +219,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		switch(this->storeMode) {
 			case 0:
-				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(this->showMarks, this->fetchDown);
+				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, this->storeMode);
 				break;
 
 			case 1:

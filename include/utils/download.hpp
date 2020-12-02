@@ -78,5 +78,6 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 bool IsUUUpdateAvailable();
 void UpdateAction();
 std::vector<StoreList> FetchStores();
+C2D_Image FetchScreenshot(const std::string &URL);
 
 #endif

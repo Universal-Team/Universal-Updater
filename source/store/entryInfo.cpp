@@ -75,6 +75,11 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 	bool &showMark: Reference to showMark.. to show the mark menu.
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch) {
+void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
+
+	if (hDown & KEY_SELECT) {
+		sFetch = true;
+		mode = 5;
+	}
 }

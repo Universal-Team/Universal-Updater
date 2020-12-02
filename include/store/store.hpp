@@ -55,6 +55,8 @@ public:
 	std::string GetLicenseEntry(int index) const;
 	C2D_Image GetIconEntry(int index) const;
 	std::string GetFileSizes(int index, const std::string &entry) const;
+	std::vector<std::string> GetScreenshotList(int index) const;
+	std::vector<std::string> GetScreenshotNames(int index) const;
 
 	std::vector<std::string> GetDownloadList(int index) const;
 

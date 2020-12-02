@@ -40,6 +40,7 @@
 	2: Search + Favorites.
 	3: Sorting.
 	4: Settings / Credits(?).
+	5: Screenshot Menu.
 */
 
 class MainScreen : public Screen {
@@ -52,15 +53,20 @@ private:
 	std::unique_ptr<Meta> meta = nullptr;
 	std::vector<std::unique_ptr<StoreEntry>> entries;
 	std::vector<std::string> dwnldList, dwnldSizes;
-	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false, ascending = false, updateFilter = false;
-	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0, lastMode = 0, smallDelay = 0, sPos = 0;
+
+	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
+		 ascending = false, updateFilter = false, screenshotFetch = false, zoom = false;
+
+	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
+		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0;
+
 	SortType sorttype = SortType::LAST_UPDATED;
 
 	/* Title, Author, Category, Console. */
 	std::vector<bool> searchIncludes = { false, false, false, false };
-	std::string searchResult = "";
+	std::string searchResult = "", screenshotName = "";
 
-	C2D_Image Image = { nullptr, nullptr };
+	C2D_Image Screenshot = { nullptr, nullptr };
 };
 
 #endif

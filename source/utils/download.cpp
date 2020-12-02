@@ -29,6 +29,7 @@
 #include "files.hpp"
 #include "json.hpp"
 #include "lang.hpp"
+#include "screenshot.hpp"
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
 
@@ -923,4 +924,65 @@ std::vector<StoreList> FetchStores() {
 	result_written = 0;
 
 	return stores;
+}
+
+C2D_Image FetchScreenshot(const std::string &URL) {
+	C2D_Image img = { nullptr, nullptr };
+
+	Result ret = 0;
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return img;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return img;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, URL.c_str());
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return img;
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return img;
+	}
+
+	std::vector<u8> buffer;
+	for (int i = 0; i < (int)result_written; i++) {
+		buffer.push_back( result_buf[i] );
+	}
+
+	img = Screenshot::ConvertFromBuffer(buffer);
+
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return img;
 }

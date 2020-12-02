@@ -29,9 +29,11 @@
 
 #include <citro2d.h>
 #include <string>
+#include <vector>
 
 namespace Screenshot {
 	C2D_Image Convert(const std::string &filename);
+	C2D_Image ConvertFromBuffer(const std::vector<u8> &buffer);
 };
 
 #endif
