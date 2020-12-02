@@ -63,4 +63,7 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 			this->Sizes.push_back( store->GetFileSizes(index, entries[i]) );
 		}
 	}
+
+	this->Screenshots = store->GetScreenshotList(index);
+	this->ScreenshotNames = store->GetScreenshotNames(index);
 }

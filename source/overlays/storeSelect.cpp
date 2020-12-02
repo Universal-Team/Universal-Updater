@@ -96,14 +96,12 @@ static void DeleteStore(const std::string &file) {
 
 /*
 	Download a Store.. including the SpriteSheets, if found.
-
-	bool Cam: if cam should be used.
 */
-static bool DownloadStore(bool Cam = true) {
+static bool DownloadStore() {
 	bool doSheet = false;
 	std::string file = "";
 
-	const std::string URL = Cam ? QR_Scanner::GetQRURL() : Input::setkbdString(150, Lang::get("ENTER_URL"), { });
+	const std::string URL = QR_Scanner::StoreHandle();
 	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
 
 	if (doSheet) {
@@ -149,6 +147,7 @@ static bool DownloadStore(bool Cam = true) {
 		}
 	}
 
+	hidScanInput(); // Re-Scan.
 	return doSheet;
 }
 
@@ -382,21 +381,8 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			else if (selection > sPos + 6 - 1) sPos = selection - 6 + 1;
 		}
 
-		/* UniStore URL Download. */
+		/* UniStore QR Code / URL Download. */
 		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[8]))) {
-			if (checkWifiStatus()) {
-				if (DownloadStore(false)) {
-					selection = 0;
-					info = GetUniStoreInfo(_STORE_PATH);
-				}
-
-			} else {
-				notConnectedMsg();
-			}
-		}
-
-		/* UniStore QR Code Download. */
-		if ((hidKeysDown() & KEY_SELECT) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) {
 			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;

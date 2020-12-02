@@ -53,6 +53,8 @@ public:
 	std::vector<std::string> GetCategoryFull() const { return this->FullCategory; };
 	std::vector<std::string> GetConsoleFull() const { return this->FullConsole; };
 	std::vector<std::string> GetSizes() const { return this->Sizes; };
+	std::vector<std::string> GetScreenshots() const { return this->Screenshots; };
+	std::vector<std::string> GetScreenshotNames() const { return this->ScreenshotNames; };
 
 	bool GetUpdateAvl() const { return this->UpdateAvailable; };
 	void SetUpdateAvl(bool v) { this->UpdateAvailable = v; };
@@ -66,7 +68,7 @@ private:
 	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, MarkString;
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
-	std::vector<std::string> FullCategory, FullConsole, Sizes;
+	std::vector<std::string> FullCategory, FullConsole, Sizes, Screenshots, ScreenshotNames;
 	bool UpdateAvailable;
 };
 

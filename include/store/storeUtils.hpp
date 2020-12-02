@@ -49,7 +49,7 @@ namespace StoreUtils {
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
-	void EntryHandle(bool &showMark, bool &fetch);
+	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode);
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
@@ -69,6 +69,10 @@ namespace StoreUtils {
 
 	/* Credits. */
 	void DrawCredits();
+
+	/* Screenshot menu. */
+	void DrawScreenshotMenu(const C2D_Image &img, const int sIndex, const bool sFetch, const int screenshotSize, const std::string &name, const int zoom);
+	void ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom);
 
 	/* Settings. */
 	void DrawSettings(int page, int selection, int sPos);

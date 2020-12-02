@@ -29,6 +29,7 @@
 #include "files.hpp"
 #include "json.hpp"
 #include "lang.hpp"
+#include "screenshot.hpp"
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
 
@@ -846,4 +847,144 @@ void UpdateAction() {
 		Msg::waitMsg(Lang::get("UPDATE_DONE"));
 		exiting = true;
 	}
+}
+
+static StoreList fetch(const std::string &entry, nlohmann::json &js) {
+	StoreList store = { "", "", "", "" };
+	if (!js.contains(entry)) return store;
+
+	if (js[entry].contains("title") && js[entry]["title"].is_string()) store.Title = js[entry]["title"];
+	if (js[entry].contains("author") && js[entry]["author"].is_string()) store.Author = js[entry]["author"];
+	if (js[entry].contains("url") && js[entry]["url"].is_string()) store.URL = js[entry]["url"];
+	if (js[entry].contains("description") && js[entry]["description"].is_string()) store.Description = js[entry]["description"];
+
+	return store;
+}
+/*
+	Fetch Store list for available UniStores.
+*/
+std::vector<StoreList> FetchStores() {
+	Msg::DisplayMsg(Lang::get("FETCHING_AVAILABLE_UNISTORES"));
+	std::vector<StoreList> stores = { };
+
+	Result ret = 0;
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return stores;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return stores;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/UniStores.json");
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return stores;
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return stores;
+	}
+
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+
+		for(auto it = parsedAPI.begin(); it != parsedAPI.end(); ++it) {
+			stores.push_back( fetch(it.key(), parsedAPI) );
+		}
+	}
+
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return stores;
+}
+
+C2D_Image FetchScreenshot(const std::string &URL) {
+	if (URL == "") return { };
+
+	C2D_Image img = { };
+
+	Result ret = 0;
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return img;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return img;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, URL.c_str());
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return img;
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return img;
+	}
+
+	std::vector<u8> buffer;
+	for (int i = 0; i < (int)result_written; i++) {
+		buffer.push_back( result_buf[i] );
+	}
+
+	img = Screenshot::ConvertFromBuffer(buffer);
+
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return img;
 }

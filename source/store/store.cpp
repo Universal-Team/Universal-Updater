@@ -477,6 +477,12 @@ std::vector<std::string> Store::GetDownloadList(int index) const {
 	return temp;
 }
 
+/*
+	Get filesizes for each download entry.
+
+	int index: The index.
+	const std::string &entry: The entry name.
+*/
 std::string Store::GetFileSizes(int index, const std::string &entry) const {
 	if (!this->valid) return "";
 
@@ -489,4 +495,52 @@ std::string Store::GetFileSizes(int index, const std::string &entry) const {
 	}
 
 	return "";
+}
+
+/*
+	Get Screenshot URL list.
+
+	int index: The Entry Index.
+*/
+std::vector<std::string> Store::GetScreenshotList(int index) const {
+	if (!this->valid) return { };
+
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return { };
+
+	std::vector<std::string> screenshots;
+
+	if (this->storeJson["storeContent"][index]["info"].contains("screenshots")) {
+		if (this->storeJson["storeContent"][index]["info"]["screenshots"].is_array()) {
+			for(auto &item : this->storeJson["storeContent"][index]["info"]["screenshots"]) {
+				if (item.is_object() && item.contains("url")) screenshots.push_back(item["url"]);
+				else screenshots.push_back("");
+			}
+		}
+	}
+
+	return screenshots;
+}
+
+/*
+	Get Screenshot names.
+
+	int index: The Entry Index.
+*/
+std::vector<std::string> Store::GetScreenshotNames(int index) const {
+	if (!this->valid) return { };
+
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return { };
+
+	std::vector<std::string> screenshotNames;
+
+	if (this->storeJson["storeContent"][index]["info"].contains("screenshots")) {
+		if (this->storeJson["storeContent"][index]["info"]["screenshots"].is_array()) {
+			for(auto &item : this->storeJson["storeContent"][index]["info"]["screenshots"]) {
+				if (item.is_object() && item.contains("description")) screenshotNames.push_back(item["description"]);
+				else screenshotNames.push_back("");
+			}
+		}
+	}
+
+	return screenshotNames;
 }

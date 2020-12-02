@@ -41,6 +41,13 @@ enum DownloadError {
 	DL_CANCEL, // No clue if that's needed tho.
 };
 
+struct StoreList {
+	std::string Title;
+	std::string Author;
+	std::string URL;
+	std::string Description;
+};
+
 Result downloadToFile(const std::string &url, const std::string &path);
 Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases);
 
@@ -70,5 +77,7 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 bool IsUUUpdateAvailable();
 void UpdateAction();
+std::vector<StoreList> FetchStores();
+C2D_Image FetchScreenshot(const std::string &URL);
 
 #endif

@@ -54,7 +54,6 @@ static const std::vector<Structs::ButtonPos> langButtons = {
 };
 
 static const std::vector<Structs::ButtonPos> toggleAbles = {
-	{ 52, 6, 24, 24 }, // Back arrow.
 	{ 288, 64, 24, 24 },
 	{ 288, 140, 24, 24 }
 };
@@ -125,11 +124,11 @@ static void DrawSettingsDir(int selection) {
 	Draw Auto-Update Settings page.
 */
 static void DrawAutoUpdate(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
 	/* Toggle Boxes. */
 	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
@@ -149,11 +148,11 @@ static void DrawAutoUpdate(int selection) {
 	int selection: The Settings Selection.
 */
 static void DrawGUISettings(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	GFX::DrawSprite(sprites_arrow_idx, 52, 6);
+	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(32, 7, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 240, 0, font);
 
 	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
 	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210, 0, font);
@@ -388,14 +387,14 @@ static void AutoUpdateLogic(int &page, int &selection) {
 	}
 
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, toggleAbles[0])) {
+		if (touching(touch, back)) {
 			page = 0;
 			selection = 2;
 
-		} else if (touching(touch, toggleAbles[1])) {
+		} else if (touching(touch, toggleAbles[0])) {
 			config->autoupdate(!config->autoupdate());
 
-		} else if (touching(touch, toggleAbles[2])) {
+		} else if (touching(touch, toggleAbles[1])) {
 			config->updatecheck(!config->updatecheck());
 		}
 	}
@@ -438,14 +437,14 @@ static void GUISettingsLogic(int &page, int &selection) {
 	}
 
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, toggleAbles[0])) {
+		if (touching(touch, back)) {
 			page = 0;
 			selection = 3;
 
-		} else if (touching(touch, toggleAbles[1])) {
+		} else if (touching(touch, toggleAbles[0])) {
 			config->usebg(!config->usebg());
 
-		} else if (touching(touch, toggleAbles[2])) {
+		} else if (touching(touch, toggleAbles[1])) {
 			config->customfont(!config->customfont());
 
 			(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
