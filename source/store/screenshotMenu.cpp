@@ -37,49 +37,44 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 	const bool sFetch: If fetching screenshots or not.
 	const int screenshotSize: The screenshot amount.
 	const std::string &name: The name of the screenshot.
-	const bool zoom: If zoomed in (true) or out (false).
+	const int zoom: The zoom level, zoom out, 1x scale, or zoom in.
 */
-void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, const bool sFetch, const int screenshotSize, const std::string &name, const bool zoom) {
+void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, const bool sFetch, const int screenshotSize, const std::string &name, const int zoom) {
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 240, BG_COLOR);
-
 	if (screenshotSize > 0) {
-		if (!zoom) {
-			if (img.tex) C2D_DrawImageAt(img, 100, 0, 0.5f, nullptr, 0.5f, 0.5f);
+		float scale = 1.0f;
 
+		if (zoom == 0) {
+			scale = std::min(1.0f, std::min(400.0f / img.subtex->width, 240.0f / img.subtex->height));
+			if (img.tex) C2D_DrawImageAt(img, (400 - img.subtex->width * scale) / 2, (240 - img.subtex->height * scale) / 2, 0.5f, nullptr, scale, scale);
 		} else {
-			if (img.tex) C2D_DrawImageAt(img, 0, 0, 0.5f, nullptr, 1.0f, 1.0f);
-		}
-	}
+			// Create new C2D_Image with smaller subtex
+			C2D_Image top = img;
+			if (img.subtex->height > 240)
+				top.subtex = new Tex3DS_SubTexture({img.subtex->width, (u16)(img.subtex->height / 2), img.subtex->left, img.subtex->top, img.subtex->right, 1.0f - (img.subtex->height / 2 / 512.0f)});
 
-	GFX::DrawBottom();
+			// If zoom == 2, then zoom in to fit the screen
+			if (zoom == 2)
+				scale = std::min(400.0f / top.subtex->width, 240.0f / top.subtex->height);
 
-	/* Bottom. */
-	if (zoom) {
-		if (img.tex) {
-			if (img.subtex->height > 240) {
-				C2D_DrawImageAt(img, -40, -240, 0.5f, nullptr, 1.0f, 1.0f);
-			}
+			if (top.tex) C2D_DrawImageAt(top, (400 - top.subtex->width * scale) / 2, (240 - top.subtex->height * scale) / 2, 0.5f, nullptr, scale, scale);
 
-		} else {
-			if (screenshotSize > 0) {
-				Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
-				Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
-				Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("SCREENSHOT_INSTRUCTIONS"), 310, 0, font);
-
-				char screenshots[0x100];
-				snprintf(screenshots, sizeof(screenshots), Lang::get("SCREENSHOT").c_str(), sIndex + 1, screenshotSize);
-				Gui::DrawStringCentered(0, 2, 0.6f, WHITE, screenshots, 310, 0, font);
-				Gui::DrawStringCentered(0, 40, 0.6f, WHITE, name, 310, 0, font);
-
-			} else {
-				Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
-			}
+			// Only delete if new
+			if (top.subtex->height > 240)
+				delete top.subtex;
 		}
 
-	} else {
+		GFX::DrawBottom();
 
-		if (screenshotSize > 0) {
+		/* Bottom. */
+		if (zoom > 0 && img.subtex->height * scale > 240) {
+			C2D_Image bottom = img;
+			bottom.subtex = new Tex3DS_SubTexture({img.subtex->width, (u16)(img.subtex->height / 2), img.subtex->left, img.subtex->bottom + (img.subtex->height / 2 / 512.0f), img.subtex->right, img.subtex->bottom});
+			if (bottom.tex) C2D_DrawImageAt(bottom, (320 - bottom.subtex->width * scale) / 2, (240 - bottom.subtex->height * scale) / 2, 0.5f, nullptr, scale, scale);
+			delete bottom.subtex;
+
+		} else {
 			Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
 			Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
 			Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("SCREENSHOT_INSTRUCTIONS"), 310, 0, font);
@@ -88,10 +83,11 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 			snprintf(screenshots, sizeof(screenshots), Lang::get("SCREENSHOT").c_str(), sIndex + 1, screenshotSize);
 			Gui::DrawStringCentered(0, 2, 0.6f, WHITE, screenshots, 310, 0, font);
 			Gui::DrawStringCentered(0, 40, 0.6f, WHITE, name, 310, 0, font);
-
-		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
 		}
+
+	} else {
+		GFX::DrawBottom();
+		Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
 	}
 }
 
@@ -102,9 +98,9 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 	int &sIndex: The Screenshot index.
 	bool &sFetch: If fetching screenshots or not.
 	const int screenshotSize: The screenshot amount.
-	bool &zoom: If zoomed in (true) or out (false).
+	int &zoom: The zoom level, zoom out, 1x scale, or zoom in.
 */
-void StoreUtils::ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, bool &zoom) {
+void StoreUtils::ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom) {
 	if (hDown & KEY_B) {
 		zoom = false;
 		sIndex = 0;
@@ -118,9 +114,9 @@ void StoreUtils::ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &
 		}
 	}
 
-	if (hDown & KEY_DOWN) zoom = false;
+	if (hDown & KEY_DOWN && zoom > 0) zoom--;
 
-	if (hDown & KEY_UP) zoom = true;
+	if (hDown & KEY_UP && zoom < 2) zoom++;
 
 	if (hDown & KEY_LEFT) {
 		if (sIndex > 0) {
