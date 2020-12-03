@@ -49,10 +49,10 @@ C2D_Image Screenshot::Convert(const std::string &filename) {
 								((x & 4) << 2) | ((y & 4) << 3))) * 4;
 
 			const u32 srcPos = (y * width + x) * 4;
+			((uint8_t *)img.tex->data)[dstPos + 0] = ImageBuffer.data()[srcPos + 3];
 			((uint8_t *)img.tex->data)[dstPos + 1] = ImageBuffer.data()[srcPos + 2];
 			((uint8_t *)img.tex->data)[dstPos + 2] = ImageBuffer.data()[srcPos + 1];
 			((uint8_t *)img.tex->data)[dstPos + 3] = ImageBuffer.data()[srcPos + 0];
-			((uint8_t *)img.tex->data)[dstPos + 4] = ImageBuffer.data()[srcPos + 3];
 		}
 	}
 
@@ -80,10 +80,10 @@ C2D_Image Screenshot::ConvertFromBuffer(const std::vector<u8> &buffer) {
 								((x & 4) << 2) | ((y & 4) << 3))) * 4;
 
 			const u32 srcPos = (y * width + x) * 4;
+			((uint8_t *)img.tex->data)[dstPos + 0] = ImageBuffer.data()[srcPos + 3];
 			((uint8_t *)img.tex->data)[dstPos + 1] = ImageBuffer.data()[srcPos + 2];
 			((uint8_t *)img.tex->data)[dstPos + 2] = ImageBuffer.data()[srcPos + 1];
 			((uint8_t *)img.tex->data)[dstPos + 3] = ImageBuffer.data()[srcPos + 0];
-			((uint8_t *)img.tex->data)[dstPos + 4] = ImageBuffer.data()[srcPos + 3];
 		}
 	}
 
