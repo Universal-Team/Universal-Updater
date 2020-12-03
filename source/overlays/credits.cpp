@@ -47,8 +47,9 @@ void Overlays::ShowCredits() {
 		Gui::DrawString(10, 70, 0.5f, TEXT_COLOR, "- dlbeer", 0, 0, font);
 		Gui::DrawString(10, 90, 0.5f, TEXT_COLOR, "- FlagBrew", 0, 0, font);
 		Gui::DrawString(10, 110, 0.5f, TEXT_COLOR, "- https://icons8.com/", 0, 0, font);
-		Gui::DrawString(10, 130, 0.5f, TEXT_COLOR, "- PabloMK7", 0, 0, font);
-		Gui::DrawString(10, 150, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
+		Gui::DrawString(10, 130, 0.5f, TEXT_COLOR, "- Ivandeve", 0, 0, font);
+		Gui::DrawString(10, 150, 0.5f, TEXT_COLOR, "- PabloMK7", 0, 0, font);
+		Gui::DrawString(10, 170, 0.5f, TEXT_COLOR, Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
 		Gui::DrawString(10, 197, 0.5f, TEXT_COLOR, Lang::get("GITHUB"), 390, 0, font);
 
 		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);

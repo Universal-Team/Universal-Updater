@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "init.hpp"
 #include "mainScreen.hpp"
+#include "sound.hpp"
 
 #include <dirent.h>
 #include <unistd.h>
@@ -36,6 +37,8 @@ bool exiting = false, is3DSX = false, needUnloadFont = false;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
 u32 old_time_limit;
+std::unique_ptr<Sound> Music = nullptr;
+bool dspfirmFound = false;
 
 /*
 	Set, if 3DSX or CIA.
@@ -44,6 +47,32 @@ static void getCurrentUsage(){
 	u64 id;
 	APT_GetProgramID(&id);
 	is3DSX = (id != 0x0004000004391700);
+}
+
+/*
+	Init Music.
+*/
+static void InitMusic() {
+	if (access("sdmc:/3ds/dspfirm.cdc", F_OK) == 0) { // Ensure dspfirm dump exist.
+		if (access("sdmc:/3ds/Universal-Updater/music.wav", F_OK) == 0) { // Ensure music.wav exist.
+			dspfirmFound = true;
+			ndspInit();
+			Music = std::make_unique<Sound>("sdmc:/3ds/Universal-Updater/music.wav");
+
+			Music->play();
+		}
+	}
+}
+
+/*
+	Exit Music.
+*/
+static void ExitMusic() {
+	if (dspfirmFound) {
+		Music->stop();
+		Music = nullptr;
+		ndspExit();
+	}
 }
 
 /*
@@ -121,6 +150,7 @@ Result Init::Initialize() {
 	if (exiting) return -1; // In case the update was successful.
 
 	Gui::setScreen(std::make_unique<MainScreen>(), false, false);
+	InitMusic();
 	return 0;
 }
 
@@ -172,6 +202,7 @@ Result Init::Exit() {
 	Gui::exit();
 	Gui::unloadSheet(sprites);
 	UnloadFont();
+	ExitMusic();
 	gfxExit();
 	cfguExit();
 	config->save();

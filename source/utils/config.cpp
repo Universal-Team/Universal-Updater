@@ -112,8 +112,10 @@ Config::Config() {
 
 	/* Let us create a new one. */
 	if (!this->json.contains("Version")) this->initialize();
+
 	if (!this->json.contains("Language")) this->sysLang();
 	else this->language(this->getString("Language"));
+
 	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
 	if (this->json.contains("List")) this->list(this->getBool("List"));
 	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
@@ -160,20 +162,20 @@ void Config::save() {
 bool Config::getBool(const std::string &key) {
 	if (!this->json.contains(key)) return false;
 
-	return this->json.at(key).get_ref<const bool&>();
+	return this->json.at(key).get_ref<const bool &>();
 }
 void Config::setBool(const std::string &key, bool v) { this->json[key] = v; };
 
 int Config::getInt(const std::string &key) {
 	if (!this->json.contains(key)) return 0;
 
-	return this->json.at(key).get_ref<const int64_t&>();
+	return this->json.at(key).get_ref<const int64_t &>();
 }
 void Config::setInt(const std::string &key, int v) { this->json[key] = v; };
 
 std::string Config::getString(const std::string &key) {
 	if (!this->json.contains(key)) return "";
 
-	return this->json.at(key).get_ref<const std::string&>();
+	return this->json.at(key).get_ref<const std::string &>();
 }
 void Config::setString(const std::string &key, const std::string &v) { this->json[key] = v; };

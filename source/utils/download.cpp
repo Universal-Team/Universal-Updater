@@ -864,7 +864,7 @@ static StoreList fetch(const std::string &entry, nlohmann::json &js) {
 	Fetch Store list for available UniStores.
 */
 std::vector<StoreList> FetchStores() {
-	Msg::DisplayMsg(Lang::get("FETCHING_AVAILABLE_UNISTORES"));
+	Msg::DisplayMsg(Lang::get("FETCHING_RECOMMENDED_UNISTORES"));
 	std::vector<StoreList> stores = { };
 
 	Result ret = 0;

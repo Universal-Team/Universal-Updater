@@ -35,7 +35,7 @@ static const std::vector<Structs::ButtonPos> markBox = {
 	{ 196, 94, 52, 52 },
 	{ 258, 94, 52, 52 },
 
-	{ 53, 215, 20, 20 }
+	{ 53, 215, 24, 24 }
 };
 
 /*
@@ -68,7 +68,7 @@ void StoreUtils::DisplayMarkBox(int marks) {
 	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 11, 0.9, TEXT_COLOR, "♠", 0, 0, font);
 
 	GFX::DrawBox(markBox[5].x, markBox[5].y, markBox[5].w, markBox[5].h, false);
-	Gui::DrawString(markBox[5].x + 3, markBox[5].y, 0.6f, TEXT_COLOR, "★", 0, 0, font);
+	Gui::DrawString(markBox[5].x + 5, markBox[5].y + 2, 0.6f, TEXT_COLOR, "★", 0, 0, font);
 }
 
 /*

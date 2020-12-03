@@ -28,7 +28,9 @@
 #include "structs.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-static const Structs::ButtonPos btn = { 53, 215, 20, 20 };
+static const Structs::ButtonPos btn = { 53, 215, 24, 24 };
+static const Structs::ButtonPos sshot = { 83, 215, 24, 24 };
+extern bool checkWifiStatus();
 
 /*
 	Draw the Entry Info part.
@@ -61,7 +63,8 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
-		Gui::DrawString(btn.x + 3, btn.y, 0.6f, TEXT_COLOR, "★", 0, 0, font);
+		GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
+		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, TEXT_COLOR, "★", 0, 0, font);
 	}
 }
 
@@ -74,12 +77,16 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 
 	bool &showMark: Reference to showMark.. to show the mark menu.
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
+	bool &sFetch: Reference to the screenshot fetch.
+	int &mode: Reference to the Store mode.
 */
 void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode) {
 	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 
-	if (hDown & KEY_SELECT) {
-		sFetch = true;
-		mode = 5;
+	if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, sshot))) {
+		if (checkWifiStatus()) {
+			sFetch = true;
+			mode = 5;
+		}
 	}
 }

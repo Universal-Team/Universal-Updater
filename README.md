@@ -49,4 +49,5 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 - [dlbeer](https://github.com/dlbeer) - Original developer of [quirc](https://github.com/dlbeer/quirc)
 - [FlagBrew](https://github.com/FlagBrew): Original QR Code Scanner code
 - [Icons8](https://icons8.com/): Icon Designer
+- [lvandeve](https://github.com/lvandeve): For [LodePNG](https://github.com/lvandeve/lodepng)
 - [PabloMK7](https://github.com/mariohackandglitch): Download Code Improvements

@@ -24,49 +24,24 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
-#define _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
+#ifndef _UNIVERSAL_UPDATER_SOUND_HPP
+#define _UNIVERSAL_UPDATER_SOUND_HPP
 
-#include "common.hpp"
-#include "store.hpp"
-#include "storeEntry.hpp"
-#include "storeUtils.hpp"
+#include <3ds.h>
+#include <string>
 
-/*
-	Modes:
-
-	0: Entry Info.
-	1: Download List.
-	2: Search + Favorites.
-	3: Sorting.
-	4: Settings / Credits(?).
-	5: Screenshot Menu.
-*/
-
-class MainScreen : public Screen {
+class Sound {
 public:
-	MainScreen();
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	Sound(const std::string &path, const int channel = 1, const bool toloop = true);
+	~Sound();
+	void play();
+	void stop();
 private:
-	std::unique_ptr<Store> store = nullptr;
-	std::unique_ptr<Meta> meta = nullptr;
-	std::vector<std::unique_ptr<StoreEntry>> entries;
-	std::vector<std::string> dwnldList, dwnldSizes;
-
-	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
-		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false;
-
-	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
-		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0;
-
-	SortType sorttype = SortType::LAST_UPDATED;
-
-	/* Title, Author, Category, Console. */
-	std::vector<bool> searchIncludes = { false, false, false, false };
-	std::string searchResult = "", screenshotName = "";
-
-	C2D_Image Screenshot = { nullptr, nullptr };
+	u32 dataSize;
+	bool good = true;
+	ndspWaveBuf waveBuf;
+	u8 *data = nullptr;
+	int chnl;
 };
 
 #endif

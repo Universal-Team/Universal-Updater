@@ -107,7 +107,7 @@ MainScreen::MainScreen() {
 void MainScreen::Draw(void) const {
 	if (this->storeMode == 5) {
 		/* Screenshot Menu. */
-		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom);
+		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom, this->canDisplay);
 		return;
 	}
 
@@ -180,13 +180,15 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (this->screenshotIndex < this->sSize) {
 				if (this->sSize > 0) {
 					this->Screenshot = FetchScreenshot(this->entries[this->store->GetEntry()]->GetScreenshots()[this->screenshotIndex]);
+					if (this->Screenshot.tex) this->canDisplay = true;
+					else this->canDisplay = false;
 				}
 			}
 
 			this->screenshotFetch = false;
 		}
 
-		StoreUtils::ScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->storeMode, this->sSize, this->zoom);
+		StoreUtils::ScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->storeMode, this->sSize, this->zoom, this->canDisplay);
 		return;
 	}
 

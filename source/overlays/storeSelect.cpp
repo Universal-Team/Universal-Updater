@@ -45,11 +45,9 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 154, 300, 22 },
 	{ 10, 184, 300, 22 },
 
-	/* Add, Delete, Info.. */
-	{ 92, 215, 16, 16 },
-	{ 136, 215, 16, 16 },
-	{ 180, 215, 16, 16 },
-	{ 224, 215, 16, 16 },
+	{ 112, 215, 16, 16 }, // Delete.
+	{ 154, 215, 16, 16 }, // Update.
+	{ 200, 215, 16, 16 }, // Add.
 	{ 4, 0, 24, 24 } // Back.
 };
 
@@ -265,7 +263,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
 			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
-			GFX::DrawSprite(sprites_arrow_idx, mainButtons[10].x, mainButtons[10].y);
+			GFX::DrawSprite(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y);
 			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
@@ -280,7 +278,6 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		GFX::DrawSprite(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y);
 		GFX::DrawSprite(sprites_update_idx, mainButtons[7].x, mainButtons[7].y);
 		GFX::DrawSprite(sprites_add_idx, mainButtons[8].x, mainButtons[8].y);
-		GFX::DrawSprite(sprites_qr_code_idx, mainButtons[9].x, mainButtons[9].y);
 		C3D_FrameEnd(0);
 
 		hidScanInput();
@@ -317,9 +314,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 						else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
+							config->lastStore(info[selection].FileName);
 							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
 							StoreUtils::ResetAll(store, meta, entries);
-							config->lastStore(info[selection].FileName);
 							StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
 							doOut = true;
 						}
@@ -339,9 +336,10 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 								else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 								else if (info[i + sPos].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 								else {
+									config->lastStore(info[i + sPos].FileName);
 									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
 									StoreUtils::ResetAll(store, meta, entries);
-									config->lastStore(info[i + sPos].FileName);
+									StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
 									doOut = true;
 								}
 
@@ -395,8 +393,6 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		}
 
 		/* Go out of the menu. */
-		if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[10]))) {
-			doOut = true;
-		}
+		if ((hidKeysDown() & KEY_B) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[9]))) doOut = true;
 	}
 }
