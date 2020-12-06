@@ -57,7 +57,7 @@
 	"EXECUTE_ENTRY": "Voulez-vous exécuter cette entrée?",
 	"EXIT_APP": "Quitter Universal-Updater",
 	"FETCHING_METADATA": "Récupération des anciennes métadonnées...",
-	"FETCHING_RECOMMENDED_UNISTORES": "Fetching recommended UniStores...",
+	"FETCHING_RECOMMENDED_UNISTORES": "Récupération des UniStores recommandés...",
 	"FILE_EXTRACTED": "fichier extrait.",
 	"FILE_SLASH": "On dirait qu'un '/' est inclus, ce qui n'est pas pris en charge.\nMerci de changer 'file' au nom du fichier seul.",
 	"FILES_EXTRACTED": "fichiers extraits.",
