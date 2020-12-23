@@ -238,11 +238,11 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		switch(this->storeMode) {
 			case 0:
-				if (this->store && this->store->GetValid()) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, this->storeMode);
+				if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, this->storeMode);
 				break;
 
 			case 1:
-				if (this->store && this->store->GetValid()) StoreUtils::DownloadHandle(this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode, this->smallDelay);
+				if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::DownloadHandle(this->store, this->entries[this->store->GetEntry()], this->dwnldList, this->storeMode, this->meta, this->lastMode, this->smallDelay);
 				break;
 
 			case 2:
