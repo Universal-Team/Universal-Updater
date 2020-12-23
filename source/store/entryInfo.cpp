@@ -30,6 +30,7 @@
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const Structs::ButtonPos btn = { 53, 215, 24, 24 };
 static const Structs::ButtonPos sshot = { 83, 215, 24, 24 };
+static const Structs::ButtonPos notes = { 113, 215, 24, 24 };
 extern bool checkWifiStatus();
 
 /*
@@ -55,6 +56,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
+		GFX::DrawSprite(sprites_notes_idx, notes.x, notes.y);
 		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, TEXT_COLOR, "★", 0, 0, font);
 	}
 }
@@ -80,4 +82,6 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 			mode = 5;
 		}
 	}
+
+	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) mode = 6;
 }

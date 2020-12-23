@@ -48,6 +48,12 @@ struct StoreList {
 	std::string Description;
 };
 
+struct UUUpdate {
+	bool Available = false;
+	std::string Notes = "";
+	std::string Version = "";
+};
+
 Result downloadToFile(const std::string &url, const std::string &path);
 Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases);
 
@@ -75,9 +81,10 @@ void doneMsg(void);
 bool IsUpdateAvailable(const std::string &URL, int revCurrent);
 bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, bool isDownload = false, bool isUDB = false);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
-bool IsUUUpdateAvailable();
+UUUpdate IsUUUpdateAvailable();
 void UpdateAction();
 std::vector<StoreList> FetchStores();
 C2D_Image FetchScreenshot(const std::string &URL);
+std::string GetChangelog();
 
 #endif

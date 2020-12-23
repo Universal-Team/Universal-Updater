@@ -35,6 +35,7 @@ extern int fadeAlpha;
 
 extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
 extern void notConnectedMsg();
+extern void DisplayChangelog();
 
 /*
 	MainScreen Constructor.
@@ -55,7 +56,7 @@ MainScreen::MainScreen() {
 			/* check version and file here. */
 			const UniStoreInfo info = GetInfo((std::string(_STORE_PATH) + config->lastStore()), config->lastStore());
 
-			if (info.Version != 3 || info.Version != _UNISTORE_VERSION) {
+			if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
 				config->lastStore("universal-db.unistore");
 			}
 
@@ -99,6 +100,7 @@ MainScreen::MainScreen() {
 	this->store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll(this->store, this->meta, this->entries);
 	StoreUtils::SortEntries(false, SortType::LAST_UPDATED, this->entries);
+	DisplayChangelog();
 };
 
 /*
@@ -108,6 +110,13 @@ void MainScreen::Draw(void) const {
 	if (this->storeMode == 5) {
 		/* Screenshot Menu. */
 		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom, this->canDisplay);
+		return;
+	}
+
+	if (this->storeMode == 6) {
+		/* Release Notes. */
+		StoreUtils::DrawReleaseNotes(this->scrollIndex, this->entries[this->store->GetEntry()], this->store);
+		GFX::DrawBottom();
 		return;
 	}
 
@@ -159,6 +168,7 @@ void MainScreen::Draw(void) const {
 	MainScreen Logic.
 */
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	/* Screenshots Menu. */
 	if (this->storeMode == 5) {
 		if (this->screenshotFetch) {
 			/* Delete Texture first. */
@@ -192,6 +202,13 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		return;
 	}
 
+	/* Release Notes. */
+	if (this->storeMode == 6) {
+		StoreUtils::ReleaseNotesLogic(this->scrollIndex, this->entries[this->store->GetEntry()], this->storeMode);
+		return;
+	}
+
+	/* Mark Menu. */
 	if (this->showMarks) StoreUtils::MarkHandle(this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 
 	if (!this->showMarks) {

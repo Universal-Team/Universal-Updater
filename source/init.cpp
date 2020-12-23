@@ -127,6 +127,7 @@ Result Init::Initialize() {
 	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
 	getCurrentUsage();
 	aptSetSleepAllowed(false);
+	hidSetRepeatParameters(20, 8);
 
 	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
@@ -143,9 +144,7 @@ Result Init::Initialize() {
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 
 	/* Check here for updates. */
-	if (config->updatecheck()) {
-		if (IsUUUpdateAvailable()) UpdateAction();
-	}
+	if (config->updatecheck()) UpdateAction();
 
 	if (exiting) return -1; // In case the update was successful.
 
@@ -161,7 +160,6 @@ Result Init::MainLoop() {
 	bool fullExit = false;
 
 	if (Initialize() == -1) fullExit = true;
-	hidSetRepeatParameters(20, 8);
 
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {

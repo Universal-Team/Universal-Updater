@@ -544,3 +544,19 @@ std::vector<std::string> Store::GetScreenshotNames(int index) const {
 
 	return screenshotNames;
 }
+
+/*
+	Get the update notes of an entry.
+
+	int index: The Entry Index.
+*/
+std::string Store::GetReleaseNotes(int index) const {
+	if (!this->valid) return "";
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("releasenotes") && this->storeJson["storeContent"][index]["info"]["releasenotes"].is_string()) {
+		return this->storeJson["storeContent"][index]["info"]["releasenotes"];
+	}
+
+	return "";
+}

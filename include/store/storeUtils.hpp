@@ -82,6 +82,10 @@ namespace StoreUtils {
 	void DrawSorting(bool asc, SortType st);
 	void SortHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st);
 
+	/* Release Notes. */
+	void DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store);
+	void ReleaseNotesLogic(int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, int &storeMode);
+
 	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 
