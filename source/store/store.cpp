@@ -193,7 +193,7 @@ void Store::loadSheets() {
 				this->sheets.push_back({ });
 
 				if (sheetLocs[i] != "") {
-					if (!(sheetLocs[i].find("/") != std::string::npos)) {
+					if (sheetLocs[i].find("/") == std::string::npos) {
 						if (access((std::string(_STORE_PATH) + sheetLocs[i]).c_str(), F_OK) == 0) {
 
 							char msg[150];
