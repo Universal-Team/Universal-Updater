@@ -48,29 +48,18 @@ void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<
 	As the name says: Release notes logic.
 
 	int &scrollIndex: The scroll index for the Release Notes text.
-	const std::unique_ptr<StoreEntry> &entry: The Store Entry.
 	int &storeMode: The store mode to properly return back.
 */
-void StoreUtils::ReleaseNotesLogic(int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, int &storeMode) {
-	if (entry) {
-		if (hRepeat & KEY_DOWN) {
-			if (entry->GetReleaseNotes() != "") { // Only scroll if not "".
-				const int height = Gui::GetStringHeight(0.5f, "", font);
-				scrollIndex += height;
-			}
-		}
+void StoreUtils::ReleaseNotesLogic(int &scrollIndex, int &storeMode) {
+	if (hRepeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
 
-		if (hRepeat & KEY_UP) {
-			if (entry->GetReleaseNotes() != "") { // Only scroll if not "".
-				const int height = Gui::GetStringHeight(0.5f, "", font);
-				if (scrollIndex > 0) scrollIndex -= height;
-			}
-		}
+	if (hRepeat & KEY_UP) {
+		if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
+	}
 
-		if (hDown & KEY_B) {
-			scrollIndex = 0;
-			storeMode = 0;
-		}
+	if (hDown & KEY_B) {
+		scrollIndex = 0;
+		storeMode = 0;
 	}
 }
 
@@ -117,18 +106,10 @@ void DisplayChangelog() {
 			u32 down = hidKeysDown();
 
 			/* Scroll Logic. */
-			if (repeat & KEY_DOWN) {
-				if (notes != "") { // Only scroll if not "".
-					const int height = Gui::GetStringHeight(0.5f, "", font);
-					scrollIndex += height;
-				}
-			}
+			if (repeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
 
 			if (repeat & KEY_UP) {
-				if (notes != "") { // Only scroll if not "".
-					const int height = Gui::GetStringHeight(0.5f, "", font);
-					if (scrollIndex > 0) scrollIndex -= height;
-				}
+				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
 			}
 
 			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;

@@ -204,7 +204,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	/* Release Notes. */
 	if (this->storeMode == 6) {
-		StoreUtils::ReleaseNotesLogic(this->scrollIndex, this->entries[this->store->GetEntry()], this->storeMode);
+		StoreUtils::ReleaseNotesLogic(this->scrollIndex, this->storeMode);
 		return;
 	}
 
@@ -238,7 +238,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		switch(this->storeMode) {
 			case 0:
-				if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, this->storeMode);
+				if (this->store && this->store->GetValid() && this->entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, this->storeMode, this->entries[this->store->GetEntry()]);
 				break;
 
 			case 1:

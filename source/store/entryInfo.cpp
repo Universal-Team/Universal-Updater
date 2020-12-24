@@ -55,8 +55,8 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
-		GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
-		GFX::DrawSprite(sprites_notes_idx, notes.x, notes.y);
+		if (!entry->GetScreenshots().empty()) GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
+		if (entry->GetReleaseNotes() != "") GFX::DrawSprite(sprites_notes_idx, notes.x, notes.y);
 		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, TEXT_COLOR, "★", 0, 0, font);
 	}
 }
@@ -72,16 +72,23 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::u
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 	bool &sFetch: Reference to the screenshot fetch.
 	int &mode: Reference to the Store mode.
+	const std::unique_ptr<StoreEntry> &entry: The Store Entry.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode) {
-	if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
+void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::unique_ptr<StoreEntry> &entry) {
+	if (entry) {
+		if ((hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 
-	if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, sshot))) {
-		if (checkWifiStatus()) {
-			sFetch = true;
-			mode = 5;
+		if ((hDown & KEY_Y) || (hDown & KEY_TOUCH && touching(touch, sshot))) {
+			if (!entry->GetScreenshots().empty()) {
+				if (checkWifiStatus()) {
+					sFetch = true;
+					mode = 5;
+				}
+			}
+		}
+
+		if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) {
+			if (entry->GetReleaseNotes() != "") mode = 6;
 		}
 	}
-
-	if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) mode = 6;
 }

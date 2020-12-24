@@ -49,7 +49,7 @@ namespace StoreUtils {
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry);
-	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode);
+	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::unique_ptr<StoreEntry> &entry);
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
@@ -84,7 +84,7 @@ namespace StoreUtils {
 
 	/* Release Notes. */
 	void DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store);
-	void ReleaseNotesLogic(int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, int &storeMode);
+	void ReleaseNotesLogic(int &scrollIndex, int &storeMode);
 
 	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);

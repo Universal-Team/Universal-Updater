@@ -870,18 +870,10 @@ void UpdateAction() {
 			u32 down = hidKeysDown();
 
 			/* Scroll Logic. */
-			if (repeat & KEY_DOWN) {
-				if (res.Notes != "") { // Only scroll if not "".
-					const int height = Gui::GetStringHeight(0.5f, "", font);
-					scrollIndex += height;
-				}
-			}
+			if (repeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
 
 			if (repeat & KEY_UP) {
-				if (res.Notes != "") { // Only scroll if not "".
-					const int height = Gui::GetStringHeight(0.5f, "", font);
-					if (scrollIndex > 0) scrollIndex -= height;
-				}
+				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
 			}
 
 			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
