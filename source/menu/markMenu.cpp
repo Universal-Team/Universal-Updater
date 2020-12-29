@@ -35,7 +35,7 @@ static const std::vector<Structs::ButtonPos> markBox = {
 	{ 196, 94, 52, 52 },
 	{ 258, 94, 52, 52 },
 
-	{ 53, 215, 24, 24 }
+	{ 45, 215, 24, 24 }
 };
 
 /*

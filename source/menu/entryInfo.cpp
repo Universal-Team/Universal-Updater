@@ -28,9 +28,9 @@
 #include "structs.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-static const Structs::ButtonPos btn = { 53, 215, 24, 24 };
-static const Structs::ButtonPos sshot = { 83, 215, 24, 24 };
-static const Structs::ButtonPos notes = { 113, 215, 24, 24 };
+static const Structs::ButtonPos btn = { 45, 215, 24, 24 };
+static const Structs::ButtonPos sshot = { 75, 215, 24, 24 };
+static const Structs::ButtonPos notes = { 105, 215, 24, 24 };
 extern bool checkWifiStatus();
 
 /*
@@ -41,18 +41,18 @@ extern bool checkWifiStatus();
 */
 void StoreUtils::DrawEntryInfo(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry) {
 	if (store && entry) { // Ensure, store & entry is not a nullptr.
-		Gui::Draw_Rect(48, 0, 272, 36, ENTRY_BAR_COLOR);
-		Gui::Draw_Rect(48, 36, 272, 1, ENTRY_BAR_OUTL_COLOR);
+		Gui::Draw_Rect(40, 0, 280, 36, ENTRY_BAR_COLOR);
+		Gui::Draw_Rect(40, 36, 280, 1, ENTRY_BAR_OUTL_COLOR);
 
-		Gui::DrawStringCentered(25, 0, 0.6, TEXT_COLOR, entry->GetTitle(), 265, 0, font);
-		Gui::DrawStringCentered(25, 20, 0.4, TEXT_COLOR, entry->GetAuthor(), 265, 0, font);
-		Gui::DrawStringCentered(25, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 240, 0, font, C2D_WordWrap);
+		Gui::DrawStringCentered(17, 0, 0.6, TEXT_COLOR, entry->GetTitle(), 273, 0, font);
+		Gui::DrawStringCentered(17, 20, 0.4, TEXT_COLOR, entry->GetAuthor(), 273, 0, font);
+		Gui::DrawStringCentered(17, 50, 0.4, TEXT_COLOR, entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
-		Gui::DrawString(61, 130, 0.45, TEXT_COLOR, Lang::get("VERSION") + ": " + entry->GetVersion(), 240, 0, font);
-		Gui::DrawString(61, 145, 0.45, TEXT_COLOR, Lang::get("CATEGORY") + ": " + entry->GetCategory(), 240, 0, font);
-		Gui::DrawString(61, 160, 0.45, TEXT_COLOR, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 240, 0, font);
-		Gui::DrawString(61, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 240, 0, font);
-		Gui::DrawString(61, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 240, 0, font);
+		Gui::DrawString(53, 130, 0.45, TEXT_COLOR, Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
+		Gui::DrawString(53, 145, 0.45, TEXT_COLOR, Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
+		Gui::DrawString(53, 160, 0.45, TEXT_COLOR, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
+		Gui::DrawString(53, 175, 0.45, TEXT_COLOR, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);
+		Gui::DrawString(53, 190, 0.45, TEXT_COLOR, Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		if (!entry->GetScreenshots().empty()) GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
@@ -82,13 +82,13 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 			if (!entry->GetScreenshots().empty()) {
 				if (checkWifiStatus()) {
 					sFetch = true;
-					mode = 5;
+					mode = 6;
 				}
 			}
 		}
 
 		if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) {
-			if (entry->GetReleaseNotes() != "") mode = 6;
+			if (entry->GetReleaseNotes() != "") mode = 7;
 		}
 	}
 }

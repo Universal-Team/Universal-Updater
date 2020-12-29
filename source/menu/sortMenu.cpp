@@ -31,19 +31,19 @@
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 static const std::vector<Structs::ButtonPos> buttons = {
-	{ 75, 60, 100, 16 },
-	{ 75, 80, 100, 16 },
-	{ 75, 100, 100, 16 },
+	{ 71, 60, 104, 16 },
+	{ 71, 80, 104, 16 },
+	{ 71, 100, 104, 16 },
 
-	{ 205, 60, 100, 16 },
-	{ 205, 80, 100, 16 },
+	{ 201, 60, 104, 16 },
+	{ 201, 80, 104, 16 },
 
-	{ 75, 170, 100, 16 },
-	{ 75, 190, 100, 16 }
+	{ 71, 170, 104, 16 },
+	{ 71, 190, 104, 16 }
 };
 
 static void DrawCheck(int pos, bool v) {
-	GFX::DrawSprite((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), buttons[pos].x + 5, buttons[pos].y);
+	GFX::DrawSprite((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), buttons[pos].x + 1, buttons[pos].y);
 }
 
 /*
@@ -73,33 +73,33 @@ static const uint8_t GetType(SortType st) {
 	SortType st: The SortType variable.
 */
 void StoreUtils::DrawSorting(bool asc, SortType st) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SORTING"), 265, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, Lang::get("SORTING"), 273, 0, font);
 
 	/* Sort By. */
-	Gui::DrawString(buttons[0].x + 5, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"), 90, 0, font);
+	Gui::DrawString(buttons[0].x + 1, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"), 90, 0, font);
 	for (int i = 0; i < 3; i++) {
 		DrawCheck(i, i == GetType(st));
 	}
 
-	Gui::DrawString(buttons[0].x + 25, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"), 80, 0, font);
-	Gui::DrawString(buttons[1].x + 25, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"), 80, 0, font);
-	Gui::DrawString(buttons[2].x + 25, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"), 80, 0, font);
+	Gui::DrawString(buttons[0].x + 21, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"), 80, 0, font);
+	Gui::DrawString(buttons[1].x + 21, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"), 80, 0, font);
+	Gui::DrawString(buttons[2].x + 21, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"), 80, 0, font);
 
 	/* Direction. */
-	Gui::DrawString(buttons[3].x + 5, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"), 80, 0, font);
+	Gui::DrawString(buttons[3].x + 1, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"), 80, 0, font);
 	DrawCheck(3, asc);
 	DrawCheck(4, !asc);
-	Gui::DrawString(buttons[3].x + 25, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"), 80, 0, font);
-	Gui::DrawString(buttons[4].x + 25, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"), 80, 0, font);
+	Gui::DrawString(buttons[3].x + 21, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"), 80, 0, font);
+	Gui::DrawString(buttons[4].x + 21, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"), 80, 0, font);
 
 	/* Top Style. */
-	Gui::DrawString(buttons[5].x + 5, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"), 90, 0, font);
+	Gui::DrawString(buttons[5].x + 1, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"), 90, 0, font);
 	DrawCheck(5, config->list());
 	DrawCheck(6, !config->list());
-	Gui::DrawString(buttons[5].x + 25, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"), 90, 0, font);
-	Gui::DrawString(buttons[6].x + 25, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"), 90, 0, font);
+	Gui::DrawString(buttons[5].x + 21, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"), 90, 0, font);
+	Gui::DrawString(buttons[6].x + 21, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"), 90, 0, font);
 }
 
 /*

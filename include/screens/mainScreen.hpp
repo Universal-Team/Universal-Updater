@@ -37,11 +37,12 @@
 
 	0: Entry Info.
 	1: Download List.
-	2: Search + Favorites.
-	3: Sorting.
-	4: Settings / Credits(?).
-	5: Screenshot Menu.
-	6: Release Notes.
+	2: Queue.
+	3: Search + Favorites.
+	4: Sorting.
+	5: Settings / Credits(?).
+	6: Screenshot Menu.
+	7: Release Notes.
 */
 
 class MainScreen : public Screen {
@@ -59,7 +60,7 @@ private:
 		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false;
 
 	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
-		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollIndex = 0;
+		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollIndex = 0, queueIndex = 0;
 
 	SortType sorttype = SortType::LAST_UPDATED;
 

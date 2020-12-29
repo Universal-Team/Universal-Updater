@@ -33,32 +33,32 @@
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
-	{ 54, 32, 262, 22 },
-	{ 54, 62, 262, 22 },
-	{ 54, 92, 262, 22 },
-	{ 54, 122, 262, 22 },
-	{ 54, 152, 262, 22 },
-	{ 54, 182, 262, 22 },
-	{ 54, 212, 262, 22 }
+	{ 46, 32, 270, 22 },
+	{ 46, 62, 270, 22 },
+	{ 46, 92, 270, 22 },
+	{ 46, 122, 270, 22 },
+	{ 46, 152, 270, 22 },
+	{ 46, 182, 270, 22 },
+	{ 46, 212, 270, 22 }
 };
 
 static const std::vector<Structs::ButtonPos> langButtons = {
-	{ 10, 34, 300, 22 },
-	{ 10, 64, 300, 22 },
-	{ 10, 94, 300, 22 },
-	{ 10, 124, 300, 22 },
-	{ 10, 154, 300, 22 },
-	{ 10, 184, 300, 22 },
+	{ 46, 32, 270, 22 },
+	{ 46, 62, 270, 22 },
+	{ 46, 92, 270, 22 },
+	{ 46, 122, 270, 22 },
+	{ 46, 152, 270, 22 },
+	{ 46, 182, 270, 22 },
 
-	{ 52, 220, 16, 16 } // Add Font.
+	{ 44, 220, 16, 16 } // Add Font.
 };
 
 static const std::vector<Structs::ButtonPos> toggleAbles = {
-	{ 288, 64, 24, 24 },
-	{ 288, 140, 24, 24 }
+	{ 280, 64, 24, 24 },
+	{ 280, 140, 24, 24 }
 };
 
-static const Structs::ButtonPos back = { 52, 0, 24, 24 }; // Back arrow for directory.
+static const Structs::ButtonPos back = { 44, 0, 24, 24 }; // Back arrow for directory.
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
@@ -76,13 +76,13 @@ static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu
 	int selection: The Settings Selection.
 */
 static void DrawSettingsMain(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 265, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 273, 0, font);
 
 	for (int i = 0; i < 7; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255, 0, font);
+		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255, 0, font);
 	}
 }
 
@@ -93,15 +93,15 @@ static void DrawSettingsMain(int selection) {
 	int sPos: The Screen Position.
 */
 static void DrawLanguageSettings(int selection, int sPos) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 	GFX::DrawSprite(sprites_add_font_idx, langButtons[6].x, langButtons[6].y);
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 240, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 248, 0, font);
 
 	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
-		if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280, 0, font);
+		if (sPos + i == selection) GFX::DrawBox(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, false);
+		Gui::DrawStringCentered(22, langButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280, 0, font);
 	}
 }
 
@@ -111,14 +111,14 @@ static void DrawLanguageSettings(int selection, int sPos) {
 	int selection: The Settings Selection.
 */
 static void DrawSettingsDir(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
 
 	for (int i = 0; i < 4; i++) {
 		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(30, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255, 0, font);
+		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255, 0, font);
 	}
 }
 
@@ -126,22 +126,22 @@ static void DrawSettingsDir(int selection) {
 	Draw Auto-Update Settings page.
 */
 static void DrawAutoUpdate(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
 	/* Toggle Boxes. */
-	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
-	GFX::DrawToggle(288, 64, config->autoupdate());
-	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+	Gui::DrawString(47, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
+	GFX::DrawToggle(280, 64, config->autoupdate());
+	Gui::DrawString(47, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(48, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
-	GFX::DrawToggle(288, 140, config->updatecheck());
-	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+	Gui::DrawString(47, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
+	GFX::DrawToggle(280, 140, config->updatecheck());
+	Gui::DrawString(47, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 /*
@@ -150,21 +150,21 @@ static void DrawAutoUpdate(int selection) {
 	int selection: The Settings Selection.
 */
 static void DrawGUISettings(int selection) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(32, 2, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 248, 0, font);
 
-	Gui::Draw_Rect(48, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210, 0, font);
-	GFX::DrawToggle(288, 64, config->usebg());
-	Gui::DrawString(55, 95, 0.4f, TEXT_COLOR, Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+	Gui::DrawString(47, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210, 0, font);
+	GFX::DrawToggle(280, 64, config->usebg());
+	Gui::DrawString(47, 95, 0.4f, TEXT_COLOR, Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(48, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(55, 144, 0.5f, TEXT_COLOR, Lang::get("CUSTOM_FONT"), 210, 0, font);
-	GFX::DrawToggle(288, 140, config->customfont());
-	Gui::DrawString(55, 171, 0.4f, TEXT_COLOR, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
+	Gui::DrawString(47, 144, 0.5f, TEXT_COLOR, Lang::get("CUSTOM_FONT"), 210, 0, font);
+	GFX::DrawToggle(280, 140, config->customfont());
+	Gui::DrawString(47, 171, 0.4f, TEXT_COLOR, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 

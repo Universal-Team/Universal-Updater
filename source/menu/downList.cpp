@@ -25,6 +25,7 @@
 */
 
 #include "keyboard.hpp"
+#include "queueSystem.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
@@ -35,15 +36,15 @@ extern std::string _3dsxPath;
 extern bool is3DSX;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
-	{ 54, 32, 262, 22 },
-	{ 54, 62, 262, 22 },
-	{ 54, 92, 262, 22 },
-	{ 54, 122, 262, 22 },
-	{ 54, 152, 262, 22 },
-	{ 54, 182, 262, 22 },
-	{ 54, 212, 262, 22 },
+	{ 46, 32, 270, 22 },
+	{ 46, 62, 270, 22 },
+	{ 46, 92, 270, 22 },
+	{ 46, 122, 270, 22 },
+	{ 46, 152, 270, 22 },
+	{ 46, 182, 270, 22 },
+	{ 46, 212, 270, 22 },
 
-	{ 50, 216, 24, 24 }
+	{ 42, 216, 24, 24 }
 };
 
 /*
@@ -117,23 +118,51 @@ void StoreUtils::DrawDownList(const std::unique_ptr<Store> &store, const std::ve
 	}
 
 	GFX::DrawBottom();
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 265, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
 
 	if (store && store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
 				if (store->GetDownloadIndex() == i + store->GetDownloadSIndex()) GFX::DrawBox(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, false);
-				Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 260, 0, font);
+				Gui::DrawStringCentered(46 - 160 + (270 / 2), downloadBoxes[i].y + 4, 0.45f, TEXT_COLOR, entries[(i + store->GetDownloadSIndex())], 268, 0, font);
 			}
 
 			if (is3DSX) GFX::DrawSprite(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y);
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(54 - 160 + (262 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 255, 0, font);
+			Gui::DrawStringCentered(46 - 160 + (270 / 2), downloadBoxes[0].y + 4, 0.5f, TEXT_COLOR, Lang::get("NO_DOWNLOADS_AVAILABLE"), 263, 0, font);
 		}
 	}
+}
+
+/*
+	Adding to Queue.. with checks!
+*/
+void AddToQueue(int index, const std::string &entry, const std::unique_ptr<Store> &store) {
+	if (!store) return;
+	/* Check first for proper JSON. */
+	if (!store->GetJson().contains("storeContent")) return;
+	if ((int)store->GetJson()["storeContent"].size() < index) return;
+	if (!store->GetJson()["storeContent"][index].contains(entry)) return;
+
+	nlohmann::json Script = nullptr;
+
+	/* Detect if array or new object thing. Else return Syntax error. :P */
+	if (store->GetJson()["storeContent"][index][entry].type() == nlohmann::json::value_t::array) {
+		Script = store->GetJson()["storeContent"][index][entry];
+
+	} else if (store->GetJson()["storeContent"][index][entry].type() == nlohmann::json::value_t::object) {
+		if (store->GetJson()["storeContent"][index][entry].contains("script") && store->GetJson()["storeContent"][index][entry]["script"].is_array()) {
+			Script = store->GetJson()["storeContent"][index][entry]["script"];
+
+		} else {
+			return;
+		}
+	}
+
+	QueueSystem::AddToQueue(Script, store->GetIconEntry(index), entry); // Here we add this to the Queue at the end.
 }
 
 /*
@@ -206,9 +235,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + store->GetDownloadSIndex() < (int)entries.size()) {
 						if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + store->GetDownloadSIndex()])) {
-							ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[i + store->GetDownloadSIndex()]);
-							if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
-							entry->SetUpdateAvl(false);
+							AddToQueue(entry->GetEntryIndex(), entries[i + store->GetDownloadSIndex()], store);
 						}
 					}
 				}
@@ -219,9 +246,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
 
 			if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[store->GetDownloadIndex()])) {
-				ScriptUtils::runFunctions(store->GetJson(), entry->GetEntryIndex(), entries[store->GetDownloadIndex()]);
-				if (meta) meta->SetUpdated(store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
-				entry->SetUpdateAvl(false);
+				AddToQueue(entry->GetEntryIndex(), entries[store->GetDownloadIndex()], store);
 			}
 		}
 

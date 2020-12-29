@@ -59,6 +59,10 @@ namespace StoreUtils {
 	void DrawDownList(const std::unique_ptr<Store> &store, const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes);
 	void DownloadHandle(const std::unique_ptr<Store> &store, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, std::unique_ptr<Meta> &meta, const int &lastMode, int &smallDelay);
 
+	/* Queue System. */
+	void DrawQueueMenu(const int queueIndex);
+	void QueueMenuHandle(int &queueIndex);
+
 	/* Search + Favorite Menu. */
 	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter);
 	void SearchHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::vector<bool> &searchIncludes, std::unique_ptr<Meta> &meta, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype);

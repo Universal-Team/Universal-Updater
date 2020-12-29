@@ -107,13 +107,13 @@ MainScreen::MainScreen() {
 	MainScreen Main Draw.
 */
 void MainScreen::Draw(void) const {
-	if (this->storeMode == 5) {
+	if (this->storeMode == 6) {
 		/* Screenshot Menu. */
 		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom, this->canDisplay);
 		return;
 	}
 
-	if (this->storeMode == 6) {
+	if (this->storeMode == 7) {
 		/* Release Notes. */
 		StoreUtils::DrawReleaseNotes(this->scrollIndex, this->entries[this->store->GetEntry()], this->store);
 		GFX::DrawBottom();
@@ -143,16 +143,20 @@ void MainScreen::Draw(void) const {
 				break;
 
 			case 2:
+				StoreUtils::DrawQueueMenu(this->queueIndex);
+				break;
+
+			case 3:
 				/* Search + Favorites. */
 				StoreUtils::DrawSearchMenu(this->searchIncludes, this->searchResult, this->marks, this->updateFilter);
 				break;
 
-			case 3:
+			case 4:
 				/* Sorting. */
 				StoreUtils::DrawSorting(this->ascending, this->sorttype);
 				break;
 
-			case 4:
+			case 5:
 				/* Settings. */
 				StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
 				break;
@@ -169,7 +173,7 @@ void MainScreen::Draw(void) const {
 */
 void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	/* Screenshots Menu. */
-	if (this->storeMode == 5) {
+	if (this->storeMode == 6) {
 		if (this->screenshotFetch) {
 			/* Delete Texture first. */
 			if (this->Screenshot.tex) {
@@ -203,7 +207,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	/* Release Notes. */
-	if (this->storeMode == 6) {
+	if (this->storeMode == 7) {
 		StoreUtils::ReleaseNotesLogic(this->scrollIndex, this->storeMode);
 		return;
 	}
@@ -212,7 +216,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (this->showMarks) StoreUtils::MarkHandle(this->entries[this->store->GetEntry()], this->store, this->showMarks, this->meta);
 
 	if (!this->showMarks) {
-		if (this->storeMode == 0 || this->storeMode == 2 || this->storeMode == 3) {
+		if (this->storeMode == 0 || this->storeMode == 3 || this->storeMode == 4) {
 			config->list() ? StoreUtils::ListLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(this->store, this->entries, this->storeMode, this->lastMode, this->fetchDown, this->smallDelay);
 		}
 
@@ -246,14 +250,18 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 2:
-				StoreUtils::SearchHandle(this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks, this->updateFilter, this->ascending, this->sorttype);
+				StoreUtils::QueueMenuHandle(this->queueIndex);
 				break;
 
 			case 3:
-				StoreUtils::SortHandle(this->store, this->entries, this->ascending, this->sorttype);
+				StoreUtils::SearchHandle(this->store, this->entries, this->searchIncludes, this->meta, this->searchResult, this->marks, this->updateFilter, this->ascending, this->sorttype);
 				break;
 
 			case 4:
+				StoreUtils::SortHandle(this->store, this->entries, this->ascending, this->sorttype);
+				break;
+
+			case 5:
 				StoreUtils::SettingsHandle(this->sPage, this->showSettings, this->storeMode, this->sSelection, this->store, this->entries, this->meta, this->sPos);
 				break;
 		}

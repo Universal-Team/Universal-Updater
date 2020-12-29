@@ -128,3 +128,14 @@ void Animation::displayProgressBar() {
 		C3D_FrameEnd(0);
 	}
 }
+
+static int frame = 0; // 0 - 7.
+extern bool QueueRuns;
+
+void Animation::DrawQueue(int x, int y) { GFX::DrawSprite(sprites_queue0_idx + frame, x, y); };
+void Animation::QueueAnimHandle() {
+	if (QueueRuns) {
+		if (frame < 7) frame++;
+		else frame = 0;
+	}
+}

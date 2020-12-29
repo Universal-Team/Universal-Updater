@@ -78,8 +78,8 @@ endif
 TARGET		:=	Universal-Updater
 BUILD		:=	build
 UNIVCORE	:= 	Universal-Core
-SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/overlays source/qr source/screens \
-							source/store source/utils
+SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/menu source/overlays \
+							source/qr source/screens source/store source/utils
 DATA		:=	data
 INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/qr include/screens \
 							include/store include/utils

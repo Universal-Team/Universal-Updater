@@ -24,25 +24,43 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_ANIMATION_HPP
-#define _UNIVERSAL_UPDATER_ANIMATION_HPP
+#ifndef _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
+#define _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 
-#include <3ds.h>
-#include <string>
+#include "json.hpp"
+#include <citro2d.h>
+#include <deque>
+#include <memory>
 
-enum class ProgressBar {
+/*
+	Extend this, if more statuses are neccessary.
+*/
+enum class QueueStatus {
+	None,
 	Downloading,
 	Extracting,
 	Installing,
-	Copying
+	Failed,
+	Done
 };
 
-namespace Animation {
-	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
-	void displayProgressBar();
+class Queue {
+public:
+	Queue(nlohmann::json object, C2D_Image img, std::string name) : obj(object), icn(img), name(name) { };
+	QueueStatus status = QueueStatus::None;
+	nlohmann::json obj;
+	C2D_Image icn;
+	int total, current;
+	std::string name = "";
+};
 
-	void DrawQueue(int x, int y);
-	void QueueAnimHandle();
+/*
+	Of course also a namespace to that part, so we can do that in a Thread.
+*/
+namespace QueueSystem {
+	void QueueHandle(); // Handles the Queue.
+	void AddToQueue(nlohmann::json obj, C2D_Image icn, std::string name); // Adds to Queue.
+	void ClearQueue(); // Clears the Queue.
 };
 
 #endif

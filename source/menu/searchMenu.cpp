@@ -30,7 +30,7 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> SearchMenu = {
-	{ 55, 45, 258, 30 }, // Search bar.
+	{ 51, 45, 262, 30 }, // Search bar.
 
 	/* Includes. */
 	{ 85, 109, 50, 10 },
@@ -56,14 +56,14 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 	bool updateFilter: The update filter.
 */
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter) {
-	Gui::Draw_Rect(48, 0, 272, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(48, 25, 272, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(25, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 265, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
+	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::DrawStringCentered(21, 2, 0.6, TEXT_COLOR, Lang::get("SEARCH_FILTERS"), 269, 0, font);
 
-	Gui::Draw_Rect(54, 44, 260, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(50, 44, 264, SearchMenu[0].h + 2, SEARCH_BAR_OUTL_COLOR);
 	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, SEARCH_BAR_COLOR);
 
-	Gui::DrawStringCentered(28, 50, 0.6, TEXT_COLOR, searchResult, 265, 0, font);
+	Gui::DrawStringCentered(24, 50, 0.6, TEXT_COLOR, searchResult, 265, 0, font);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
