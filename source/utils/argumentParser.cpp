@@ -37,7 +37,7 @@
 	int dlIndex: The Download index.
 */
 ArgumentParser::ArgumentParser(const std::string &file, const std::string &entry, int dlIndex) {
-	if (dlIndex != -1 || file != "") {
+	if (dlIndex != -1 && file != "") {
 		this->file = file;
 		this->entry = entry;
 		this->dlIndex = dlIndex;

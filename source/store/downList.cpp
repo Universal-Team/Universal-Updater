@@ -54,9 +54,9 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	const std::string &unistoreName: The name of the UniStore filename.
 	const std::string &author: The author of the app.
 */
-static void CreateShortcut(const std::string &entryName, int index, const std::string &unistoreName, const std::string &author) {
+static bool CreateShortcut(const std::string &entryName, int index, const std::string &unistoreName, const std::string &author) {
 	std::string sName = Input::setkbdString(30, Lang::get("ENTER_SHORTCUT_FILENAME"), {});
-	if (sName == "") sName = "tmp";
+	if (sName == "") return false; // Just cancel.
 	std::ofstream out(config->shortcut() + "/" + sName + ".xml", std::ios::binary);
 
 	out << "<shortcut>" << std::endl;
@@ -82,6 +82,7 @@ static void CreateShortcut(const std::string &entryName, int index, const std::s
 	out << "	<author>" << author << "</author>" << std::endl;
 	out << "</shortcut>" << std::endl;
 	out.close();
+	return true;
 }
 
 
@@ -162,8 +163,9 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<Store> &store, const std::
 				if (entries.size() <= 0) return; // Smaller than 0 -> No No.
 
 				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"))) {
-					CreateShortcut(entry->GetTitle(), store->GetDownloadIndex(), store->GetFileName(), entry->GetAuthor());
-					Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
+					if (CreateShortcut(entry->GetTitle(), store->GetDownloadIndex(), store->GetFileName(), entry->GetAuthor())) {
+						Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
+					}
 				}
 			}
 		}

@@ -162,16 +162,7 @@ void QRCode::drawThread() {
 			if (this->stores.size() > 0) {
 				Gui::DrawStringCentered(0, 30, 0.7f, TEXT_COLOR, this->stores[this->selectedStore].Title, 390, 0, font);
 				Gui::DrawStringCentered(0, 50, 0.6f, TEXT_COLOR, this->stores[this->selectedStore].Author, 380, 0, font);
-
-				if (this->stores[this->selectedStore].Description != "") {
-					/* "\n\n" breaks C2D_WordWrap, so check here. */
-					if (!(this->stores[this->selectedStore].Description.find("\n\n") != std::string::npos)) {
-						Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
-
-					} else {
-						Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font);
-					}
-				}
+				Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
 			}
 
 			GFX::DrawBottom();

@@ -88,7 +88,7 @@ void StoreUtils::MarkHandle(std::unique_ptr<StoreEntry> &entry, const std::uniqu
 	touchPosition t;
 	hidTouchRead(&t);
 
-	if (meta && entry) {
+	if (meta && entry && store) {
 		if (hidKeysDown() & KEY_TOUCH) {
 			/* Star. */
 			if (touching(t, markBox[0])) {

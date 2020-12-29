@@ -240,16 +240,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 			if (info[selection].StoreSize != -1) {
 				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390, 0, font);
 				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380, 0, font);
-
-				if (info[selection].Description != "") {
-					/* "\n\n" breaks C2D_WordWrap, so check here. */
-					if (!(info[selection].Description.find("\n\n") != std::string::npos)) {
-						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font, C2D_WordWrap);
-
-					} else {
-						Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font);
-					}
-				}
+				Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font, C2D_WordWrap);
 
 			} else {
 				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 390, 0, font);

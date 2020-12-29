@@ -66,4 +66,5 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 
 	this->Screenshots = store->GetScreenshotList(index);
 	this->ScreenshotNames = store->GetScreenshotNames(index);
+	this->ReleaseNotes = store->GetReleaseNotes(index);
 }

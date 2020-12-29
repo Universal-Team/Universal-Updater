@@ -752,20 +752,20 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 /*
 	Checks for U-U updates.
 */
-bool IsUUUpdateAvailable() {
-	if (!checkWifiStatus()) return false;
+UUUpdate IsUUUpdateAvailable() {
+	if (!checkWifiStatus()) return { false, "", "" };
 
 	Msg::DisplayMsg(Lang::get("CHECK_UU_UPDATES"));
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf) return false;
+	if (!socubuf) return { false, "", "" };
 
 	ret = socInit((u32 *)socubuf, 0x100000);
 
 	if (R_FAILED(ret)) {
 		free(socubuf);
-		return false;
+		return { false, "", "" };
 	}
 
 	CURL *hnd = curl_easy_init();
@@ -778,7 +778,7 @@ bool IsUUUpdateAvailable() {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return false;
+		return { false, "", "" };
 	}
 
 	CURLcode cres = curl_easy_perform(hnd);
@@ -795,14 +795,15 @@ bool IsUUUpdateAvailable() {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return false;
+		return { false, "", "" };
 	}
 
 	if (nlohmann::json::accept(result_buf)) {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
 		if (parsedAPI.contains("tag_name") && parsedAPI["tag_name"].is_string()) {
-			const std::string tag = parsedAPI["tag_name"];
+			UUUpdate update = { false, "", "" };
+			update.Version = parsedAPI["tag_name"];
 
 			socExit();
 			free(result_buf);
@@ -811,7 +812,10 @@ bool IsUUUpdateAvailable() {
 			result_sz = 0;
 			result_written = 0;
 
-			return strcasecmp(StringUtils::lower_case(tag).c_str(), StringUtils::lower_case(C_V).c_str()) > 0;
+			if (parsedAPI["body"].is_string()) update.Notes = parsedAPI["body"];
+			update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
+			update.Available = strcasecmp(StringUtils::lower_case(update.Version).c_str(), StringUtils::lower_case(C_V).c_str()) > 0;
+			return update;
 		}
 	}
 
@@ -822,7 +826,7 @@ bool IsUUUpdateAvailable() {
 	result_sz = 0;
 	result_written = 0;
 
-	return false;
+	return { false, "", "" };
 }
 
 extern bool is3DSX, exiting;
@@ -832,20 +836,64 @@ extern std::string _3dsxPath;
 	Execute U-U update action.
 */
 void UpdateAction() {
-	if (ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
-	(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"),
-	false, Lang::get("DONLOADING_UNIVERSAL_UPDATER")) == 0) {
+	UUUpdate res = IsUUUpdateAvailable();
+	if (res.Available) {
+		bool confirmed = false;
+		int scrollIndex = 0;
 
-		if (is3DSX) {
-			Msg::waitMsg(Lang::get("UPDATE_DONE"));
-			exiting = true;
-			return;
+		while(!confirmed) {
+			Gui::clearTextBufs();
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+			C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+
+			Gui::ScreenDraw(Top);
+			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+			Gui::DrawString(5, 25 - scrollIndex, 0.5f, TEXT_COLOR, res.Notes, 390, 0, font, C2D_WordWrap);
+			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
+			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
+			Gui::DrawStringCentered(0, 217, 0.7f, TEXT_COLOR, res.Version, 390, 0, font);
+
+			GFX::DrawBottom();
+			Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
+			Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTL_COLOR);
+			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
+			C3D_FrameEnd(0);
+
+			hidScanInput();
+			touchPosition t;
+			touchRead(&t);
+			u32 repeat = hidKeysDownRepeat();
+			u32 down = hidKeysDown();
+
+			/* Scroll Logic. */
+			if (repeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
+
+			if (repeat & KEY_UP) {
+				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
+			}
+
+			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
 		}
 
-		ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"));
-		ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"));
-		Msg::waitMsg(Lang::get("UPDATE_DONE"));
-		exiting = true;
+		if (ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
+		(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"),
+		false, Lang::get("DONLOADING_UNIVERSAL_UPDATER")) == 0) {
+
+			if (is3DSX) {
+				Msg::waitMsg(Lang::get("UPDATE_DONE"));
+				exiting = true;
+				return;
+			}
+
+			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"));
+			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"));
+			Msg::waitMsg(Lang::get("UPDATE_DONE"));
+			exiting = true;
+		}
 	}
 }
 
@@ -987,4 +1035,79 @@ C2D_Image FetchScreenshot(const std::string &URL) {
 	result_written = 0;
 
 	return img;
+}
+
+/*
+	Return the release changelog.
+*/
+std::string GetChangelog() {
+	if (!checkWifiStatus()) return "";
+
+	Result ret = 0;
+
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return "";
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return "";
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
+	if (ret != 0) {
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return "";
+	}
+
+	CURLcode cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	char *newbuf = (char *)realloc(result_buf, result_written + 1);
+	result_buf = newbuf;
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+
+	if (cres != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
+		return "";
+	}
+
+	if (nlohmann::json::accept(result_buf)) {
+		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+
+		if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
+			socExit();
+			free(result_buf);
+			free(socubuf);
+			result_buf = nullptr;
+			result_sz = 0;
+			result_written = 0;
+
+			std::string notes = parsedAPI["body"];
+			notes.erase(remove(notes.begin(), notes.end(), '\r'), notes.end()); // Remove the CRLF \r's.
+			return notes;
+		}
+	}
+
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return "";
 }
