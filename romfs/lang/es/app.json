@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "¿Quieres crear un acceso directo?",
 	"CREDITS": "Agradecimientos",
 	"CURRENT_VERSION": "Versión Actual: ",
-	"CURRENTLY_EXTRACTING": "Extracción actual:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Usar fuente personalizada",
 	"CUSTOM_FONT_DESC": "Si se activa, la fuente 'sdmc:/3ds/Universal-Updater/font.bcfnt' será empleada en lugar de la del sistema (si es encontrada).",
 	"DELETE_ERROR": "¡Eliminar error!",
