@@ -109,7 +109,8 @@ void Animation::displayProgressBar() {
 			case ProgressBar::Extracting:
 				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 390, 0, font);
 				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
-				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 390, 0, font);
+				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING"), 390, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.6f, TEXT_COLOR, extractingFile, 390, 0, font);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;
 
