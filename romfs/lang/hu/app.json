@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Szeretnél létrehozni egy parancsikont?",
 	"CREDITS": "Készítők",
 	"CURRENT_VERSION": "Aktuális verzió: ",
-	"CURRENTLY_EXTRACTING": "Épp kicsomagolás alatt:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Egyéni karakterkészlet használat",
 	"CUSTOM_FONT_DESC": "Ha engedélyezett, akkor az 'sdmc:/3ds/Universal-Updater/font.bcfnt' karakterkészlet kerül használatra a rendszer karakterkészlet helyett.",
 	"DELETE_ERROR": "Törlési hiba!",
