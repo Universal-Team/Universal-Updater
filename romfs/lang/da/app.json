@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Vil du oprette en genvej?",
 	"CREDITS": "Medvirkende",
 	"CURRENT_VERSION": "Nuværende version: ",
-	"CURRENTLY_EXTRACTING": "Udpakker i øjeblikket:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Brug brugerdefineret skrifttype",
 	"CUSTOM_FONT_DESC": "If enabled, 'sdmc:/3ds/Universal-Updater/font.bcfnt' will be used instead of the system font, if found.",
 	"DELETE_ERROR": "Sletnings Fejl!",
