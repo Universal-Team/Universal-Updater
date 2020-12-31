@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Voulez-vous créer un raccourci ?",
 	"CREDITS": "Crédits",
 	"CURRENT_VERSION": "Version actuelle: ",
-	"CURRENTLY_EXTRACTING": "Extraction de:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Utiliser une police personnalisée",
 	"CUSTOM_FONT_DESC": "Si activé, 'sdmc:/3ds/Universal-Updater/font.bcfnt' sera utilisé à la place de la police système, si le fichier existe.",
 	"DELETE_ERROR": "Erreur d'effacement!",
