@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "ショートカットを作成しますか？",
 	"CREDITS": "クレジット",
 	"CURRENT_VERSION": "現在のバージョン: ",
-	"CURRENTLY_EXTRACTING": "現在展開中:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "カスタムフォントを使用",
 	"CUSTOM_FONT_DESC": "有効にすると、システムフォントの代わりに「sdmc:/3ds/Universal-Updater/font.bcfnt」が見つかった場合には使用されます。",
 	"DELETE_ERROR": "削除エラー！",
