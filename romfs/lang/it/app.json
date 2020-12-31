@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Vuoi creare una scorciatoia?",
 	"CREDITS": "Riconoscimenti",
 	"CURRENT_VERSION": "Versione corrente: ",
-	"CURRENTLY_EXTRACTING": "Estrazione attuale:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Usa Carattere Personalizzato",
 	"CUSTOM_FONT_DESC": "Se abilitato, verrà usato 'sdmc:/3ds/Universal-Updater/font.bcfnt' invece del carattere di sistema, se trovato.",
 	"DELETE_ERROR": "Errore di Eliminazione!",
