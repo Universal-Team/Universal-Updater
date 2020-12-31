@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Você quer criar um atalho?",
 	"CREDITS": "Créditos",
 	"CURRENT_VERSION": "Versão instalada: ",
-	"CURRENTLY_EXTRACTING": "Extraindo agora:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Usar fonte customizada",
 	"CUSTOM_FONT_DESC": "Se ativado, a fonte em 'sdmc:/3ds/Universal-Updater/font.bcfnt' será usada no lugar da fonte padrão do sistema – caso a mesma seja encontrada.",
 	"DELETE_ERROR": "Erro ao deletar!",
