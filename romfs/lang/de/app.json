@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Möchtest du eine Verknüpfung erstellen?",
 	"CREDITS": "Credits",
 	"CURRENT_VERSION": "Aktuelle Version: ",
-	"CURRENTLY_EXTRACTING": "Momentan extrahieren:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Benutzerdefinierte Schriftart verwenden",
 	"CUSTOM_FONT_DESC": "Falls aktiviert, wird, falls gefunden, 'sdmc:/3ds/Universal-Updater/font.bcfnt' anstelle der Systemschriftart verwendet.",
 	"DELETE_ERROR": "Fehler beim Löschen!",
