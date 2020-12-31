@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Створити скорочення?",
 	"CREDITS": "Співавтори",
 	"CURRENT_VERSION": "Поточна версія: ",
-	"CURRENTLY_EXTRACTING": "Розпаковується:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Використовувати інший шрифт",
 	"CUSTOM_FONT_DESC": "Якщо увімкнено, то замість системного шрифту буде використано 'sdmc:/3ds/Universal-Updater/font.bcfnt' (якщо він присутній).",
 	"DELETE_ERROR": "Помилка при видаленні!",
