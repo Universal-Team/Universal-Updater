@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Would you like to create a shortcut?",
 	"CREDITS": "Благодарность",
 	"CURRENT_VERSION": "Текущая версия: ",
-	"CURRENTLY_EXTRACTING": "Currently extracting:",
+	"CURRENTLY_EXTRACTING": "Извлекается:",
 	"CUSTOM_FONT": "Использовать другой шрифт",
 	"CUSTOM_FONT_DESC": "Если включено, то вместо системного шрифта будет использоваться 'sdmc:/3ds/Universal-Updater/font.bcfnt'.",
 	"DELETE_ERROR": "Ошибка удаления!",
