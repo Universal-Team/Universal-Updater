@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Would you like to create a shortcut?",
 	"CREDITS": "Credits",
 	"CURRENT_VERSION": "Current version: ",
-	"CURRENTLY_EXTRACTING": "Currently extracting:\n",
+	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Use Custom Font",
 	"CUSTOM_FONT_DESC": "If enabled, 'sdmc:/3ds/Universal-Updater/font.bcfnt' will be used instead of the system font, if found.",
 	"DELETE_ERROR": "Delete Error!",

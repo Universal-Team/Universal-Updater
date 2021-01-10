@@ -13,20 +13,24 @@
 	<a title="Crowdin" target="_blank" href="https://crowdin.com/project/universal-updater"><img src="https://badges.crowdin.net/universal-updater/localized.svg" alt="Translation status on Crowdin"></a>
 </p>
 
-Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as we do that for you.
+Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as it does that all for you.
 
 ## Features
 
 - A store format with a concept similar to the Cydia Repositories
-   - Default is [Universal-DB](https://db.universal-team.net)
-   - Want to add your own? Go to settings, find "Select Unistore", hit the + icon and type the URL or hit the QR button and scan the QR code (if they have one)
+   - The default is [Universal-DB](https://db.universal-team.net)
+   - Want to add more? Go to settings, choose "Select Unistore", click the + icon and select one from the list, enter a URL, or scan a QR code
 - Customization in sorting and display
-   - All sorting keys: "Title", "Author" & "Last Updated"
-   - Direction could be Ascending or Descending
-   - App display could be shown in either a Grid or Rows
-- Translations for multi-lingual users
-   - To contribute to translations, join our [Crowdin](https://crwd.in/universal-updater)
-   - Request a new language on our [Discord Server](https://discord.gg/KDJCfGF)
+   - Several sorting keys: "Title", "Author", and "Last Updated"
+   - Direction can be Ascending or Descending
+   - App display can be shown in either a grid or rows
+- Searching and markings to make finding apps easy
+- View screenshots and release notes before downloading
+- Shortcuts for easily updating frequently updated apps when using the Homebrew Launcher
+- Translations for users of many languages
+   - To contribute to translations, join our [Crowdin project](https://crwd.in/universal-updater)
+   - Request new languages on our [Discord server](https://universal-team.net/discord)
+
 
 ## Compilation
 ### Setting up your enviromment
