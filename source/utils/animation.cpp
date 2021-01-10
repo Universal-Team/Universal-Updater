@@ -130,12 +130,13 @@ void Animation::displayProgressBar() {
 }
 
 static int frame = 0; // 0 - 7.
+static int advanceFrame = 0; // Only animate every 4 frames.
 extern bool QueueRuns;
 
 void Animation::DrawQueue(int x, int y) { GFX::DrawSprite(sprites_queue0_idx + frame, x, y); };
 void Animation::QueueAnimHandle() {
 	if (QueueRuns) {
-		if (frame < 7) frame++;
-		else frame = 0;
+		advanceFrame = (advanceFrame + 1) % 4;
+		if (advanceFrame == 0) frame = (frame + 1) % 8;
 	}
 }
