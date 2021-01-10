@@ -61,6 +61,8 @@ namespace QueueSystem {
 	void QueueHandle(); // Handles the Queue.
 	void AddToQueue(nlohmann::json obj, C2D_Image icn, std::string name); // Adds to Queue.
 	void ClearQueue(); // Clears the Queue.
+
+	extern LightLock lock;
 };
 
 #endif

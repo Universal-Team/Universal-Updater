@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "init.hpp"
 #include "mainScreen.hpp"
+#include "queueSystem.hpp"
 #include "sound.hpp"
 
 #include <dirent.h>
@@ -150,6 +151,10 @@ Result Init::Initialize() {
 
 	Gui::setScreen(std::make_unique<MainScreen>(), false, false);
 	InitMusic();
+
+	/* Initialize Queue System LightLock. */
+	LightLock_Init(&QueueSystem::lock);
+
 	return 0;
 }
 

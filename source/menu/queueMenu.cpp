@@ -118,12 +118,16 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
 	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, "Queue System", 273, 0, font);
 
+	LightLock_Lock(&QueueSystem::lock);
+
 	if (!queueEntries.empty()) {
 		GFX::DrawBox(QueueBoxes[0].x, QueueBoxes[0].y, QueueBoxes[0].w, QueueBoxes[0].h, false);
 
 		C2D_DrawImageAt(queueEntries[0]->icn, QueueBoxes[0].x + 5, QueueBoxes[0].y + 21, 0.5f);
 		DrawStatus(queueEntries[0]->status);
 	}
+
+	LightLock_Unlock(&QueueSystem::lock);
 }
 
 void StoreUtils::QueueMenuHandle(int &queueIndex) {
