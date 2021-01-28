@@ -61,7 +61,17 @@ void Config::sysLang() {
 		case 5:
 			this->language("es");
 			break;
-
+		
+		/*	
+		case 6:
+			this->language("sc"); //simplified chinese
+			break;
+		
+		case 7:
+			this->language("kr") //korean
+			break;
+		*/
+		
 		case 8:
 			this->language("nl");
 			break;
@@ -71,8 +81,14 @@ void Config::sysLang() {
 			break;
 
 		case 10:
-			this->language("ru");
+			this->language("ru"); 
 			break;
+		
+		/*
+		case 11:
+			this->language("tc") //traditional chinese
+			break;
+		*/
 			
 		default:
 			this->language("en"); //for Simplified chinese (6), korean (7) and traditional chinese (11), which are not translated. also in case something goes wrong
