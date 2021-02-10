@@ -25,7 +25,7 @@
 	"CREATE_SHORTCUT": "Czy chcesz teraz stworzyć skrót?",
 	"CREDITS": "Współautorzy",
 	"CURRENT_VERSION": "Bieżąca wersja:",
-	"CURRENTLY_EXTRACTING": "Currently extracting:",
+	"CURRENTLY_EXTRACTING": "Obecnie wyodrębnianie:",
 	"CUSTOM_FONT": "Użyj niestandardowej czcionki",
 	"CUSTOM_FONT_DESC": "Jeśli włączone, zamiast czcionki systemowej zostaną użyte 'sdmc:/3ds/Universal-Updater/font.bcfnt', jeśli jest obecny.",
 	"DELETE_ERROR": "Błąd usuwania!",
