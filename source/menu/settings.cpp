@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,13 +24,14 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "common.hpp"
 #include "init.hpp"
 #include "overlay.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
 #include <unistd.h>
 
-extern bool exiting;
+extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 46, 32, 270, 22 },
@@ -54,15 +55,16 @@ static const std::vector<Structs::ButtonPos> langButtons = {
 };
 
 static const std::vector<Structs::ButtonPos> toggleAbles = {
-	{ 280, 64, 24, 24 },
-	{ 280, 140, 24, 24 }
+	{ 280, 44, 24, 24 },
+	{ 280, 120, 24, 24 }
 };
 
 static const Structs::ButtonPos back = { 44, 0, 24, 24 }; // Back arrow for directory.
+static const Structs::ButtonPos Themes = { 40, 220, 273, 24 }; // Themes.
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
-static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH" };
+static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 //static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
@@ -70,19 +72,21 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE
 static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", "Magyar", "Polski", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
 static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu", "pl", "pt-BR", "ru", "uk", "jp"};
 
+static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT" };
+
 /*
 	Main Settings.
 
 	int selection: The Settings Selection.
 */
 static void DrawSettingsMain(int selection) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, Lang::get("SETTINGS"), 273, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
+	Gui::DrawStringCentered(17, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SETTINGS"), 273, 0, font);
 
 	for (int i = 0; i < 7; i++) {
-		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(mainStrings[i]), 255, 0, font);
+		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(mainStrings[i]), 255, 0, font);
 	}
 }
 
@@ -93,15 +97,15 @@ static void DrawSettingsMain(int selection) {
 	int sPos: The Screen Position.
 */
 static void DrawLanguageSettings(int selection, int sPos) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 	GFX::DrawSprite(sprites_add_font_idx, langButtons[6].x, langButtons[6].y);
-	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_LANG"), 248, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECT_LANG"), 248, 0, font);
 
 	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
-		if (sPos + i == selection) GFX::DrawBox(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, false);
-		Gui::DrawStringCentered(22, langButtons[i].y + 4, 0.45f, TEXT_COLOR, languages[sPos + i], 280, 0, font);
+		if (sPos + i == selection) Gui::Draw_Rect(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+		Gui::DrawStringCentered(22, langButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, languages[sPos + i], 280, 0, font);
 	}
 }
 
@@ -111,14 +115,14 @@ static void DrawLanguageSettings(int selection, int sPos) {
 	int selection: The Settings Selection.
 */
 static void DrawSettingsDir(int selection) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
 
-	for (int i = 0; i < 4; i++) {
-		if (i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, TEXT_COLOR, Lang::get(dirStrings[i]), 255, 0, font);
+	for (int i = 0; i < 5; i++) {
+		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(dirStrings[i]), 255, 0, font);
 	}
 }
 
@@ -126,22 +130,22 @@ static void DrawSettingsDir(int selection) {
 	Draw Auto-Update Settings page.
 */
 static void DrawAutoUpdate(int selection) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
 	/* Toggle Boxes. */
-	Gui::Draw_Rect(40, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(47, 68, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
-	GFX::DrawToggle(280, 64, config->autoupdate());
-	Gui::DrawString(47, 95, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 44, 273, 24, (selection == 0 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+	Gui::DrawString(47, 48, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
+	GFX::DrawToggle(280, 44, config->autoupdate());
+	Gui::DrawString(47, 75, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(40, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(47, 144, 0.5f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
-	GFX::DrawToggle(280, 140, config->updatecheck());
-	Gui::DrawString(47, 171, 0.4f, TEXT_COLOR, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 120, 273, 24, (selection == 1 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+	Gui::DrawString(47, 124, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
+	GFX::DrawToggle(280, 120, config->updatecheck());
+	Gui::DrawString(47, 151, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 /*
@@ -150,21 +154,24 @@ static void DrawAutoUpdate(int selection) {
 	int selection: The Settings Selection.
 */
 static void DrawGUISettings(int selection) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(24, 2, 0.6, TEXT_COLOR, Lang::get("GUI_SETTINGS"), 248, 0, font);
+	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("GUI_SETTINGS"), 248, 0, font);
 
-	Gui::Draw_Rect(40, 64, 273, 24, (selection == 0 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(47, 68, 0.5f, TEXT_COLOR, Lang::get("UNISTORE_BG"), 210, 0, font);
-	GFX::DrawToggle(280, 64, config->usebg());
-	Gui::DrawString(47, 95, 0.4f, TEXT_COLOR, Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 44, 273, 24, (selection == 0 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+	Gui::DrawString(47, 48, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("UNISTORE_BG"), 210, 0, font);
+	GFX::DrawToggle(280, 44, config->usebg());
+	Gui::DrawString(47, 75, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(40, 140, 273, 24, (selection == 1 ? SIDEBAR_UNSELECTED_COLOR : BOX_INSIDE_COLOR));
-	Gui::DrawString(47, 144, 0.5f, TEXT_COLOR, Lang::get("CUSTOM_FONT"), 210, 0, font);
-	GFX::DrawToggle(280, 140, config->customfont());
-	Gui::DrawString(47, 171, 0.4f, TEXT_COLOR, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 120, 273, 24, (selection == 1 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+	Gui::DrawString(47, 124, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CUSTOM_FONT"), 210, 0, font);
+	GFX::DrawToggle(280, 120, config->customfont());
+	Gui::DrawString(47, 151, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
+
+	Gui::Draw_Rect(40, 220, 273, 24, (selection == 2 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+	Gui::DrawString(47, 224, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("ACTIVE_THEME") + ": " + Lang::get(ThemeNames[GFX::SelectedTheme]), 210, 0, font);
 }
 
 
@@ -180,13 +187,10 @@ static void DrawGUISettings(int selection) {
 
 	int &page: Reference to the page.
 	bool &dspSettings: Reference to the display Settings.
-	int &storeMode: Reference to the Store Mode.
+	int &storeMode: Reference to the store Mode.
 	int &selection: Reference to the Selection.
-	std::unique_ptr<Store> &store: Reference to the Store class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
-	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
+static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int &selection) {
 	if (hDown & KEY_B) {
 		selection = 0;
 		storeMode = 0;
@@ -218,7 +222,12 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 			page = 4;
 
 		} else if (touching(touch, mainButtons[1])) {
-			Overlays::SelectStore(store, entries, meta);
+			if (QueueRuns) {
+				if (Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"))) Overlays::SelectStore();
+
+			} else {
+				Overlays::SelectStore();
+			}
 
 		} else if (touching(touch, mainButtons[2])) {
 			selection = 0;
@@ -236,7 +245,8 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 			Overlays::ShowCredits();
 
 		} else if (touching(touch, mainButtons[6])) {
-			exiting = true;
+			if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
+			else exiting = true;
 		}
 	}
 
@@ -248,7 +258,12 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 
 			case 1:
-				Overlays::SelectStore(store, entries, meta);
+				if (QueueRuns) {
+					if (Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"))) Overlays::SelectStore();
+
+				} else {
+					Overlays::SelectStore();
+				}
 				break;
 
 			case 2:
@@ -271,7 +286,8 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 
 			case 6:
-				exiting = true;
+				if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
+				else exiting = true;
 				break;
 		}
 	}
@@ -287,14 +303,14 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<Store> &store) {
+static void SettingsHandleDir(int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 4;
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 3) selection++;
+		if (selection < 4) selection++;
 		else selection = 0;
 	}
 
@@ -319,20 +335,24 @@ static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<S
 			selection = 4;
 
 		} else if (touching(touch, mainButtons[0])) {
-			const std::string path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"), store);
+			const std::string path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->_3dsxPath(path);
 
 		} else if (touching(touch, mainButtons[1])) {
-			const std::string path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"), store);
+			const std::string path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->ndsPath(path);
 
 		} else if (touching(touch, mainButtons[2])) {
-			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"), store);
+			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->archPath(path);
 
 		} else if (touching(touch, mainButtons[3])) {
-			const std::string path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"), store);
+			const std::string path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
 			if (path != "") config->shortcut(path);
+
+		} else if (touching(touch, mainButtons[4])) {
+			const std::string path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
+			if (path != "") config->firmPath(path);
 		}
 	}
 
@@ -341,23 +361,28 @@ static void SettingsHandleDir(int &page, int &selection, const std::unique_ptr<S
 
 		switch(selection) {
 			case 0:
-				path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"), store);
+				path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->_3dsxPath(path);
 				break;
 
 			case 1:
-				path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"), store);
+				path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->ndsPath(path);
 				break;
 
 			case 2:
-				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"), store);
+				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->archPath(path);
 				break;
 
 			case 3:
-				path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"), store);
+				path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
 				if (path != "") config->shortcut(path);
+				break;
+
+			case 4:
+				path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
+				if (path != "") config->firmPath(path);
 				break;
 		}
 	}
@@ -431,7 +456,7 @@ static void GUISettingsLogic(int &page, int &selection) {
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 1) selection++;
+		if (selection < 2) selection++;
 	}
 
 	if (hRepeat & KEY_UP) {
@@ -450,6 +475,12 @@ static void GUISettingsLogic(int &page, int &selection) {
 			config->customfont(!config->customfont());
 
 			(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
+
+		} else if (touching(touch, Themes)) {
+			if (GFX::SelectedTheme < (_THEME_AMOUNT - 1)) GFX::SelectedTheme++;
+			else GFX::SelectedTheme = 0;
+
+			config->theme(GFX::SelectedTheme);
 		}
 	}
 
@@ -463,6 +494,13 @@ static void GUISettingsLogic(int &page, int &selection) {
 				config->customfont(!config->customfont());
 
 				(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
+				break;
+
+			case 2:
+				if (GFX::SelectedTheme < (_THEME_AMOUNT - 1)) GFX::SelectedTheme++;
+				else GFX::SelectedTheme = 0;
+
+				config->theme(GFX::SelectedTheme);
 				break;
 		}
 	}
@@ -600,20 +638,18 @@ void StoreUtils::DrawSettings(int page, int selection, int sPos) {
 
 	int &page: Reference to the page.
 	bool &dspSettings: Reference to the display Settings.
-	int &storeMode: Reference to the Store Mode.
+	int &storeMode: Reference to the store Mode.
 	int &selection: Reference to the Selection.
-	std::unique_ptr<Store> &store: Reference to the Store class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
-	std::unique_ptr<Meta> &meta: Reference to the Meta class.
+	int &sPos: Reference to screen position.
 */
-void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta, int &sPos) {
+void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, int &sPos) {
 	switch(page) {
 		case 0:
-			SettingsHandleMain(page, dspSettings, storeMode, selection, store, entries, meta);
+			SettingsHandleMain(page, dspSettings, storeMode, selection);
 			break;
 
 		case 1:
-			SettingsHandleDir(page, selection, store);
+			SettingsHandleDir(page, selection);
 			break;
 
 		case 2:

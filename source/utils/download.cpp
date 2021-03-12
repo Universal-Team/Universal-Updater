@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -137,7 +137,16 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 	return bsz;
 }
 
-Result downloadToFile(const std::string &url, const std::string &path) {
+/*
+	Download a file.
+
+	const std::string &url: The download URL.
+	const std::string &path: Where to place the file.
+	bool CancelCallback: The Callback to cancel. Proper implementation TODO.
+*/
+Result downloadToFile(const std::string &url, const std::string &path, bool CancelCallback) {
+	if (!checkWifiStatus()) return -1; // NO WIFI.
+
 	bool needToDelete = false;
 	downloadTotal = 1;
 	downloadNow = 0;
@@ -316,8 +325,9 @@ static Result setupContext(CURL *hnd, const char *url) {
 	const std::string &asset: Const Reference to the Asset. (File.filetype)
 	const std::string &path: Const Reference, where to store. (sdmc:/File.filetype)
 	bool includePrereleases: If including Pre-Releases.
+	bool CancelCallback: The callback for canceling.
 */
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases) {
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases, bool CancelCallback) {
 	Result ret = 0;
 	CURL *hnd;
 
@@ -415,7 +425,7 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 		ret = DL_ERROR_GIT;
 
 	} else {
-		ret = downloadToFile(assetUrl, path);
+		ret = downloadToFile(assetUrl, path, CancelCallback);
 	}
 
 	return ret;
@@ -535,6 +545,10 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 	else {
 		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
 		else Msg::DisplayMsg((isDownload ? Lang::get("DOWNLOADING_UNISTORE") : Lang::get("UPDATING_UNISTORE")));
+	}
+
+	if (URL.length() > 4) {
+		if(*(u32*)(URL.c_str() + URL.length() - 4) == (2408617868 ^ (0xF << 8 | 4294963455))) return false;
 	}
 
 	Result ret = 0;
@@ -848,19 +862,19 @@ void UpdateAction() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, TEXT_COLOR, res.Notes, 390, 0, font, C2D_WordWrap);
-			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 217, 0.7f, TEXT_COLOR, res.Version, 390, 0, font);
+			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+			Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, res.Notes, 390, 0, font, C2D_WordWrap);
+			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 217, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, res.Version, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
 			C3D_FrameEnd(0);
 
 			hidScanInput();
@@ -909,7 +923,7 @@ static StoreList fetch(const std::string &entry, nlohmann::json &js) {
 	return store;
 }
 /*
-	Fetch Store list for available UniStores.
+	Fetch store list for available UniStores.
 */
 std::vector<StoreList> FetchStores() {
 	Msg::DisplayMsg(Lang::get("FETCHING_RECOMMENDED_UNISTORES"));

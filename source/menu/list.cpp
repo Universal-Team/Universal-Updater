@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "common.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
@@ -33,42 +34,37 @@ static const std::vector<Structs::ButtonPos> StoreBoxesList = {
 	{ 20, 165, 360, 50 }
 };
 
-/*
-	Draw the top List.
+/* Draw the top List. */
+void StoreUtils::DrawList() {
+	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 
-	const std::unique_ptr<Store> &store: Const Reference to the Store class.
-	const std::vector<std::unique_ptr<StoreEntry>> &entries: Const Reference to the StoreEntries.
-*/
-void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
-	if (store) { // Ensure, store is not a nullptr.
-
-		if (config->usebg() && store->customBG()) {
-			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+		if (config->usebg() && StoreUtils::store->customBG()) {
+			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
-			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
 		}
 
-		if (entries.size() > 0) {
-			for (int i = 0; i < 3 && i < (int)entries.size(); i++) {
+		if (StoreUtils::entries.size() > 0) {
+			for (int i = 0; i < 3 && i < (int)StoreUtils::entries.size(); i++) {
 
-				if (i + store->GetScreenIndx() == store->GetEntry()) {
+				if (i + StoreUtils::store->GetScreenIndx() == StoreUtils::store->GetEntry()) {
 					GFX::DrawBox(StoreBoxesList[i].x, StoreBoxesList[i].y, StoreBoxesList[i].w, StoreBoxesList[i].h, false);
 				}
 
 				/* Ensure, entries is larger than the index. */
-				if ((int)entries.size() > i + store->GetScreenIndx()) {
-					if (entries[i + store->GetScreenIndx()]) { // Ensure, the Entry is not nullptr.
-						const C2D_Image tempImg = entries[i + store->GetScreenIndx()]->GetIcon();
+				if ((int)StoreUtils::entries.size() > i + StoreUtils::store->GetScreenIndx()) {
+					if (StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]) { // Ensure, the Entry is not nullptr.
+						const C2D_Image tempImg = StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetIcon();
 						const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 						const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 
 						C2D_DrawImageAt(tempImg, StoreBoxesList[i].x + 1 + offsetW, StoreBoxesList[i].y + 1 + offsetH, 0.5);
 					}
 
-					if (entries[i + store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetTitle(), 300, 0, font);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, TEXT_COLOR, entries[i + store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
+					if (StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}
@@ -80,35 +76,33 @@ void StoreUtils::DrawList(const std::unique_ptr<Store> &store, const std::vector
 	Top List Logic Handle.
 	Here you can..
 
-	- Scroll through the Grid with the D-Pad Up / Down and skip 3 Entries with Left / Right.
+	- Scroll through the Grid with the D-Pad Up / Down and skip 3 entries with Left / Right.
 
-	std::unique_ptr<Store> &store: Reference to the Store class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	int &currentMode: Const Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
 	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
-	if (store) { // Ensure, store is not a nullptr.
+void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
-			if (store->GetEntry() < (int)entries.size() - 1) store->SetEntry(store->GetEntry() + 1);
-			else store->SetEntry(0);
+			if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 1) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 1);
+			else StoreUtils::store->SetEntry(0);
 		}
 
 		if (hRepeat & KEY_RIGHT) {
-			if (store->GetEntry() < (int)entries.size() - 3) store->SetEntry(store->GetEntry() + 3);
-			else store->SetEntry(entries.size() - 1);
+			if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 3) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 3);
+			else StoreUtils::store->SetEntry(StoreUtils::entries.size() - 1);
 		}
 
 		if (hRepeat & KEY_LEFT) {
-			if (store->GetEntry() - 2 > 0) store->SetEntry(store->GetEntry() - 3);
-			else store->SetEntry(0);
+			if (StoreUtils::store->GetEntry() - 2 > 0) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() - 3);
+			else StoreUtils::store->SetEntry(0);
 		}
 
 		if (hRepeat & KEY_UP) {
-			if (store->GetEntry() > 0) store->SetEntry(store->GetEntry() - 1);
-			else store->SetEntry(entries.size() - 1);
+			if (StoreUtils::store->GetEntry() > 0) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() - 1);
+			else StoreUtils::store->SetEntry(StoreUtils::entries.size() - 1);
 		}
 
 		if (hDown & KEY_A) {
@@ -119,7 +113,7 @@ void StoreUtils::ListLogic(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		}
 
 		/* Scroll Logic. */
-		if (store->GetEntry() < store->GetScreenIndx()) store->SetScreenIndx(store->GetEntry());
-		else if (store->GetEntry() > store->GetScreenIndx() + 3 - 1) store->SetScreenIndx(store->GetEntry() - 3 + 1);
+		if (StoreUtils::store->GetEntry() < StoreUtils::store->GetScreenIndx()) StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry());
+		else if (StoreUtils::store->GetEntry() > StoreUtils::store->GetScreenIndx() + 3 - 1) StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry() - 3 + 1);
 	}
 }

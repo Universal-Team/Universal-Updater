@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ struct UUUpdate {
 	std::string Version = "";
 };
 
-Result downloadToFile(const std::string &url, const std::string &path);
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases);
+Result downloadToFile(const std::string &url, const std::string &path, bool CancelCallback = false);
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases, bool CancelCallback = false);
 
 /*
 	Check Wi-Fi status.

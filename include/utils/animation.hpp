@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -38,11 +38,17 @@ enum class ProgressBar {
 };
 
 namespace Animation {
+	extern int DisplayY, DisplayDelay;
+	extern bool MoveUp, DoDelay;
+
 	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
 	void displayProgressBar();
 
 	void DrawQueue(int x, int y);
 	void QueueAnimHandle();
+
+	void QueueEntryDone();
+	void HandleQueueEntryDone();
 };
 
 #endif

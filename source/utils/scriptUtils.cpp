@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 extern bool showProgressBar;
 extern ProgressBar progressbarType;
 extern char progressBarMsg[128];
-extern int filesExtracted;
+extern int filesExtracted, extractFilesCount;
 
 extern void downloadFailed();
 static Thread thread;
@@ -53,6 +53,7 @@ Result ScriptUtils::removeFile(const std::string &file, const std::string &messa
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
@@ -92,9 +93,12 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	_source = std::regex_replace(source, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_source = std::regex_replace(_source, std::regex("%3DSX%"), config->_3dsxPath());
 	_source = std::regex_replace(_source, std::regex("%NDS%"), config->ndsPath());
+	_source = std::regex_replace(_source, std::regex("%FIRM%"), config->firmPath());
+
 	_dest = std::regex_replace(destination, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_dest = std::regex_replace(_dest, std::regex("%3DSX%"), config->_3dsxPath());
 	_dest = std::regex_replace(_dest, std::regex("%NDS%"), config->ndsPath());
+	_dest = std::regex_replace(_dest, std::regex("%FIRM%"), config->firmPath());
 
 	if (isARG) {
 		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
@@ -122,11 +126,8 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	return ret;
 }
 
-/*
-	Rename / Move a file.
-*/
+/* Rename / Move a file. */
 Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message) {
-
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
 
@@ -134,9 +135,12 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	old = std::regex_replace(oldName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	old = std::regex_replace(old, std::regex("%3DSX%"), config->_3dsxPath());
 	old = std::regex_replace(old, std::regex("%NDS%"), config->ndsPath());
+	old = std::regex_replace(old, std::regex("%FIRM%"), config->firmPath());
+
 	_new = std::regex_replace(newName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_new = std::regex_replace(_new, std::regex("%3DSX%"), config->_3dsxPath());
 	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
+	_new = std::regex_replace(_new, std::regex("%FIRM%"), config->firmPath());
 
 	Msg::DisplayMsg(message);
 
@@ -146,14 +150,13 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	return ret;
 }
 
-/*
-	Download from GitHub Release.
-*/
-Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG) {
+/* Download from GitHub Release. */
+Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG, bool CancelCallback) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
 
@@ -167,7 +170,7 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 	}
 
-	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases, CancelCallback) != 0) {
 		if (isARG) showProgressBar = false;
 
 		downloadFailed();
@@ -189,14 +192,13 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 	return ret;
 }
 
-/*
-	Download a file.
-*/
-Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG) {
+/* Download a file. */
+Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG, bool CancelCallback) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
 
@@ -210,7 +212,7 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 	}
 
-	if (downloadToFile(file, out) != 0) {
+	if (downloadToFile(file, out, CancelCallback) != 0) {
 		if (isARG) showProgressBar = false;
 
 		downloadFailed();
@@ -233,14 +235,13 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 	return ret;
 }
 
-/*
-	Install CIA files.
-*/
+/* Install CIA files. */
 void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const std::string &message, bool isARG) {
 	std::string in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
 	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
+	in = std::regex_replace(in, std::regex("%FIRM%"), config->firmPath());
 
 	if (isARG) {
 		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
@@ -261,17 +262,19 @@ void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const 
 	}
 }
 
-/*
-	Extract files.
-*/
-void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG) {
+/* Extract files. */
+void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG, bool CancelCallback) {
+	extractFilesCount = 0;
+
 	std::string out, in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
 	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
+	in = std::regex_replace(in, std::regex("%FIRM%"), config->firmPath());
 	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	if (isARG) {
 		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
@@ -286,7 +289,7 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 	filesExtracted = 0;
 
 	getExtractedSize(in, input);
-	extractArchive(in, input, out);
+	extractArchive(in, input, out, CancelCallback);
 
 	if (isARG) {
 		showProgressBar = false;

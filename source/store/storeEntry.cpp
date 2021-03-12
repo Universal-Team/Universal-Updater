@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 /*
 	Fetch informations on constructor.
 
-	const std::unique_ptr<Store> &store: Const Reference to the Store class.
-	const std::unique_ptr<Meta> &meta: Const Reference to the Meta class.
+	const std::unique_ptr<Store> &store: Const Reference to the store class.
+	const std::unique_ptr<Meta> &meta: Const Reference to the meta class.
 	int index: Index of the entry.
 */
 StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, int index) {

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,18 @@
 */
 
 #include "files.hpp"
+#include "gui.hpp"
 #include "queueSystem.hpp"
 #include "scriptUtils.hpp"
+#include "storeUtils.hpp"
 #include <unistd.h>
 
 std::deque<std::unique_ptr<Queue>> queueEntries;
+int QueueSystem::RequestNeeded = -1, QueueSystem::RequestAnswer = -1;
+bool QueueSystem::Wait = false, QueueSystem::DoNothing = true, QueueSystem::Popup = false, QueueSystem::CancelCallback = false;
+std::string QueueSystem::RequestMsg = "", QueueSystem::EndMsg = "";
+int QueueSystem::LastElement = 0;
+
 bool QueueRuns = false;
 static Thread queueThread = nullptr;
 
@@ -41,17 +48,23 @@ LightLock QueueSystem::lock;
 	nlohmann::json obj: The object.
 	C2D_Image icn: The icon.
 */
-void QueueSystem::AddToQueue(nlohmann::json obj, C2D_Image icn, std::string name) {
+void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) {
+	if (!QueueSystem::Wait) QueueSystem::DoNothing = true;
 	LightLock_Lock(&lock);
-	queueEntries.push_back( std::make_unique<Queue>(obj, icn, name) );
+	queueEntries.push_back( std::make_unique<Queue>(obj, icn, name, uName, eName, lUpdated) );
 	LightLock_Unlock(&lock);
 
+
 	/* If not already running, let it run!! */
-	if (!QueueRuns) {
+	if (!QueueRuns && !QueueSystem::Wait) {
 		QueueRuns = true; // We enable the queue run state here.
 		s32 prio = 0;
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 		queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
+		QueueSystem::DoNothing = false;
+
+	} else {
+		if (!QueueSystem::Wait) QueueSystem::DoNothing = false;
 	}
 }
 
@@ -61,6 +74,19 @@ void QueueSystem::AddToQueue(nlohmann::json obj, C2D_Image icn, std::string name
 void QueueSystem::ClearQueue() {
 	QueueRuns = false;
 	queueEntries.clear();
+}
+
+/*
+	Use this, to go back to the queue after the Request.
+*/
+void QueueSystem::Resume() {
+	QueueRuns = true;
+	QueueSystem::Wait = false;
+	QueueSystem::DoNothing = false;
+
+	s32 prio = 0;
+	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+	queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
 }
 
 /*
@@ -75,7 +101,7 @@ void QueueSystem::QueueHandle() {
 		queueEntries[0]->current = 0;
 		LightLock_Unlock(&lock);
 
-		for(int i = 0; i < (int)queueEntries[0]->obj.size(); i++) {
+		for(int i = QueueSystem::LastElement; i < (int)queueEntries[0]->obj.size(); i++) {
 			LightLock_Lock(&lock);
 			queueEntries[0]->current++;
 			LightLock_Unlock(&lock);
@@ -94,9 +120,10 @@ void QueueSystem::QueueHandle() {
 
 				/* Deleting a file. */
 				if (type == "deleteFile") {
+					queueEntries[0]->status = QueueStatus::Deleting;
+
 					bool missing = false;
 					std::string file = "";
-
 
 					LightLock_Lock(&lock);
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
@@ -125,7 +152,7 @@ void QueueSystem::QueueHandle() {
 					} else missing = true;
 					LightLock_Unlock(&lock);
 
-					if (!missing) ret = ScriptUtils::downloadFile(file, output, "");
+					if (!missing) ret = ScriptUtils::downloadFile(file, output, "", false, QueueSystem::CancelCallback);
 					else ret = SYNTAX_ERROR;
 
 					/* Download from a GitHub Release. */
@@ -151,7 +178,7 @@ void QueueSystem::QueueHandle() {
 						includePrereleases = queueEntries[0]->obj[i]["includePrereleases"];
 					LightLock_Unlock(&lock);
 
-					if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, "");
+					if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, "", false, QueueSystem::CancelCallback);
 					else ret = SYNTAX_ERROR;
 
 					/* Extracting files. */
@@ -174,7 +201,7 @@ void QueueSystem::QueueHandle() {
 					} else missing = true;
 					LightLock_Unlock(&lock);
 
-					if (!missing) ScriptUtils::extractFile(file, input, output, "");
+					if (!missing) ScriptUtils::extractFile(file, input, output, "", false, QueueSystem::CancelCallback);
 					else ret = SYNTAX_ERROR;
 
 				/* Installing CIAs. */
@@ -209,7 +236,10 @@ void QueueSystem::QueueHandle() {
 					if (!missing) makeDirs(directory.c_str());
 					else ret = SYNTAX_ERROR;
 
+				/* Request Type 1. */
 				} else if (type == "rmdir") {
+					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
+					queueEntries[0]->status = QueueStatus::Request;
 					bool missing = false;
 					std::string directory = "", message = "", promptmsg = "";
 
@@ -223,13 +253,32 @@ void QueueSystem::QueueHandle() {
 					if (!missing && directory != "") {
 						if (access(directory.c_str(), F_OK) != 0) ret = DELETE_ERROR;
 						else {
-							if (Msg::promptMsg(promptmsg)) removeDirRecursive(directory.c_str());
+							if (QueueSystem::RequestNeeded == RMDIR_REQUEST) {
+								/* There we already did it. :) */
+								queueEntries[0]->status = QueueStatus::Deleting;
+								if (QueueSystem::RequestAnswer == 1) removeDirRecursive(directory.c_str());
+								/* Reset. */
+								QueueSystem::RequestNeeded = -1;
+								QueueSystem::RequestAnswer = -1;
+								QueueSystem::RequestMsg = "";
+								QueueSystem::LastElement = 0; // Reset back to 0.
+
+							} else {
+								/* We are in the process of the need of an answer. */
+								QueueSystem::RequestNeeded = RMDIR_REQUEST; // Type 1.
+								QueueSystem::RequestMsg = promptmsg;
+								QueueSystem::Wait = true;
+								QueueRuns = false;
+							}
 						}
 					}
 
 					else ret = SYNTAX_ERROR;
 
+				/* Request Type 2. */
 				} else if (type == "promptMessage" || type == "promptMsg") {
+					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
+					queueEntries[0]->status = QueueStatus::Request;
 					std::string Message = "";
 					int skipCount = -1;
 
@@ -243,14 +292,27 @@ void QueueSystem::QueueHandle() {
 					}
 					LightLock_Unlock(&lock);
 
-					Result res = ScriptUtils::prompt(Message);
+					if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
+						if (skipCount > -1 && QueueSystem::RequestAnswer == SCRIPT_CANCELED) i += skipCount; // Skip.
 
-					if (skipCount > -1 && res == SCRIPT_CANCELED) i += skipCount; // Skip.
+						/* Reset. */
+						QueueSystem::RequestNeeded = -1;
+						QueueSystem::RequestAnswer = -1;
+						QueueSystem::RequestMsg = "";
+						QueueSystem::LastElement = 0; // Reset back to 0.
+
+					} else {
+						QueueSystem::RequestNeeded = PROMPT_REQUEST; // Type 2.
+						QueueSystem::RequestMsg = Message;
+						QueueSystem::Wait = true;
+						QueueRuns = false;
+					}
 
 				} else if (type == "exit") {
 					ret = SCRIPT_CANCELED;
 
 				} else if (type == "copy") {
+					queueEntries[0]->status = QueueStatus::Copying;
 					std::string source = "", destination = "";
 					bool missing = false;
 
@@ -298,22 +360,52 @@ void QueueSystem::QueueHandle() {
 			}
 		}
 
-		LightLock_Lock(&lock);
+		if (!QueueSystem::Wait) {
+			QueueSystem::DoNothing = true;
+			LightLock_Lock(&lock);
 
-		/* Canceled or None is for me -> Done. */
-		if (ret == NONE || ret == SCRIPT_CANCELED) {
-			queueEntries[0]->status = QueueStatus::Done;
+			/* Canceled or None is for me -> Done. */
+			if (ret == NONE || ret == SCRIPT_CANCELED) {
+				queueEntries[0]->status = QueueStatus::Done;
 
-		} else { // Else it failed..
-			queueEntries[0]->status = QueueStatus::Failed;
+			} else { // Else it failed..
+				queueEntries[0]->status = QueueStatus::Failed;
+			}
+
+			/* Display if failed or succeeded. */
+			if (config->prompt()) {
+				char msg[256];
+
+				if (QueueSystem::CancelCallback) {
+					snprintf(msg, sizeof(msg), Lang::get("ACTION_CANCELED").c_str(), queueEntries[0]->name.c_str());
+
+				} else {
+					if (queueEntries[0]->status == QueueStatus::Failed) {
+						snprintf(msg, sizeof(msg), Lang::get("ACTION_FAILED").c_str(), queueEntries[0]->name.c_str());
+
+					} else {
+						snprintf(msg, sizeof(msg), Lang::get("ACTION_SUCCEEDED").c_str(), queueEntries[0]->name.c_str());
+					}
+				}
+
+				QueueSystem::EndMsg = msg;
+				QueueSystem::Popup = true;
+			}
+
+			if (StoreUtils::meta) {
+				StoreUtils::meta->SetUpdated(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->lastUpdated);
+				StoreUtils::meta->SetInstalled(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->name);
+				StoreUtils::RefreshUpdateAVL();
+			}
+
+			if (QueueSystem::CancelCallback) QueueSystem::CancelCallback = false; // Reset.
+
+			queueEntries.pop_front();
+			if (queueEntries.empty()) QueueRuns = false; // The queue ended.
+			ret = NONE; // Reset.
+
+			LightLock_Unlock(&lock);
+			QueueSystem::DoNothing = false;
 		}
-
-		queueEntries.pop_front();
-		if (queueEntries.empty()) QueueRuns = false; // The queue ended.
-		ret = NONE; // Reset.
-
-		LightLock_Unlock(&lock);
-
-		/* TODO: Display a message if something ends? */
 	}
 }

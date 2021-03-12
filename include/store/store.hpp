@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 	std::string GetUniStoreTitle() const;
 	std::string GetUniStoreAuthor() const;
 
-	/* Get Information of the UniStore Entries. */
+	/* Get Information of the UniStore entries. */
 	std::string GetTitleEntry(int index) const;
 	std::string GetAuthorEntry(int index) const;
 	std::string GetDescriptionEntry(int index) const;

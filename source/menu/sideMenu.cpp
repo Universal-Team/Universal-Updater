@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 */
 
 #include "animation.hpp"
+#include "common.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
@@ -41,15 +42,15 @@ static const std::vector<Structs::ButtonPos> sidePos = {
 /*
 	Draw the Side Menu part.
 
-	int currentMenu: The current Store Mode / Menu.
+	int currentMenu: The current store Mode / Menu.
 */
 void StoreUtils::DrawSideMenu(int currentMenu) {
 	for (int i = 0; i < 6; i++) {
 		if (i == currentMenu) {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, SIDEBAR_SELECTED_COLOR);
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, GFX::Themes[GFX::SelectedTheme].SideBarSelected);
 
 		} else {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, SIDEBAR_UNSELECTED_COLOR);
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, GFX::Themes[GFX::SelectedTheme].SideBarUnselected);
 		}
 	}
 
@@ -60,7 +61,7 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 	GFX::DrawSprite(sprites_sort_idx, sidePos[4].x, sidePos[4].y);
 	GFX::DrawSprite(sprites_settings_idx, sidePos[5].x, sidePos[5].y);
 
-	Gui::Draw_Rect(40, 0, 1, 240, BAR_OUTL_COLOR);
+	Gui::Draw_Rect(40, 0, 1, 240, GFX::Themes[GFX::SelectedTheme].BarOutline);
 }
 
 /*
@@ -69,7 +70,7 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 
 	- Switch between the Menus through the sidebar.
 
-	int &currentMenu: Reference to the Store Mode / Menu.
+	int &currentMenu: Reference to the store Mode / Menu.
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
 	int &lastMenu: Reference to the last menu.
 */

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "common.hpp"
 #include "keyboard.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
@@ -73,89 +74,87 @@ static const uint8_t GetType(SortType st) {
 	SortType st: The SortType variable.
 */
 void StoreUtils::DrawSorting(bool asc, SortType st) {
-	Gui::Draw_Rect(40, 0, 280, 25, ENTRY_BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, ENTRY_BAR_OUTL_COLOR);
-	Gui::DrawStringCentered(17, 2, 0.6, TEXT_COLOR, Lang::get("SORTING"), 273, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
+	Gui::DrawStringCentered(17, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SORTING"), 273, 0, font);
 
 	/* Sort By. */
-	Gui::DrawString(buttons[0].x + 1, buttons[0].y - 20, 0.6f, TEXT_COLOR, Lang::get("SORT_BY"), 90, 0, font);
+	Gui::DrawString(buttons[0].x + 1, buttons[0].y - 20, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SORT_BY"), 90, 0, font);
 	for (int i = 0; i < 3; i++) {
 		DrawCheck(i, i == GetType(st));
 	}
 
-	Gui::DrawString(buttons[0].x + 21, buttons[0].y + 2, 0.4f, TEXT_COLOR, Lang::get("TITLE"), 80, 0, font);
-	Gui::DrawString(buttons[1].x + 21, buttons[1].y + 2, 0.4f, TEXT_COLOR, Lang::get("AUTHOR"), 80, 0, font);
-	Gui::DrawString(buttons[2].x + 21, buttons[2].y + 2, 0.4f, TEXT_COLOR, Lang::get("LAST_UPDATED"), 80, 0, font);
+	Gui::DrawString(buttons[0].x + 21, buttons[0].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("TITLE"), 80, 0, font);
+	Gui::DrawString(buttons[1].x + 21, buttons[1].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTHOR"), 80, 0, font);
+	Gui::DrawString(buttons[2].x + 21, buttons[2].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LAST_UPDATED"), 80, 0, font);
 
 	/* Direction. */
-	Gui::DrawString(buttons[3].x + 1, buttons[3].y - 20, 0.6f, TEXT_COLOR, Lang::get("DIRECTION"), 80, 0, font);
+	Gui::DrawString(buttons[3].x + 1, buttons[3].y - 20, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DIRECTION"), 80, 0, font);
 	DrawCheck(3, asc);
 	DrawCheck(4, !asc);
-	Gui::DrawString(buttons[3].x + 21, buttons[3].y + 2, 0.4f, TEXT_COLOR, Lang::get("ASCENDING"), 80, 0, font);
-	Gui::DrawString(buttons[4].x + 21, buttons[4].y + 2, 0.4f, TEXT_COLOR, Lang::get("DESCENDING"), 80, 0, font);
+	Gui::DrawString(buttons[3].x + 21, buttons[3].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("ASCENDING"), 80, 0, font);
+	Gui::DrawString(buttons[4].x + 21, buttons[4].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DESCENDING"), 80, 0, font);
 
 	/* Top Style. */
-	Gui::DrawString(buttons[5].x + 1, buttons[5].y - 20, 0.6f, TEXT_COLOR, Lang::get("TOP_STYLE"), 90, 0, font);
+	Gui::DrawString(buttons[5].x + 1, buttons[5].y - 20, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("TOP_STYLE"), 90, 0, font);
 	DrawCheck(5, config->list());
 	DrawCheck(6, !config->list());
-	Gui::DrawString(buttons[5].x + 21, buttons[5].y + 2, 0.4f, TEXT_COLOR, Lang::get("LIST"), 90, 0, font);
-	Gui::DrawString(buttons[6].x + 21, buttons[6].y + 2, 0.4f, TEXT_COLOR, Lang::get("GRID"), 90, 0, font);
+	Gui::DrawString(buttons[5].x + 21, buttons[5].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LIST"), 90, 0, font);
+	Gui::DrawString(buttons[6].x + 21, buttons[6].y + 2, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("GRID"), 90, 0, font);
 }
 
 /*
 	Sort Handle.
 	Here you can..
 
-	- Sort your Entries to..
+	- Sort your entries to..
 		- Title (Ascending / Descending).
 		- Author (Ascending / Descending).
 		- Last Updated Date (Ascending / Descending).
 
 	- Change the Top Style.
 
-	std::unique_ptr<Store> &store: Reference to the Store class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the StoreEntries.
 	bool &asc: Reference to the Ascending variable.
 	SortType &st: Reference to the SortType.
 */
-void StoreUtils::SortHandle(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, bool &asc, SortType &st) {
-	if (store && store->GetValid() && entries.size() > 0) { // Ensure, this is valid and more than 0 entries exist.
+void StoreUtils::SortHandle(bool &asc, SortType &st) {
+	if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) { // Ensure, this is valid and more than 0 StoreUtils::entries exist.
 		if (hDown & KEY_TOUCH) {
 			/* SortType Part. */
 			if (touching(touch, buttons[0])) {
 				st = SortType::TITLE;
-				StoreUtils::SortEntries(asc, st, entries);
+				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, buttons[1])) {
 				st = SortType::AUTHOR;
-				StoreUtils::SortEntries(asc, st, entries);
+				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, buttons[2])) {
 				st = SortType::LAST_UPDATED;
-				StoreUtils::SortEntries(asc, st, entries);
+				StoreUtils::SortEntries(asc, st);
 
 			/* Ascending | Descending Part. */
 			} else if (touching(touch, buttons[3])) {
 				asc = true;
-				StoreUtils::SortEntries(asc, st, entries);
+				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, buttons[4])) {
 				asc = false;
-				StoreUtils::SortEntries(asc, st, entries);
+				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, buttons[5])) {
 				if (config->list()) return;
 				config->list(true);
-				store->SetEntry(0);
-				store->SetScreenIndx(0);
-				store->SetBox(0);
+				StoreUtils::store->SetEntry(0);
+				StoreUtils::store->SetScreenIndx(0);
+				StoreUtils::store->SetBox(0);
 
 			} else if (touching(touch, buttons[6])) {
 				if (!config->list()) return;
 				config->list(false);
-				store->SetEntry(0);
-				store->SetScreenIndx(0);
-				store->SetBox(0);
+				StoreUtils::store->SetEntry(0);
+				StoreUtils::store->SetScreenIndx(0);
+				StoreUtils::store->SetBox(0);
 			}
 		}
 	}

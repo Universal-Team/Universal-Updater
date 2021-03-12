@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -121,6 +121,7 @@ Result Init::Initialize() {
 	Gui::init();
 
 	cfguInit();
+	ptmuInit();
 	amInit();
 	acInit();
 
@@ -137,6 +138,8 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+	GFX::SelectedTheme = config->theme();
+	if (GFX::SelectedTheme > (_THEME_AMOUNT - 1)) GFX::SelectedTheme = 0; // In case it is above the max themes.
 	Lang::load(config->language());
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
@@ -178,7 +181,6 @@ Result Init::MainLoop() {
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
-
 		Gui::DrawScreen(false);
 		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
 		C3D_FrameEnd(0);
@@ -209,6 +211,7 @@ Result Init::Exit() {
 	gfxExit();
 	cfguExit();
 	config->save();
+	ptmuExit();
 	acExit();
 	amExit();
 

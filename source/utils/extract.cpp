@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 int filesExtracted = 0, extractFilesCount = 0;
 std::string extractingFile = "";
 
-/* That are our File Progressbar variable. */
+/* That are our Extract Progressbar variable. */
 u32 extractSize = 0, writeOffset = 0;
 
 Result getExtractedSize(const std::string &archivePath, const std::string &wantedFile) {
@@ -48,7 +48,7 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		int size = archive_entry_size(entry);
-		if (size > 0) { /* Ignore folders. */
+		if (size > 0) { // Ignore folders.
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
@@ -63,7 +63,7 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 	return EXTRACT_ERROR_NONE;
 }
 
-Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath) {
+Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath, bool CancelCallback) {
 	archive *a = archive_read_new();
 	archive_entry *entry;
 
@@ -77,7 +77,9 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 	}
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-		if (archive_entry_size(entry) > 0) { /* Ignore folders. */
+		if (CancelCallback) break; // Cancel Extraction.
+
+		if (archive_entry_size(entry) > 0) { // Ignore folders.
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
@@ -113,7 +115,7 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				while(sizeLeft > 0) {
 					u64 toRead = std::min(0x30000u, sizeLeft);
 					ssize_t size = archive_read_data(a, buf, toRead);
-					// Archive error, stop extracting
+					/* Archive error, stop extracting. */
 					if(size < 0) {
 						fclose(file);
 						delete[] buf;
