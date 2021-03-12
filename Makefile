@@ -53,7 +53,7 @@ else
 GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short=7 HEAD)
 endif
 
-# Ensure version.h exists
+# Ensure version.hpp exists
 ifeq (,$(wildcard include/version.hpp))
 $(shell mkdir -p include)
 $(shell touch include/version.hpp)

@@ -140,8 +140,8 @@ extern std::deque<std::unique_ptr<Queue>> queueEntries;
 
 void Animation::DrawQueue(int x, int y) {
 	GFX::DrawSprite(sprites_queue0_idx + frame, x, y);
-	Gui::DrawString(x + 13, y + 12, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, std::to_string(queueEntries.size()), 0, 0, font);
-};
+	Gui::DrawStringCentered(x + 20 - 160, y + 11, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, std::to_string(queueEntries.size()), 0, 0, font);
+}
 void Animation::QueueAnimHandle() {
 	if (QueueRuns) {
 		advanceFrame = (advanceFrame + 1) % 4;

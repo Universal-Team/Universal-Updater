@@ -68,7 +68,7 @@ namespace QueueSystem {
 	extern int RequestNeeded, RequestAnswer;
 	extern std::string RequestMsg, EndMsg;
 	extern int LastElement;
-	extern bool Wait, DoNothing, Popup, CancelCallback;
+	extern bool Wait, Popup, CancelCallback;
 
 	void QueueHandle(); // Handles the Queue.
 	void AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated); // Adds to Queue.

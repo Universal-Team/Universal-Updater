@@ -58,7 +58,7 @@ Result ScriptUtils::removeFile(const std::string &file, const std::string &messa
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
 
-	Msg::DisplayMsg(message);
+	// Msg::DisplayMsg(message);
 	deleteFile(out.c_str());
 	return ret;
 }
@@ -142,7 +142,7 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
 	_new = std::regex_replace(_new, std::regex("%FIRM%"), config->firmPath());
 
-	Msg::DisplayMsg(message);
+	// Msg::DisplayMsg(message);
 
 	/* TODO: Kinda avoid that? */
 	makeDirs(_new.c_str());

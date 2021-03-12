@@ -33,7 +33,7 @@
 
 std::deque<std::unique_ptr<Queue>> queueEntries;
 int QueueSystem::RequestNeeded = -1, QueueSystem::RequestAnswer = -1;
-bool QueueSystem::Wait = false, QueueSystem::DoNothing = true, QueueSystem::Popup = false, QueueSystem::CancelCallback = false;
+bool QueueSystem::Wait = false, QueueSystem::Popup = false, QueueSystem::CancelCallback = false;
 std::string QueueSystem::RequestMsg = "", QueueSystem::EndMsg = "";
 int QueueSystem::LastElement = 0;
 
@@ -49,7 +49,6 @@ LightLock QueueSystem::lock;
 	C2D_Image icn: The icon.
 */
 void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) {
-	if (!QueueSystem::Wait) QueueSystem::DoNothing = true;
 	LightLock_Lock(&lock);
 	queueEntries.push_back( std::make_unique<Queue>(obj, icn, name, uName, eName, lUpdated) );
 	LightLock_Unlock(&lock);
@@ -61,10 +60,7 @@ void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std
 		s32 prio = 0;
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 		queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
-		QueueSystem::DoNothing = false;
 
-	} else {
-		if (!QueueSystem::Wait) QueueSystem::DoNothing = false;
 	}
 }
 
@@ -73,7 +69,9 @@ void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std
 */
 void QueueSystem::ClearQueue() {
 	QueueRuns = false;
+	LightLock_Lock(&lock);
 	queueEntries.clear();
+	LightLock_Unlock(&lock);
 }
 
 /*
@@ -82,7 +80,6 @@ void QueueSystem::ClearQueue() {
 void QueueSystem::Resume() {
 	QueueRuns = true;
 	QueueSystem::Wait = false;
-	QueueSystem::DoNothing = false;
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
@@ -101,9 +98,16 @@ void QueueSystem::QueueHandle() {
 		queueEntries[0]->current = 0;
 		LightLock_Unlock(&lock);
 
-		for(int i = QueueSystem::LastElement; i < (int)queueEntries[0]->obj.size(); i++) {
+		for(int i = QueueSystem::LastElement; true; i++) {
 			LightLock_Lock(&lock);
+
+			if(i >= (int)queueEntries[0]->obj.size()) {
+				LightLock_Unlock(&lock);
+				break;
+			}
+
 			queueEntries[0]->current++;
+
 			LightLock_Unlock(&lock);
 
 			if (ret == NONE) {
@@ -120,12 +124,12 @@ void QueueSystem::QueueHandle() {
 
 				/* Deleting a file. */
 				if (type == "deleteFile") {
-					queueEntries[0]->status = QueueStatus::Deleting;
-
 					bool missing = false;
 					std::string file = "";
 
 					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Deleting;
+
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
 						file = queueEntries[0]->obj[i]["file"];
 					} else missing = true;
@@ -137,11 +141,11 @@ void QueueSystem::QueueHandle() {
 
 					/* Downloading from a URL. */
 				} else if (type == "downloadFile") {
-					LightLock_Lock(&lock);
-					queueEntries[0]->status = QueueStatus::Downloading;
-
 					bool missing = false;
 					std::string file = "", output = "";
+
+					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Downloading;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
 						file = queueEntries[0]->obj[i]["file"];
@@ -157,10 +161,11 @@ void QueueSystem::QueueHandle() {
 
 					/* Download from a GitHub Release. */
 				} else if (type == "downloadRelease") {
-					LightLock_Lock(&lock);
-					queueEntries[0]->status = QueueStatus::Downloading;
 					bool missing = false, includePrereleases = false;
 					std::string repo = "", file = "", output = "";
+
+					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Downloading;
 
 					if (queueEntries[0]->obj[i].contains("repo") && queueEntries[0]->obj[i]["repo"].is_string()) {
 						repo = queueEntries[0]->obj[i]["repo"];
@@ -183,10 +188,11 @@ void QueueSystem::QueueHandle() {
 
 					/* Extracting files. */
 				} else if (type == "extractFile") {
-					LightLock_Lock(&lock);
-					queueEntries[0]->status = QueueStatus::Extracting;
 					bool missing = false;
 					std::string file = "", input = "", output = "";
+
+					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Extracting;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
 						file = queueEntries[0]->obj[i]["file"];
@@ -206,10 +212,11 @@ void QueueSystem::QueueHandle() {
 
 				/* Installing CIAs. */
 				} else if (type == "installCia") {
-					LightLock_Lock(&lock);
-					queueEntries[0]->status = QueueStatus::Installing;
 					bool missing = false, updateSelf = false;
 					std::string file = "";
+
+					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Installing;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
 						file = queueEntries[0]->obj[i]["file"];
@@ -239,11 +246,12 @@ void QueueSystem::QueueHandle() {
 				/* Request Type 1. */
 				} else if (type == "rmdir") {
 					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
-					queueEntries[0]->status = QueueStatus::Request;
 					bool missing = false;
 					std::string directory = "", message = "", promptmsg = "";
 
 					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Request;
+
 					if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
 						directory = queueEntries[0]->obj[i]["directory"];
 					} else missing = true;
@@ -255,7 +263,9 @@ void QueueSystem::QueueHandle() {
 						else {
 							if (QueueSystem::RequestNeeded == RMDIR_REQUEST) {
 								/* There we already did it. :) */
+								LightLock_Lock(&QueueSystem::lock);
 								queueEntries[0]->status = QueueStatus::Deleting;
+								LightLock_Unlock(&QueueSystem::lock);
 								if (QueueSystem::RequestAnswer == 1) removeDirRecursive(directory.c_str());
 								/* Reset. */
 								QueueSystem::RequestNeeded = -1;
@@ -278,11 +288,12 @@ void QueueSystem::QueueHandle() {
 				/* Request Type 2. */
 				} else if (type == "promptMessage" || type == "promptMsg") {
 					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
-					queueEntries[0]->status = QueueStatus::Request;
 					std::string Message = "";
 					int skipCount = -1;
 
 					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Request;
+
 					if (queueEntries[0]->obj[i].contains("message") && queueEntries[0]->obj[i]["message"].is_string()) {
 						Message = queueEntries[0]->obj[i]["message"];
 					}
@@ -312,11 +323,12 @@ void QueueSystem::QueueHandle() {
 					ret = SCRIPT_CANCELED;
 
 				} else if (type == "copy") {
-					queueEntries[0]->status = QueueStatus::Copying;
 					std::string source = "", destination = "";
 					bool missing = false;
 
 					LightLock_Lock(&lock);
+					queueEntries[0]->status = QueueStatus::Copying;
+
 					if (queueEntries[0]->obj[i].contains("source") && queueEntries[0]->obj[i]["source"].is_string()) {
 						source = queueEntries[0]->obj[i]["source"];
 					} else missing = true;
@@ -361,7 +373,6 @@ void QueueSystem::QueueHandle() {
 		}
 
 		if (!QueueSystem::Wait) {
-			QueueSystem::DoNothing = true;
 			LightLock_Lock(&lock);
 
 			/* Canceled or None is for me -> Done. */
@@ -405,7 +416,6 @@ void QueueSystem::QueueHandle() {
 			ret = NONE; // Reset.
 
 			LightLock_Unlock(&lock);
-			QueueSystem::DoNothing = false;
 		}
 	}
 }

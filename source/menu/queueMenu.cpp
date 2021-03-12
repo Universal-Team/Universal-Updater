@@ -208,8 +208,7 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	Gui::DrawStringCentered(17, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("QUEUE"), 273, 0, font);
 
-	LightLock_Lock(&QueueSystem::lock);
-	if (!queueEntries.empty() && !QueueSystem::DoNothing) {
+	if (!queueEntries.empty()) {
 		Gui::Draw_Rect(QueueBoxes[0].x, QueueBoxes[0].y, QueueBoxes[0].w, QueueBoxes[0].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
 		C2D_DrawImageAt(queueEntries[0]->icn, QueueBoxes[0].x + 5, QueueBoxes[0].y + 21, 0.5f);
 		DrawStatus(queueEntries[0]->status);
@@ -227,8 +226,6 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 			GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[3].x, QueueBoxes[3].y);
 		}
 	}
-
-	LightLock_Unlock(&QueueSystem::lock);
 }
 
 void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
@@ -262,14 +259,18 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 
 			/* Remove from Queue. */
 		} else if (touching(touch, QueueBoxes[3])) { // Remove Queue entries.
-			if (!QueueSystem::DoNothing && queueEntries.size() > 1) queueEntries.erase(queueEntries.begin() + 1 + queueMenuIdx);
+			LightLock_Lock(&QueueSystem::lock);
+			if (queueEntries.size() > 1) queueEntries.erase(queueEntries.begin() + 1 + queueMenuIdx);
+			LightLock_Unlock(&QueueSystem::lock);
 		}
 	}
 
 	if (hDown & KEY_DOWN) {
+		LightLock_Lock(&QueueSystem::lock);
 		if (!queueEntries.empty()) {
 			if ((1 + queueMenuIdx) < (int)queueEntries.size() - 1) queueMenuIdx++;
 		}
+		LightLock_Unlock(&QueueSystem::lock);
 	}
 
 	if (hDown & KEY_UP) {
