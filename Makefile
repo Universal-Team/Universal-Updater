@@ -46,11 +46,22 @@ endif
 
 CURRENT_VERSION := $(shell git describe --abbrev=0 --tags)
 
-# If on a tagged commit, use the tag instead of the commit
+# If on a tagged commit, use just the tag
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
 GIT_VER := $(shell git tag -l --points-at HEAD)
 else
-GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short HEAD)
+GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short=7 HEAD)
+endif
+
+# Ensure version.h exists
+ifeq (,$(wildcard $(CURDIR)/include/version.hpp))
+$(shell mkdir -p include)
+$(shell touch $(CURDIR)/include/version.hpp)
+endif
+
+# Print new version if changed
+ifeq (,$(findstring $(GIT_VER), $(shell cat $(CURDIR)/include/version.hpp)))
+$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > $(CURDIR)/include/version.hpp)
 endif
 
 #---------------------------------------------------------------------------------
@@ -99,7 +110,6 @@ RSF_FILE	:=	app/build-cia.rsf
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
-			-DV_STRING=\"$(GIT_VER)\" \
 			-DC_V=\"$(CURRENT_VERSION)\" \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)

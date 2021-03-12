@@ -6,16 +6,16 @@
 *.elf
 *.cia
 *.3dsx
-*/build
+*build
 *.map
 *.lst
 .vscode/ipch
 *.DS_Store
 romfs/gfx/*.t3x
+include/version.hpp
 
 bannertool*
 makerom*
 *.pfs0
 *.nso
 *.nacp
-build/sprites.h
