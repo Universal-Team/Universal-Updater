@@ -54,14 +54,14 @@ GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short
 endif
 
 # Ensure version.h exists
-ifeq (,$(wildcard $(CURDIR)/include/version.hpp))
+ifeq (,$(wildcard include/version.hpp))
 $(shell mkdir -p include)
-$(shell touch $(CURDIR)/include/version.hpp)
+$(shell touch include/version.hpp)
 endif
 
 # Print new version if changed
-ifeq (,$(findstring $(GIT_VER), $(shell cat $(CURDIR)/include/version.hpp)))
-$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > $(CURDIR)/include/version.hpp)
+ifeq (,$(findstring $(GIT_VER), $(shell cat include/version.hpp)))
+$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/version.hpp)
 endif
 
 #---------------------------------------------------------------------------------
