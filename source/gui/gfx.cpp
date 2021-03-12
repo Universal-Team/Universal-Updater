@@ -26,7 +26,7 @@
 
 #include "common.hpp"
 #include "gfx.hpp"
-#include "stringUtils.hpp"
+#include "stringutils.hpp"
 #include <ctime>
 
 int GFX::SelectedTheme = 0;
