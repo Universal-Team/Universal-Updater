@@ -50,8 +50,8 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> QueueBoxes = {
 	{ 47, 36, 266, 90 },
 	{ 47, 139, 266, 90 },
-	{ 288, 73, 24, 24 }, // Cancel current Queue.
-	{ 288, 169, 24, 24 } // Remove next Queue.
+	{ 292, 37, 20, 20 }, // Cancel current Queue.
+	{ 292, 140, 20, 20 } // Remove next Queue.
 };
 
 extern std::deque<std::unique_ptr<Queue>> queueEntries;
@@ -59,14 +59,14 @@ extern std::deque<std::unique_ptr<Queue>> queueEntries;
 void DrawStatus(QueueStatus s) {
 	if (!ShowQueueProgress) {
 		if (!queueEntries.empty()) {
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, queueEntries[0]->name, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, queueEntries[0]->name, 230, 0, font);
 
 			char prog[256];
 			snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), queueEntries[0]->current, queueEntries[0]->total);
-			Gui::DrawString(QueueBoxes[0].x + 150, QueueBoxes[0].y + 58, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 241, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 80, 0, font, C2D_AlignRight);
 
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)queueEntries[0]->current / (float)queueEntries[0]->total) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)queueEntries[0]->current / (float)queueEntries[0]->total) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
 
 			switch(s) {
 				case QueueStatus::Done:
@@ -75,31 +75,31 @@ void DrawStatus(QueueStatus s) {
 					break;
 
 				case QueueStatus::Copying:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_COPYING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_COPYING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Deleting:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_DELETING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_DELETING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Downloading:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_DOWNLOADING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_DOWNLOADING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Extracting:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_EXTRACTING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_EXTRACTING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Installing:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_INSTALLING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_INSTALLING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Moving:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_MOVING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_MOVING"), 120, 0, font);
 					break;
 
 				case QueueStatus::Request:
-					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_WAITING"), 250, 0, font);
+					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_WAITING"), 120, 0, font);
 					break;
 			}
 		}
@@ -113,7 +113,7 @@ void DrawStatus(QueueStatus s) {
 	if (!queueEntries.empty()) {
 		char prog[256];
 		snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), queueEntries[0]->current, queueEntries[0]->total);
-		Gui::DrawString((QueueBoxes[0].x + 182) - Gui::GetStringWidth(0.4f, prog, font), QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 250, 0, font);
+		Gui::DrawString((QueueBoxes[0].x + 241), QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 80, 0, font, C2D_AlignRight);
 	}
 
 	/* String Handle. */
@@ -170,7 +170,8 @@ void DrawStatus(QueueStatus s) {
 			break;
 
 		case QueueStatus::Request:
-			snprintf(str, sizeof(str), Lang::get("ACTION_REQUIRED").c_str());
+			snprintf(str, sizeof(str), Lang::get("OP_WAITING").c_str());
+			snprintf(str2, sizeof(str2), Lang::get("ACTION_REQUIRED").c_str());
 			break;
 	}
 
@@ -182,41 +183,43 @@ void DrawStatus(QueueStatus s) {
 			break;
 
 		case QueueStatus::Copying:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)copyOffset / (float)copySize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)copyOffset / (float)copySize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
 			break;
 
 		case QueueStatus::Deleting:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
 			break;
 
 		case QueueStatus::Downloading:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)downloadNow / (float)downloadTotal) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)downloadNow / (float)downloadTotal) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 120, 0, font);
 			break;
 
 		case QueueStatus::Extracting:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)writeOffset / (float)extractSize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)writeOffset / (float)extractSize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 120, 0, font);
 			break;
 
 		case QueueStatus::Installing:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)installOffset / (float)installSize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)installOffset / (float)installSize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
 			break;
 
 		case QueueStatus::Moving:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_MOVING"), 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_MOVING"), 230, 0, font);
 			break;
 
 		case QueueStatus::Request:
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 230, 0, font);
+			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+			Gui::DrawStringCentered(QueueBoxes[0].x + 151 - 160, QueueBoxes[0].y + 32, 0.8f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 180, 0, font);
 			break;
 	}
 }
@@ -246,7 +249,7 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 			const uint8_t offsetH2 = (48 - tempImg2.subtex->height) / 2; // Center H.
 			C2D_DrawImageAt(tempImg2, QueueBoxes[1].x + 5 + offsetW2, QueueBoxes[1].y + 21 + offsetH2, 0.5f);
 
-			Gui::DrawString(QueueBoxes[1].x + 10, QueueBoxes[1].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, queueEntries[1 + queueMenuIdx]->name, 250, 0, font);
+			Gui::DrawString(QueueBoxes[1].x + 10, QueueBoxes[1].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, queueEntries[1 + queueMenuIdx]->name, 230, 0, font);
 
 			Gui::DrawString(QueueBoxes[1].x + 60, QueueBoxes[1].y + 30, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("QUEUE_POSITION") + ": " + std::to_string(queueMenuIdx + 1), 0, 0, font);
 
@@ -263,7 +266,7 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 
 	if (hDown & KEY_TOUCH) {
 		/* Current Queue Cancel. */
-		if (touching(touch, QueueBoxes[2])) { // Needs to be above the 0 one, otherwise the callback won't be accepted.
+		if (QueueSystem::RequestNeeded == NO_REQUEST && touching(touch, QueueBoxes[2])) { // Needs to be above the 0 one, otherwise the callback won't be accepted.
 			QueueSystem::CancelCallback = true;
 
 		} else if (touching(touch, QueueBoxes[0])) {

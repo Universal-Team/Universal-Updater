@@ -83,6 +83,7 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
 				extractingFile = outputPath + match.suffix().str();
+				filesExtracted++;
 
 				/* make directories. */
 				for (char *slashpos = strchr(extractingFile.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
@@ -129,7 +130,6 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 					writeOffset += size;
 				}
 
-				filesExtracted++;
 				fclose(file);
 				delete[] buf;
 
