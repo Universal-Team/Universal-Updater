@@ -65,6 +65,7 @@
 	"EXECUTE_ENTRY": "Voulez-vous exécuter cette entrée?",
 	"EXIT_APP": "Quitter Universal-Updater",
 	"EXTRACTING": "Extraction... %s / %s (%.2f%%)",
+	"EXTRACT_ERROR": "Extract error!",
 	"FEATURE_SIDE_EFFECTS": "Cette fonctionnalité peut avoir des effets secondaires pendant que la file d'attente est en cours d'exécution.\nÊtes-vous sûr de vouloir continuer ?",
 	"FETCHING_METADATA": "Récupération des anciennes métadonnées...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Récupération des UniStores recommandés...",
