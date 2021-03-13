@@ -38,7 +38,8 @@ enum ScriptState {
 	SYNTAX_ERROR,
 	COPY_ERROR,
 	MOVE_ERROR,
-	DELETE_ERROR
+	DELETE_ERROR,
+	EXTRACT_ERROR
 };
 
 namespace ScriptUtils {
@@ -52,7 +53,7 @@ namespace ScriptUtils {
 	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG = false);
 	Result downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG = false);
 	void installFile(const std::string &file, bool updatingSelf, const std::string &message, bool isARG = false);
-	void extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG = false);
+	Result extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG = false);
 
 	Result runFunctions(nlohmann::json storeJson, int selection, const std::string &entry);
 };

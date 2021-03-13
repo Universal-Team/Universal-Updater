@@ -276,8 +276,9 @@ void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const 
 }
 
 /* Extract files. */
-void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG) {
+Result ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG) {
 	extractFilesCount = 0;
+	Result ret = NONE;
 
 	std::string out, in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
@@ -305,13 +306,17 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 	filesExtracted = 0;
 
 	getExtractedSize(in, input);
-	extractArchive(in, input, out);
+	if(extractArchive(in, input, out) != EXTRACT_ERROR_NONE) {
+		ret = EXTRACT_ERROR;
+	}
 
 	if (isARG) {
 		showProgressBar = false;
 		threadJoin(thread, U64_MAX);
 		threadFree(thread);
 	}
+
+	return ret;
 }
 
 /*
@@ -442,7 +447,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ScriptUtils::extractFile(file, input, output, message, true);
+				if (!missing) ret = ScriptUtils::extractFile(file, input, output, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "installCia") {
@@ -580,5 +585,6 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 	else if (ret == COPY_ERROR) Msg::waitMsg(Lang::get("COPY_ERROR"));
 	else if (ret == MOVE_ERROR) Msg::waitMsg(Lang::get("MOVE_ERROR"));
 	else if (ret == DELETE_ERROR) Msg::waitMsg(Lang::get("DELETE_ERROR"));
+	else if (ret == EXTRACT_ERROR) Msg::waitMsg(Lang::get("EXTRACT_ERROR"));
 	return ret;
 }
