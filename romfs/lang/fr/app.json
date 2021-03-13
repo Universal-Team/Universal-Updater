@@ -1,4 +1,6 @@
 {
+	"3DSX_IN_FOLDER": "Put 3DSX files in folder",
+	"3DSX_IN_FOLDER_DESC": "If enabled, 3DSX files will be put in a folder with the same name instead of directly in the set folder.",
 	"ACTION_CANCELED": "%s canceled!",
 	"ACTION_FAILED": "%s failed!",
 	"ACTION_REQUIRED": "Action required!",
