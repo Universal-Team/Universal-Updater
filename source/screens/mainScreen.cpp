@@ -245,9 +245,19 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->dwnldList = StoreUtils::store->GetDownloadList(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetEntryIndex());
 					this->dwnldSizes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetSizes();
 
+					bool good = false;
+
 					for (int i = 0; i < (int)this->dwnldList.size(); i++) {
-						if (i > (int)installedNames.size() - 1) this->installs.push_back( false );
-						else this->installs.push_back( this->dwnldList[i] == installedNames[i] );
+						good = false;
+
+						for (int i2 = 0; i2 < (int)installedNames.size(); i2++) {
+							if (installedNames[i2] == this->dwnldList[i]) {
+								this->installs.push_back( true );
+								good = true;
+							}
+						}
+
+						if (!good) this->installs.push_back( false );
 					}
 				}
 			}

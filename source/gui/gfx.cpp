@@ -52,7 +52,8 @@ std::vector<UITheme> GFX::Themes = {
 		C2D_Color32(77, 101, 128, 255), // Sidebar Unselected.
 		C2D_Color32(77, 101, 128, 255), // Mark Selected.
 		C2D_Color32(28, 33, 58, 255), // Mark Unselected.
-		C2D_Color32(28, 33, 58, 255) // Downlist Preview (Top).
+		C2D_Color32(28, 33, 58, 255), // Downlist Preview (Top).
+		C2D_Color32(173, 204, 239, 255) // SideBar Icon Color.
 	}
 };
 

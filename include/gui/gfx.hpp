@@ -43,28 +43,22 @@ struct UITheme {
 	uint32_t BGColor;
 	uint32_t BarOutline;
 	uint32_t TextColor;
-
 	uint32_t EntryBar;
 	uint32_t EntryOutline;
-
 	uint32_t BoxInside;
 	uint32_t BoxSelected;
 	uint32_t BoxUnselected;
-
 	uint32_t ProgressbarOut;
 	uint32_t ProgressbarIn;
-
 	uint32_t SearchBar;
 	uint32_t SearchbarOutline;
-
 	uint32_t SideBarSelected;
 	uint32_t SideBarUnselected;
-
 	/* NOTE: Also used for the buttons. */
 	uint32_t MarkSelected;
 	uint32_t MarkUnselected;
-
 	uint32_t DownListPrev;
+	uint32_t SideBarIconColor;
 };
 
 namespace GFX {

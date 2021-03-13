@@ -40,8 +40,6 @@ int QueueSystem::LastElement = 0;
 bool QueueRuns = false;
 static Thread queueThread = nullptr;
 
-LightLock QueueSystem::lock;
-
 /*
 	Adds an entry to the queue.
 
@@ -49,18 +47,22 @@ LightLock QueueSystem::lock;
 	C2D_Image icn: The icon.
 */
 void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) {
-	LightLock_Lock(&lock);
 	queueEntries.push_back( std::make_unique<Queue>(obj, icn, name, uName, eName, lUpdated) );
-	LightLock_Unlock(&lock);
-
 
 	/* If not already running, let it run!! */
 	if (!QueueRuns && !QueueSystem::Wait) {
 		QueueRuns = true; // We enable the queue run state here.
+
+		if (queueThread) {
+			threadJoin(queueThread, U64_MAX);
+			threadFree(queueThread);
+			queueThread = nullptr;
+		}
+
 		s32 prio = 0;
+
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 		queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
-
 	}
 }
 
@@ -69,17 +71,27 @@ void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std
 */
 void QueueSystem::ClearQueue() {
 	QueueRuns = false;
-	LightLock_Lock(&lock);
 	queueEntries.clear();
-	LightLock_Unlock(&lock);
+
+	if (queueThread) {
+		threadJoin(queueThread, U64_MAX);
+		threadFree(queueThread);
+		queueThread = nullptr;
+	}
 }
 
 /*
 	Use this, to go back to the queue after the Request.
 */
 void QueueSystem::Resume() {
-	QueueRuns = true;
 	QueueSystem::Wait = false;
+	QueueRuns = true;
+
+	if (queueThread) {
+		threadJoin(queueThread, U64_MAX);
+		threadFree(queueThread);
+		queueThread = nullptr;
+	}
 
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
@@ -93,48 +105,31 @@ void QueueSystem::QueueHandle() {
 	while(QueueRuns) {
 		Result ret = NONE; // No Error as of yet.
 
-		LightLock_Lock(&lock);
 		queueEntries[0]->total = queueEntries[0]->obj.size();
-		queueEntries[0]->current = 0;
-		LightLock_Unlock(&lock);
+		queueEntries[0]->current = QueueSystem::LastElement;
 
-		for(int i = QueueSystem::LastElement; true; i++) {
-			LightLock_Lock(&lock);
-
-			if(i >= (int)queueEntries[0]->obj.size()) {
-				LightLock_Unlock(&lock);
-				break;
-			}
-
+		for(int i = QueueSystem::LastElement; (ret != PROMPT_RET) && i < queueEntries[0]->total; i++) {
 			queueEntries[0]->current++;
 
-			LightLock_Unlock(&lock);
-
-			if (ret == NONE) {
+			if (ret == NONE && !QueueSystem::CancelCallback) {
 				std::string type = "";
 
-				LightLock_Lock(&lock);
 				if (queueEntries[0]->obj[i].contains("type") && queueEntries[0]->obj[i]["type"].is_string()) {
 					type = queueEntries[0]->obj[i]["type"];
 
 				} else {
 					ret = SYNTAX_ERROR;
 				}
-				LightLock_Unlock(&lock);
 
 				/* Deleting a file. */
 				if (type == "deleteFile") {
 					bool missing = false;
 					std::string file = "";
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Deleting;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
 						file = queueEntries[0]->obj[i]["file"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
-
 
 					if (!missing) ret = ScriptUtils::removeFile(file, "");
 					else ret = SYNTAX_ERROR;
@@ -144,7 +139,6 @@ void QueueSystem::QueueHandle() {
 					bool missing = false;
 					std::string file = "", output = "";
 
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Downloading;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
@@ -154,9 +148,8 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("output") && queueEntries[0]->obj[i]["output"].is_string()) {
 						output = queueEntries[0]->obj[i]["output"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
-					if (!missing) ret = ScriptUtils::downloadFile(file, output, "", false, QueueSystem::CancelCallback);
+					if (!missing) ret = ScriptUtils::downloadFile(file, output, "", false);
 					else ret = SYNTAX_ERROR;
 
 					/* Download from a GitHub Release. */
@@ -164,7 +157,6 @@ void QueueSystem::QueueHandle() {
 					bool missing = false, includePrereleases = false;
 					std::string repo = "", file = "", output = "";
 
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Downloading;
 
 					if (queueEntries[0]->obj[i].contains("repo") && queueEntries[0]->obj[i]["repo"].is_string()) {
@@ -181,17 +173,14 @@ void QueueSystem::QueueHandle() {
 
 					if (queueEntries[0]->obj[i].contains("includePrereleases") && queueEntries[0]->obj[i]["includePrereleases"].is_boolean())
 						includePrereleases = queueEntries[0]->obj[i]["includePrereleases"];
-					LightLock_Unlock(&lock);
 
-					if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, "", false, QueueSystem::CancelCallback);
+					if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, "", false);
 					else ret = SYNTAX_ERROR;
 
 					/* Extracting files. */
 				} else if (type == "extractFile") {
 					bool missing = false;
 					std::string file = "", input = "", output = "";
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Extracting;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
@@ -205,17 +194,14 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("output") && queueEntries[0]->obj[i]["output"].is_string()) {
 						output = queueEntries[0]->obj[i]["output"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
-					if (!missing) ScriptUtils::extractFile(file, input, output, "", false, QueueSystem::CancelCallback);
+					if (!missing) ScriptUtils::extractFile(file, input, output, "", false);
 					else ret = SYNTAX_ERROR;
 
 				/* Installing CIAs. */
 				} else if (type == "installCia") {
 					bool missing = false, updateSelf = false;
 					std::string file = "";
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Installing;
 
 					if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
@@ -225,7 +211,6 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("updateSelf") && queueEntries[0]->obj[i]["updateSelf"].is_boolean()) {
 						updateSelf = queueEntries[0]->obj[i]["updateSelf"];
 					}
-					LightLock_Unlock(&lock);
 
 					if (!missing) ScriptUtils::installFile(file, updateSelf, "");
 					else ret = SYNTAX_ERROR;
@@ -234,51 +219,43 @@ void QueueSystem::QueueHandle() {
 					bool missing = false;
 					std::string directory = "";
 
-					LightLock_Lock(&lock);
 					if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
 						directory = queueEntries[0]->obj[i]["directory"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
 					if (!missing) makeDirs(directory.c_str());
 					else ret = SYNTAX_ERROR;
 
 				/* Request Type 1. */
 				} else if (type == "rmdir") {
-					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
 					bool missing = false;
 					std::string directory = "", message = "", promptmsg = "";
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Request;
 
 					if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
 						directory = queueEntries[0]->obj[i]["directory"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
 					promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
+
 					if (!missing && directory != "") {
 						if (access(directory.c_str(), F_OK) != 0) ret = DELETE_ERROR;
 						else {
 							if (QueueSystem::RequestNeeded == RMDIR_REQUEST) {
 								/* There we already did it. :) */
-								LightLock_Lock(&QueueSystem::lock);
 								queueEntries[0]->status = QueueStatus::Deleting;
-								LightLock_Unlock(&QueueSystem::lock);
 								if (QueueSystem::RequestAnswer == 1) removeDirRecursive(directory.c_str());
 								/* Reset. */
-								QueueSystem::RequestNeeded = -1;
-								QueueSystem::RequestAnswer = -1;
+								QueueSystem::RequestNeeded = NO_REQUEST;
+								QueueSystem::RequestAnswer = NO_REQUEST;
 								QueueSystem::RequestMsg = "";
-								QueueSystem::LastElement = 0; // Reset back to 0.
 
 							} else {
 								/* We are in the process of the need of an answer. */
 								QueueSystem::RequestNeeded = RMDIR_REQUEST; // Type 1.
 								QueueSystem::RequestMsg = promptmsg;
-								QueueSystem::Wait = true;
-								QueueRuns = false;
+								QueueSystem::LastElement = i; // So we know, where we go again after the Request.
+								ret = PROMPT_RET;
 							}
 						}
 					}
@@ -287,11 +264,8 @@ void QueueSystem::QueueHandle() {
 
 				/* Request Type 2. */
 				} else if (type == "promptMessage" || type == "promptMsg") {
-					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
 					std::string Message = "";
 					int skipCount = -1;
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Request;
 
 					if (queueEntries[0]->obj[i].contains("message") && queueEntries[0]->obj[i]["message"].is_string()) {
@@ -301,22 +275,23 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("count") && queueEntries[0]->obj[i]["count"].is_number()) {
 						skipCount = queueEntries[0]->obj[i]["count"];
 					}
-					LightLock_Unlock(&lock);
 
 					if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
-						if (skipCount > -1 && QueueSystem::RequestAnswer == SCRIPT_CANCELED) i += skipCount; // Skip.
+						if ((skipCount > -1) && (QueueSystem::RequestAnswer == SCRIPT_CANCELED)) {
+							i += skipCount; // Skip.
+							queueEntries[0]->current += skipCount;
+						}
 
 						/* Reset. */
-						QueueSystem::RequestNeeded = -1;
-						QueueSystem::RequestAnswer = -1;
+						QueueSystem::RequestAnswer = NO_REQUEST;
+						QueueSystem::RequestNeeded = NO_REQUEST;
 						QueueSystem::RequestMsg = "";
-						QueueSystem::LastElement = 0; // Reset back to 0.
 
 					} else {
 						QueueSystem::RequestNeeded = PROMPT_REQUEST; // Type 2.
 						QueueSystem::RequestMsg = Message;
-						QueueSystem::Wait = true;
-						QueueRuns = false;
+						QueueSystem::LastElement = i; // So we know, where we go again after the Request.
+						ret = PROMPT_RET;
 					}
 
 				} else if (type == "exit") {
@@ -325,8 +300,6 @@ void QueueSystem::QueueHandle() {
 				} else if (type == "copy") {
 					std::string source = "", destination = "";
 					bool missing = false;
-
-					LightLock_Lock(&lock);
 					queueEntries[0]->status = QueueStatus::Copying;
 
 					if (queueEntries[0]->obj[i].contains("source") && queueEntries[0]->obj[i]["source"].is_string()) {
@@ -336,7 +309,6 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("destination") && queueEntries[0]->obj[i]["destination"].is_string()) {
 						destination = queueEntries[0]->obj[i]["destination"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
 					if (!missing) ret = ScriptUtils::copyFile(source, destination, "");
 					else ret = SYNTAX_ERROR;
@@ -344,8 +316,8 @@ void QueueSystem::QueueHandle() {
 				} else if (type == "move") {
 					std::string oldFile = "", newFile = "";
 					bool missing = false;
+					queueEntries[0]->status = QueueStatus::Moving;
 
-					LightLock_Lock(&lock);
 					if (queueEntries[0]->obj[i].contains("old") && queueEntries[0]->obj[i]["old"].is_string()) {
 						oldFile = queueEntries[0]->obj[i]["old"];
 					} else missing = true;
@@ -353,7 +325,6 @@ void QueueSystem::QueueHandle() {
 					if (queueEntries[0]->obj[i].contains("new") && queueEntries[0]->obj[i]["new"].is_string()) {
 						newFile = queueEntries[0]->obj[i]["new"];
 					} else missing = true;
-					LightLock_Unlock(&lock);
 
 					if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, "");
 					else ret = SYNTAX_ERROR;
@@ -361,20 +332,28 @@ void QueueSystem::QueueHandle() {
 				} else if (type == "skip") {
 					int skipCount = -1;
 
-					LightLock_Lock(&lock);
 					if (queueEntries[0]->obj[i].contains("count") && queueEntries[0]->obj[i]["count"].is_number()) {
 						skipCount = queueEntries[0]->obj[i]["count"];
 					}
-					LightLock_Unlock(&lock);
 
 					if (skipCount > 0) i += skipCount; // Skip.
 				}
+
+			} else {
+				queueEntries[0]->current = queueEntries[0]->total; // Set to total.
+				ret = SCRIPT_CANCELED;
+				break;
 			}
 		}
 
-		if (!QueueSystem::Wait) {
-			LightLock_Lock(&lock);
+		/* If we expect a prompt, we go to this. */
+		if (ret == PROMPT_RET) {
+			queueEntries[0]->current = QueueSystem::LastElement + 1; // Cause no Zero.
+			QueueSystem::Wait = true;
+			QueueRuns = false;
+		}
 
+		if (!QueueSystem::Wait) {
 			/* Canceled or None is for me -> Done. */
 			if (ret == NONE || ret == SCRIPT_CANCELED) {
 				queueEntries[0]->status = QueueStatus::Done;
@@ -412,10 +391,9 @@ void QueueSystem::QueueHandle() {
 			if (QueueSystem::CancelCallback) QueueSystem::CancelCallback = false; // Reset.
 
 			queueEntries.pop_front();
+			if (QueueSystem::LastElement != 0) QueueSystem::LastElement = 0;
 			if (queueEntries.empty()) QueueRuns = false; // The queue ended.
 			ret = NONE; // Reset.
-
-			LightLock_Unlock(&lock);
 		}
 	}
 }

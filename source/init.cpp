@@ -155,9 +155,6 @@ Result Init::Initialize() {
 	Gui::setScreen(std::make_unique<MainScreen>(), false, false);
 	InitMusic();
 
-	/* Initialize Queue System LightLock. */
-	LightLock_Init(&QueueSystem::lock);
-
 	return 0;
 }
 
@@ -177,16 +174,12 @@ Result Init::MainLoop() {
 		hRepeat = hidKeysDownRepeat();
 		hidTouchRead(&touch);
 
-		LightLock_Lock(&QueueSystem::lock);
-
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 		Gui::DrawScreen(false);
 		C3D_FrameEnd(0);
-
-		LightLock_Unlock(&QueueSystem::lock);
 
 		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
 

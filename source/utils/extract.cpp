@@ -25,6 +25,7 @@
 */
 
 #include "extract.hpp"
+#include "queueSystem.hpp"
 #include "scriptUtils.hpp"
 #include <archive.h>
 #include <archive_entry.h>
@@ -63,7 +64,7 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 	return EXTRACT_ERROR_NONE;
 }
 
-Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath, bool CancelCallback) {
+Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath) {
 	archive *a = archive_read_new();
 	archive_entry *entry;
 
@@ -77,8 +78,6 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 	}
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-		if (CancelCallback) break; // Cancel Extraction.
-
 		if (archive_entry_size(entry) > 0) { // Ignore folders.
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
@@ -115,14 +114,16 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				while(sizeLeft > 0) {
 					u64 toRead = std::min(0x30000u, sizeLeft);
 					ssize_t size = archive_read_data(a, buf, toRead);
+
 					/* Archive error, stop extracting. */
-					if(size < 0) {
+					if (size < 0) {
 						fclose(file);
 						delete[] buf;
 						archive_read_close(a);
 						archive_read_free(a);
 						return EXTRACT_ERROR_ARCHIVE;
 					}
+
 					fwrite(buf, 1, size, file);
 					sizeLeft -= size;
 					writeOffset += size;
@@ -131,11 +132,14 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				filesExtracted++;
 				fclose(file);
 				delete[] buf;
+
+				if (QueueSystem::CancelCallback) goto exit; // Cancel Extraction.
 			}
 		}
 	}
 
-	archive_read_close(a);
-	archive_read_free(a);
-	return EXTRACT_ERROR_NONE;
+	exit:
+		archive_read_close(a);
+		archive_read_free(a);
+		return EXTRACT_ERROR_NONE;
 }

@@ -39,6 +39,8 @@ extern int filesExtracted, extractFilesCount;
 
 extern curl_off_t downloadTotal;
 extern curl_off_t downloadNow;
+extern curl_off_t downloadSpeed;
+extern CURL *CurlHandle;
 bool ShowQueueProgress = true; // Queue Mode View.
 int queueMenuIdx = 0; // Queue Menu Index.
 
@@ -46,10 +48,10 @@ int queueMenuIdx = 0; // Queue Menu Index.
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 static const std::vector<Structs::ButtonPos> QueueBoxes = {
-	{ 46, 32, 266, 80 },
-	{ 46, 132, 266, 80 },
-	{ 288, 62, 24, 24 }, // Cancel current Queue.
-	{ 288, 162, 24, 24 } // Remove next Queue.
+	{ 47, 36, 266, 90 },
+	{ 47, 139, 266, 90 },
+	{ 288, 73, 24, 24 }, // Cancel current Queue.
+	{ 288, 169, 24, 24 } // Remove next Queue.
 };
 
 extern std::deque<std::unique_ptr<Queue>> queueEntries;
@@ -92,6 +94,10 @@ void DrawStatus(QueueStatus s) {
 					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_INSTALLING"), 250, 0, font);
 					break;
 
+				case QueueStatus::Moving:
+					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_MOVING"), 250, 0, font);
+					break;
+
 				case QueueStatus::Request:
 					Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 68, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_CURRENT") + Lang::get("OP_WAITING"), 250, 0, font);
 					break;
@@ -107,7 +113,7 @@ void DrawStatus(QueueStatus s) {
 	if (!queueEntries.empty()) {
 		char prog[256];
 		snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), queueEntries[0]->current, queueEntries[0]->total);
-		Gui::DrawString(QueueBoxes[0].x + 150, QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 250, 0, font);
+		Gui::DrawString((QueueBoxes[0].x + 182) - Gui::GetStringWidth(0.4f, prog, font), QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, prog, 250, 0, font);
 	}
 
 	/* String Handle. */
@@ -115,6 +121,7 @@ void DrawStatus(QueueStatus s) {
 		case QueueStatus::Done:
 		case QueueStatus::Failed:
 		case QueueStatus::None:
+		case QueueStatus::Moving:
 			break;
 
 		case QueueStatus::Copying:
@@ -129,6 +136,9 @@ void DrawStatus(QueueStatus s) {
 			break;
 
 		case QueueStatus::Downloading:
+			if (CurlHandle) curl_easy_getinfo(CurlHandle, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed);
+			else downloadSpeed = 0;
+
 			if (downloadTotal < 1.0f) downloadTotal = 1.0f;
 			if (downloadTotal < downloadNow) downloadTotal = downloadNow;
 
@@ -136,6 +146,9 @@ void DrawStatus(QueueStatus s) {
 					StringUtils::formatBytes(downloadNow).c_str(),
 					StringUtils::formatBytes(downloadTotal).c_str(),
 					((float)downloadNow/(float)downloadTotal) * 100.0f);
+
+			snprintf(str2, sizeof(str2), Lang::get("DOWNLOAD_SPEED").c_str(),
+					((downloadSpeed / 1024)));
 			break;
 
 		case QueueStatus::Extracting:
@@ -182,6 +195,7 @@ void DrawStatus(QueueStatus s) {
 			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
 			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 25, 182, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
 			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)downloadNow / (float)downloadTotal) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 62, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str2, 250, 0, font);
 			break;
 
 		case QueueStatus::Extracting:
@@ -197,6 +211,10 @@ void DrawStatus(QueueStatus s) {
 			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 25 + 1, (int)(((float)installOffset / (float)installSize) * 180.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
 			break;
 
+		case QueueStatus::Moving:
+			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("OP_MOVING"), 250, 0, font);
+			break;
+
 		case QueueStatus::Request:
 			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 250, 0, font);
 			break;
@@ -210,17 +228,27 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 
 	if (!queueEntries.empty()) {
 		Gui::Draw_Rect(QueueBoxes[0].x, QueueBoxes[0].y, QueueBoxes[0].w, QueueBoxes[0].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		C2D_DrawImageAt(queueEntries[0]->icn, QueueBoxes[0].x + 5, QueueBoxes[0].y + 21, 0.5f);
+
+		const C2D_Image tempImg = queueEntries[0]->icn;
+		const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
+		const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
+		C2D_DrawImageAt(tempImg, QueueBoxes[0].x + 5 + offsetW, QueueBoxes[0].y + 21 + offsetH, 0.5f);
+
 		DrawStatus(queueEntries[0]->status);
-		//GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[2].x, QueueBoxes[2].y); // Don't show until properly implemented.
+		GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[2].x, QueueBoxes[2].y); // Don't show until properly implemented.
 
 		/* The next Queue Entries being displayed below. */
 		if ((1 + queueMenuIdx) < (int)queueEntries.size()) {
 			Gui::Draw_Rect(QueueBoxes[1].x, QueueBoxes[1].y, QueueBoxes[1].w, QueueBoxes[1].h, GFX::Themes[GFX::SelectedTheme].MarkUnselected);
-			C2D_DrawImageAt(queueEntries[1 + queueMenuIdx]->icn, QueueBoxes[1].x + 5, QueueBoxes[1].y + 21, 0.5f);
+
+			const C2D_Image tempImg2 = queueEntries[1 + queueMenuIdx]->icn;
+			const uint8_t offsetW2 = (48 - tempImg2.subtex->width) / 2; // Center W.
+			const uint8_t offsetH2 = (48 - tempImg2.subtex->height) / 2; // Center H.
+			C2D_DrawImageAt(tempImg2, QueueBoxes[1].x + 5 + offsetW2, QueueBoxes[1].y + 21 + offsetH2, 0.5f);
+
 			Gui::DrawString(QueueBoxes[1].x + 10, QueueBoxes[1].y + 5, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, queueEntries[1 + queueMenuIdx]->name, 250, 0, font);
 
-			Gui::DrawString(QueueBoxes[1].x + 60, QueueBoxes[1].y + 30, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("QUEUE_POSITION") + ": " + std::to_string(queueMenuIdx + 2), 0, 0, font);
+			Gui::DrawString(QueueBoxes[1].x + 60, QueueBoxes[1].y + 30, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("QUEUE_POSITION") + ": " + std::to_string(queueMenuIdx + 1), 0, 0, font);
 
 			/* Cancel. */
 			GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[3].x, QueueBoxes[3].y);
@@ -234,17 +262,23 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 	}
 
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, QueueBoxes[0])) {
-			if (QueueSystem::RequestNeeded != -1) { // -1 means no request.
+		/* Current Queue Cancel. */
+		if (touching(touch, QueueBoxes[2])) { // Needs to be above the 0 one, otherwise the callback won't be accepted.
+			QueueSystem::CancelCallback = true;
+
+		} else if (touching(touch, QueueBoxes[0])) {
+			if (QueueSystem::RequestNeeded != NO_REQUEST) { // -1 means no request.
 				switch(QueueSystem::RequestNeeded) {
-					case 1: // Remove Directory message.
+					case RMDIR_REQUEST: // Remove Directory message.
 						QueueSystem::RequestAnswer = Msg::promptMsg(QueueSystem::RequestMsg);
+
 						QueueSystem::Wait = false;
 						QueueSystem::Resume();
 						break;
 
-					case 2: // Skip prompt message.
+					case PROMPT_REQUEST: // Skip prompt message.
 						QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg);
+
 						QueueSystem::Wait = false;
 						QueueSystem::Resume();
 						break;
@@ -254,23 +288,16 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 				ShowQueueProgress = !ShowQueueProgress; // In case no request expected, switch from progress to total progress mode etc.
 			}
 
-			/* Current Queue Cancel. */
-		} else if (touching(touch, QueueBoxes[2])) { // TODO: Cancel current Queue.
-
 			/* Remove from Queue. */
 		} else if (touching(touch, QueueBoxes[3])) { // Remove Queue entries.
-			LightLock_Lock(&QueueSystem::lock);
 			if (queueEntries.size() > 1) queueEntries.erase(queueEntries.begin() + 1 + queueMenuIdx);
-			LightLock_Unlock(&QueueSystem::lock);
 		}
 	}
 
 	if (hDown & KEY_DOWN) {
-		LightLock_Lock(&QueueSystem::lock);
 		if (!queueEntries.empty()) {
 			if ((1 + queueMenuIdx) < (int)queueEntries.size() - 1) queueMenuIdx++;
 		}
-		LightLock_Unlock(&QueueSystem::lock);
 	}
 
 	if (hDown & KEY_UP) {

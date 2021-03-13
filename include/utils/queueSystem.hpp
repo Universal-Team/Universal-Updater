@@ -40,12 +40,15 @@ enum class QueueStatus {
 	Downloading,
 	Extracting,
 	Installing,
+	Moving,
 	Request, // For User needed Requests.
 	Failed,
 	Done
 };
 
 enum RequestType {
+	PROMPT_RET = -3,
+	NO_REQUEST = -1,
 	RMDIR_REQUEST = 1, // remove dir prompt request.
 	PROMPT_REQUEST = 2, // skip prompt request.
 	PROMPT_ERROR = 3 // Error message prompt. Unused right now.
@@ -74,8 +77,6 @@ namespace QueueSystem {
 	void AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated); // Adds to Queue.
 	void ClearQueue(); // Clears the Queue.
 	void Resume();
-
-	extern LightLock lock;
 };
 
 #endif

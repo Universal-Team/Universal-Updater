@@ -29,6 +29,7 @@
 #include "files.hpp"
 #include "json.hpp"
 #include "lang.hpp"
+#include "queueSystem.hpp"
 #include "screenshot.hpp"
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
@@ -55,6 +56,7 @@ static size_t result_written = 0;
 
 curl_off_t downloadTotal = 1; // Dont initialize with 0 to avoid division by zero later.
 curl_off_t downloadNow = 0;
+curl_off_t downloadSpeed = 0;
 
 static FILE *downfile = nullptr;
 static size_t file_buffer_pos = 0;
@@ -67,6 +69,7 @@ static LightEvent waitCommit;
 static bool killThread = false;
 static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
+CURL *CurlHandle = nullptr;
 
 static int curlProgress(CURL *hnd,
 					curl_off_t dltotal, curl_off_t dlnow,
@@ -104,6 +107,7 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 	const size_t bsz = size * nmemb;
 	size_t tofill = 0;
 	if (writeError) return 0;
+	if (QueueSystem::CancelCallback) return 0;
 
 	if (!g_buffers[g_index]) {
 		LightEvent_Init(&waitCommit, RESET_STICKY);
@@ -142,17 +146,16 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 
 	const std::string &url: The download URL.
 	const std::string &path: Where to place the file.
-	bool CancelCallback: The Callback to cancel. Proper implementation TODO.
 */
-Result downloadToFile(const std::string &url, const std::string &path, bool CancelCallback) {
+Result downloadToFile(const std::string &url, const std::string &path) {
 	if (!checkWifiStatus()) return -1; // NO WIFI.
 
 	bool needToDelete = false;
 	downloadTotal = 1;
 	downloadNow = 0;
+	downloadSpeed = 0;
 
 	CURLcode curlResult;
-	CURL *hnd;
 	Result retcode = 0;
 	int res;
 
@@ -186,24 +189,25 @@ Result downloadToFile(const std::string &url, const std::string &path, bool Canc
 		goto exit;
 	}
 
-	hnd = curl_easy_init();
-	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, FILE_ALLOC_SIZE);
-	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L);
-	curl_easy_setopt(hnd, CURLOPT_USERAGENT, USER_AGENT);
-	curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
-	curl_easy_setopt(hnd, CURLOPT_FAILONERROR, 1L);
-	curl_easy_setopt(hnd, CURLOPT_ACCEPT_ENCODING, "gzip");
-	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
-	curl_easy_setopt(hnd, CURLOPT_XFERINFOFUNCTION, curlProgress);
-	curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
-	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, file_handle_data);
-	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
-	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
+	CurlHandle = curl_easy_init();
+	curl_easy_setopt(CurlHandle, CURLOPT_BUFFERSIZE, FILE_ALLOC_SIZE);
+	curl_easy_setopt(CurlHandle, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(CurlHandle, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(CurlHandle, CURLOPT_USERAGENT, USER_AGENT);
+	curl_easy_setopt(CurlHandle, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_FAILONERROR, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_ACCEPT_ENCODING, "gzip");
+	curl_easy_setopt(CurlHandle, CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(CurlHandle, CURLOPT_XFERINFOFUNCTION, curlProgress);
+	curl_easy_setopt(CurlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
+	curl_easy_setopt(CurlHandle, CURLOPT_WRITEFUNCTION, file_handle_data);
+	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_STDERR, stdout);
 
-	curlResult = curl_easy_perform(hnd);
-	curl_easy_cleanup(hnd);
+	curlResult = curl_easy_perform(CurlHandle);
+	curl_easy_cleanup(CurlHandle);
+	CurlHandle = nullptr;
 
 	if (curlResult != CURLE_OK) {
 		retcode = -curlResult;
@@ -263,6 +267,7 @@ exit:
 		if (access(path.c_str(), F_OK) == 0) deleteFile(path.c_str()); // Delete file, cause not fully downloaded.
 	}
 
+	if (QueueSystem::CancelCallback) return 0;
 	return retcode;
 }
 
@@ -325,9 +330,8 @@ static Result setupContext(CURL *hnd, const char *url) {
 	const std::string &asset: Const Reference to the Asset. (File.filetype)
 	const std::string &path: Const Reference, where to store. (sdmc:/File.filetype)
 	bool includePrereleases: If including Pre-Releases.
-	bool CancelCallback: The callback for canceling.
 */
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases, bool CancelCallback) {
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases) {
 	Result ret = 0;
 	CURL *hnd;
 
@@ -425,7 +429,7 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 		ret = DL_ERROR_GIT;
 
 	} else {
-		ret = downloadToFile(assetUrl, path, CancelCallback);
+		ret = downloadToFile(assetUrl, path);
 	}
 
 	return ret;

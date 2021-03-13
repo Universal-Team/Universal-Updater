@@ -48,7 +48,7 @@ bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &te
 }
 
 /* Remove a File. */
-Result ScriptUtils::removeFile(const std::string &file, const std::string &message) {
+Result ScriptUtils::removeFile(const std::string &file, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
@@ -58,20 +58,25 @@ Result ScriptUtils::removeFile(const std::string &file, const std::string &messa
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
 
-	// Msg::DisplayMsg(message);
+	if (isARG) Msg::DisplayMsg(message);
 	deleteFile(out.c_str());
 	return ret;
 }
 
 /* Boot a title. */
-void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message) {
+void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message, bool isARG) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
 
 	const u64 ID = std::stoull(TitleID, 0, 16);
-	if (Msg::promptMsg(MSG)) {
-		Msg::DisplayMsg(message);
+	if (isARG) {
+		if (Msg::promptMsg(MSG)) {
+			Msg::DisplayMsg(message);
+			Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
+		}
+
+	} else {
 		Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
 	}
 }
@@ -127,7 +132,7 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 }
 
 /* Rename / Move a file. */
-Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message) {
+Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message, bool isARG) {
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
 
@@ -142,7 +147,7 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
 	_new = std::regex_replace(_new, std::regex("%FIRM%"), config->firmPath());
 
-	// Msg::DisplayMsg(message);
+	if (isARG) Msg::DisplayMsg(message);
 
 	/* TODO: Kinda avoid that? */
 	makeDirs(_new.c_str());
@@ -151,7 +156,7 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 }
 
 /* Download from GitHub Release. */
-Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG, bool CancelCallback) {
+Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
@@ -170,7 +175,7 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 	}
 
-	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases, CancelCallback) != 0) {
+	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
 		if (isARG) showProgressBar = false;
 
 		downloadFailed();
@@ -193,7 +198,7 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 }
 
 /* Download a file. */
-Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG, bool CancelCallback) {
+Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
@@ -212,7 +217,7 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 	}
 
-	if (downloadToFile(file, out, CancelCallback) != 0) {
+	if (downloadToFile(file, out) != 0) {
 		if (isARG) showProgressBar = false;
 
 		downloadFailed();
@@ -263,7 +268,7 @@ void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const 
 }
 
 /* Extract files. */
-void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG, bool CancelCallback) {
+void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG) {
 	extractFilesCount = 0;
 
 	std::string out, in;
@@ -289,7 +294,7 @@ void ScriptUtils::extractFile(const std::string &file, const std::string &input,
 	filesExtracted = 0;
 
 	getExtractedSize(in, input);
-	extractArchive(in, input, out, CancelCallback);
+	extractArchive(in, input, out);
 
 	if (isARG) {
 		showProgressBar = false;
@@ -350,7 +355,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::removeFile(file, message);
+				if (!missing) ret = ScriptUtils::removeFile(file, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "downloadFile") {
@@ -520,7 +525,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					Message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message);
+				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "move") {
@@ -541,7 +546,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					Message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message);
+				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "skip") {

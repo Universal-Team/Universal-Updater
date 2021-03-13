@@ -54,8 +54,8 @@ struct UUUpdate {
 	std::string Version = "";
 };
 
-Result downloadToFile(const std::string &url, const std::string &path, bool CancelCallback = false);
-Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases, bool CancelCallback = false);
+Result downloadToFile(const std::string &url, const std::string &path);
+Result downloadFromRelease(const std::string &url, const std::string &asset, const std::string &path, bool includePrereleases);
 
 /*
 	Check Wi-Fi status.
