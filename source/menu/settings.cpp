@@ -82,11 +82,11 @@ static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT" };
 static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
-	Gui::DrawStringCentered(17, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SETTINGS"), 280, 0, font);
 
 	for (int i = 0; i < 7; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(mainStrings[i]), 255, 0, font);
+		Gui::DrawStringCentered(20, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(mainStrings[i]), 255, 0, font);
 	}
 }
 
@@ -101,11 +101,11 @@ static void DrawLanguageSettings(int selection, int sPos) {
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 	GFX::DrawSprite(sprites_add_font_idx, langButtons[6].x, langButtons[6].y);
-	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECT_LANG"), 248, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECT_LANG"), 248, 0, font);
 
 	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
 		if (sPos + i == selection) Gui::Draw_Rect(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		Gui::DrawStringCentered(22, langButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, languages[sPos + i], 280, 0, font);
+		Gui::DrawStringCentered(20, langButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, languages[sPos + i], 280, 0, font);
 	}
 }
 
@@ -118,11 +118,11 @@ static void DrawSettingsDir(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
 
 	for (int i = 0; i < 5; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		Gui::DrawStringCentered(22, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(dirStrings[i]), 255, 0, font);
+		Gui::DrawStringCentered(20, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(dirStrings[i]), 255, 0, font);
 	}
 }
 
@@ -134,7 +134,7 @@ static void DrawAutoUpdate(int selection) {
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
 	/* Toggle Boxes. */
 	Gui::Draw_Rect(40, 44, 280, 24, (selection == 0 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
@@ -158,7 +158,7 @@ static void DrawGUISettings(int selection) {
 	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 
-	Gui::DrawStringCentered(24, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("GUI_SETTINGS"), 248, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("GUI_SETTINGS"), 248, 0, font);
 
 	Gui::Draw_Rect(40, 44, 280, 24, (selection == 0 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
 	Gui::DrawString(47, 48, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("UNISTORE_BG"), 210, 0, font);
@@ -593,7 +593,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, langButtons[6])) {
 			/* Download Font. */
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 			config->customfont(true);
 			Init::LoadFont();
 		}
