@@ -65,7 +65,7 @@
 	"EXECUTE_ENTRY": "この項目を実行しますか？",
 	"EXIT_APP": "Universal-Updaterを終了",
 	"EXTRACTING": "解凍中… %s / %s (%.2f%%)",
-	"EXTRACT_ERROR": "Extract error!",
+	"EXTRACT_ERROR": "解凍エラー！",
 	"FEATURE_SIDE_EFFECTS": "この機能は、行列の実行中に副作用が発生する可能性があります。\n続行してもよろしいですか？",
 	"FETCHING_METADATA": "古いメタデータを取得しています……",
 	"FETCHING_RECOMMENDED_UNISTORES": "おすすめのUniStoreを取得しています……",
