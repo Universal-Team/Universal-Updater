@@ -59,12 +59,30 @@ static const std::vector<Structs::ButtonPos> toggleAbles = {
 	{ 288, 120, 24, 24 }
 };
 
+static const std::vector<Structs::ButtonPos> dirButtons = {
+	{ 41, 34, 280, 24 },
+	{ 41, 64, 280, 24 },
+	{ 41, 120, 280, 24 },
+	{ 41, 150, 280, 24 },
+	{ 41, 180, 280, 24 },
+	{ 41, 210, 280, 24 }
+};
+
+static const std::vector<Structs::ButtonPos> dirIcons = {
+	{ 288, 34, 24, 24 },
+	{ 288, 64, 24, 24 },
+	{ 288, 120, 24, 24 },
+	{ 288, 150, 24, 24 },
+	{ 288, 180, 24, 24 },
+	{ 288, 210, 24, 24 }
+};
+
 static const Structs::ButtonPos back = { 45, 0, 24, 24 }; // Back arrow for directory.
 static const Structs::ButtonPos Themes = { 40, 220, 280, 24 }; // Themes.
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
-static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
+static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_IN_FOLDER", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 //static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
@@ -120,9 +138,15 @@ static void DrawSettingsDir(int selection) {
 	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
 	Gui::DrawStringCentered(20, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
 
-	for (int i = 0; i < 5; i++) {
-		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		Gui::DrawStringCentered(20, mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(dirStrings[i]), 255, 0, font);
+	for (int i = 0; i < (int)dirButtons.size(); i++) {
+		Gui::Draw_Rect(dirButtons[i].x, dirButtons[i].y, dirButtons[i].w, dirButtons[i].h, (selection == i ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		Gui::DrawString(dirButtons[i].x + 4, dirButtons[i].y + 4, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get(dirStrings[i]), 210, 0, font);
+		if(i == 1) { // Put 3DSX in folder has a toggle and description
+			GFX::DrawToggle(dirIcons[i].x, dirIcons[i].y, config->_3dsxInFolder());
+			Gui::DrawString(dirButtons[i].x + 4, dirButtons[i].y + 28, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("3DSX_IN_FOLDER_DESC"), 265, 0, font, C2D_WordWrap);
+		} else {
+			GFX::DrawSprite(sprites_arrow_idx, dirIcons[i].x, dirIcons[i].y, -1.0f);
+		}
 	}
 }
 
@@ -310,7 +334,7 @@ static void SettingsHandleDir(int &page, int &selection) {
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 4) selection++;
+		if (selection < (int)dirStrings.size() - 1) selection++;
 		else selection = 0;
 	}
 
@@ -334,23 +358,26 @@ static void SettingsHandleDir(int &page, int &selection) {
 			page = 0;
 			selection = 4;
 
-		} else if (touching(touch, mainButtons[0])) {
+		} else if (touching(touch, dirButtons[0])) {
 			const std::string path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->_3dsxPath(path);
 
-		} else if (touching(touch, mainButtons[1])) {
+		} else if (touching(touch, dirButtons[1])) {
+			config->_3dsxInFolder(!config->_3dsxInFolder());
+
+		} else if (touching(touch, dirButtons[2])) {
 			const std::string path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->ndsPath(path);
 
-		} else if (touching(touch, mainButtons[2])) {
+		} else if (touching(touch, dirButtons[3])) {
 			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->archPath(path);
 
-		} else if (touching(touch, mainButtons[3])) {
+		} else if (touching(touch, dirButtons[4])) {
 			const std::string path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
 			if (path != "") config->shortcut(path);
 
-		} else if (touching(touch, mainButtons[4])) {
+		} else if (touching(touch, dirButtons[5])) {
 			const std::string path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
 			if (path != "") config->firmPath(path);
 		}
@@ -366,21 +393,25 @@ static void SettingsHandleDir(int &page, int &selection) {
 				break;
 
 			case 1:
+				config->_3dsxInFolder(!config->_3dsxInFolder());
+				break;
+
+			case 2:
 				path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->ndsPath(path);
 				break;
 
-			case 2:
+			case 3:
 				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->archPath(path);
 				break;
 
-			case 3:
+			case 4:
 				path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
 				if (path != "") config->shortcut(path);
 				break;
 
-			case 4:
+			case 5:
 				path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
 				if (path != "") config->firmPath(path);
 				break;

@@ -55,6 +55,9 @@ public:
 	bool autoupdate() const { return this->v_autoUpdate; };
 	void autoupdate(bool v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
 
+	bool _3dsxInFolder() const { return this->v_3dsxInFolder; };
+	void _3dsxInFolder(bool v) { this->v_3dsxInFolder = v; if (!this->changesMade) this->changesMade = true; };
+
 	std::string _3dsxPath() const { return this->v_3dsxPath; };
 	void _3dsxPath(const std::string &v) { this->v_3dsxPath = v; if (!this->changesMade) this->changesMade = true; };
 
@@ -117,7 +120,7 @@ private:
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads";
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true,
-		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true;
+		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false;
 };
 
 #endif
