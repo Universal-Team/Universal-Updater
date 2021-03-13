@@ -65,6 +65,7 @@
 	"EXECUTE_ENTRY": "Você quer executar este item?",
 	"EXIT_APP": "Fechar Universal-Updater",
 	"EXTRACTING": "Extracting... %s / %s (%.2f%%)",
+	"EXTRACT_ERROR": "Extract error!",
 	"FEATURE_SIDE_EFFECTS": "This Feature may have side effects while the Queue is running.\nAre you sure you want to continue?",
 	"FETCHING_METADATA": "Buscando metadados antigos...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Buscando por UniStores recomendadas...",
