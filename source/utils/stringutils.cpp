@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "stringutils.hpp"
+#include <stdarg.h>
 
 /*
 	To lowercase conversion.
@@ -69,9 +70,9 @@ std::string StringUtils::formatBytes(int bytes) {
 
 	if (bytes == 1)							snprintf(out, sizeof(out), "%d Byte", bytes);
 	else if (bytes < 1024)					snprintf(out, sizeof(out), "%d Bytes", bytes);
-	else if (bytes < 1024 * 1024)			snprintf(out, sizeof(out), "%.1f KB", (float)bytes / 1024);
-	else if (bytes < 1024 * 1024 * 1024)	snprintf(out, sizeof(out), "%.1f MB", (float)bytes / 1024 / 1024);
-	else									snprintf(out, sizeof(out), "%.1f GB", (float)bytes / 1024 / 1024 / 1024);
+	else if (bytes < 1024 * 1024)			snprintf(out, sizeof(out), "%.1f KiB", (float)bytes / 1024);
+	else if (bytes < 1024 * 1024 * 1024)	snprintf(out, sizeof(out), "%.1f MiB", (float)bytes / 1024 / 1024);
+	else									snprintf(out, sizeof(out), "%.1f GiB", (float)bytes / 1024 / 1024 / 1024);
 
 	return out;
 }
@@ -104,4 +105,15 @@ std::string StringUtils::GetMarkString(int marks) {
 	if (marks & favoriteMarks::SPADE)	out += "♠";
 
 	return out;
+}
+
+std::string StringUtils::format(const std::string &fmt_str, ...) {
+	va_list ap;
+	char *fp = nullptr;
+	va_start(ap, fmt_str);
+	vasprintf(&fp, fmt_str.c_str(), ap);
+	va_end(ap);
+
+	std::unique_ptr<char, decltype(free) *> formatted(fp, free);
+	return std::string(formatted.get());
 }

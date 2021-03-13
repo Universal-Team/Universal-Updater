@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -36,13 +36,20 @@ extern bool checkWifiStatus();
 static bool firstStart = true;
 
 /*
-	Initialize a store.
+	Initialize a Store.
 
 	const std::string &file: The UniStore file.
 	const std::string &file2: The UniStore file.. without full path.
 	bool ARGMode: If Argument mode.
 */
 Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
+	if (file.length() > 4) {
+		if(*(u32*)(file.c_str() + file.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
+			this->valid = false;
+			return;
+		}
+	}
+
 	this->fileName = file2;
 
 	if (!ARGMode) {
@@ -55,7 +62,7 @@ Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
 };
 
 /*
-	Update an UniStore,, including SpriteSheet, if revision increased.
+	Update an UniStore, including SpriteSheet, if revision increased.
 
 	const std::string &file: Const Reference to the fileName.
 */
@@ -231,7 +238,7 @@ void Store::LoadFromFile(const std::string &file) {
 			if (this->storeJson["storeInfo"]["version"] < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 			else if (this->storeJson["storeInfo"]["version"] > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 			else if (this->storeJson["storeInfo"]["version"] == 3 || this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION) {
-				this->valid = this->storeJson["storeInfo"]["version"] = true;
+				this->valid = true;
 			}
 		}
 

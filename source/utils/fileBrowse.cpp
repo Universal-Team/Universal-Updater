@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -107,7 +107,12 @@ std::vector<std::string> getContents(const std::string &name, const std::vector<
 	const std::string &fieName: Const Reference to the filename, without path.
 */
 UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
-	UniStoreInfo Temp = { "", "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, Entries.
+	UniStoreInfo Temp = { "", "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, entries.
+
+	if (fileName.length() > 4) {
+		if(*(u32*)(fileName.c_str() + fileName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
+	}
+
 	nlohmann::json JSON = nullptr;
 
 	FILE *temp = fopen(file.c_str(), "r");

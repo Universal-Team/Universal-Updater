@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -152,28 +152,27 @@ void QRCode::drawThread() {
 			C2D_DrawImageAt(this->image, 0, 0, 0.5, nullptr, 1.0f, 1.0f);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
 
 		} else {
 			GFX::DrawTop();
-			Gui::DrawStringCentered(0, 1, 0.7, TEXT_COLOR, Lang::get("STORE_INFO"), 390, 0, font);
+			Gui::DrawStringCentered(0, 1, 0.7, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("STORE_INFO"), 390, 0, font);
 
 			if (this->stores.size() > 0) {
-				Gui::DrawStringCentered(0, 30, 0.7f, TEXT_COLOR, this->stores[this->selectedStore].Title, 390, 0, font);
-				Gui::DrawStringCentered(0, 50, 0.6f, TEXT_COLOR, this->stores[this->selectedStore].Author, 380, 0, font);
-				Gui::DrawStringCentered(0, 90, 0.5f, TEXT_COLOR, this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
+				Gui::DrawStringCentered(0, 30, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, this->stores[this->selectedStore].Title, 390, 0, font);
+				Gui::DrawStringCentered(0, 50, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, this->stores[this->selectedStore].Author, 380, 0, font);
+				Gui::DrawStringCentered(0, 90, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
 			}
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("RECOMMENDED_UNISTORES"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
+			Gui::DrawStringCentered(0, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("RECOMMENDED_UNISTORES"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)this->stores.size(); i++) {
-				if (this->sPos + i == this->selectedStore) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, this->stores[this->sPos + i].Title, 295, 0, font);
+				if (this->sPos + i == this->selectedStore) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, this->stores[this->sPos + i].Title, 295, 0, font);
 			}
 		}
 
@@ -410,7 +409,7 @@ void QRCode::handler(std::string &result) {
 }
 
 /*
-	The Store Add QR Code handle and such.
+	The store Add QR Code handle and such.
 */
 std::string QR_Scanner::StoreHandle() {
 	std::string result = "";

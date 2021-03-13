@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "common.hpp"
+#include "queueSystem.hpp"
 #include "storeUtils.hpp"
+
+std::unique_ptr<Meta> StoreUtils::meta = nullptr;
+std::unique_ptr<Store> StoreUtils::store = nullptr;
+std::vector<std::unique_ptr<StoreEntry>> StoreUtils::entries;
 
 /*
 	Compare Title.
@@ -82,20 +88,19 @@ bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, co
 
 	bool Ascending: If Ascending.
 	SortType sorttype: The sort type.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Entries, which should be sorted.
 */
-void StoreUtils::SortEntries(bool Ascending, SortType sorttype, std::vector<std::unique_ptr<StoreEntry>> &entries) {
+void StoreUtils::SortEntries(bool Ascending, SortType sorttype) {
 	switch(sorttype) {
 		case SortType::TITLE:
-			Ascending ? std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleAscending) : std::sort(entries.begin(), entries.end(), StoreUtils::compareTitleDescending);
+			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareTitleAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareTitleDescending);
 			break;
 
 		case SortType::AUTHOR:
-			Ascending ? std::sort(entries.begin(), entries.end(), StoreUtils::compareAuthorAscending) : std::sort(entries.begin(), entries.end(), StoreUtils::compareAuthorDescending);
+			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareAuthorAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareAuthorDescending);
 			break;
 
 		case SortType::LAST_UPDATED:
-			Ascending ? std::sort(entries.begin(), entries.end(), StoreUtils::compareUpdateAscending) : std::sort(entries.begin(), entries.end(), StoreUtils::compareUpdateDescending);
+			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateDescending);
 			break;
 	}
 }
@@ -117,62 +122,128 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 /*
 	Search for stuff of the store.
 
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
 	const std::string &query: Const Reference to the query.
 	bool title: if titles should be included.
 	bool author: if authors should be included.
 	bool category: if categories should be included.
 	bool console: if consoles should be included.
 	int selectedMarks: The selected mark flags.
-	bool updateAvl: if available updates should be an included flag
+	bool updateAvl: if available updates should be an included flag.
+	bool isAND: if using AND or OR mode.
 */
-void StoreUtils::search(std::vector<std::unique_ptr<StoreEntry>> &entries, const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl) {
-	for (auto it = entries.begin(); it != entries.end(); ++it) {
-		if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
-		|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
-		|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
-		|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
-		|| (!title && !author && !category && !console))
-		&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
-			entries.erase(it);
-			--it;
+void StoreUtils::search(const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl, bool isAND) {
+	if (isAND) {
+		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
+			if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
+			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
+			|| (!title && !author && !category && !console))
+			&& ((selectedMarks == 0 && !updateAvl) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks) && (!updateAvl || (*it)->GetUpdateAvl()))))) {
+				StoreUtils::entries.erase(it);
+				--it;
+			}
+		}
+
+	} else {
+		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
+			if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
+			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
+			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
+			|| (!title && !author && !category && !console))
+			&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
+				StoreUtils::entries.erase(it);
+				--it;
+			}
 		}
 	}
 }
 
-/*
-	Filter for available updates.
-
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
-*/
-void StoreUtils::FilterUpdateAvailable(std::vector<std::unique_ptr<StoreEntry>> &entries) {
-	for (auto it = entries.begin(); it != entries.end(); ++it) {
+/* Filter for available updates. */
+void StoreUtils::FilterUpdateAvailable() {
+	for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
 		if (!((*it)->GetUpdateAvl())) {
-			entries.erase(it);
+			StoreUtils::entries.erase(it);
 			--it;
 		}
 	}
 }
 
-/*
-	Reset everything of the store and clear + fetch the Entries again.
+/* Reset everything of the store and clear + fetch the entries again. */
+void StoreUtils::ResetAll() {
+	if (StoreUtils::store) {
+		StoreUtils::entries.clear();
 
-	const std::unique_ptr<Store> &store: Const Reference to the Store class.
-	const std::unique_ptr<Meta> &meta: Const Reference to the Meta class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the entries.
-*/
-void StoreUtils::ResetAll(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, std::vector<std::unique_ptr<StoreEntry>> &entries) {
-	if (store) {
-		entries.clear();
-
-		if (store->GetValid()) {
-			for (int i = 0; i < store->GetStoreSize(); i++) {
-				entries.push_back( std::make_unique<StoreEntry>(store, meta, i) );
+		if (StoreUtils::store->GetValid()) {
+			for (int i = 0; i < StoreUtils::store->GetStoreSize(); i++) {
+				StoreUtils::entries.push_back( std::make_unique<StoreEntry>(StoreUtils::store, StoreUtils::meta, i) );
 			}
 
-			store->SetBox(0);
-			store->SetEntry(0);
-			store->SetScreenIndx(0);
+			StoreUtils::store->SetBox(0);
+			StoreUtils::store->SetEntry(0);
+			StoreUtils::store->SetScreenIndx(0);
+		}
+	}
+}
+
+/* Refresh the available update displays from all Entries. */
+void StoreUtils::RefreshUpdateAVL() {
+	for (int i = 0; i < (int)StoreUtils::entries.size(); i++) {
+		if (StoreUtils::entries[i]) {
+			StoreUtils::entries[i]->SetUpdateAvl(StoreUtils::meta->UpdateAvailable(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[i]->GetTitle(), StoreUtils::entries[i]->GetLastUpdated()));
+		}
+	}
+}
+
+void StoreUtils::AddToQueue(int index, const std::string &entry, const std::string &entryName, const std::string &lUpdated) {
+	if (!StoreUtils::store && !StoreUtils::store->GetValid()) return;
+
+	/* Check first for proper JSON. */
+	if (!StoreUtils::store->GetJson().contains("storeContent")) return;
+	if ((int)StoreUtils::store->GetJson()["storeContent"].size() < index) return;
+	if (!StoreUtils::store->GetJson()["storeContent"][index].contains(entry)) return;
+
+	nlohmann::json Script = nullptr;
+
+	/* Detect if array or new object thing. Else return Syntax error. :P */
+	if (StoreUtils::store->GetJson()["storeContent"][index][entry].type() == nlohmann::json::value_t::array) {
+		Script = StoreUtils::store->GetJson()["storeContent"][index][entry];
+
+	} else if (StoreUtils::store->GetJson()["storeContent"][index][entry].type() == nlohmann::json::value_t::object) {
+		if (StoreUtils::store->GetJson()["storeContent"][index][entry].contains("script") && StoreUtils::store->GetJson()["storeContent"][index][entry]["script"].is_array()) {
+			Script = StoreUtils::store->GetJson()["storeContent"][index][entry]["script"];
+
+		} else {
+			return;
+		}
+	}
+
+	QueueSystem::AddToQueue(Script, StoreUtils::store->GetIconEntry(index), entry, StoreUtils::store->GetUniStoreTitle(), entryName, lUpdated); // Here we add this to the Queue at the end.
+}
+
+/*
+	Add all update-able entries to the queue.
+*/
+void StoreUtils::AddAllToQueue() {
+	if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::meta && !StoreUtils::entries.empty()) { // Ensure all is valid.
+		for (int storeEntry = 0; storeEntry < (int)StoreUtils::entries.size(); storeEntry++) {
+			if (StoreUtils::entries[storeEntry]) { // Ensure pointer is valid.
+
+				const std::vector<std::string> entryNames = StoreUtils::store->GetDownloadList(StoreUtils::entries[storeEntry]->GetEntryIndex()); // Return a vector of all Download Entries.
+				const std::vector<std::string> installedNames = StoreUtils::meta->GetInstalled(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[storeEntry]->GetTitle()); // Return a vector from all installed entries.
+
+				if (!entryNames.empty() && !installedNames.empty()) { // Ensure both aren't empty.
+					for (int i = 0; i < (int)entryNames.size(); i++) {
+						for (int i2 = 0; i2 < (int)installedNames.size(); i2++) {
+							if (entryNames[i] == installedNames[i2]) { // If name matches with installed title, add to queue.
+								/* Add to Queue. */
+								StoreUtils::AddToQueue(entries[storeEntry]->GetEntryIndex(), entryNames[i2], entries[storeEntry]->GetTitle(), entries[storeEntry]->GetLastUpdated());
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -130,12 +130,15 @@ Config::Config() {
 	if (this->json.contains("_3DSX_Path")) this->_3dsxPath(this->getString("_3DSX_Path"));
 	if (this->json.contains("NDS_Path")) this->ndsPath(this->getString("NDS_Path"));
 	if (this->json.contains("Archive_Path")) this->archPath(this->getString("Archive_Path"));
+	if (this->json.contains("Firm_Path")) this->firmPath(this->getString("Firm_Path"));
 	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
+	if (this->json.contains("Active_Theme")) this->theme(this->getInt("Active_Theme"));
+	if (this->json.contains("Prompt")) this->prompt(this->getBool("Prompt"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -154,12 +157,15 @@ void Config::save() {
 		this->setString("_3DSX_Path", this->_3dsxPath());
 		this->setString("NDS_Path", this->ndsPath());
 		this->setString("Archive_Path", this->archPath());
+		this->setString("Firm_Path", this->firmPath());
 		this->setBool("MetaData", this->metadata());
 		this->setBool("UpdateCheck", this->updatecheck());
 		this->setBool("UseBG", this->usebg());
 		this->setBool("CustomFont", this->customfont());
 		this->setString("Shortcut_Path", this->shortcut());
 		this->setBool("Display_Changelog", this->changelog());
+		this->setInt("Active_Theme", this->theme());
+		this->setBool("Prompt", this->prompt());
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');
@@ -170,22 +176,34 @@ void Config::save() {
 
 /* Helper functions. */
 bool Config::getBool(const std::string &key) {
+	if (this->json.is_discarded()) return false;
 	if (!this->json.contains(key)) return false;
 
 	return this->json.at(key).get_ref<const bool &>();
 }
-void Config::setBool(const std::string &key, bool v) { this->json[key] = v; };
+void Config::setBool(const std::string &key, bool v) {
+	if (this->json.is_discarded()) return;
+	this->json[key] = v;
+};
 
 int Config::getInt(const std::string &key) {
+	if (this->json.is_discarded()) return 0;
 	if (!this->json.contains(key)) return 0;
 
 	return this->json.at(key).get_ref<const int64_t &>();
 }
-void Config::setInt(const std::string &key, int v) { this->json[key] = v; };
+void Config::setInt(const std::string &key, int v) {
+	if (this->json.is_discarded()) return;
+	this->json[key] = v;
+};
 
 std::string Config::getString(const std::string &key) {
+	if (this->json.is_discarded()) return "";
 	if (!this->json.contains(key)) return "";
 
 	return this->json.at(key).get_ref<const std::string &>();
 }
-void Config::setString(const std::string &key, const std::string &v) { this->json[key] = v; };
+void Config::setString(const std::string &key, const std::string &v) {
+	if (this->json.is_discarded()) return;
+	this->json[key] = v;
+};

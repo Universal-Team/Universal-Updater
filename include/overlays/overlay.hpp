@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -28,15 +28,13 @@
 #define _UNIVERSAL_UPDATER_OVERLAY_HPP
 
 #include "common.hpp"
-#include "store.hpp"
-#include "storeEntry.hpp"
 #include <3ds.h>
 
 namespace Overlays {
-	void SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta);
-	void SelectLanguage(const std::unique_ptr<Store> &store);
+	void SelectStore();
+	void SelectLanguage();
 	void ShowCredits();
-	std::string SelectDir(const std::string &oldDir, const std::string &msg, const std::unique_ptr<Store> &store);
+	std::string SelectDir(const std::string &oldDir, const std::string &msg);
 };
 
 #endif

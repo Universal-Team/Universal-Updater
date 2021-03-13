@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,11 +37,12 @@
 
 	0: Entry Info.
 	1: Download List.
-	2: Search + Favorites.
-	3: Sorting.
-	4: Settings / Credits(?).
-	5: Screenshot Menu.
-	6: Release Notes.
+	2: Queue.
+	3: Search + Favorites.
+	4: Sorting.
+	5: Settings / Credits(?).
+	6: Screenshot Menu.
+	7: Release Notes.
 */
 
 class MainScreen : public Screen {
@@ -50,21 +51,18 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	std::unique_ptr<Store> store = nullptr;
-	std::unique_ptr<Meta> meta = nullptr;
-	std::vector<std::unique_ptr<StoreEntry>> entries;
 	std::vector<std::string> dwnldList, dwnldSizes;
 
 	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
-		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false;
+		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false, isAND = true;
 
 	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
-		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollIndex = 0;
+		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollIndex = 0, queueIndex = 0;
 
 	SortType sorttype = SortType::LAST_UPDATED;
 
 	/* Title, Author, Category, Console. */
-	std::vector<bool> searchIncludes = { false, false, false, false };
+	std::vector<bool> searchIncludes = { false, false, false, false }, installs = { };
 	std::string searchResult = "", screenshotName = "";
 
 	C2D_Image Screenshot = { nullptr, nullptr };

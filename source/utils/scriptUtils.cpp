@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 extern bool showProgressBar;
 extern ProgressBar progressbarType;
 extern char progressBarMsg[128];
-extern int filesExtracted;
+extern int filesExtracted, extractFilesCount;
 
 extern void downloadFailed();
 static Thread thread;
@@ -47,41 +47,41 @@ bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &te
 	return regex_match(tested, patternRegex);
 }
 
-/*
-	Remove a File.
-*/
-Result ScriptUtils::removeFile(const std::string &file, const std::string &message) {
+/* Remove a File. */
+Result ScriptUtils::removeFile(const std::string &file, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
 
-	Msg::DisplayMsg(message);
+	if (isARG) Msg::DisplayMsg(message);
 	deleteFile(out.c_str());
 	return ret;
 }
 
-/*
-	Boot a title.
-*/
-void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message) {
+/* Boot a title. */
+void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message, bool isARG) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
 
 	const u64 ID = std::stoull(TitleID, 0, 16);
-	if (Msg::promptMsg(MSG)) {
-		Msg::DisplayMsg(message);
+	if (isARG) {
+		if (Msg::promptMsg(MSG)) {
+			Msg::DisplayMsg(message);
+			Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
+		}
+
+	} else {
 		Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
 	}
 }
 
-/*
-	Prompt message.
-*/
+/* Prompt message. */
 Result ScriptUtils::prompt(const std::string &message) {
 	Result ret = NONE;
 	if (!Msg::promptMsg(message)) ret = SCRIPT_CANCELED;
@@ -89,10 +89,8 @@ Result ScriptUtils::prompt(const std::string &message) {
 	return ret;
 }
 
-/*
-	Copy.
-*/
-Result ScriptUtils::copyFile(const std::string &source, const std::string &destination, const std::string &message) {
+/* Copy. */
+Result ScriptUtils::copyFile(const std::string &source, const std::string &destination, const std::string &message, bool isARG) {
 	Result ret = NONE;
 	if (access(source.c_str(), F_OK) != 0) return COPY_ERROR;
 
@@ -100,17 +98,22 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 	_source = std::regex_replace(source, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_source = std::regex_replace(_source, std::regex("%3DSX%"), config->_3dsxPath());
 	_source = std::regex_replace(_source, std::regex("%NDS%"), config->ndsPath());
+	_source = std::regex_replace(_source, std::regex("%FIRM%"), config->firmPath());
+
 	_dest = std::regex_replace(destination, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_dest = std::regex_replace(_dest, std::regex("%3DSX%"), config->_3dsxPath());
 	_dest = std::regex_replace(_dest, std::regex("%NDS%"), config->ndsPath());
+	_dest = std::regex_replace(_dest, std::regex("%FIRM%"), config->firmPath());
 
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressbarType = ProgressBar::Copying;
+	if (isARG) {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+		showProgressBar = true;
+		progressbarType = ProgressBar::Copying;
 
-	s32 prio = 0;
-	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+		s32 prio = 0;
+		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	}
 
 	/* If destination does not exist, create dirs. */
 	if (access(_dest.c_str(), F_OK) != 0) makeDirs(_dest.c_str());
@@ -118,17 +121,18 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 
 	if (ret == -1) ret = COPY_ERROR;
 	else if (ret == 1) ret = NONE;
-	showProgressBar = false;
-	threadJoin(thread, U64_MAX);
-	threadFree(thread);
+
+	if (isARG) {
+		showProgressBar = false;
+		threadJoin(thread, U64_MAX);
+		threadFree(thread);
+	}
+
 	return ret;
 }
 
-/*
-	Rename / Move a file.
-*/
-Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message) {
-
+/* Rename / Move a file. */
+Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message, bool isARG) {
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
 
@@ -136,11 +140,14 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	old = std::regex_replace(oldName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	old = std::regex_replace(old, std::regex("%3DSX%"), config->_3dsxPath());
 	old = std::regex_replace(old, std::regex("%NDS%"), config->ndsPath());
+	old = std::regex_replace(old, std::regex("%FIRM%"), config->firmPath());
+
 	_new = std::regex_replace(newName, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	_new = std::regex_replace(_new, std::regex("%3DSX%"), config->_3dsxPath());
 	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
+	_new = std::regex_replace(_new, std::regex("%FIRM%"), config->firmPath());
 
-	Msg::DisplayMsg(message);
+	if (isARG) Msg::DisplayMsg(message);
 
 	/* TODO: Kinda avoid that? */
 	makeDirs(_new.c_str());
@@ -148,126 +155,156 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	return ret;
 }
 
-/*
-	Download from GitHub Release.
-*/
-Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message) {
+/* Download from GitHub Release. */
+Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
 
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressbarType = ProgressBar::Downloading;
+	if (isARG) {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+		showProgressBar = true;
+		progressbarType = ProgressBar::Downloading;
 
-	s32 prio = 0;
-	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+		s32 prio = 0;
+		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	}
 
 	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
-		showProgressBar = false;
+		if (isARG) showProgressBar = false;
+
 		downloadFailed();
 		ret = FAILED_DOWNLOAD;
-		threadJoin(thread, U64_MAX);
-		threadFree(thread);
+
+		if (isARG) {
+			threadJoin(thread, U64_MAX);
+			threadFree(thread);
+		}
 		return ret;
 	}
 
-	showProgressBar = false;
-	threadJoin(thread, U64_MAX);
-	threadFree(thread);
+	if (isARG) {
+		showProgressBar = false;
+		threadJoin(thread, U64_MAX);
+		threadFree(thread);
+	}
+
 	return ret;
 }
 
-/*
-	Download a file.
-*/
-Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message) {
+/* Download a file. */
+Result ScriptUtils::downloadFile(const std::string &file, const std::string &output, const std::string &message, bool isARG) {
 	std::string out;
 	out = std::regex_replace(output, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
 	out = std::regex_replace(out, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
 	Result ret = NONE;
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressbarType = ProgressBar::Downloading;
 
-	s32 prio = 0;
-	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	if (isARG) {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+		showProgressBar = true;
+		progressbarType = ProgressBar::Downloading;
+
+		s32 prio = 0;
+		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	}
 
 	if (downloadToFile(file, out) != 0) {
-		showProgressBar = false;
+		if (isARG) showProgressBar = false;
+
 		downloadFailed();
 		ret = FAILED_DOWNLOAD;
-		threadJoin(thread, U64_MAX);
-		threadFree(thread);
+
+		if (isARG) {
+			threadJoin(thread, U64_MAX);
+			threadFree(thread);
+		}
+
 		return ret;
 	}
 
-	showProgressBar = false;
-	threadJoin(thread, U64_MAX);
-	threadFree(thread);
+	if (isARG) {
+		showProgressBar = false;
+		threadJoin(thread, U64_MAX);
+		threadFree(thread);
+	}
+
 	return ret;
 }
 
-/*
-	Install CIA files.
-*/
-void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const std::string &message) {
+/* Install CIA files. */
+void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const std::string &message, bool isARG) {
 	std::string in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
 	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
+	in = std::regex_replace(in, std::regex("%FIRM%"), config->firmPath());
 
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
-	progressbarType = ProgressBar::Installing;
+	if (isARG) {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+		showProgressBar = true;
+		progressbarType = ProgressBar::Installing;
 
-	s32 prio = 0;
-	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+		s32 prio = 0;
+		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	}
 
 	Title::Install(in.c_str(), updatingSelf);
-	showProgressBar = false;
-	threadJoin(thread, U64_MAX);
-	threadFree(thread);
+
+	if (isARG) {
+		showProgressBar = false;
+		threadJoin(thread, U64_MAX);
+		threadFree(thread);
+	}
 }
 
-/*
-	Extract files.
-*/
-void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message) {
+/* Extract files. */
+void ScriptUtils::extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message, bool isARG) {
+	extractFilesCount = 0;
+
 	std::string out, in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%"), config->_3dsxPath());
 	in = std::regex_replace(in, std::regex("%NDS%"), config->ndsPath());
+	in = std::regex_replace(in, std::regex("%FIRM%"), config->firmPath());
 	out = std::regex_replace(output, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%"), config->_3dsxPath());
 	out = std::regex_replace(out, std::regex("%NDS%"), config->ndsPath());
+	out = std::regex_replace(out, std::regex("%FIRM%"), config->firmPath());
 
-	snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
-	showProgressBar = true;
+	if (isARG) {
+		snprintf(progressBarMsg, sizeof(progressBarMsg), message.c_str());
+		showProgressBar = true;
+		progressbarType = ProgressBar::Extracting;
+
+		s32 prio = 0;
+		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
+	}
+
 	filesExtracted = 0;
-	progressbarType = ProgressBar::Extracting;
-
-	s32 prio = 0;
-	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 
 	getExtractedSize(in, input);
 	extractArchive(in, input, out);
-	showProgressBar = false;
-	threadJoin(thread, U64_MAX);
-	threadFree(thread);
+
+	if (isARG) {
+		showProgressBar = false;
+		threadJoin(thread, U64_MAX);
+		threadFree(thread);
+	}
 }
 
 /*
-	Execute | run the script.
+	NOTE: This is for the argument system for now. This might get replaced completely with the Queue System in the future.
 */
 Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const std::string &entry) {
 	Result ret = NONE; // No Error as of yet.
@@ -318,7 +355,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::removeFile(file, message);
+				if (!missing) ret = ScriptUtils::removeFile(file, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "downloadFile") {
@@ -339,7 +376,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::downloadFile(file, output, message);
+				if (!missing) ret = ScriptUtils::downloadFile(file, output, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "downloadRelease") {
@@ -368,7 +405,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message);
+				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "extractFile") {
@@ -394,7 +431,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ScriptUtils::extractFile(file, input, output, message);
+				if (!missing) ScriptUtils::extractFile(file, input, output, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "installCia") {
@@ -414,7 +451,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					message = Script[i]["message"];
 				}
 
-				if (!missing) ScriptUtils::installFile(file, updateSelf, message);
+				if (!missing) ScriptUtils::installFile(file, updateSelf, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "mkdir") {
@@ -488,7 +525,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					Message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message);
+				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "move") {
@@ -509,7 +546,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					Message = Script[i]["message"];
 				}
 
-				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message);
+				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "skip") {
