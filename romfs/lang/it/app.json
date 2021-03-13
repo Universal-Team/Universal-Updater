@@ -65,6 +65,7 @@
 	"EXECUTE_ENTRY": "Vuoi eseguire questa voce?",
 	"EXIT_APP": "Esci da Universal-Updater",
 	"EXTRACTING": "Estrazione... %s / %s (%.2f%%)",
+	"EXTRACT_ERROR": "Extract error!",
 	"FEATURE_SIDE_EFFECTS": "Questa funzionalità potrebbe avere degli effetti collaterali mentre la coda è in esecuzione.\nSei sicuro di voler continuare?",
 	"FETCHING_METADATA": "Recupero di metadata antica in corso...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Recupero degli UniStore consigliati...",
