@@ -307,5 +307,28 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 		if (queueMenuIdx > 0) queueMenuIdx--;
 	}
 
+	if(hDown & KEY_A) {
+		if (QueueSystem::RequestNeeded != NO_REQUEST) { // -1 means no request.
+			switch(QueueSystem::RequestNeeded) {
+				case RMDIR_REQUEST: // Remove Directory message.
+					QueueSystem::RequestAnswer = Msg::promptMsg(QueueSystem::RequestMsg);
+
+					QueueSystem::Wait = false;
+					QueueSystem::Resume();
+					break;
+
+				case PROMPT_REQUEST: // Skip prompt message.
+					QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg);
+
+					QueueSystem::Wait = false;
+					QueueSystem::Resume();
+					break;
+			}
+
+		} else {
+			ShowQueueProgress = !ShowQueueProgress; // In case no request expected, switch from progress to total progress mode etc.
+		}
+	}
+
 	if (hDown & KEY_B) storeMode = 0; // Go to EntryInfo.
 }
