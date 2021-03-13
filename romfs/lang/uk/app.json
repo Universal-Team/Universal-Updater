@@ -65,6 +65,7 @@
 	"EXECUTE_ENTRY": "Виконати цей запис?",
 	"EXIT_APP": "Вийти з Universal-Updater",
 	"EXTRACTING": "Розпаковування... %s / %s (%.2f%%)",
+	"EXTRACT_ERROR": "Extract error!",
 	"FEATURE_SIDE_EFFECTS": "This Feature may have side effects while the Queue is running.\nAre you sure you want to continue?",
 	"FETCHING_METADATA": "Отримання старих метаданих...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Отримання рекомендованих UniStores...",
