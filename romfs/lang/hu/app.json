@@ -1,6 +1,6 @@
 {
-	"3DSX_IN_FOLDER": "Put 3DSX files in folder",
-	"3DSX_IN_FOLDER_DESC": "If enabled, 3DSX files will be put in a folder with the same name instead of directly in the set folder.",
+	"3DSX_IN_FOLDER": "3DSX fájlok mappába rakása",
+	"3DSX_IN_FOLDER_DESC": "Ha engedélyezett, a 3DSX fájlok egy velük egyező nevű mappába kerülnek, a beállított mappa helyett.",
 	"ACTION_CANCELED": "%s megszakítva!",
 	"ACTION_FAILED": "%s sikertelen!",
 	"ACTION_REQUIRED": "Beavatkozás szükséges!",
@@ -65,7 +65,7 @@
 	"EXECUTE_ENTRY": "Szeretné futtatni ezt a bejegyzést?",
 	"EXIT_APP": "Kilépés az Universal-Updater-ből",
 	"EXTRACTING": "Kicsomagolás... %s / %s (%.2f%%)",
-	"EXTRACT_ERROR": "Extract error!",
+	"EXTRACT_ERROR": "Kicsomagolási hiba!",
 	"FEATURE_SIDE_EFFECTS": "Ez a funkció mellékhatásokkal rendelkezhet a futó várósorra.\nBiztosan szeretnéd folytatni?",
 	"FETCHING_METADATA": "Régi metaadat beolvasása...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Ajánlot UniStore-ok letöltése...",
