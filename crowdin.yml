@@ -1,3 +1,7 @@
+"project_id_env": "UU_CROWDIN_ID"
+"api_token_env": "CROWDIN_TOKEN"
+preserve_hierarchy: true
+
 files:
   - source: /romfs/lang/en/app.json
     translation: /romfs/lang/%two_letters_code%/app.json
