@@ -47,6 +47,13 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 240, GFX::Themes[GFX::SelectedTheme].BGColor);
 
+	if (sFetch) {
+		Animation::QueueEntryDone();
+		GFX::DrawBottom();
+		Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LOADING_SCREENSHOT"), 310);
+		return;
+	}
+
 	if (!canDisplay) {
 		Animation::QueueEntryDone();
 

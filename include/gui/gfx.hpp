@@ -74,6 +74,7 @@ namespace GFX {
 	void DrawTime();
 	void DrawBattery();
 	void HandleBattery();
+	void DrawIcon(const int Idx, int X, int Y, float ScaleX = 1, float ScaleY = 1);
 };
 
 #endif

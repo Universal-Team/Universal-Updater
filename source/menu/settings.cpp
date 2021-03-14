@@ -90,7 +90,7 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_I
 static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", "Magyar", "Polski", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
 static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu", "pl", "pt-BR", "ru", "uk", "jp"};
 
-static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT" };
+static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT", "Stack" };
 
 /*
 	Main Settings.
@@ -195,7 +195,7 @@ static void DrawGUISettings(int selection) {
 	Gui::DrawString(47, 151, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
 
 	Gui::Draw_Rect(40, 196, 280, 24, (selection == 2 ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
-	Gui::DrawString(47, 200, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("ACTIVE_THEME") + ": " + Lang::get(ThemeNames[GFX::SelectedTheme]), 210, 0, font);
+	Gui::DrawString(47, 200, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("ACTIVE_THEME") + ": " + (GFX::SelectedTheme == 0 ? Lang::get(ThemeNames[GFX::SelectedTheme]) : ThemeNames[GFX::SelectedTheme]), 210, 0, font);
 }
 
 

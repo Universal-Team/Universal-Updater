@@ -425,12 +425,8 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	result_sz = 0;
 	result_written = 0;
 
-	if (assetUrl.empty() || ret != 0) {
-		ret = DL_ERROR_GIT;
-
-	} else {
-		ret = downloadToFile(assetUrl, path);
-	}
+	if (assetUrl.empty() || ret != 0) ret = DL_ERROR_GIT;
+	else ret = downloadToFile(assetUrl, path);
 
 	return ret;
 }
