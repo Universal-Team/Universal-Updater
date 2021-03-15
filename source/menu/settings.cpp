@@ -78,7 +78,7 @@ static const std::vector<Structs::ButtonPos> dirIcons = {
 };
 
 static const Structs::ButtonPos back = { 45, 0, 24, 24 }; // Back arrow for directory.
-static const Structs::ButtonPos Themes = { 40, 220, 280, 24 }; // Themes.
+static const Structs::ButtonPos Themes = { 40, 196, 280, 24 }; // Themes.
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };

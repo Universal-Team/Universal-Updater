@@ -165,11 +165,14 @@ static int blinkDelay = 40;
 static bool blinkState = true, batteryLow = false;
 void GFX::DrawBattery() {
 	u8 chargeState = false, level = 0;
+	bool chargerPlugged = false;
+
 	PTMU_GetBatteryChargeState(&chargeState); // Get Charge state.
 	PTMU_GetBatteryLevel(&level); // Get Battery Level.
+	PTMU_GetAdapterState(&chargerPlugged); // Get if charger adapter is plugged.
 
-	if (chargeState) {
-		GFX::DrawSprite((level < 5 ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1);
+	if (chargerPlugged) {
+		GFX::DrawSprite((chargeState ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1);
 		if (batteryLow) batteryLow = false; // Cause we're charging.
 
 	} else {
