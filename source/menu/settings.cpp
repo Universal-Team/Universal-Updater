@@ -87,8 +87,8 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_I
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 //static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
 //static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
-static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", "Magyar", "Polski", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
-static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu", "pl", "pt-BR", "ru", "uk", "jp"};
+static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
+static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
 
 static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT", "Stack" };
 
