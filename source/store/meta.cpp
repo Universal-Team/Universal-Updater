@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ void Meta::ImportMetadata() {
 	const std::string &entry: The Entry name.
 */
 std::string Meta::GetUpdated(const std::string &unistoreName, const std::string &entry) const {
+	if (this->metadataJson.is_discarded()) return "";
 	if (!this->metadataJson.contains(unistoreName)) return ""; // UniStore Name does not exist.
 
 	if (!this->metadataJson[unistoreName].contains(entry)) return ""; // Entry does not exist.
@@ -101,6 +102,8 @@ std::string Meta::GetUpdated(const std::string &unistoreName, const std::string 
 */
 int Meta::GetMarks(const std::string &unistoreName, const std::string &entry) const {
 	int temp = 0;
+
+	if (this->metadataJson.is_discarded()) return temp;
 
 	if (!this->metadataJson.contains(unistoreName)) return temp; // UniStore Name does not exist.
 
@@ -125,6 +128,25 @@ bool Meta::UpdateAvailable(const std::string &unistoreName, const std::string &e
 	}
 
 	return false;
+}
+
+/*
+	Get the marks.
+
+	const std::string &unistoreName: The UniStore name.
+	const std::string &entry: The Entry name.
+*/
+std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, const std::string &entry) const {
+	if (this->metadataJson.is_discarded()) return { };
+
+	if (!this->metadataJson.contains(unistoreName)) return { }; // UniStore Name does not exist.
+
+	if (!this->metadataJson[unistoreName].contains(entry)) return { }; // Entry does not exist.
+
+	if (!this->metadataJson[unistoreName][entry].contains("installed")) return { }; // marks does not exist.
+
+	if (this->metadataJson[unistoreName][entry]["installed"].is_array()) return this->metadataJson[unistoreName][entry]["installed"];
+	return { };
 }
 
 /*

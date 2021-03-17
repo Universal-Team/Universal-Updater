@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 
 #include "json.hpp"
 #include <string>
+#include <vector>
 
 enum favoriteMarks {
 	STAR = 1 << 0,
@@ -46,14 +47,57 @@ public:
 	std::string GetUpdated(const std::string &unistoreName, const std::string &entry) const;
 	int GetMarks(const std::string &unistoreName, const std::string &entry) const;
 	bool UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const;
+	std::vector<std::string> GetInstalled(const std::string &unistoreName, const std::string &entry) const;
 
 	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
+		if (this->metadataJson.is_discarded()) return;
 		this->metadataJson[unistoreName][entry]["updated"] = updated;
 	};
 
 	void SetMarks(const std::string &unistoreName, const std::string &entry, int marks) {
+		if (this->metadataJson.is_discarded()) return;
 		this->metadataJson[unistoreName][entry]["marks"] = marks;
 	};
+
+	/* TODO: Handle this better. */
+	void SetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
+		if (this->metadataJson.is_discarded()) return;
+
+		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
+		bool write = true;
+
+		if (!installs.empty()) {
+			write = !installs.empty();
+
+			for (int i = 0; i < (int)installs.size(); i++) {
+				if (installs[i] == name) {
+					write = false;
+					break;
+				}
+			}
+		}
+
+		if (write) this->metadataJson[unistoreName][entry]["installed"] += name;
+	}
+
+	/* Remove installed state from a download list entry. */
+	void RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
+		if (this->metadataJson.is_discarded()) return;
+
+		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
+		int idx = -1;
+
+		if (!installs.empty()) {
+			for (int i = 0; i < (int)installs.size(); i++) {
+				if (installs[i] == name) {
+					idx = i;
+					break;
+				}
+			}
+		}
+
+		if (idx != -1) this->metadataJson[unistoreName][entry]["installed"].erase(idx);
+	}
 
 	void ImportMetadata();
 	void SaveCall();

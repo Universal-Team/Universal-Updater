@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "animation.hpp"
+#include "common.hpp"
 #include "download.hpp"
 #include "fileBrowse.hpp"
 #include "files.hpp"
@@ -52,7 +54,7 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 };
 
 /*
-	Delete a Store.. including the Spritesheets, if found.
+	Delete a store.. including the Spritesheets, if found.
 
 	const std::string &file: The file of the UniStore.
 */
@@ -93,7 +95,7 @@ static void DeleteStore(const std::string &file) {
 }
 
 /*
-	Download a Store.. including the SpriteSheets, if found.
+	Download a store.. including the SpriteSheets, if found.
 */
 static bool DownloadStore() {
 	bool doSheet = false;
@@ -209,12 +211,8 @@ static bool UpdateStore(const std::string &URL) {
 	- Download / Add a UniStore.
 	- Check for Updates for a UniStore.
 	- Switch the UniStore.
-
-	std::unique_ptr<Store> &store: Reference to the Store class.
-	std::vector<std::unique_ptr<StoreEntry>> &entries: Reference to the Store Entries.
-	std::unique_ptr<Meta> &meta: Reference to the Meta class.
 */
-void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::unique_ptr<StoreEntry>> &entries, std::unique_ptr<Meta> &meta) {
+void Overlays::SelectStore() {
 	bool doOut = false;
 	int selection = 0, sPos = 0;
 
@@ -226,11 +224,11 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		if (store && config->usebg() && store->customBG()) {
+		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
 			GFX::DrawTop();
@@ -238,29 +236,29 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, info[selection].Title, 390, 0, font);
-				Gui::DrawStringCentered(0, 30, 0.6f, TEXT_COLOR, info[selection].Author, 380, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.5f, TEXT_COLOR, info[selection].Description, 380, 130, font, C2D_WordWrap);
+				Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Title, 390, 0, font);
+				Gui::DrawStringCentered(0, 30, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Author, 380, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Description, 380, 130, font, C2D_WordWrap);
 
 			} else {
-				Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("INVALID_UNISTORE"), 390, 0, font);
+				Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("INVALID_UNISTORE"), 390, 0, font);
 			}
 
-			Gui::DrawString(10, 200, 0.4, TEXT_COLOR, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
-			Gui::DrawString(10, 210, 0.4, TEXT_COLOR, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
-			Gui::DrawString(10, 220, 0.4, TEXT_COLOR, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
+			Gui::DrawString(10, 200, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
 
+			Animation::QueueEntryDone();
 			GFX::DrawBottom();
 
-			Gui::Draw_Rect(0, 0, 320, 25, ENTRY_BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, ENTRY_BAR_OUTL_COLOR);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
 			GFX::DrawSprite(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y);
-			Gui::DrawStringCentered(0, 2, 0.6, TEXT_COLOR, Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
+			Gui::DrawStringCentered(0, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
-				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, info[sPos + i].FileName, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, info[sPos + i].FileName, 295, 0, font);
 			}
 		}
 
@@ -275,6 +273,7 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 		touchPosition touch;
 		hidTouchRead(&touch);
 		u32 hRepeat = hidKeysDownRepeat();
+		Animation::HandleQueueEntryDone();
 
 		if (info.size() > 0) {
 			if (hRepeat & KEY_DOWN) {
@@ -306,9 +305,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
 							config->lastStore(info[selection].FileName);
-							store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
-							StoreUtils::ResetAll(store, meta, entries);
-							StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
+							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
+							StoreUtils::ResetAll();
+							StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
 							doOut = true;
 						}
 
@@ -328,9 +327,9 @@ void Overlays::SelectStore(std::unique_ptr<Store> &store, std::vector<std::uniqu
 								else if (info[i + sPos].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 								else {
 									config->lastStore(info[i + sPos].FileName);
-									store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
-									StoreUtils::ResetAll(store, meta, entries);
-									StoreUtils::SortEntries(false, SortType::LAST_UPDATED, entries);
+									StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
+									StoreUtils::ResetAll();
+									StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
 									doOut = true;
 								}
 

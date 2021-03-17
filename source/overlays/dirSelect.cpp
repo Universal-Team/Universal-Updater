@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "animation.hpp"
+#include "common.hpp"
 #include "fileBrowse.hpp"
 #include "overlay.hpp"
+#include "storeUtils.hpp"
 #include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -39,10 +42,8 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 186, 300, 22 }
 };
 
-/*
-	Select a Directory.
-*/
-std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg, const std::unique_ptr<Store> &store) {
+/* Select a Directory. */
+std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg) {
 	std::string currentPath = oldDir;
 	bool dirChanged = false;
 	int selection = 0, sPos = 0;
@@ -72,32 +73,33 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		if (store && config->usebg() && store->customBG()) {
+		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-			C2D_DrawImageAt(store->GetStoreImg(), 0, 26, 0.5f, nullptr);
+			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, msg, 380, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, msg, 380, 0, font);
 
-		Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
-		Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, currentPath, 390, 0, font);
+		Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+		Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+		Gui::DrawStringCentered(0, 217, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, currentPath, 390, 0, font);
 
+		Animation::QueueEntryDone();
 		GFX::DrawBottom();
 
-		Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
-		Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("START_SELECT"), 310, 0, font);
+		Gui::Draw_Rect(0, 215, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+		Gui::Draw_Rect(0, 214, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+		Gui::DrawStringCentered(0, 220, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("START_SELECT"), 310, 0, font);
 
 		if (dirContents.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
-				if (sPos + i == selection) GFX::DrawBox(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, false);
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, TEXT_COLOR, dirContents[sPos + i].name, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, dirContents[sPos + i].name, 295, 0, font);
 			}
 		}
 
@@ -122,6 +124,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		touchPosition touch;
 		hidTouchRead(&touch);
 		u32 hRepeat = hidKeysDownRepeat();
+		Animation::HandleQueueEntryDone();
 
 		if (dirContents.size() > 0) {
 			if (hRepeat & KEY_DOWN) {

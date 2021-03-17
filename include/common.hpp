@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -27,15 +27,17 @@
 #ifndef _UNIVERSAL_UPDATER_COMMON_HPP
 #define _UNIVERSAL_UPDATER_COMMON_HPP
 
-#include <3ds.h>
 #include "config.hpp"
 #include "gfx.hpp"
 #include "lang.hpp"
 #include "msg.hpp"
 #include "screenCommon.hpp"
+#include <3ds.h>
+#include <vector>
 
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
 #define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
+#define _THEME_AMOUNT 2
 #define _UNISTORE_VERSION 4
 
 inline std::unique_ptr<Config> config;

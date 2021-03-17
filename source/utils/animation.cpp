@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include "animation.hpp"
 #include "common.hpp"
+#include "queueSystem.hpp"
 #include "stringutils.hpp"
 #include <curl/curl.h>
 
@@ -34,6 +35,8 @@ extern std::string extractingFile;
 char progressBarMsg[128] = "";
 bool showProgressBar = false;
 ProgressBar progressbarType = ProgressBar::Downloading;
+int Animation::DisplayY = 240, Animation::DisplayDelay = 3 * 60;
+bool Animation::MoveUp = true, Animation::DoDelay = false;
 
 extern u32 extractSize, writeOffset;
 extern u32 installSize, installOffset;
@@ -49,8 +52,8 @@ extern curl_off_t downloadNow;
 	u64 totalProgress: The total progress.
 */
 void Animation::DrawProgressBar(u64 currentProgress, u64 totalProgress) {
-	Gui::Draw_Rect(30, 120, 340, 30, PROGRESSBAR_OUT_COLOR);
-	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, PROGRESSBAR_IN_COLOR);
+	Gui::Draw_Rect(30, 120, 342, 30, GFX::Themes[GFX::SelectedTheme].ProgressbarOut);
+	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, GFX::Themes[GFX::SelectedTheme].ProgressbarIn);
 }
 
 /*
@@ -98,33 +101,99 @@ void Animation::displayProgressBar() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, progressBarMsg, 390, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, progressBarMsg, 390, 0, font);
 
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 390, 0, font);
 				Animation::DrawProgressBar(downloadNow, downloadTotal);
 				break;
 
 			case ProgressBar::Extracting:
-				Gui::DrawStringCentered(0, 180, 0.6f, TEXT_COLOR, str, 390, 0, font);
-				Gui::DrawStringCentered(0, 100, 0.6f, TEXT_COLOR, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
-				Gui::DrawStringCentered(0, 40, 0.6f, TEXT_COLOR, Lang::get("CURRENTLY_EXTRACTING") + "\n" + extractingFile, 390, 0, font);
+				Gui::DrawStringCentered(0, 180, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 390, 0, font);
+				Gui::DrawStringCentered(0, 100, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
+				Gui::DrawStringCentered(0, 40, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CURRENTLY_EXTRACTING"), 390, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, extractingFile, 390, 0, font);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;
 
 			case ProgressBar::Installing:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 390, 0, font);
 				Animation::DrawProgressBar(installOffset, installSize);
 				break;
 
 			case ProgressBar::Copying:
-				Gui::DrawStringCentered(0, 80, 0.6f, TEXT_COLOR, str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 390, 0, font);
 				Animation::DrawProgressBar(copyOffset, copySize);
 				break;
 		}
 
 		GFX::DrawBottom();
 		C3D_FrameEnd(0);
+	}
+}
+
+static int frame = 0; // 0 - 7.
+static int advanceFrame = 0; // Only animate every 4 frames.
+extern bool QueueRuns;
+extern std::deque<std::unique_ptr<Queue>> queueEntries;
+
+void Animation::DrawQueue(int x, int y) {
+	GFX::DrawIcon(sprites_queue0_idx + frame, x, y);
+	Gui::DrawStringCentered(x + 20 - 160, y + 11, 0.6f, GFX::Themes[GFX::SelectedTheme].SideBarIconColor, QueueSystem::Wait ? "!" : std::to_string(queueEntries.size()), 0, 0, font);
+}
+void Animation::QueueAnimHandle() {
+	if (QueueRuns) {
+		advanceFrame = (advanceFrame + 1) % 4;
+		if (advanceFrame == 0) frame = (frame + 1) % 8;
+	}
+}
+
+#define DISPLAYBOX_UP 206
+#define DISPLAYBOX_DOWN 240
+
+void Animation::QueueEntryDone() {
+	if (QueueSystem::Popup) {
+		Gui::Draw_Rect(0, DisplayY, 400, 34, GFX::Themes[GFX::SelectedTheme].DownListPrev);
+
+		if (QueueSystem::EndMsg != "") {
+			Gui::DrawStringCentered(0, DisplayY + 8, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, QueueSystem::EndMsg, 395, 0, font);
+		}
+	}
+}
+void Animation::HandleQueueEntryDone() {
+	if (QueueSystem::Popup) {
+		if (!Animation::DoDelay) {
+			if (Animation::MoveUp) {
+				if (Animation::DisplayY > DISPLAYBOX_UP) {
+					Animation::DisplayY--;
+
+					if (Animation::DisplayY <= DISPLAYBOX_UP) {
+						Animation::DisplayDelay = 3 * 60;
+						Animation::DoDelay = true;
+					}
+				}
+
+			} else {
+				if (Animation::DisplayY < DISPLAYBOX_DOWN) {
+					Animation::DisplayY++;
+
+					if (Animation::DisplayY >= DISPLAYBOX_DOWN) {
+						QueueSystem::Popup = false;
+						Animation::MoveUp = true;
+					}
+				}
+			}
+
+		} else {
+			if (Animation::DisplayDelay > 0) {
+				Animation::DisplayDelay--;
+
+				if (Animation::DisplayDelay <= 0) {
+					Animation::MoveUp = false;
+					Animation::DoDelay = false;
+				}
+			}
+		}
 	}
 }

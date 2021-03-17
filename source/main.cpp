@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -33,9 +33,7 @@
 #define ARG_AMOUNT 4 // In case for more args, change this. It must be ARG amount + 1, because of 3DSX Path.
 std::string _3dsxPath = "";
 
-/*
-	ARG Init.
-*/
+/* ARG Init. */
 static void InitForARG() {
 	gfxInitDefault();
 	romfsInit();
@@ -51,14 +49,14 @@ static void InitForARG() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+	GFX::SelectedTheme = config->theme();
+	if (GFX::SelectedTheme > (_THEME_AMOUNT - 1)) GFX::SelectedTheme = 0; // In case it is above the max themes.
 	Lang::load(config->language());
 	Init::LoadFont();
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 }
 
-/*
-	ARG Exit.
-*/
+/* ARG Exit. */
 static Result ExitForARG() {
 	Gui::exit();
 	Init::UnloadFont();

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,24 +24,28 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "animation.hpp"
+#include "common.hpp"
 #include "download.hpp"
 #include "storeUtils.hpp"
 
-void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry, const std::unique_ptr<Store> &store) {
-	if (entry && store) {
+void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry) {
+	if (entry && StoreUtils::store) {
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
-		Gui::DrawString(5, 25 - scrollIndex, 0.5f, TEXT_COLOR, entry->GetReleaseNotes(), 390, 0, font, C2D_WordWrap);
-		Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-		Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-		Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, entry->GetTitle(), 390, 0, font);
+		Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+		Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetReleaseNotes(), 390, 0, font, C2D_WordWrap);
+		Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+		Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+		Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetTitle(), 390, 0, font);
 
 	} else {
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-		Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-		Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+		Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+		Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+		Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
 	}
+
+	Animation::QueueEntryDone();
 }
 
 /*
@@ -85,18 +89,18 @@ void DisplayChangelog() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, TEXT_COLOR, notes, 390, 0, font, C2D_WordWrap);
-			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 217, 0.7f, TEXT_COLOR, C_V, 390, 0, font);
+			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+			Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, notes, 390, 0, font, C2D_WordWrap);
+			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 217, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, C_V, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTL_COLOR);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
 			C3D_FrameEnd(0);
 
 			hidScanInput();

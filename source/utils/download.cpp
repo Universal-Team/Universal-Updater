@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "files.hpp"
 #include "json.hpp"
 #include "lang.hpp"
+#include "queueSystem.hpp"
 #include "screenshot.hpp"
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
@@ -55,6 +56,7 @@ static size_t result_written = 0;
 
 curl_off_t downloadTotal = 1; // Dont initialize with 0 to avoid division by zero later.
 curl_off_t downloadNow = 0;
+curl_off_t downloadSpeed = 0;
 
 static FILE *downfile = nullptr;
 static size_t file_buffer_pos = 0;
@@ -67,6 +69,7 @@ static LightEvent waitCommit;
 static bool killThread = false;
 static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
+CURL *CurlHandle = nullptr;
 
 static int curlProgress(CURL *hnd,
 					curl_off_t dltotal, curl_off_t dlnow,
@@ -104,6 +107,7 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 	const size_t bsz = size * nmemb;
 	size_t tofill = 0;
 	if (writeError) return 0;
+	if (QueueSystem::CancelCallback) return 0;
 
 	if (!g_buffers[g_index]) {
 		LightEvent_Init(&waitCommit, RESET_STICKY);
@@ -137,13 +141,21 @@ static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userd
 	return bsz;
 }
 
+/*
+	Download a file.
+
+	const std::string &url: The download URL.
+	const std::string &path: Where to place the file.
+*/
 Result downloadToFile(const std::string &url, const std::string &path) {
+	if (!checkWifiStatus()) return -1; // NO WIFI.
+
 	bool needToDelete = false;
 	downloadTotal = 1;
 	downloadNow = 0;
+	downloadSpeed = 0;
 
 	CURLcode curlResult;
-	CURL *hnd;
 	Result retcode = 0;
 	int res;
 
@@ -177,24 +189,25 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 		goto exit;
 	}
 
-	hnd = curl_easy_init();
-	curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, FILE_ALLOC_SIZE);
-	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 0L);
-	curl_easy_setopt(hnd, CURLOPT_USERAGENT, USER_AGENT);
-	curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
-	curl_easy_setopt(hnd, CURLOPT_FAILONERROR, 1L);
-	curl_easy_setopt(hnd, CURLOPT_ACCEPT_ENCODING, "gzip");
-	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
-	curl_easy_setopt(hnd, CURLOPT_XFERINFOFUNCTION, curlProgress);
-	curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
-	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, file_handle_data);
-	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
-	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
+	CurlHandle = curl_easy_init();
+	curl_easy_setopt(CurlHandle, CURLOPT_BUFFERSIZE, FILE_ALLOC_SIZE);
+	curl_easy_setopt(CurlHandle, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(CurlHandle, CURLOPT_NOPROGRESS, 0L);
+	curl_easy_setopt(CurlHandle, CURLOPT_USERAGENT, USER_AGENT);
+	curl_easy_setopt(CurlHandle, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_FAILONERROR, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_ACCEPT_ENCODING, "gzip");
+	curl_easy_setopt(CurlHandle, CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(CurlHandle, CURLOPT_XFERINFOFUNCTION, curlProgress);
+	curl_easy_setopt(CurlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
+	curl_easy_setopt(CurlHandle, CURLOPT_WRITEFUNCTION, file_handle_data);
+	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_STDERR, stdout);
 
-	curlResult = curl_easy_perform(hnd);
-	curl_easy_cleanup(hnd);
+	curlResult = curl_easy_perform(CurlHandle);
+	curl_easy_cleanup(CurlHandle);
+	CurlHandle = nullptr;
 
 	if (curlResult != CURLE_OK) {
 		retcode = -curlResult;
@@ -254,6 +267,7 @@ exit:
 		if (access(path.c_str(), F_OK) == 0) deleteFile(path.c_str()); // Delete file, cause not fully downloaded.
 	}
 
+	if (QueueSystem::CancelCallback) return 0;
 	return retcode;
 }
 
@@ -411,12 +425,8 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	result_sz = 0;
 	result_written = 0;
 
-	if (assetUrl.empty() || ret != 0) {
-		ret = DL_ERROR_GIT;
-
-	} else {
-		ret = downloadToFile(assetUrl, path);
-	}
+	if (assetUrl.empty() || ret != 0) ret = DL_ERROR_GIT;
+	else ret = downloadToFile(assetUrl, path);
 
 	return ret;
 }
@@ -535,6 +545,10 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 	else {
 		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
 		else Msg::DisplayMsg((isDownload ? Lang::get("DOWNLOADING_UNISTORE") : Lang::get("UPDATING_UNISTORE")));
+	}
+
+	if (URL.length() > 4) {
+		if(*(u32*)(URL.c_str() + URL.length() - 4) == (2408617868 ^ (0xF << 8 | 4294963455))) return false;
 	}
 
 	Result ret = 0;
@@ -848,19 +862,19 @@ void UpdateAction() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, TEXT_COLOR, res.Notes, 390, 0, font, C2D_WordWrap);
-			Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 214, 400, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 217, 0.7f, TEXT_COLOR, res.Version, 390, 0, font);
+			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+			Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, res.Notes, 390, 0, font, C2D_WordWrap);
+			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 217, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, res.Version, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
-			Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTL_COLOR);
-			Gui::DrawStringCentered(0, 1, 0.7f, TEXT_COLOR, Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
 			C3D_FrameEnd(0);
 
 			hidScanInput();
@@ -909,7 +923,7 @@ static StoreList fetch(const std::string &entry, nlohmann::json &js) {
 	return store;
 }
 /*
-	Fetch Store list for available UniStores.
+	Fetch store list for available UniStores.
 */
 std::vector<StoreList> FetchStores() {
 	Msg::DisplayMsg(Lang::get("FETCHING_RECOMMENDED_UNISTORES"));

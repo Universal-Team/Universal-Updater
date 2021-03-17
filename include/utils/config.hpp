@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -55,6 +55,9 @@ public:
 	bool autoupdate() const { return this->v_autoUpdate; };
 	void autoupdate(bool v) { this->v_autoUpdate = v; if (!this->changesMade) this->changesMade = true; };
 
+	bool _3dsxInFolder() const { return this->v_3dsxInFolder; };
+	void _3dsxInFolder(bool v) { this->v_3dsxInFolder = v; if (!this->changesMade) this->changesMade = true; };
+
 	std::string _3dsxPath() const { return this->v_3dsxPath; };
 	void _3dsxPath(const std::string &v) { this->v_3dsxPath = v; if (!this->changesMade) this->changesMade = true; };
 
@@ -63,6 +66,9 @@ public:
 
 	std::string archPath() const { return this->v_archivePath; };
 	void archPath(const std::string &v) { this->v_archivePath = v; if (!this->changesMade) this->changesMade = true; };
+
+	std::string firmPath() const { return this->v_firmPath; };
+	void firmPath(const std::string &v) { this->v_firmPath = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Fetching old metadata. */
 	bool metadata() const { return this->v_metadata; };
@@ -87,6 +93,14 @@ public:
 	/* If displaying changelog. */
 	bool changelog() const { return this->v_changelog; };
 	void changelog(bool v) { this->v_changelog = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* The active Theme. */
+	int theme() const { return this->v_theme; };
+	void theme(int v) { this->v_theme = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* If showing prompt if action failed / succeeded. */
+	bool prompt() const { return this->v_prompt; };
+	void prompt(bool v) { this->v_prompt = v; if (!this->changesMade) this->changesMade = true; };
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -99,12 +113,14 @@ private:
 	nlohmann::json json;
 	bool changesMade = false;
 
+	int v_theme = 0;
+
 	std::string v_language = "en", v_lastStore = "universal-db.unistore",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
-				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts";
+				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads";
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true,
-		v_showBg = false, v_customFont = false, v_changelog = true;
+		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false;
 };
 
 #endif

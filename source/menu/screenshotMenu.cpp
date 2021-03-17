@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "animation.hpp"
+#include "common.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
@@ -43,15 +45,24 @@ extern bool checkWifiStatus();
 */
 void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, const bool sFetch, const int screenshotSize, const std::string &name, const int zoom, const bool canDisplay) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 240, BG_COLOR);
+	Gui::Draw_Rect(0, 0, 400, 240, GFX::Themes[GFX::SelectedTheme].BGColor);
+
+	if (sFetch) {
+		Animation::QueueEntryDone();
+		GFX::DrawBottom();
+		Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LOADING_SCREENSHOT"), 310);
+		return;
+	}
 
 	if (!canDisplay) {
+		Animation::QueueEntryDone();
+
 		GFX::DrawBottom();
 		if (screenshotSize > 0) { // if texture is nullptr AND screenshot size is larger than 0.
-			Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("SCREENSHOT_COULD_NOT_LOAD"), 310);
+			Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SCREENSHOT_COULD_NOT_LOAD"), 310);
 
 		} else {
-			Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
+			Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
 		}
 
 		return;
@@ -82,6 +93,7 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 					delete top.subtex;
 			}
 
+			Animation::QueueEntryDone();
 			GFX::DrawBottom();
 
 			/* Bottom. */
@@ -92,19 +104,20 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 				delete bottom.subtex;
 
 			} else {
-				Gui::Draw_Rect(0, 215, 320, 25, BAR_COLOR);
-				Gui::Draw_Rect(0, 214, 320, 1, BAR_OUTL_COLOR);
-				Gui::DrawStringCentered(0, 220, 0.5f, TEXT_COLOR, Lang::get("SCREENSHOT_INSTRUCTIONS"), 310, 0, font);
+				Gui::Draw_Rect(0, 215, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
+				Gui::Draw_Rect(0, 214, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+				Gui::DrawStringCentered(0, 220, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SCREENSHOT_INSTRUCTIONS"), 310, 0, font);
 
 				char screenshots[0x100];
 				snprintf(screenshots, sizeof(screenshots), Lang::get("SCREENSHOT").c_str(), sIndex + 1, screenshotSize);
-				Gui::DrawStringCentered(0, 2, 0.6f, WHITE, screenshots, 310, 0, font);
-				Gui::DrawStringCentered(0, 40, 0.6f, WHITE, name, 310, 0, font);
+				Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, screenshots, 310, 0, font);
+				Gui::DrawStringCentered(0, 40, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, name, 310, 0, font);
 			}
 
 		} else {
+			Animation::QueueEntryDone();
 			GFX::DrawBottom();
-			Gui::DrawStringCentered(0, 2, 0.6f, WHITE, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
+			Gui::DrawStringCentered(0, 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("NO_SCREENSHOTS_AVAILABLE"), 310);
 		}
 	}
 }

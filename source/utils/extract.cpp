@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2020 Universal-Team
+*   Copyright (C) 2019-2021 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 */
 
 #include "extract.hpp"
+#include "queueSystem.hpp"
 #include "scriptUtils.hpp"
 #include <archive.h>
 #include <archive_entry.h>
@@ -33,7 +34,7 @@
 int filesExtracted = 0, extractFilesCount = 0;
 std::string extractingFile = "";
 
-/* That are our File Progressbar variable. */
+/* That are our Extract Progressbar variable. */
 u32 extractSize = 0, writeOffset = 0;
 
 Result getExtractedSize(const std::string &archivePath, const std::string &wantedFile) {
@@ -48,7 +49,7 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		int size = archive_entry_size(entry);
-		if (size > 0) { /* Ignore folders. */
+		if (size > 0) { // Ignore folders.
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
@@ -70,14 +71,19 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 	a = archive_read_new();
 	archive_read_support_format_all(a);
 
-	if (archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) return EXTRACT_ERROR_OPENFILE;
+	if (archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
+		archive_read_close(a);
+		archive_read_free(a);
+		return EXTRACT_ERROR_OPENFILE;
+	}
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-		if (archive_entry_size(entry) > 0) { /* Ignore folders. */
+		if (archive_entry_size(entry) > 0) { // Ignore folders.
 			std::smatch match;
 			std::string entryName(archive_entry_pathname(entry));
 			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
 				extractingFile = outputPath + match.suffix().str();
+				filesExtracted++;
 
 				/* make directories. */
 				for (char *slashpos = strchr(extractingFile.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
@@ -92,27 +98,48 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 				uint sizeLeft = archive_entry_size(entry);
 
 				FILE *file = fopen(extractingFile.c_str(), "wb");
-				if (!file) return EXTRACT_ERROR_WRITEFILE;
+				if (!file) {
+					archive_read_close(a);
+					archive_read_free(a);
+					return EXTRACT_ERROR_WRITEFILE;
+				}
 
 				u8 *buf = new u8[0x30000];
-				if (!buf) return EXTRACT_ERROR_ALLOC;
+				if (!buf) {
+					fclose(file);
+					archive_read_close(a);
+					archive_read_free(a);
+					return EXTRACT_ERROR_ALLOC;
+				}
 
 				while(sizeLeft > 0) {
 					u64 toRead = std::min(0x30000u, sizeLeft);
 					ssize_t size = archive_read_data(a, buf, toRead);
+
+					/* Archive error, stop extracting. */
+					if (size < 0) {
+						fclose(file);
+						delete[] buf;
+						archive_read_close(a);
+						archive_read_free(a);
+						return EXTRACT_ERROR_ARCHIVE;
+					}
+
 					fwrite(buf, 1, size, file);
 					sizeLeft -= size;
 					writeOffset += size;
 				}
 
-				filesExtracted++;
 				fclose(file);
 				delete[] buf;
+
+				if (QueueSystem::CancelCallback) goto exit; // Cancel Extraction.
 			}
 		}
 	}
 
-	archive_read_close(a);
-	archive_read_free(a);
-	return EXTRACT_ERROR_NONE;
+	exit:
+		archive_read_close(a);
+		archive_read_free(a);
+		return EXTRACT_ERROR_NONE;
 }
