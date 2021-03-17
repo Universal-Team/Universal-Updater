@@ -87,6 +87,7 @@
 	"LAST_UPDATED": "最後更新日",
 	"LICENSE": "ライセンス",
 	"LIST": "リスト",
+	"LOADING_SCREENSHOT": "スクリーン ショットを読み込んでいます……",
 	"LOADING_SPRITESHEET": "スプライトシート%i/%iを読み込んでいます……",
 	"MEDIATYPE_NAND": "メディアタイプNAND",
 	"MEDIATYPE_SD": "メディアタイプSD",
