@@ -26,11 +26,11 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
    - App display can be shown in either a grid or rows
 - Background installation so you can keep using the rest of the app while installing
 - Searching and markings to make finding apps easy
-- View screenshots and release notes before downloading
+- Viewing screenshots and release notes for apps
 - Shortcuts for easily updating frequently updated apps when using the Homebrew Launcher
 - Translations for users of many languages
    - To contribute to translations, join our [Crowdin project](https://crwd.in/universal-updater)
-   - Request new languages on our [Discord server](https://universal-team.net/discord)
+   - To request a new language, join our [Discord Server](https://universal-team.net/discord) or contact a project manager on Crowdin
 
 
 ## Compilation
@@ -42,15 +42,15 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 <details><summary>Screenshots</summary>
 
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/entry-info.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/download-list.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/queue-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/search-menu.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/sort-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/settings-menu.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/mark-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/screenshot.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/release-notes.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/list-style.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/language-selection.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/store-selection.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/recommended-unistores.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/auto-update-settings.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/gui-settings.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-settings.png)
-![](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-selection.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/credits.png)
+![Entry info](https://db.universal-team.net/assets/images/screenshots/universal-updater/entry-info.png) ![Download list](https://db.universal-team.net/assets/images/screenshots/universal-updater/download-list.png)
+![Queue menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/queue-menu.png) ![Search menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/search-menu.png)
+![Sorting and Filters menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/sort-menu.png) ![Settings menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/settings-menu.png)
+![Marking menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/mark-menu.png) ![Viewing a screenshot](https://db.universal-team.net/assets/images/screenshots/universal-updater/screenshot.png)
+![Viewing release notes](https://db.universal-team.net/assets/images/screenshots/universal-updater/release-notes.png) ![The menu in list mode](https://db.universal-team.net/assets/images/screenshots/universal-updater/list-style.png)
+![Language selection menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/language-selection.png) ![UniStore selection menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/store-selection.png)
+![Recommended UniStores menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/recommended-unistores.png) ![="Auto-Update settings menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/auto-update-settings.png)
+![GUI settings menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/gui-settings.png) ![Directory settings menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-settings.png)
+![Directory selection menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-selection.png) ![Credits menu](https://db.universal-team.net/assets/images/screenshots/universal-updater/credits.png)
 
 </details>
 
