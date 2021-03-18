@@ -895,7 +895,7 @@ void UpdateAction() {
 
 		if (ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
 		(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"),
-		false, Lang::get("DONLOADING_UNIVERSAL_UPDATER")) == 0) {
+		false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true) == 0) {
 
 			if (is3DSX) {
 				Msg::waitMsg(Lang::get("UPDATE_DONE"));
@@ -903,8 +903,8 @@ void UpdateAction() {
 				return;
 			}
 
-			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"));
-			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"));
+			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
+			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"), true);
 			Msg::waitMsg(Lang::get("UPDATE_DONE"));
 			exiting = true;
 		}
