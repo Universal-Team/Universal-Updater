@@ -24,6 +24,7 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
    - Several sorting keys: "Title", "Author", and "Last Updated"
    - Direction can be Ascending or Descending
    - App display can be shown in either a grid or rows
+- Background installation so you can keep using the rest of the app while installing
 - Searching and markings to make finding apps easy
 - View screenshots and release notes before downloading
 - Shortcuts for easily updating frequently updated apps when using the Homebrew Launcher
@@ -41,7 +42,15 @@ To build Universal-Updater from source, you will need to setup devkitARM with li
 
 <details><summary>Screenshots</summary>
 
-![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Credits.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/DirectorySelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/DownloadList.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/EntryInfo.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/LanguageSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/ListStyle.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/MarkMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/SearchMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/SettingsMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/SortMenu.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/StoreSelection.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/AutoUpdateSettings.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/DirectorySettings.png)![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/GUISettings.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/3DS_Screenshot.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Screenshot_Zoom0.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Screenshot_Zoom1.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Screenshot_Zoom2.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Keyboard.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/Recommended_UniStores.png) ![](https://github.com/Universal-Team/Universal-Updater/blob/master/resources/ReleaseNotes.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/entry-info.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/download-list.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/queue-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/search-menu.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/sort-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/settings-menu.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/mark-menu.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/screenshot.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/release-notes.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/list-style.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/language-selection.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/store-selection.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/recommended-unistores.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/auto-update-settings.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/gui-settings.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-settings.png)
+![](https://db.universal-team.net/assets/images/screenshots/universal-updater/directory-selection.png) ![](https://db.universal-team.net/assets/images/screenshots/universal-updater/credits.png)
 
 </details>
 
