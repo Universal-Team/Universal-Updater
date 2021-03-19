@@ -85,10 +85,8 @@ static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTO
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_IN_FOLDER", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
-//static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", "Lietuvių", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
-//static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", "lt", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
-static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", "Magyar", "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", "日本語" };
-static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", "hu", "pl", "pt", "pt-BR", "ru", "uk", "jp"};
+static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", /* "Nederlands", */ "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", /* "한국어" */ };
+static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", /* "lt", */ "hu", /* "nl", */ "pl", "pt", "pt-BR", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", /* "ko" */ };
 
 static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT", "Stack" };
 
@@ -578,10 +576,14 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	if (hDown & KEY_A) {
 		const std::string l = langsTemp[selection];
 
-		/* Check if is "uk". */
-		if (l == "uk") {
-			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
-				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+		/* Check if language needs a custom font. */
+		u8 region;
+		CFGU_SecureInfoGetRegion(&region);
+		if (l == "uk" || (l == "zh-CN" && region != CFG_REGION_CHN) || (l == "zh-TW" && region != CFG_REGION_TWN)) {
+			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0 || config->downloadedFont() != l) {
+				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+				config->downloadedFont(l);
+				Init::UnloadFont();
 			}
 
 			config->customfont(true);
@@ -601,10 +603,14 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 				if (i + sPos < (int)languages.size()) {
 					const std::string l = langsTemp[i + sPos];
 
-					/* Check if is "uk". */
-					if (l == "uk") {
-						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
-							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"));
+					/* Check if language needs a custom font. */
+					u8 region;
+					CFGU_SecureInfoGetRegion(&region);
+					if (l == "uk" || (l == "zh-CN" && region != CFG_REGION_CHN) || (l == "zh-TW" && region != CFG_REGION_TWN)) {
+						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0 || config->downloadedFont() != l) {
+							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+							config->downloadedFont(l);
+							Init::UnloadFont();
 						}
 
 						config->customfont(true);
@@ -624,8 +630,13 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, langButtons[6])) {
 			/* Download Font. */
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+			std::string l = config->language();
+			if(l != "uk" && l != "zh-CN" && l != "zh-TW")
+				l = "uk";
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+			config->downloadedFont(l);
 			config->customfont(true);
+			Init::UnloadFont();
 			Init::LoadFont();
 		}
 	}

@@ -86,6 +86,10 @@ public:
 	bool customfont() const { return this->v_customFont; };
 	void customfont(bool v) { this->v_customFont = v; if (!this->changesMade) this->changesMade = true; };
 
+	/* The most recently downloaded language font */
+	std::string downloadedFont() const { return this->v_downloadedFont; };
+	void downloadedFont(const std::string &v) { this->v_downloadedFont = v; if (!this->changesMade) this->changesMade = true; };
+
 	/* The shortcut path. */
 	std::string shortcut() const { return this->v_shortcutPath; };
 	void shortcut(const std::string &v) { this->v_shortcutPath = v; if (!this->changesMade) this->changesMade = true; };
@@ -115,7 +119,7 @@ private:
 
 	int v_theme = 0;
 
-	std::string v_language = "en", v_lastStore = "universal-db.unistore",
+	std::string v_language = "en", v_lastStore = "universal-db.unistore", v_downloadedFont = "",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads";
 
