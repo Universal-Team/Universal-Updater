@@ -38,7 +38,9 @@ static void InitForARG() {
 	gfxInitDefault();
 	romfsInit();
 	cfguInit();
-	Gui::init();
+	u8 region;
+	CFGU_SecureInfoGetRegion(&region);
+	Gui::init((CFG_Region)region);
 	amInit();
 	acInit();
 
