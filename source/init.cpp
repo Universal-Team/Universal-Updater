@@ -118,7 +118,9 @@ void Init::UnloadFont() {
 Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
-	Gui::init();
+	u8 region;
+	CFGU_SecureInfoGetRegion(&region);
+	Gui::init((CFG_Region)region);
 
 	cfguInit();
 	ptmuInit();
