@@ -577,17 +577,24 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		const std::string l = langsTemp[selection];
 
 		/* Check if language needs a custom font. */
-		u8 region;
-		CFGU_SecureInfoGetRegion(&region);
-		if (l == "uk" || (l == "zh-CN" && region != CFG_REGION_CHN) || (l == "zh-TW" && region != CFG_REGION_TWN)) {
-			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0 || config->downloadedFont() != l) {
-				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
-				config->downloadedFont(l);
+		if (l == "uk") {
+			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
+				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 				Init::UnloadFont();
 			}
 
 			config->customfont(true);
 			Init::LoadFont();
+		} else if(!config->customfont()) {
+			CFG_Region region = CFG_REGION_USA;
+			if(l == "zh-CN") {
+				region = CFG_REGION_CHN;
+			} else if(l == "zh-TW") {
+				region = CFG_REGION_TWN;
+			} else if(l == "ko") {
+				region = CFG_REGION_KOR;
+			}
+			Gui::loadSystemFont(region);
 		}
 
 		config->language(l);
@@ -604,17 +611,24 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 					const std::string l = langsTemp[i + sPos];
 
 					/* Check if language needs a custom font. */
-					u8 region;
-					CFGU_SecureInfoGetRegion(&region);
-					if (l == "uk" || (l == "zh-CN" && region != CFG_REGION_CHN) || (l == "zh-TW" && region != CFG_REGION_TWN)) {
-						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0 || config->downloadedFont() != l) {
-							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
-							config->downloadedFont(l);
+					if (l == "uk") {
+						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
+							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 							Init::UnloadFont();
 						}
 
 						config->customfont(true);
 						Init::LoadFont();
+					} else if(!config->customfont()) {
+						CFG_Region region = CFG_REGION_USA;
+						if(l == "zh-CN") {
+							region = CFG_REGION_CHN;
+						} else if(l == "zh-TW") {
+							region = CFG_REGION_TWN;
+						} else if(l == "ko") {
+							region = CFG_REGION_KOR;
+						}
+						Gui::loadSystemFont(region);
 					}
 
 					config->language(l);
@@ -631,10 +645,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		if (touching(touch, langButtons[6])) {
 			/* Download Font. */
 			std::string l = config->language();
-			if(l != "uk" && l != "zh-CN" && l != "zh-TW")
-				l = "uk";
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + l + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
-			config->downloadedFont(l);
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 			config->customfont(true);
 			Init::UnloadFont();
 			Init::LoadFont();

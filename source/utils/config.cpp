@@ -27,7 +27,6 @@
 #include "common.hpp"
 #include "config.hpp"
 #include "json.hpp"
-#include "scriptUtils.hpp"
 #include <string>
 #include <unistd.h>
 
@@ -118,6 +117,9 @@ Config::Config() {
 	/* Let us create a new one. */
 	if (!this->json.contains("Version")) this->initialize();
 
+	if (!this->json.contains("Language")) this->sysLang();
+	else this->language(this->getString("Language"));
+
 	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
 	if (this->json.contains("List")) this->list(this->getBool("List"));
 	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
@@ -130,20 +132,10 @@ Config::Config() {
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
-	if (this->json.contains("DownloadedFont")) this->downloadedFont(this->getString("DownloadedFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
 	if (this->json.contains("Active_Theme")) this->theme(this->getInt("Active_Theme"));
 	if (this->json.contains("Prompt")) this->prompt(this->getBool("Prompt"));
-
-	if (!this->json.contains("Language")) {
-		this->sysLang();
-		if((this->language() == "zh-CN" || this->language() == "zh-TW") && (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0 || this->downloadedFont() != this->language())) {
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/" + this->language() + ".bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", "Downloading compatible font...", true);
-			this->downloadedFont(this->language());
-			this->customfont(true);
-		}
-	} else this->language(this->getString("Language"));
 
 	this->changesMade = false; // No changes made yet.
 }
@@ -168,7 +160,6 @@ void Config::save() {
 		this->setBool("UpdateCheck", this->updatecheck());
 		this->setBool("UseBG", this->usebg());
 		this->setBool("CustomFont", this->customfont());
-		this->setString("DownloadedFont", this->downloadedFont());
 		this->setString("Shortcut_Path", this->shortcut());
 		this->setBool("Display_Changelog", this->changelog());
 		this->setInt("Active_Theme", this->theme());

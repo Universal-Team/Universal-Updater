@@ -41,13 +41,13 @@ void Lang::load(const std::string &lang) {
 
 	/* Check if exist. */
 	if (access(("romfs:/lang/" + lang + "/app.json").c_str(), F_OK) == 0) {
-		values = fopen(std::string(("romfs:/lang/" + lang + "/app.json")).c_str(), "rt");
+		values = fopen(("romfs:/lang/" + lang + "/app.json").c_str(), "rt");
 		appJson = nlohmann::json::parse(values, nullptr, false);
 		fclose(values);
 		return;
 
 	} else {
-		values = fopen(("romfs:/lang/en/app.json"), "rt");
+		values = fopen("romfs:/lang/en/app.json", "rt");
 		appJson = nlohmann::json::parse(values, nullptr, false);
 		fclose(values);
 		return;

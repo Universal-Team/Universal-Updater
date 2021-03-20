@@ -37,10 +37,8 @@ std::string _3dsxPath = "";
 static void InitForARG() {
 	gfxInitDefault();
 	romfsInit();
+
 	cfguInit();
-	u8 region;
-	CFGU_SecureInfoGetRegion(&region);
-	Gui::init((CFG_Region)region);
 	amInit();
 	acInit();
 
@@ -49,6 +47,18 @@ static void InitForARG() {
 	mkdir("sdmc:/3ds/Universal-Updater", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
+
+	config = std::make_unique<Config>();
+
+	CFG_Region region = CFG_REGION_USA;
+	if(config->language() == "zh-CN") {
+		region = CFG_REGION_CHN;
+	} else if(config->language() == "zh-TW") {
+		region = CFG_REGION_TWN;
+	} else if(config->language() == "ko") {
+		region = CFG_REGION_KOR;
+	}
+	Gui::init(region);
 
 	config = std::make_unique<Config>();
 	GFX::SelectedTheme = config->theme();

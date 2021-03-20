@@ -118,20 +118,11 @@ void Init::UnloadFont() {
 Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
-	u8 region;
-	CFGU_SecureInfoGetRegion(&region);
-	Gui::init((CFG_Region)region);
 
 	cfguInit();
 	ptmuInit();
 	amInit();
 	acInit();
-
-	APT_GetAppCpuTimeLimit(&old_time_limit);
-	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
-	getCurrentUsage();
-	aptSetSleepAllowed(false);
-	hidSetRepeatParameters(20, 8);
 
 	/* Create Directories, if missing. */
 	mkdir("sdmc:/3ds", 0777);
@@ -140,6 +131,23 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+
+	CFG_Region region = CFG_REGION_USA;
+	if(config->language() == "zh-CN") {
+		region = CFG_REGION_CHN;
+	} else if(config->language() == "zh-TW") {
+		region = CFG_REGION_TWN;
+	} else if(config->language() == "ko") {
+		region = CFG_REGION_KOR;
+	}
+	Gui::init(region);
+
+	APT_GetAppCpuTimeLimit(&old_time_limit);
+	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
+	getCurrentUsage();
+	aptSetSleepAllowed(false);
+	hidSetRepeatParameters(20, 8);
+
 	GFX::SelectedTheme = config->theme();
 	if (GFX::SelectedTheme > (_THEME_AMOUNT - 1)) GFX::SelectedTheme = 0; // In case it is above the max themes.
 	Lang::load(config->language());
