@@ -88,7 +88,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET		:=	Universal-Updater
 BUILD		:=	build
-UNIVCORE	:= 	Universal-Core
+UNIVCORE	:=	Universal-Core
 SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/menu source/overlays \
 							source/qr source/screens source/store source/utils
 DATA		:=	data
@@ -98,9 +98,9 @@ GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
 APP_AUTHOR	:=	Universal-Team
-APP_DESCRIPTION :=	An easy to use app for installing and updating 3DS homebrew
+APP_DESCRIPTION :=	A simple 3DS homebrew updater
 ICON		:=	app/icon.png
-BNR_IMAGE	:=  app/banner.png
+BNR_IMAGE	:=	app/banner.png
 BNR_AUDIO	:=	app/BannerAudio.wav
 RSF_FILE	:=	app/build-cia.rsf
 
