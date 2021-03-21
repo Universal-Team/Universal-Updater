@@ -87,6 +87,7 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_I
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", /* "Nederlands", */ "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", /* "한국어" */ };
 static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", /* "lt", */ "hu", /* "nl", */ "pl", "pt", "pt-BR", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", /* "ko" */ };
+static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {-1, 0}, /* {-1, 0}, */ {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {sprites_zh_CN_idx, 54}, {sprites_zh_TW_idx, 55}, {sprites_jp_idx, 31}, /* {sprites_ko_idx, 30} */ };
 
 static const std::vector<std::string> ThemeNames = { "THEME_DEFAULT", "Stack" };
 
@@ -121,7 +122,10 @@ static void DrawLanguageSettings(int selection, int sPos) {
 
 	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
 		if (sPos + i == selection) Gui::Draw_Rect(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-		Gui::DrawStringCentered(20, langButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, languages[sPos + i], 280, 0, font);
+		if(langSprites[sPos + i].first != -1)
+			GFX::DrawSprite(langSprites[sPos + i].first, 160 + 20 - (langSprites[sPos + i].second / 2), langButtons[i].y + 6);
+		else
+			Gui::DrawStringCentered(20, langButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, languages[sPos + i], 280, 0, font);
 	}
 }
 
