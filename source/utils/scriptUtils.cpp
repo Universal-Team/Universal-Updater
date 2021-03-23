@@ -182,12 +182,13 @@ Result ScriptUtils::downloadRelease(const std::string &repo, const std::string &
 	}
 
 	if (downloadFromRelease("https://github.com/" + repo, file, out, includePrereleases) != 0) {
-		if (isARG) showProgressBar = false;
-
-		downloadFailed();
 		ret = FAILED_DOWNLOAD;
 
 		if (isARG) {
+			showProgressBar = false;
+
+			downloadFailed();
+
 			threadJoin(thread, U64_MAX);
 			threadFree(thread);
 		}
@@ -225,12 +226,13 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 	}
 
 	if (downloadToFile(file, out) != 0) {
-		if (isARG) showProgressBar = false;
-
-		downloadFailed();
 		ret = FAILED_DOWNLOAD;
 
 		if (isARG) {
+			showProgressBar = false;
+
+			downloadFailed();
+
 			threadJoin(thread, U64_MAX);
 			threadFree(thread);
 		}
