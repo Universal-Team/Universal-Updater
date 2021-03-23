@@ -27,6 +27,16 @@
 #include "common.hpp"
 #include "msg.hpp"
 
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+
+const std::vector<Structs::ButtonPos> promptButtons = {
+	{24, 94, 124, 48},
+	{172, 94, 124, 48}
+};
+const std::vector<std::string> promptLabels = {
+	"CANCEL", "CONFIRM"
+};
+
 /*
 	Displays just a message until the next draw frame.
 
@@ -84,21 +94,27 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 
 	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("CONFIRM_OR_CANCEL"), 390, 0, font);
 	GFX::DrawBottom();
+	for(uint i = 0; i < promptButtons.size(); i++) {
+		Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
+		Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+	}
 	C3D_FrameEnd(0);
 
 	for (int i = 0; i < 3; i++) gspWaitForVBlank();
 	hidScanInput();
 
 	uint32_t Down = 0;
+	touchPosition Touch;
 	while(1) {
 		do {
 			gspWaitForVBlank();
 			hidScanInput();
 			Down = hidKeysDown();
+			hidTouchRead(&Touch);
 		} while (!Down);
 
-		if (Down & KEY_A) return true;
-		else if (Down & KEY_B) return false;
+		if ((Down & KEY_A) || (Down & KEY_TOUCH && touching(Touch, promptButtons[1]))) return true;
+		else if ((Down & KEY_B) || (Down & KEY_TOUCH && touching(Touch, promptButtons[0]))) return false;
 	};
 }
 
