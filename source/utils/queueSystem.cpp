@@ -375,10 +375,12 @@ void QueueSystem::QueueHandle() {
 				QueueSystem::Popup = true;
 			}
 
-			if (StoreUtils::meta) {
-				StoreUtils::meta->SetUpdated(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->lastUpdated);
-				StoreUtils::meta->SetInstalled(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->name);
-				StoreUtils::RefreshUpdateAVL();
+			if (queueEntries[0]->status == QueueStatus::Done) { // ONLY update, if successful.
+				if (StoreUtils::meta) {
+					StoreUtils::meta->SetUpdated(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->lastUpdated);
+					StoreUtils::meta->SetInstalled(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->name);
+					StoreUtils::RefreshUpdateAVL();
+				}
 			}
 
 			if (QueueSystem::CancelCallback) QueueSystem::CancelCallback = false; // Reset.
