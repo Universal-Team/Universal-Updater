@@ -65,65 +65,65 @@ static const std::vector<Structs::ButtonPos> SearchMenu = {
 	isAND: isAND for the AND / OR mode.
 */
 void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter, bool isAND) {
-	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
-	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
-	Gui::DrawStringCentered(21, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SEARCH_FILTERS"), 269, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
+	Gui::DrawStringCentered(21, 2, 0.6, UIThemes->TextColor(), Lang::get("SEARCH_FILTERS"), 269, 0, font);
 
-	Gui::Draw_Rect(50, 40, 264, SearchMenu[0].h + 2, GFX::Themes[GFX::SelectedTheme].SearchbarOutline);
-	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, GFX::Themes[GFX::SelectedTheme].SearchBar);
+	Gui::Draw_Rect(50, 40, 264, SearchMenu[0].h + 2, UIThemes->SearchBarOutline());
+	Gui::Draw_Rect(SearchMenu[0].x, SearchMenu[0].y, SearchMenu[0].w, SearchMenu[0].h, UIThemes->SearchBar());
 
-	Gui::DrawStringCentered(24, 46, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, searchResult, 265, 0, font);
+	Gui::DrawStringCentered(24, 46, 0.6, UIThemes->TextColor(), searchResult, 265, 0, font);
 
 	/* Checkboxes. */
 	for (int i = 0; i < 4; i++) {
 		GFX::DrawCheckbox(SearchMenu[i + 1].x, SearchMenu[i + 1].y, searchIncludes[i]);
 	}
 
-	Gui::DrawString(84, 81, 0.5, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("INCLUDE_IN_RESULTS"), 265, 0, font);
+	Gui::DrawString(84, 81, 0.5, UIThemes->TextColor(), Lang::get("INCLUDE_IN_RESULTS"), 265, 0, font);
 
-	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("TITLE"), 90, 0, font);
-	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AUTHOR"), 90, 0, font);
+	Gui::DrawString(SearchMenu[1].x + 18, SearchMenu[1].y + 1, 0.4, UIThemes->TextColor(), Lang::get("TITLE"), 90, 0, font);
+	Gui::DrawString(SearchMenu[2].x + 18, SearchMenu[2].y + 1, 0.4, UIThemes->TextColor(), Lang::get("AUTHOR"), 90, 0, font);
 
-	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CATEGORY"), 90, 0, font);
-	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CONSOLE"), 90, 0, font);
+	Gui::DrawString(SearchMenu[3].x + 18, SearchMenu[3].y + 1, 0.4, UIThemes->TextColor(), Lang::get("CATEGORY"), 90, 0, font);
+	Gui::DrawString(SearchMenu[4].x + 18, SearchMenu[4].y + 1, 0.4, UIThemes->TextColor(), Lang::get("CONSOLE"), 90, 0, font);
 
 	/* Filters. */
-	Gui::DrawString(84, SearchMenu[5].y - 20, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("FILTER_TO"), 265, 0, font);
+	Gui::DrawString(84, SearchMenu[5].y - 20, 0.5f, UIThemes->TextColor(), Lang::get("FILTER_TO"), 265, 0, font);
 
 	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, (marks & favoriteMarks::STAR ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, (marks & favoriteMarks::HEART ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, (marks & favoriteMarks::DIAMOND ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, (marks & favoriteMarks::CLUBS ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, (marks & favoriteMarks::SPADE ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, (updateFilter ?
-		GFX::Themes[GFX::SelectedTheme].SideBarUnselected : GFX::Themes[GFX::SelectedTheme].BoxInside));
+		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
-	Gui::DrawString(SearchMenu[5].x + 9, SearchMenu[5].y + 7, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "★", 0, 0, font);
-	Gui::DrawString(SearchMenu[6].x + 9, SearchMenu[6].y + 7, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "♥", 0, 0, font);
-	Gui::DrawString(SearchMenu[7].x + 9, SearchMenu[7].y + 7, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "♦", 0, 0, font);
-	Gui::DrawString(SearchMenu[8].x + 9, SearchMenu[8].y + 7, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "♣", 0, 0, font);
-	Gui::DrawString(SearchMenu[9].x + 9, SearchMenu[9].y + 7, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "♠", 0, 0, font);
+	Gui::DrawString(SearchMenu[5].x + 9, SearchMenu[5].y + 7, 0.5f, UIThemes->TextColor(), "★", 0, 0, font);
+	Gui::DrawString(SearchMenu[6].x + 9, SearchMenu[6].y + 7, 0.5f, UIThemes->TextColor(), "♥", 0, 0, font);
+	Gui::DrawString(SearchMenu[7].x + 9, SearchMenu[7].y + 7, 0.5f, UIThemes->TextColor(), "♦", 0, 0, font);
+	Gui::DrawString(SearchMenu[8].x + 9, SearchMenu[8].y + 7, 0.5f, UIThemes->TextColor(), "♣", 0, 0, font);
+	Gui::DrawString(SearchMenu[9].x + 9, SearchMenu[9].y + 7, 0.5f, UIThemes->TextColor(), "♠", 0, 0, font);
 	GFX::DrawSprite(sprites_update_filter_idx, SearchMenu[10].x + 8, SearchMenu[10].y + 8);
 
-	Gui::Draw_Rect(SearchMenu[11].x, SearchMenu[11].y, SearchMenu[11].w, SearchMenu[11].h, GFX::Themes[GFX::SelectedTheme].MarkUnselected);
-	Gui::DrawStringCentered(23, SearchMenu[11].y + 6, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECTION_QUEUE"), 280, 0, font);
+	Gui::Draw_Rect(SearchMenu[11].x, SearchMenu[11].y, SearchMenu[11].w, SearchMenu[11].h, UIThemes->MarkUnselected());
+	Gui::DrawStringCentered(23, SearchMenu[11].y + 6, 0.45f, UIThemes->TextColor(), Lang::get("SELECTION_QUEUE"), 280, 0, font);
 
 	/* AND / OR. */
-	Gui::Draw_Rect(SearchMenu[12].x, SearchMenu[12].y, SearchMenu[12].w, SearchMenu[12].h, (isAND ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
-	Gui::DrawString(SearchMenu[12].x + 4, SearchMenu[12].y, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, "AND", 0, 0, font);
+	Gui::Draw_Rect(SearchMenu[12].x, SearchMenu[12].y, SearchMenu[12].w, SearchMenu[12].h, (isAND ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(SearchMenu[12].x + 4, SearchMenu[12].y, 0.4f, UIThemes->TextColor(), "AND", 0, 0, font);
 
-	Gui::Draw_Rect(SearchMenu[13].x, SearchMenu[13].y, SearchMenu[13].w, SearchMenu[13].h, (!isAND ? GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
-	Gui::DrawString(SearchMenu[13].x + 8, SearchMenu[13].y, 0.4f, GFX::Themes[GFX::SelectedTheme].TextColor, "OR", 0, 0, font);
+	Gui::Draw_Rect(SearchMenu[13].x, SearchMenu[13].y, SearchMenu[13].w, SearchMenu[13].h, (!isAND ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(SearchMenu[13].x + 8, SearchMenu[13].y, 0.4f, UIThemes->TextColor(), "OR", 0, 0, font);
 }
 
 /*

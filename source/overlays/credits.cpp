@@ -41,21 +41,21 @@ void Overlays::ShowCredits() {
 
 		GFX::DrawTop();
 		GFX::DrawSprite(sprites_universal_updater_idx, 220, 26);
-		Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
 
-		Gui::DrawString(10, 30, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- Universal-Team", 0, 0, font);
-		Gui::DrawString(10, 50, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- devkitPro", 0, 0, font);
-		Gui::DrawString(10, 70, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- dlbeer", 0, 0, font);
-		Gui::DrawString(10, 90, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- FlagBrew", 0, 0, font);
-		Gui::DrawString(10, 110, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- https://icons8.com/", 0, 0, font);
-		Gui::DrawString(10, 130, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- Ivandeve", 0, 0, font);
-		Gui::DrawString(10, 150, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, "- PabloMK7", 0, 0, font);
-		Gui::DrawString(10, 170, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
-		Gui::DrawString(10, 197, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("GITHUB"), 390, 0, font);
+		Gui::DrawString(10, 30, 0.5f, UIThemes->TextColor(), "- Universal-Team", 0, 0, font);
+		Gui::DrawString(10, 50, 0.5f, UIThemes->TextColor(), "- devkitPro", 0, 0, font);
+		Gui::DrawString(10, 70, 0.5f, UIThemes->TextColor(), "- dlbeer", 0, 0, font);
+		Gui::DrawString(10, 90, 0.5f, UIThemes->TextColor(), "- FlagBrew", 0, 0, font);
+		Gui::DrawString(10, 110, 0.5f, UIThemes->TextColor(), "- https://icons8.com/", 0, 0, font);
+		Gui::DrawString(10, 130, 0.5f, UIThemes->TextColor(), "- Ivandeve", 0, 0, font);
+		Gui::DrawString(10, 150, 0.5f, UIThemes->TextColor(), "- PabloMK7", 0, 0, font);
+		Gui::DrawString(10, 170, 0.5f, UIThemes->TextColor(), Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
+		Gui::DrawString(10, 197, 0.5f, UIThemes->TextColor(), Lang::get("GITHUB"), 390, 0, font);
 
-		Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-		Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-		Gui::DrawStringCentered(0, 218, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CURRENT_VERSION") + std::string(VER_NUMBER), 390, 0, font);
+		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("CURRENT_VERSION") + std::string(VER_NUMBER), 390, 0, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();

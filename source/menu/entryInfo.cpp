@@ -42,23 +42,23 @@ extern bool QueueRuns;
 */
 void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
-		Gui::Draw_Rect(40, 0, 280, 36, GFX::Themes[GFX::SelectedTheme].EntryBar);
-		Gui::Draw_Rect(40, 36, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
+		Gui::Draw_Rect(40, 0, 280, 36, UIThemes->EntryBar());
+		Gui::Draw_Rect(40, 36, 280, 1, UIThemes->EntryOutline());
 
-		Gui::DrawStringCentered(17, 0, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetTitle(), 273, 0, font);
-		Gui::DrawStringCentered(17, 20, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetAuthor(), 273, 0, font);
-		Gui::DrawStringCentered(17, 50, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetDescription(), 248, 0, font, C2D_WordWrap);
+		Gui::DrawStringCentered(17, 0, 0.6, UIThemes->TextColor(), entry->GetTitle(), 273, 0, font);
+		Gui::DrawStringCentered(17, 20, 0.4, UIThemes->TextColor(), entry->GetAuthor(), 273, 0, font);
+		Gui::DrawStringCentered(17, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
-		Gui::DrawString(53, 130, 0.45, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
-		Gui::DrawString(53, 145, 0.45, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
-		Gui::DrawString(53, 160, 0.45, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
-		Gui::DrawString(53, 175, 0.45, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);
-		Gui::DrawString(53, 190, 0.45, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
+		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
+		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
+		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
+		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);
+		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		if (!entry->GetScreenshots().empty()) GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
 		if (entry->GetReleaseNotes() != "") GFX::DrawSprite(sprites_notes_idx, notes.x, notes.y);
-		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, "★", 0, 0, font);
+		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
 	}
 }
 

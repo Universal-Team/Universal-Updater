@@ -38,8 +38,10 @@ bool exiting = false, is3DSX = false, needUnloadFont = false;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
 u32 old_time_limit;
+std::unique_ptr<Theme> UIThemes = nullptr;
 std::unique_ptr<Sound> Music = nullptr;
 bool dspfirmFound = false;
+std::vector<std::string> Themes = { };
 
 /*
 	Set, if 3DSX or CIA.
@@ -131,6 +133,9 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+	UIThemes = std::make_unique<Theme>();
+	UIThemes->LoadTheme(config->theme());
+	Themes = UIThemes->ThemeNames();
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {
@@ -148,8 +153,6 @@ Result Init::Initialize() {
 	aptSetSleepAllowed(false);
 	hidSetRepeatParameters(20, 8);
 
-	GFX::SelectedTheme = config->theme();
-	if (GFX::SelectedTheme > (_THEME_AMOUNT - 1)) GFX::SelectedTheme = 0; // In case it is above the max themes.
 	Lang::load(config->language());
 
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);

@@ -48,28 +48,28 @@ void StoreUtils::DisplayMarkBox(int marks) {
 	Gui::Draw_Rect(0, 0, 320, 240, DIM_COLOR); // Darken.
 
 	Gui::Draw_Rect(markBox[0].x, markBox[0].y, markBox[0].w, markBox[0].h, (marks & favoriteMarks::STAR ?
-		GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 
 	Gui::Draw_Rect(markBox[1].x, markBox[1].y, markBox[1].w, markBox[1].h, (marks & favoriteMarks::HEART ?
-		GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 
 	Gui::Draw_Rect(markBox[2].x, markBox[2].y, markBox[2].w, markBox[2].h, (marks & favoriteMarks::DIAMOND ?
-		GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 
 	Gui::Draw_Rect(markBox[3].x, markBox[3].y, markBox[3].w, markBox[3].h, (marks & favoriteMarks::CLUBS ?
-		GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 
 	Gui::Draw_Rect(markBox[4].x, markBox[4].y, markBox[4].w, markBox[4].h, (marks & favoriteMarks::SPADE ?
-		GFX::Themes[GFX::SelectedTheme].MarkSelected : GFX::Themes[GFX::SelectedTheme].MarkUnselected));
+		UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 
-	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 11, 0.9, GFX::Themes[GFX::SelectedTheme].TextColor, "★", 0, 0, font);
-	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 11, 0.9, GFX::Themes[GFX::SelectedTheme].TextColor, "♥", 0, 0, font);
-	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 11, 0.9, GFX::Themes[GFX::SelectedTheme].TextColor, "♦", 0, 0, font);
-	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 11, 0.9, GFX::Themes[GFX::SelectedTheme].TextColor, "♣", 0, 0, font);
-	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 11, 0.9, GFX::Themes[GFX::SelectedTheme].TextColor, "♠", 0, 0, font);
+	Gui::DrawString(markBox[0].x + 15, markBox[0].y + 11, 0.9, UIThemes->TextColor(), "★", 0, 0, font);
+	Gui::DrawString(markBox[1].x + 15, markBox[1].y + 11, 0.9, UIThemes->TextColor(), "♥", 0, 0, font);
+	Gui::DrawString(markBox[2].x + 15, markBox[2].y + 11, 0.9, UIThemes->TextColor(), "♦", 0, 0, font);
+	Gui::DrawString(markBox[3].x + 15, markBox[3].y + 11, 0.9, UIThemes->TextColor(), "♣", 0, 0, font);
+	Gui::DrawString(markBox[4].x + 15, markBox[4].y + 11, 0.9, UIThemes->TextColor(), "♠", 0, 0, font);
 
 	GFX::DrawBox(markBox[5].x, markBox[5].y, markBox[5].w, markBox[5].h, false);
-	Gui::DrawString(markBox[5].x + 5, markBox[5].y + 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, "★", 0, 0, font);
+	Gui::DrawString(markBox[5].x + 5, markBox[5].y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
 }
 
 /*

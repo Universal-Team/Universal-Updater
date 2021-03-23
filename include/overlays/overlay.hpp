@@ -35,6 +35,7 @@ namespace Overlays {
 	void SelectLanguage();
 	void ShowCredits();
 	std::string SelectDir(const std::string &oldDir, const std::string &msg);
+	void SelectTheme();
 };
 
 #endif

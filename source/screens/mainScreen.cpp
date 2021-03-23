@@ -122,11 +122,11 @@ void MainScreen::Draw(void) const {
 	}
 
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-	Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+	Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+	Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 
-	if (StoreUtils::store && StoreUtils::store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, StoreUtils::store->GetUniStoreTitle(), 360, 0, font);
-	else Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("INVALID_UNISTORE"), 370, 0, font);
+	if (StoreUtils::store && StoreUtils::store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), StoreUtils::store->GetUniStoreTitle(), 360, 0, font);
+	else Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 370, 0, font);
 	config->list() ? StoreUtils::DrawList() : StoreUtils::DrawGrid();
 	GFX::DrawTime();
 	GFX::DrawBattery();

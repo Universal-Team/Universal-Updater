@@ -32,17 +32,17 @@
 void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry) {
 	if (entry && StoreUtils::store) {
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
-		Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetReleaseNotes(), 390, 0, font, C2D_WordWrap);
-		Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-		Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-		Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, entry->GetTitle(), 390, 0, font);
+		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+		Gui::DrawString(5, 25 - scrollIndex, 0.5f, UIThemes->TextColor(), entry->GetReleaseNotes(), 390, 0, font, C2D_WordWrap);
+		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), entry->GetTitle(), 390, 0, font);
 
 	} else {
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-		Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-		Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 	}
 
 	Animation::QueueEntryDone();
@@ -89,18 +89,18 @@ void DisplayChangelog() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, notes, 390, 0, font, C2D_WordWrap);
-			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-			Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-			Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-			Gui::DrawStringCentered(0, 217, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, C_V, 390, 0, font);
+			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+			Gui::DrawString(5, 25 - scrollIndex, 0.5f, UIThemes->TextColor(), notes, 390, 0, font, C2D_WordWrap);
+			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+			Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), C_V, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
+			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
 			C3D_FrameEnd(0);
 
 			hidScanInput();

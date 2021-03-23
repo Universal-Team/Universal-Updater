@@ -29,8 +29,11 @@
 
 #include "common.hpp"
 #include "sprites.h"
+#include "theme.hpp"
 #include <citro2d.h>
 #include <string>
+
+extern std::unique_ptr<Theme> UIThemes;
 
 /* Standard Colors. */
 #define WHITE C2D_Color32(255, 255, 255, 255)
@@ -38,37 +41,11 @@
 #define TRANSPARENT C2D_Color32(0, 0, 0, 0)
 #define DIM_COLOR C2D_Color32(0, 0, 0, 190)
 
-struct UITheme {
-	uint32_t BarColor;
-	uint32_t BGColor;
-	uint32_t BarOutline;
-	uint32_t TextColor;
-	uint32_t EntryBar;
-	uint32_t EntryOutline;
-	uint32_t BoxInside;
-	uint32_t BoxSelected;
-	uint32_t BoxUnselected;
-	uint32_t ProgressbarOut;
-	uint32_t ProgressbarIn;
-	uint32_t SearchBar;
-	uint32_t SearchbarOutline;
-	uint32_t SideBarSelected;
-	uint32_t SideBarUnselected;
-	/* NOTE: Also used for the buttons. */
-	uint32_t MarkSelected;
-	uint32_t MarkUnselected;
-	uint32_t DownListPrev;
-	uint32_t SideBarIconColor;
-};
-
 namespace GFX {
-	extern std::vector<UITheme> Themes;
-	extern int SelectedTheme;
-
 	void DrawTop(void);
 	void DrawBottom();
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = GFX::Themes[GFX::SelectedTheme].BoxInside);
+	void DrawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = UIThemes->BoxInside());
 	void DrawCheckbox(float xPos, float yPos, bool selected);
 	void DrawToggle(float xPos, float yPos, bool toggled);
 	void DrawTime();

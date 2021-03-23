@@ -241,8 +241,8 @@ void Overlays::SelectStore() {
 
 		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-			Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
@@ -251,29 +251,29 @@ void Overlays::SelectStore() {
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Title, 390, 0, font);
-				Gui::DrawStringCentered(0, 30, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Author, 380, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, info[selection].Description, 380, 130, font, C2D_WordWrap);
+				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), info[selection].Title, 390, 0, font);
+				Gui::DrawStringCentered(0, 30, 0.6f, UIThemes->TextColor(), info[selection].Author, 380, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.5f, UIThemes->TextColor(), info[selection].Description, 380, 130, font, C2D_WordWrap);
 
 			} else {
-				Gui::DrawStringCentered(0, 1, 0.7f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("INVALID_UNISTORE"), 390, 0, font);
+				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 390, 0, font);
 			}
 
-			Gui::DrawString(10, 200, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
-			Gui::DrawString(10, 210, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
-			Gui::DrawString(10, 220, 0.4, GFX::Themes[GFX::SelectedTheme].TextColor, "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
+			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
 
 			Animation::QueueEntryDone();
 			GFX::DrawBottom();
 
-			Gui::Draw_Rect(0, 0, 320, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-			Gui::Draw_Rect(0, 25, 320, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
+			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
 			GFX::DrawSprite(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y);
-			Gui::DrawStringCentered(0, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
+			Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
-				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, info[sPos + i].FileName, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].FileName, 295, 0, font);
 			}
 		}
 

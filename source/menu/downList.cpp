@@ -111,17 +111,17 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	/* For the Top Screen. */
 	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
-			Gui::Draw_Rect(0, 174, 400, 66, GFX::Themes[GFX::SelectedTheme].DownListPrev);
+			Gui::Draw_Rect(0, 174, 400, 66, UIThemes->DownListPrev());
 			const C2D_Image tempImg = entry->GetIcon();
 			const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 			const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 			C2D_DrawImageAt(tempImg, 9 + offsetW, 174 + 9 + offsetH, 0.5);
 
-			Gui::DrawString(70, 174 + 15, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, entries[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
+			Gui::DrawString(70, 174 + 15, 0.45f, UIThemes->TextColor(), entries[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
 
 			if (!sizes.empty()) {
 				if (sizes[StoreUtils::store->GetDownloadIndex()] != "") {
-					Gui::DrawString(70, 174 + 30, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("SIZE") + ": " +  sizes[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
+					Gui::DrawString(70, 174 + 30, 0.45f, UIThemes->TextColor(), Lang::get("SIZE") + ": " +  sizes[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
 				}
 			}
 		}
@@ -132,15 +132,15 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	Animation::QueueEntryDone();
 
 	GFX::DrawBottom();
-	Gui::Draw_Rect(40, 0, 280, 25, GFX::Themes[GFX::SelectedTheme].EntryBar);
-	Gui::Draw_Rect(40, 25, 280, 1, GFX::Themes[GFX::SelectedTheme].EntryOutline);
-	Gui::DrawStringCentered(17, 2, 0.6, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
+	Gui::DrawStringCentered(17, 2, 0.6, UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
 
 	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
-				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, GFX::Themes[GFX::SelectedTheme].MarkSelected);
-				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, GFX::Themes[GFX::SelectedTheme].TextColor, entries[(i + StoreUtils::store->GetDownloadSIndex())], 235, 0, font);
+				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UIThemes->MarkSelected());
+				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UIThemes->TextColor(), entries[(i + StoreUtils::store->GetDownloadSIndex())], 235, 0, font);
 
 				if (installs[(i + StoreUtils::store->GetDownloadSIndex())]) GFX::DrawSprite(sprites_installed_idx, installedPos[i].x, installedPos[i].y);
 			}
@@ -149,7 +149,7 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
+			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, UIThemes->TextColor(), Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
 		}
 	}
 }

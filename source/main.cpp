@@ -49,6 +49,8 @@ static void InitForARG() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+	UIThemes = std::make_unique<Theme>();
+	UIThemes->LoadTheme(config->theme());
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {
@@ -60,9 +62,6 @@ static void InitForARG() {
 	}
 	Gui::init(region);
 
-	config = std::make_unique<Config>();
-	GFX::SelectedTheme = config->theme();
-	if (GFX::SelectedTheme > (_THEME_AMOUNT - 1)) GFX::SelectedTheme = 0; // In case it is above the max themes.
 	Lang::load(config->language());
 	Init::LoadFont();
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.

@@ -39,7 +39,7 @@ void Msg::DisplayMsg(const std::string &Text) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Text, 395, 0, font);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UIThemes->TextColor(), Text, 395, 0, font);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -56,7 +56,7 @@ void Msg::DisplayWarnMsg(const std::string &Text) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 1, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Text, 390, 0, font);
+	Gui::DrawStringCentered(0, 1, 0.6f, UIThemes->TextColor(), Text, 390, 0, font);
 
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -78,11 +78,11 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-	Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, promptMsg, 395, 0, font);
+	Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+	Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, UIThemes->TextColor(), promptMsg, 395, 0, font);
 
-	Gui::DrawStringCentered(0, 218, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("CONFIRM_OR_CANCEL"), 390, 0, font);
+	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("CONFIRM_OR_CANCEL"), 390, 0, font);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 
@@ -116,10 +116,10 @@ void Msg::waitMsg(const std::string &msg) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, msg, 395, 0, font);
-	Gui::Draw_Rect(0, 215, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-	Gui::Draw_Rect(0, 214, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
-	Gui::DrawStringCentered(0, 218, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, Lang::get("KEY_CONTINUE"), 390, 0, font);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, UIThemes->TextColor(), msg, 395, 0, font);
+	Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+	Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("KEY_CONTINUE"), 390, 0, font);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 

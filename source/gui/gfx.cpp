@@ -29,68 +29,18 @@
 #include "stringutils.hpp"
 #include <ctime>
 
-int GFX::SelectedTheme = 0;
-
-/* All available Themes here inside that vector. */
-std::vector<UITheme> GFX::Themes = {
-	/* Default Theme. */
-	{
-		C2D_Color32(50, 73, 98, 255), // Bar.
-		C2D_Color32(38, 44, 77, 255), // BG.
-		C2D_Color32(25, 30, 53, 255), // Bar Outline.
-		WHITE, // Text.
-		C2D_Color32(50, 73, 98, 255), // Entry bar.
-		C2D_Color32(25, 30, 53, 255), // Entry Outline.
-		C2D_Color32(28, 33, 58, 255), // Box Inside.
-		C2D_Color32(108, 130, 155, 255), // Box Outside.
-		BLACK, // Box Selected.
-		C2D_Color32(28, 33, 58, 255), // Progressbar Out.
-		C2D_Color32(77, 101, 128, 255), // Progressbar In.
-		C2D_Color32(51, 75, 102, 255), // Searchbar.
-		C2D_Color32(25, 30, 53, 255), // Searchbar Outline.
-		C2D_Color32(108, 130, 155, 255), // Sidebar Selected.
-		C2D_Color32(77, 101, 128, 255), // Sidebar Unselected.
-		C2D_Color32(77, 101, 128, 255), // Mark Selected.
-		C2D_Color32(28, 33, 58, 255), // Mark Unselected.
-		C2D_Color32(28, 33, 58, 255), // Downlist Preview (Top).
-		C2D_Color32(173, 204, 239, 255) // SideBar Icon Color.
-	},
-	/* Stack Theme. */
-	{
-		C2D_Color32(44, 48, 64, 255), // Bar.
-		C2D_Color32(52, 56, 64, 255), // BG.
-		C2D_Color32(22, 24, 32, 255), // Bar Outline.
-		C2D_Color32(216, 228, 228, 255), // Text.
-		C2D_Color32(60, 63, 113, 255), // Entry bar.
-		C2D_Color32(42, 46, 54, 255), // Entry Outline.
-		C2D_Color32(60, 63, 113, 255), // Box Inside.
-		C2D_Color32(42, 46, 54, 255), // Box Outside.
-		C2D_Color32(102, 105, 170, 255), // Box Selected.
-		C2D_Color32(42, 46, 54, 255), // Progressbar Out.
-		C2D_Color32(60, 63, 113, 255), // Progressbar In.
-		C2D_Color32(60, 63, 113, 255), // Searchbar.
-		C2D_Color32(42, 46, 54, 255), // Searchbar Outline.
-		C2D_Color32(60, 63, 113, 255), // Sidebar Selected.
-		C2D_Color32(42, 46, 54, 255), // Sidebar Unselected.
-		C2D_Color32(60, 63, 113, 255), // Mark Selected.
-		C2D_Color32(42, 46, 54, 255), // Mark Unselected.
-		C2D_Color32(52, 60, 76, 255), // Downlist Preview (Top).
-		C2D_Color32(102, 105, 170, 255) // SideBar Icon Color.
-	}
-};
-
 /* Draw the base top screen. */
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, GFX::Themes[GFX::SelectedTheme].BarColor);
-	Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
-	Gui::Draw_Rect(0, 25, 400, 1, GFX::Themes[GFX::SelectedTheme].BarOutline);
+	Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+	Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+	Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 }
 
 /* Draw the base bottom screen. */
 void GFX::DrawBottom() {
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 240, GFX::Themes[GFX::SelectedTheme].BGColor);
+	Gui::Draw_Rect(0, 0, 320, 240, UIThemes->BGColor());
 }
 
 /*
@@ -104,15 +54,15 @@ void GFX::DrawBottom() {
 	uint32_t clr: (Optional) The color of the inside of the box.
 */
 void GFX::DrawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr) {
-	Gui::Draw_Rect(xPos, yPos, width, height, GFX::Themes[GFX::SelectedTheme].BoxInside); // Draw middle BG.
+	Gui::Draw_Rect(xPos, yPos, width, height, UIThemes->BoxInside()); // Draw middle BG.
 
 	if (selected) {
 		static constexpr int depth = 3;
 
-		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, GFX::Themes[GFX::SelectedTheme].BoxSelected); // Top.
-		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, GFX::Themes[GFX::SelectedTheme].BoxSelected); // Left.
-		Gui::Draw_Rect(xPos + width, yPos - depth, depth, height + depth * 2, GFX::Themes[GFX::SelectedTheme].BoxSelected); // Right.
-		Gui::Draw_Rect(xPos - depth, yPos + height, width + depth * 2, depth, GFX::Themes[GFX::SelectedTheme].BoxSelected); // Bottom.
+		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, UIThemes->BoxSelected()); // Top.
+		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, UIThemes->BoxSelected()); // Left.
+		Gui::Draw_Rect(xPos + width, yPos - depth, depth, height + depth * 2, UIThemes->BoxSelected()); // Right.
+		Gui::Draw_Rect(xPos - depth, yPos + height, width + depth * 2, depth, UIThemes->BoxSelected()); // Bottom.
 	}
 }
 
@@ -158,7 +108,7 @@ void GFX::DrawTime() {
 	struct tm *timeStruct	= gmtime((const time_t *)&unixTime);
 	const std::string str	= StringUtils::format("%02i:%02i", timeStruct->tm_hour, timeStruct->tm_min); // <Hour>:<Minute>.
 
-	Gui::DrawString(11, 5, 0.5f, GFX::Themes[GFX::SelectedTheme].TextColor, str, 0, 0, font);
+	Gui::DrawString(11, 5, 0.5f, UIThemes->TextColor(), str, 0, 0, font);
 }
 
 static int blinkDelay = 40;
@@ -228,7 +178,7 @@ void GFX::HandleBattery() {
 */
 void GFX::DrawIcon(const int Idx, int X, int Y, float ScaleX, float ScaleY) {
 	C2D_ImageTint tint;
-	C2D_PlainImageTint(&tint, GFX::Themes[GFX::SelectedTheme].SideBarIconColor, 1.0f);
+	C2D_PlainImageTint(&tint, UIThemes->SideBarIconColor(), 1.0f);
 
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, Idx), X, Y, 0.5f, &tint, ScaleX, ScaleY);
 }

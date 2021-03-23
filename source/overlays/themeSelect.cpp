@@ -26,10 +26,8 @@
 
 #include "animation.hpp"
 #include "common.hpp"
-#include "fileBrowse.hpp"
 #include "overlay.hpp"
 #include "storeUtils.hpp"
-#include <unistd.h>
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
@@ -42,32 +40,14 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 186, 300, 22 }
 };
 
-/* Select a Directory. */
-std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg) {
-	std::string currentPath = oldDir;
-	bool dirChanged = false;
+extern std::vector<std::string> Themes;
+
+/* Select a Theme. */
+void Overlays::SelectTheme() {
+	bool Finish = false;
 	int selection = 0, sPos = 0;
 
-	std::vector<DirEntry> dirContents;
-	dirContents.clear();
-
-	/* Make sure. */
-	if (access((oldDir + std::string("/")).c_str(), F_OK) == 0) {
-		chdir((oldDir + std::string("/")).c_str());
-
-	} else {
-		currentPath = "sdmc:/";
-		chdir("sdmc:/");
-	}
-
-	std::vector<DirEntry> dirContentsTemp;
-	getDirectoryContents(dirContentsTemp, {"/"});
-
-	for(uint i = 0; i < dirContentsTemp.size(); i++) {
-		dirContents.push_back(dirContentsTemp[i]);
-	}
-
-	while(1) {
+	while(!Finish) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, TRANSPARENT);
@@ -83,63 +63,45 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), msg, 380, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("SELECT_A_THEME"), 380, 0, font);
 
 		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 217, 0.6f, UIThemes->TextColor(), currentPath, 390, 0, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
 
 		Gui::Draw_Rect(0, 215, 320, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 214, 320, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 220, 0.5f, UIThemes->TextColor(), Lang::get("START_SELECT"), 310, 0, font);
 
-		if (dirContents.size() > 0) {
-			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
+		if (Themes.size() > 0) {
+			for(int i = 0; i < 7 && i < (int)Themes.size(); i++) {
 				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), dirContents[sPos + i].name, 295, 0, font);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), Themes[sPos + i], 295, 0, font);
 			}
 		}
 
 		C3D_FrameEnd(0);
-
-		if (dirChanged) {
-			dirChanged = false;
-
-			selection = 0;
-			sPos = 0;
-			dirContents.clear();
-			std::vector<DirEntry> dirContentsTemp;
-			getDirectoryContents(dirContentsTemp, {"/"});
-
-			for(uint i = 0; i < dirContentsTemp.size(); i++) {
-				dirContents.push_back(dirContentsTemp[i]);
-			}
-		}
-
-
 		hidScanInput();
 		touchPosition touch;
 		hidTouchRead(&touch);
 		u32 hRepeat = hidKeysDownRepeat();
 		Animation::HandleQueueEntryDone();
 
-		if (dirContents.size() > 0) {
+		if (Themes.size() > 0) {
 			if (hRepeat & KEY_DOWN) {
-				if (selection < (int)dirContents.size() - 1) selection++;
+				if (selection < (int)Themes.size() - 1) selection++;
 				else selection = 0;
 			}
 
 			if (hRepeat & KEY_UP) {
 				if (selection > 0) selection--;
-				else selection = dirContents.size() - 1;
+				else selection = Themes.size() - 1;
 			}
 
 			if (hRepeat & KEY_RIGHT) {
-				if (selection + 7 < (int)dirContents.size()-1) selection += 7;
-				else selection = dirContents.size()-1;
+				if (selection + 7 < (int)Themes.size()-1) selection += 7;
+				else selection = Themes.size()-1;
 			}
 
 			if (hRepeat & KEY_LEFT) {
@@ -148,29 +110,18 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			}
 
 			if (hidKeysDown() & KEY_A) {
-				if (dirContents[selection].isDirectory) {
-					chdir(dirContents[selection].name.c_str());
-					char path[PATH_MAX];
-					getcwd(path, PATH_MAX);
-					currentPath = path;
-					dirChanged = true;
-				}
+				UIThemes->LoadTheme(Themes[selection]);
+				config->theme(Themes[selection]);
+				Finish = true;
 			}
 
 			if (hidKeysDown() & KEY_TOUCH) {
 				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
-						if (i + sPos < (int)dirContents.size()) {
-							if (dirContents[i + sPos].isDirectory) {
-								chdir(dirContents[i + sPos].name.c_str());
-
-								char path[PATH_MAX];
-								getcwd(path, PATH_MAX);
-								currentPath = path;
-
-								dirChanged = true;
-								break;
-							}
+						if (i + sPos < (int)Themes.size()) {
+							UIThemes->LoadTheme(Themes[i + sPos]);
+							config->theme(Themes[i + sPos]);
+							Finish = true;
 						}
 					}
 				}
@@ -180,22 +131,8 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
 		}
 
-		if ((hidKeysDown() & KEY_X) || (hidKeysDown() & KEY_START)) {
-			if (currentPath.size() > 0 && currentPath.back() == '/') currentPath.pop_back(); // Pop back the "/".
-			return currentPath;
-		}
-
 		if (hidKeysDown() & KEY_B) {
-			char path[PATH_MAX];
-			getcwd(path, PATH_MAX);
-
-			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) return "";
-			else {
-				chdir("..");
-				getcwd(path, PATH_MAX);
-				currentPath = path;
-				dirChanged = true;
-			}
+			Finish = true;
 		}
 	}
 }

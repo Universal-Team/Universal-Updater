@@ -65,11 +65,11 @@ void Config::sysLang() {
 		case 6:
 			this->language("zh-CN"); // Chinese (Simplified)
 			break;
-		
+
 		// case 7:
 		// 	this->language("ko"); // Korean
 		// 	break;
-		
+
 		// case 8:
 		// 	this->language("nl"); // Dutch
 		// 	break;
@@ -85,7 +85,7 @@ void Config::sysLang() {
 		case 11:
 			this->language("zh-TW"); // Chinese (Traditional)
 			break;
-			
+
 		default:
 			this->language("en"); // Fall back to English if missing
 			break;
@@ -138,7 +138,18 @@ Config::Config() {
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
-	if (this->json.contains("Active_Theme")) this->theme(this->getInt("Active_Theme"));
+
+	/* Exceptions for it. It was an INT before. */
+	if (this->json.contains("Active_Theme")) {
+		if (this->json["Active_Theme"].is_number()) {
+			this->json["Active_Theme"] = "Default";
+			this->theme(this->getString("Active_Theme"));
+
+		} else {
+			this->theme(this->getString("Active_Theme"));
+		}
+	}
+
 	if (this->json.contains("Prompt")) this->prompt(this->getBool("Prompt"));
 
 	this->changesMade = false; // No changes made yet.
@@ -166,7 +177,7 @@ void Config::save() {
 		this->setBool("CustomFont", this->customfont());
 		this->setString("Shortcut_Path", this->shortcut());
 		this->setBool("Display_Changelog", this->changelog());
-		this->setInt("Active_Theme", this->theme());
+		this->setString("Active_Theme", this->theme());
 		this->setBool("Prompt", this->prompt());
 
 		/* Write changes to file. */

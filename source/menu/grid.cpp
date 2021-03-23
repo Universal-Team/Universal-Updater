@@ -56,7 +56,7 @@ void StoreUtils::DrawGrid() {
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
-			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 		}
 
 		for (int i = 0, i2 = 0 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 15 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {

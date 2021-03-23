@@ -42,7 +42,7 @@ void StoreUtils::DrawList() {
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
-			Gui::Draw_Rect(0, 26, 400, 214, GFX::Themes[GFX::SelectedTheme].BGColor);
+			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 		}
 
 		if (StoreUtils::entries.size() > 0) {
@@ -63,8 +63,8 @@ void StoreUtils::DrawList() {
 					}
 
 					if (StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, GFX::Themes[GFX::SelectedTheme].TextColor, StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}
