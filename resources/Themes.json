@@ -1,23 +1,23 @@
 {
-	"Default": [
-		"#324962",
-		"#262C4D",
-		"#191E35",
-		"#FFFFFF",
-		"#324962",
-		"#191E35",
-		"#1C213A",
-		"#6C829B",
-		"#000000",
-		"#1C213A",
-		"#4D6580",
-		"#334B66",
-		"#191E35",
-		"#6C829B",
-		"#4D6580",
-		"#4D6580",
-		"#1C213A",
-		"#1C213A",
-		"#ADCCEF"
-	]
+	"Default": {
+		"BGColor": "#262C4D",
+		"BarColor": "#324962",
+		"BarOutline": "#191E35",
+		"BoxInside": "#1C213A",
+		"BoxSelected": "#6C829B",
+		"BoxUnselected": "#000000",
+		"DownListPrev": "#1C213A",
+		"EntryBar": "#324962",
+		"EntryOutline": "#191E35",
+		"MarkSelected": "#4D6580",
+		"MarkUnselected": "#1C213A",
+		"ProgressbarIn": "#4D6580",
+		"ProgressbarOut": "#1C213A",
+		"SearchBar": "#334B66",
+		"SearchBarOutline": "#191E35",
+		"SideBarIconColor": "#ADCCEF",
+		"SideBarSelected": "#6C829B",
+		"SideBarUnselected": "#4D6580",
+		"TextColor": "#FFFFFF"
+	}
 }

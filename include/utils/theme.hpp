@@ -34,10 +34,10 @@
 class Theme {
 public:
 	Theme(const std::string &ThemeJSON = "sdmc:/3ds/Universal-Updater/Themes.json");
-	void InitWithDefaultColors(const std::string &ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json");
+	nlohmann::json InitWithDefaultColors(const std::string &ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json");
 	void LoadTheme(const std::string &ThemeName);
 	std::vector<std::string> ThemeNames();
-	uint32_t GetThemeColor(const std::string &colorString, const uint32_t DefaultColor);
+	uint32_t GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor);
 
 	uint32_t BarColor() const { return this->vBarColor; };
 	uint32_t BGColor() const { return this->vBGColor; };
