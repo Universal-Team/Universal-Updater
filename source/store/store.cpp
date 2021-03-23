@@ -231,6 +231,8 @@ void Store::LoadFromFile(const std::string &file) {
 
 	this->storeJson = nlohmann::json::parse(in, nullptr, false);
 	fclose(in);
+	if (this->storeJson.is_discarded())
+		this->storeJson = { };
 
 	/* Check, if valid. */
 	if (this->storeJson.contains("storeInfo") && this->storeJson.contains("storeContent")) {

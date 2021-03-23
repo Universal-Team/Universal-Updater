@@ -43,8 +43,12 @@ Meta::Meta() {
 	}
 
 	FILE *temp = fopen(_META_PATH, "rt");
-	this->metadataJson = nlohmann::json::parse(temp, nullptr, false);
-	fclose(temp);
+	if (temp) {
+		this->metadataJson = nlohmann::json::parse(temp, nullptr, false);
+		fclose(temp);
+	}
+	if (this->metadataJson.is_discarded())
+		this->metadataJson = { };
 
 	if (config->metadata()) this->ImportMetadata();
 }
@@ -59,9 +63,15 @@ void Meta::ImportMetadata() {
 	}
 
 	Msg::DisplayMsg(Lang::get("FETCHING_METADATA"));
-	FILE *old = fopen("sdmc:/3ds/Universal-Updater/updates.json", "r");
-	nlohmann::json oldJson = nlohmann::json::parse(old, nullptr, false);
-	fclose(old);
+
+	nlohmann::json oldJson;
+	FILE *old = fopen("sdmc:/3ds/Universal-Updater/updates.json", "rt");
+	if (old) {
+		oldJson = nlohmann::json::parse(old, nullptr, false);
+		fclose(old);
+	}
+	if (oldJson.is_discarded())
+		oldJson = { };
 
 	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
 
@@ -83,7 +93,6 @@ void Meta::ImportMetadata() {
 	const std::string &entry: The Entry name.
 */
 std::string Meta::GetUpdated(const std::string &unistoreName, const std::string &entry) const {
-	if (this->metadataJson.is_discarded()) return "";
 	if (!this->metadataJson.contains(unistoreName)) return ""; // UniStore Name does not exist.
 
 	if (!this->metadataJson[unistoreName].contains(entry)) return ""; // Entry does not exist.
@@ -102,8 +111,6 @@ std::string Meta::GetUpdated(const std::string &unistoreName, const std::string 
 */
 int Meta::GetMarks(const std::string &unistoreName, const std::string &entry) const {
 	int temp = 0;
-
-	if (this->metadataJson.is_discarded()) return temp;
 
 	if (!this->metadataJson.contains(unistoreName)) return temp; // UniStore Name does not exist.
 
@@ -137,8 +144,6 @@ bool Meta::UpdateAvailable(const std::string &unistoreName, const std::string &e
 	const std::string &entry: The Entry name.
 */
 std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, const std::string &entry) const {
-	if (this->metadataJson.is_discarded()) return { };
-
 	if (!this->metadataJson.contains(unistoreName)) return { }; // UniStore Name does not exist.
 
 	if (!this->metadataJson[unistoreName].contains(entry)) return { }; // Entry does not exist.

@@ -50,19 +50,15 @@ public:
 	std::vector<std::string> GetInstalled(const std::string &unistoreName, const std::string &entry) const;
 
 	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
-		if (this->metadataJson.is_discarded()) return;
 		this->metadataJson[unistoreName][entry]["updated"] = updated;
 	};
 
 	void SetMarks(const std::string &unistoreName, const std::string &entry, int marks) {
-		if (this->metadataJson.is_discarded()) return;
 		this->metadataJson[unistoreName][entry]["marks"] = marks;
 	};
 
 	/* TODO: Handle this better. */
 	void SetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
-		if (this->metadataJson.is_discarded()) return;
-
 		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
 		bool write = true;
 
@@ -82,8 +78,6 @@ public:
 
 	/* Remove installed state from a download list entry. */
 	void RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
-		if (this->metadataJson.is_discarded()) return;
-
 		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
 		int idx = -1;
 

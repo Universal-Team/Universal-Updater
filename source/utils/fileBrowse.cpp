@@ -113,11 +113,15 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 		if(*(u32*)(fileName.c_str() + fileName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
 	}
 
-	nlohmann::json JSON = nullptr;
+	nlohmann::json JSON;
+	FILE *temp = fopen(file.c_str(), "rt");
+	if(temp) {
+		JSON = nlohmann::json::parse(temp, nullptr, false);
+		fclose(temp);
+	}
+	if (JSON.is_discarded())
+		JSON = { };
 
-	FILE *temp = fopen(file.c_str(), "r");
-	JSON = nlohmann::json::parse(temp, nullptr, false);
-	fclose(temp);
 
 	if (!JSON.contains("storeInfo")) return Temp; // storeInfo does not exist.
 

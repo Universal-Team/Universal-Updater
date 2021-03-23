@@ -59,9 +59,14 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	const std::string &file: The file of the UniStore.
 */
 static void DeleteStore(const std::string &file) {
+	nlohmann::json storeJson;
 	FILE *temp = fopen((std::string(_STORE_PATH) + file).c_str(), "rt");
-	nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
-	fclose(temp);
+	if (temp) {
+		storeJson = nlohmann::json::parse(temp, nullptr, false);
+		fclose(temp);
+	}
+	if (storeJson.is_discarded())
+		storeJson = {};
 
 	/* Check, if Spritesheet exist on UniStore. */
 	if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
@@ -105,9 +110,14 @@ static bool DownloadStore() {
 	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
 
 	if (doSheet) {
+		nlohmann::json storeJson;
 		FILE *temp = fopen(file.c_str(), "rt");
-		nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
-		fclose(temp);
+		if (temp) {
+			storeJson = nlohmann::json::parse(temp, nullptr, false);
+			fclose(temp);
+		}
+		if (storeJson.is_discarded())
+			storeJson = { };
 
 		if (doSheet) {
 			if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
@@ -158,9 +168,14 @@ static bool UpdateStore(const std::string &URL) {
 	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, false);
 
 	if (doSheet) {
+		nlohmann::json storeJson;
 		FILE *temp = fopen(file.c_str(), "rt");
-		nlohmann::json storeJson = nlohmann::json::parse(temp, nullptr, false);
-		fclose(temp);
+		if (temp) {
+			storeJson = nlohmann::json::parse(temp, nullptr, false);
+			fclose(temp);
+		}
+		if (storeJson.is_discarded())
+			storeJson = { };
 
 		if (doSheet) {
 			if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {

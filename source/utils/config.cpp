@@ -110,9 +110,13 @@ Config::Config() {
 		this->initialize();
 	}
 
-	FILE *file = fopen("sdmc:/3ds/Universal-Updater/Config.json", "r");
-	this->json = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
+	FILE *file = fopen("sdmc:/3ds/Universal-Updater/Config.json", "rt");
+	if (file) {
+		this->json = nlohmann::json::parse(file, nullptr, false);
+		fclose(file);
+	}
+	if (this->json.is_discarded())
+		this->json = { };
 
 	/* Let us create a new one. */
 	if (!this->json.contains("Version")) this->initialize();
@@ -174,34 +178,28 @@ void Config::save() {
 
 /* Helper functions. */
 bool Config::getBool(const std::string &key) {
-	if (this->json.is_discarded()) return false;
 	if (!this->json.contains(key)) return false;
 
 	return this->json.at(key).get_ref<const bool &>();
 }
 void Config::setBool(const std::string &key, bool v) {
-	if (this->json.is_discarded()) return;
 	this->json[key] = v;
 };
 
 int Config::getInt(const std::string &key) {
-	if (this->json.is_discarded()) return 0;
 	if (!this->json.contains(key)) return 0;
 
 	return this->json.at(key).get_ref<const int64_t &>();
 }
 void Config::setInt(const std::string &key, int v) {
-	if (this->json.is_discarded()) return;
 	this->json[key] = v;
 };
 
 std::string Config::getString(const std::string &key) {
-	if (this->json.is_discarded()) return "";
 	if (!this->json.contains(key)) return "";
 
 	return this->json.at(key).get_ref<const std::string &>();
 }
 void Config::setString(const std::string &key, const std::string &v) {
-	if (this->json.is_discarded()) return;
 	this->json[key] = v;
 };
