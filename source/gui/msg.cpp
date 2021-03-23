@@ -89,11 +89,17 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	for (int i = 0; i < 3; i++) gspWaitForVBlank();
 	hidScanInput();
 
+	uint32_t Down = 0;
 	while(1) {
-		hidScanInput();
-		if (hidKeysDown() & KEY_A) return true;
-		else if (hidKeysDown() & KEY_B) return false;
-	}
+		do {
+			gspWaitForVBlank();
+			hidScanInput();
+			Down = hidKeysDown();
+		} while (!Down);
+
+		if (Down & KEY_A) return true;
+		else if (Down & KEY_B) return false;
+	};
 }
 
 /*
@@ -120,8 +126,14 @@ void Msg::waitMsg(const std::string &msg) {
 	for (int i = 0; i < 3; i++) gspWaitForVBlank();
 	hidScanInput();
 
+	uint32_t Down = 0;
 	while(!doOut) {
-		hidScanInput();
-		if (hidKeysDown()) doOut = !doOut;
+		do {
+			gspWaitForVBlank();
+			hidScanInput();
+			Down = hidKeysDown();
+		} while (!Down);
+
+		doOut = true;
 	}
 }
