@@ -136,7 +136,7 @@ static void DrawLanguageSettings(int selection, int sPos) {
 static void DrawSettingsDir(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor(), 1.0f);
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
 
 	for (int i = 0; i < (int)dirButtons.size(); i++) {
@@ -146,7 +146,7 @@ static void DrawSettingsDir(int selection) {
 			GFX::DrawToggle(dirIcons[i].x, dirIcons[i].y, config->_3dsxInFolder());
 			Gui::DrawString(dirButtons[i].x + 4, dirButtons[i].y + 28, 0.4f, UIThemes->TextColor(), Lang::get("3DSX_IN_FOLDER_DESC"), 265, 0, font, C2D_WordWrap);
 		} else {
-			GFX::DrawIcon(sprites_arrow_idx, dirIcons[i].x, dirIcons[i].y, UIThemes->TextColor(), -1.0f);
+			GFX::DrawIcon(sprites_arrow_idx, dirIcons[i].x, dirIcons[i].y, UIThemes->TextColor(), 1.0f, -1.0f);
 		}
 	}
 }

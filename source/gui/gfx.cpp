@@ -89,7 +89,7 @@ void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	bool selected: if checked, or not.
 */
 void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
-	GFX::DrawIcon((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos, UIThemes->TextColor(), 0.5f);
+	GFX::DrawIcon((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos, UIThemes->TextColor(), 1.0f);
 }
 
 /*
@@ -100,7 +100,7 @@ void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
 	bool toggled: If toggled or not.
 */
 void GFX::DrawToggle(float xPos, float yPos, bool toggled) {
-	GFX::DrawIcon((toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), xPos, yPos, UIThemes->TextColor(), 0.5f);
+	GFX::DrawSprite((toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), xPos, yPos);
 }
 
 void GFX::DrawTime() {
