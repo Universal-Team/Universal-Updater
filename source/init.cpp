@@ -41,7 +41,7 @@ u32 old_time_limit;
 std::unique_ptr<Theme> UIThemes = nullptr;
 std::unique_ptr<Sound> Music = nullptr;
 bool dspfirmFound = false;
-std::vector<std::string> Themes = { };
+std::vector<std::pair<std::string, std::string>> Themes = { };
 
 /*
 	Set, if 3DSX or CIA.

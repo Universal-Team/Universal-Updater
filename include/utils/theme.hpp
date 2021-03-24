@@ -36,7 +36,7 @@ public:
 	Theme(const std::string &ThemeJSON = "sdmc:/3ds/Universal-Updater/Themes.json");
 	nlohmann::json InitWithDefaultColors(const std::string &ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json");
 	void LoadTheme(const std::string &ThemeName);
-	std::vector<std::string> ThemeNames();
+	std::vector<std::pair<std::string, std::string>> ThemeNames();
 	uint32_t GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor);
 
 	uint32_t BarColor() const { return this->vBarColor; };

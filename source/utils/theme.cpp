@@ -35,42 +35,43 @@
  * @param b blue component of the color
  * @param a alpha component of the color
  */
-#define RGBA8(r, g, b, a) ((((r)&0xFF)<<0) | (((g)&0xFF)<<8) | (((b)&0xFF)<<16) | (((a)&0xFF)<<24))
+#define RGBA8(r, g, b, a) ((((r) & 0xFF) << 0) | (((g) & 0xFF) << 8) | (((b) & 0xFF) << 16) | (((a) & 0xFF) << 24))
 
 
 Theme::Theme(const std::string &ThemeJSON) {
 	FILE *file = fopen(ThemeJSON.c_str(), "rt");
-	if(file) {
+	if (file) {
 		this->json = nlohmann::json::parse(file, nullptr, false);
 		fclose(file);
 	}
-	if(!file || this->json.is_discarded())
-		this->json = this->InitWithDefaultColors();
+
+	if (!file || this->json.is_discarded()) this->json = this->InitWithDefaultColors();
 	this->Loaded = true;
 }
 
 nlohmann::json Theme::InitWithDefaultColors(const std::string &ThemePath) {
 	nlohmann::json JS = {
-		{"Default", {
-			{"BarColor", "#324962"},
-			{"BGColor", "#262C4D"},
-			{"BarOutline", "#191E35"},
-			{"TextColor", "#FFFFFF"},
-			{"EntryBar", "#324962"},
-			{"EntryOutline", "#191E35"},
-			{"BoxInside", "#1C213A"},
-			{"BoxSelected", "#6C829B"},
-			{"BoxUnselected", "#000000"},
-			{"ProgressbarOut", "#1C213A"},
-			{"ProgressbarIn", "#4D6580"},
-			{"SearchBar", "#334B66"},
-			{"SearchBarOutline", "#191E35"},
-			{"SideBarSelected", "#6C829B"},
-			{"SideBarUnselected", "#4D6580"},
-			{"MarkSelected", "#4D6580"},
-			{"MarkUnselected", "#1C213A"},
-			{"DownListPrev", "#1C213A"},
-			{"SideBarIconColor", "#ADCCEF"}
+		{ "Default", {
+			{ "BarColor", "#324962" },
+			{ "BGColor", "#262C4D" },
+			{ "BarOutline", "#191E35" },
+			{ "TextColor", "#FFFFFF" },
+			{ "EntryBar", "#324962" },
+			{ "EntryOutline", "#191E35" },
+			{ "BoxInside", "#1C213A" },
+			{ "BoxSelected", "#6C829B" },
+			{ "BoxUnselected", "#000000" },
+			{ "ProgressbarOut", "#1C213A" },
+			{ "ProgressbarIn", "#4D6580" },
+			{ "SearchBar", "#334B66" },
+			{ "SearchBarOutline", "#191E35" },
+			{ "SideBarSelected", "#6C829B" },
+			{ "SideBarUnselected", "#4D6580" },
+			{ "MarkSelected", "#4D6580" },
+			{ "MarkUnselected", "#1C213A" },
+			{ "DownListPrev", "#1C213A" },
+			{ "SideBarIconColor", "#ADCCEF" },
+			{ "Description", "Universal-Updater's default Theme.\n\nBy: Universal-Team" }
 		}}
 	};
 
@@ -105,12 +106,17 @@ void Theme::LoadTheme(const std::string &ThemeName) {
 	this->vSideBarIconColor  = this->GetThemeColor(ThemeName, "SideBarIconColor", C2D_Color32(173, 204, 239, 255));
 }
 
-std::vector<std::string> Theme::ThemeNames() {
-	std::vector<std::string> Temp = { };
+std::vector<std::pair<std::string, std::string>> Theme::ThemeNames() {
+	std::vector<std::pair<std::string, std::string>> Temp = { };
 
 	if (this->Loaded) {
 		for(auto it = this->json.begin(); it != this->json.end(); ++it) {
-			Temp.push_back(it.key().c_str());
+			if (this->json[it.key()].contains("Description") && this->json[it.key()]["Description"].is_string()) {
+				Temp.push_back(std::make_pair(it.key(), this->json[it.key()]["Description"]));
+
+			} else {
+				Temp.push_back(std::make_pair(it.key(), it.key()));
+			}
 		}
 	}
 

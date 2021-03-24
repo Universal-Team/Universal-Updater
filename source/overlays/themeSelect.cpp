@@ -40,7 +40,7 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 186, 300, 22 }
 };
 
-extern std::vector<std::string> Themes;
+extern std::vector<std::pair<std::string, std::string>> Themes;
 
 /* Select a Theme. */
 void Overlays::SelectTheme() {
@@ -67,6 +67,7 @@ void Overlays::SelectTheme() {
 
 		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, 40, 0.5f, UIThemes->TextColor(), Themes[selection].second, 380, 140, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
@@ -77,7 +78,7 @@ void Overlays::SelectTheme() {
 		if (Themes.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)Themes.size(); i++) {
 				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), Themes[sPos + i], 295, 0, font);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), Themes[sPos + i].first, 295, 0, font);
 			}
 		}
 
@@ -110,8 +111,8 @@ void Overlays::SelectTheme() {
 			}
 
 			if (hidKeysDown() & KEY_A) {
-				UIThemes->LoadTheme(Themes[selection]);
-				config->theme(Themes[selection]);
+				UIThemes->LoadTheme(Themes[selection].first);
+				config->theme(Themes[selection].first);
 				Finish = true;
 			}
 
@@ -119,8 +120,8 @@ void Overlays::SelectTheme() {
 				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)Themes.size()) {
-							UIThemes->LoadTheme(Themes[i + sPos]);
-							config->theme(Themes[i + sPos]);
+							UIThemes->LoadTheme(Themes[i + sPos].first);
+							config->theme(Themes[i + sPos].first);
 							Finish = true;
 						}
 					}
