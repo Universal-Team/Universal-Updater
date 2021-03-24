@@ -121,7 +121,7 @@ std::vector<std::string> Theme::ThemeNames() {
 uint32_t Theme::GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor) {
 	if(this->json.contains(ThemeName) && this->json[ThemeName].is_object() && this->json[ThemeName].contains(Key) && this->json[ThemeName][Key].is_string()) {
 		const std::string &colorString = this->json[ThemeName][Key].get_ref<const std::string &>();
-		if (colorString.length() < 7 || std::regex_search(colorString.substr(1), std::regex("[^0-9A-F]"))) { // invalid color.
+		if (colorString.length() < 7 || std::regex_search(colorString.substr(1), std::regex("[^0-9A-Fa-f]"))) { // invalid color.
 			return DefaultColor;
 		}
 
