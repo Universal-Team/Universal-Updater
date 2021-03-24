@@ -268,7 +268,7 @@ void Overlays::SelectStore() {
 
 			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			GFX::DrawSprite(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y);
+			GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UIThemes->TextColor());
 			Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
@@ -279,9 +279,9 @@ void Overlays::SelectStore() {
 
 		if (info.size() <= 0) GFX::DrawBottom(); // Otherwise we'd draw on top.
 
-		GFX::DrawSprite(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y);
-		GFX::DrawSprite(sprites_update_idx, mainButtons[7].x, mainButtons[7].y);
-		GFX::DrawSprite(sprites_add_idx, mainButtons[8].x, mainButtons[8].y);
+		GFX::DrawIcon(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());
+		GFX::DrawIcon(sprites_update_idx, mainButtons[7].x, mainButtons[7].y, UIThemes->TextColor());
+		GFX::DrawIcon(sprites_add_idx, mainButtons[8].x, mainButtons[8].y, UIThemes->TextColor());
 		C3D_FrameEnd(0);
 
 		hidScanInput();

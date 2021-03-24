@@ -142,10 +142,10 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UIThemes->MarkSelected());
 				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UIThemes->TextColor(), entries[(i + StoreUtils::store->GetDownloadSIndex())], 235, 0, font);
 
-				if (installs[(i + StoreUtils::store->GetDownloadSIndex())]) GFX::DrawSprite(sprites_installed_idx, installedPos[i].x, installedPos[i].y);
+				if (installs[(i + StoreUtils::store->GetDownloadSIndex())]) GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, UIThemes->TextColor());
 			}
 
-			if (is3DSX) GFX::DrawSprite(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y);
+			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UIThemes->TextColor());
 
 
 		} else { // If no downloads available..

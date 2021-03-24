@@ -115,14 +115,14 @@ static void DrawSettingsMain(int selection) {
 static void DrawLanguageSettings(int selection, int sPos) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
-	GFX::DrawSprite(sprites_add_font_idx, langButtons[6].x, langButtons[6].y);
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
+	GFX::DrawIcon(sprites_add_font_idx, langButtons[6].x, langButtons[6].y, UIThemes->TextColor());
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_LANG"), 248, 0, font);
 
 	for(int i = 0; i < 6 && i < (int)languages.size(); i++) {
 		if (sPos + i == selection) Gui::Draw_Rect(langButtons[i].x, langButtons[i].y, langButtons[i].w, langButtons[i].h, UIThemes->MarkSelected());
 		if(langSprites[sPos + i].first != -1)
-			GFX::DrawSprite(langSprites[sPos + i].first, 160 + 20 - (langSprites[sPos + i].second / 2), langButtons[i].y + 6);
+			GFX::DrawIcon(langSprites[sPos + i].first, 160 + 20 - (langSprites[sPos + i].second / 2), langButtons[i].y + 6, UIThemes->TextColor());
 		else
 			Gui::DrawStringCentered(20, langButtons[i].y + 4, 0.45f, UIThemes->TextColor(), languages[sPos + i], 280, 0, font);
 	}
@@ -146,7 +146,7 @@ static void DrawSettingsDir(int selection) {
 			GFX::DrawToggle(dirIcons[i].x, dirIcons[i].y, config->_3dsxInFolder());
 			Gui::DrawString(dirButtons[i].x + 4, dirButtons[i].y + 28, 0.4f, UIThemes->TextColor(), Lang::get("3DSX_IN_FOLDER_DESC"), 265, 0, font, C2D_WordWrap);
 		} else {
-			GFX::DrawSprite(sprites_arrow_idx, dirIcons[i].x, dirIcons[i].y, -1.0f);
+			GFX::DrawIcon(sprites_arrow_idx, dirIcons[i].x, dirIcons[i].y, UIThemes->TextColor(), -1.0f);
 		}
 	}
 }
@@ -157,7 +157,7 @@ static void DrawSettingsDir(int selection) {
 static void DrawAutoUpdate(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
 
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_SETTINGS"), 240, 0, font);
 
@@ -181,7 +181,7 @@ static void DrawAutoUpdate(int selection) {
 static void DrawGUISettings(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	GFX::DrawSprite(sprites_arrow_idx, back.x, back.y);
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
 
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("GUI_SETTINGS"), 248, 0, font);
 

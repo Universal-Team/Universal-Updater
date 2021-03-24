@@ -238,7 +238,7 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 		C2D_DrawImageAt(tempImg, QueueBoxes[0].x + 5 + offsetW, QueueBoxes[0].y + 21 + offsetH, 0.5f);
 
 		DrawStatus(queueEntries[0]->status);
-		GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[2].x, QueueBoxes[2].y); // Don't show until properly implemented.
+		GFX::DrawIcon(sprites_cancel_idx, QueueBoxes[2].x, QueueBoxes[2].y, UIThemes->TextColor());
 
 		/* The next Queue Entries being displayed below. */
 		if ((1 + queueMenuIdx) < (int)queueEntries.size()) {
@@ -254,7 +254,7 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 			Gui::DrawString(QueueBoxes[1].x + 60, QueueBoxes[1].y + 30, 0.4f, UIThemes->TextColor(), Lang::get("QUEUE_POSITION") + ": " + std::to_string(queueMenuIdx + 1), 0, 0, font);
 
 			/* Cancel. */
-			GFX::DrawSprite(sprites_cancel_idx, QueueBoxes[3].x, QueueBoxes[3].y);
+			GFX::DrawIcon(sprites_cancel_idx, QueueBoxes[3].x, QueueBoxes[3].y, UIThemes->TextColor());
 		}
 	}
 }

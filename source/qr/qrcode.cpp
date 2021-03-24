@@ -176,9 +176,9 @@ void QRCode::drawThread() {
 			}
 		}
 
-		GFX::DrawSprite((this->displayList ? sprites_qr_code_idx : sprites_list_idx), mainButtons[6].x, mainButtons[6].y);
-		if (this->displayList) GFX::DrawSprite(sprites_keyboard_idx, mainButtons[7].x, mainButtons[7].y);
-		GFX::DrawSprite(sprites_arrow_idx, mainButtons[8].x, mainButtons[8].y);
+		GFX::DrawIcon((this->displayList ? sprites_qr_code_idx : sprites_list_idx), mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());
+		if (this->displayList) GFX::DrawIcon(sprites_keyboard_idx, mainButtons[7].x, mainButtons[7].y, UIThemes->TextColor());
+		GFX::DrawIcon(sprites_arrow_idx, mainButtons[8].x, mainButtons[8].y, UIThemes->TextColor());
 		C3D_FrameEnd(0);
 	}
 

@@ -56,8 +56,8 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
-		if (!entry->GetScreenshots().empty()) GFX::DrawSprite(sprites_screenshot_idx, sshot.x, sshot.y);
-		if (entry->GetReleaseNotes() != "") GFX::DrawSprite(sprites_notes_idx, notes.x, notes.y);
+		if (!entry->GetScreenshots().empty()) GFX::DrawIcon(sprites_screenshot_idx, sshot.x, sshot.y, UIThemes->TextColor());
+		if (entry->GetReleaseNotes() != "") GFX::DrawIcon(sprites_notes_idx, notes.x, notes.y, UIThemes->TextColor());
 		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
 	}
 }

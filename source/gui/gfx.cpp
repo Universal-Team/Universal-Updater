@@ -89,7 +89,7 @@ void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	bool selected: if checked, or not.
 */
 void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
-	GFX::DrawSprite((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos);
+	GFX::DrawIcon((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos, UIThemes->TextColor(), 0.5f);
 }
 
 /*
@@ -100,7 +100,7 @@ void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
 	bool toggled: If toggled or not.
 */
 void GFX::DrawToggle(float xPos, float yPos, bool toggled) {
-	GFX::DrawSprite((toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), xPos, yPos);
+	GFX::DrawIcon((toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), xPos, yPos, UIThemes->TextColor(), 0.5f);
 }
 
 void GFX::DrawTime() {
@@ -122,38 +122,38 @@ void GFX::DrawBattery() {
 	PTMU_GetAdapterState(&chargerPlugged); // Get if charger adapter is plugged.
 
 	if (chargerPlugged) {
-		GFX::DrawSprite((chargeState ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1);
+		GFX::DrawIcon((chargeState ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1, UIThemes->TextColor());
 		if (batteryLow) batteryLow = false; // Cause we're charging.
 
 	} else {
 		switch(level) {
 			case 0: // Blinky.
-				GFX::DrawSprite((blinkState ? sprites_battery_blink_idx : sprites_battery_0_idx), 366, 1);
+				GFX::DrawIcon((blinkState ? sprites_battery_blink_idx : sprites_battery_0_idx), 366, 1, UIThemes->TextColor());
 				if (!batteryLow) batteryLow = true;
 				break;
 
 			case 1: // Red.
-				GFX::DrawSprite(sprites_battery_0_idx, 366, 1);
+				GFX::DrawIcon(sprites_battery_0_idx, 366, 1, UIThemes->TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 2: // One.
-				GFX::DrawSprite(sprites_battery_1_idx, 366, 1);
+				GFX::DrawIcon(sprites_battery_1_idx, 366, 1, UIThemes->TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 3: // Two.
-				GFX::DrawSprite(sprites_battery_2_idx, 366, 1);
+				GFX::DrawIcon(sprites_battery_2_idx, 366, 1, UIThemes->TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 4: // Three.
-				GFX::DrawSprite(sprites_battery_3_idx, 366, 1);
+				GFX::DrawIcon(sprites_battery_3_idx, 366, 1, UIThemes->TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 5: // Full.
-				GFX::DrawSprite(sprites_battery_4_idx, 366, 1);
+				GFX::DrawIcon(sprites_battery_4_idx, 366, 1, UIThemes->TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 		}
@@ -176,9 +176,9 @@ void GFX::HandleBattery() {
 /*
 	Draws the sidebar icons blended with the SideBarIconColor.
 */
-void GFX::DrawIcon(const int Idx, int X, int Y, float ScaleX, float ScaleY) {
+void GFX::DrawIcon(const int Idx, int X, int Y, uint32_t Color, float BlendPower, float ScaleX, float ScaleY) {
 	C2D_ImageTint tint;
-	C2D_PlainImageTint(&tint, UIThemes->SideBarIconColor(), 1.0f);
+	C2D_PlainImageTint(&tint, Color, BlendPower);
 
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, Idx), X, Y, 0.5f, &tint, ScaleX, ScaleY);
 }

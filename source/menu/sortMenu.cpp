@@ -44,7 +44,7 @@ static const std::vector<Structs::ButtonPos> buttons = {
 };
 
 static void DrawCheck(int pos, bool v) {
-	GFX::DrawSprite((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), buttons[pos].x + 1, buttons[pos].y);
+	GFX::DrawIcon((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), buttons[pos].x + 1, buttons[pos].y, UIThemes->TextColor());
 }
 
 /*

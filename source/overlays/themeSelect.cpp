@@ -131,8 +131,6 @@ void Overlays::SelectTheme() {
 			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
 		}
 
-		if (hidKeysDown() & KEY_B) {
-			Finish = true;
-		}
+		if (hidKeysDown() & KEY_B) Finish = true;
 	}
 }
