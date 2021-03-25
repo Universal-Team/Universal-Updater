@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
+    container: universalteam/devkitarm
     name: Build with Docker using devkitARM
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
