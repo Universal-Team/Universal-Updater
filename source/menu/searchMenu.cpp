@@ -90,19 +90,19 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	/* Filters. */
 	Gui::DrawString(84, SearchMenu[5].y - 20, 0.5f, UIThemes->TextColor(), Lang::get("FILTER_TO"), 265, 0, font);
 
-	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, (marks & favoriteMarks::STAR ?
+	Gui::Draw_Rect(SearchMenu[5].x, SearchMenu[5].y, SearchMenu[5].w, SearchMenu[5].h, ((marks & favoriteMarks::STAR) ?
 		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
-	Gui::Draw_Rect(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, (marks & favoriteMarks::HEART ?
+	Gui::Draw_Rect(SearchMenu[6].x, SearchMenu[6].y, SearchMenu[6].w, SearchMenu[6].h, ((marks & favoriteMarks::HEART) ?
 		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
-	Gui::Draw_Rect(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, (marks & favoriteMarks::DIAMOND ?
+	Gui::Draw_Rect(SearchMenu[7].x, SearchMenu[7].y, SearchMenu[7].w, SearchMenu[7].h, ((marks & favoriteMarks::DIAMOND) ?
 		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
-	Gui::Draw_Rect(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, (marks & favoriteMarks::CLUBS ?
+	Gui::Draw_Rect(SearchMenu[8].x, SearchMenu[8].y, SearchMenu[8].w, SearchMenu[8].h, ((marks & favoriteMarks::CLUBS) ?
 		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
-	Gui::Draw_Rect(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, (marks & favoriteMarks::SPADE ?
+	Gui::Draw_Rect(SearchMenu[9].x, SearchMenu[9].y, SearchMenu[9].w, SearchMenu[9].h, ((marks & favoriteMarks::SPADE) ?
 		UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 
 	Gui::Draw_Rect(SearchMenu[10].x, SearchMenu[10].y, SearchMenu[10].w, SearchMenu[10].h, (updateFilter ?

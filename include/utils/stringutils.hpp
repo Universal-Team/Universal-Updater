@@ -37,7 +37,7 @@ namespace StringUtils {
 	std::string formatBytes(int bytes);
 	std::string GetMarkString(int marks);
 	std::vector<std::string> GetMarks(int marks);
-	std::string format(const std::string &fmt_str, ...);
+	std::string format(const char *fmt_str, ...);
 };
 
 #endif

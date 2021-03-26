@@ -50,13 +50,13 @@ MainScreen::MainScreen() {
 	StoreUtils::meta = std::make_unique<Meta>();
 
 	/* Check if lastStore is accessible. */
-	if (config->lastStore() != "universal-db.unistore" || config->lastStore() != "") {
-		if (access((std::string(_STORE_PATH) + config->lastStore()).c_str(), F_OK) != 0) {
+	if (config->lastStore() != "universal-db.unistore" && config->lastStore() != "") {
+		if (access((_STORE_PATH + config->lastStore()).c_str(), F_OK) != 0) {
 			config->lastStore("universal-db.unistore");
 
 		} else {
 			/* check version and file here. */
-			const UniStoreInfo info = GetInfo((std::string(_STORE_PATH) + config->lastStore()), config->lastStore());
+			const UniStoreInfo info = GetInfo((_STORE_PATH + config->lastStore()), config->lastStore());
 
 			if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
 				config->lastStore("universal-db.unistore");
@@ -245,10 +245,8 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					this->dwnldList = StoreUtils::store->GetDownloadList(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetEntryIndex());
 					this->dwnldSizes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetSizes();
 
-					bool good = false;
-
 					for (int i = 0; i < (int)this->dwnldList.size(); i++) {
-						good = false;
+						bool good = false;
 
 						for (int i2 = 0; i2 < (int)installedNames.size(); i2++) {
 							if (installedNames[i2] == this->dwnldList[i]) {

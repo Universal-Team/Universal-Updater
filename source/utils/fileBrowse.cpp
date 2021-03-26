@@ -87,19 +87,6 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents) {
 	getDirectoryContents(dirContents, {});
 }
 
-std::vector<std::string> getContents(const std::string &name, const std::vector<std::string> &extensionList) {
-	std::vector<std::string> dirContents;
-	DIR *pdir = opendir(name.c_str());
-	struct dirent *pent;
-
-	while ((pent = readdir(pdir)) != NULL) {
-		if (nameEndsWith(pent->d_name, extensionList)) dirContents.push_back(pent->d_name);
-	}
-
-	closedir(pdir);
-	return dirContents;
-}
-
 /*
 	Return UniStore info.
 
@@ -188,17 +175,20 @@ u32 copyBuf[copyBufSize];
 /*
 	Copy a directory.
 
-	DirEntry *entry: Pointer to a DirEntry.
+	DirEntry &entry: A DirEntry reference.
 	const char *destinationPath: Pointer to the destination path.
 	const char *sourcePath: Pointer to the source path.
 */
-void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePath) {
+void dirCopy(const DirEntry &entry, const char *destinationPath, const char *sourcePath) {
 	std::vector<DirEntry> dirContents;
 	dirContents.clear();
-	if (entry->isDirectory)	chdir((sourcePath + ("/" + entry->name)).c_str());
+	if (entry.isDirectory)
+		chdir((sourcePath + ("/" + entry.name)).c_str());
 	getDirectoryContents(dirContents);
-	if (((int)dirContents.size()) == 1)	mkdir((destinationPath + ("/" + entry->name)).c_str(), 0777);
-	if (((int)dirContents.size()) != 1)	fcopy((sourcePath + ("/" + entry->name)).c_str(), (destinationPath + ("/" + entry->name)).c_str());
+	if (((int)dirContents.size()) == 1)
+		mkdir((destinationPath + ("/" + entry.name)).c_str(), 0777);
+	if (((int)dirContents.size()) != 1)
+		fcopy((sourcePath + ("/" + entry.name)).c_str(), (destinationPath + ("/" + entry.name)).c_str());
 }
 
 u32 copyOffset = 0, copySize = 0;
@@ -220,13 +210,11 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		chdir(sourcePath);
 		std::vector<DirEntry> dirContents;
 		getDirectoryContents(dirContents);
-		DirEntry *entry = &dirContents.at(1);
 		mkdir(destinationPath, 0777);
 
 		for(int i = 1; i < ((int)dirContents.size()); i++) {
 			chdir(sourcePath);
-			entry = &dirContents.at(i);
-			dirCopy(entry, destinationPath, sourcePath);
+			dirCopy(dirContents[i], destinationPath, sourcePath);
 		}
 
 		chdir(destinationPath);
@@ -244,51 +232,27 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			fseek(sourceFile, 0, SEEK_END);
 			copySize = ftell(sourceFile); // Get source file's size.
 			fseek(sourceFile, 0, SEEK_SET);
-
 		} else {
-			fclose(sourceFile);
 			return -1;
 		}
 
 		FILE *destinationFile = fopen(destinationPath, "wb");
-		//if (destinationFile) {
-			fseek(destinationFile, 0, SEEK_SET);
-		/*} else {
+		if (!destinationFile) {
 			fclose(sourceFile);
-			fclose(destinationFile);
 			return -1;
-		}*/
+		}
 
-		int numr;
 		while(1) {
-			scanKeys();
-			if (keysHeld() & KEY_B) {
-				/* Cancel copying. */
-				fclose(sourceFile);
-				fclose(destinationFile);
-				return -1;
-				break;
-			}
-
-			printf("\x1b[16;0H");
-			printf("Progress:\n");
-			printf("%i/%i Bytes					   ", (int)copyOffset, (int)copySize);
-
 			/* Copy file to destination path. */
-			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
-			fwrite(copyBuf, 2, numr, destinationFile);
-			copyOffset += copyBufSize;
+			int numr = fread(copyBuf, sizeof(u32), copyBufSize, sourceFile);
+			fwrite(copyBuf, sizeof(u32), numr, destinationFile);
+			copyOffset += copyBufSize * sizeof(u32);
 
 			if (copyOffset > copySize) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 
-				printf("\x1b[17;0H");
-				printf("%i/%i Bytes					   ", (int)copyOffset, (int)copySize);
-				for(int i = 0; i < 30; i++) gspWaitForVBlank();
-
 				return 1;
-				break;
 			}
 		}
 

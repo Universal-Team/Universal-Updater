@@ -140,7 +140,7 @@ void StoreUtils::search(const std::string &query, bool title, bool author, bool 
 			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
 			|| (!title && !author && !category && !console))
 			&& ((selectedMarks == 0 && !updateAvl) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks) && (!updateAvl || (*it)->GetUpdateAvl()))))) {
-				StoreUtils::entries.erase(it);
+				it = StoreUtils::entries.erase(it);
 				--it;
 			}
 		}
@@ -153,19 +153,9 @@ void StoreUtils::search(const std::string &query, bool title, bool author, bool 
 			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
 			|| (!title && !author && !category && !console))
 			&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
-				StoreUtils::entries.erase(it);
+				it = StoreUtils::entries.erase(it);
 				--it;
 			}
-		}
-	}
-}
-
-/* Filter for available updates. */
-void StoreUtils::FilterUpdateAvailable() {
-	for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-		if (!((*it)->GetUpdateAvl())) {
-			StoreUtils::entries.erase(it);
-			--it;
 		}
 	}
 }
@@ -197,7 +187,7 @@ void StoreUtils::RefreshUpdateAVL() {
 }
 
 void StoreUtils::AddToQueue(int index, const std::string &entry, const std::string &entryName, const std::string &lUpdated) {
-	if (!StoreUtils::store && !StoreUtils::store->GetValid()) return;
+	if (!StoreUtils::store || !StoreUtils::store->GetValid()) return;
 
 	/* Check first for proper JSON. */
 	if (!StoreUtils::store->GetJson().contains("storeContent")) return;

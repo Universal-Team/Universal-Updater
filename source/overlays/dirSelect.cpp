@@ -49,7 +49,6 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 	int selection = 0, sPos = 0;
 
 	std::vector<DirEntry> dirContents;
-	dirContents.clear();
 
 	/* Make sure. */
 	if (access((oldDir + std::string("/")).c_str(), F_OK) == 0) {
@@ -60,12 +59,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		chdir("sdmc:/");
 	}
 
-	std::vector<DirEntry> dirContentsTemp;
-	getDirectoryContents(dirContentsTemp, {"/"});
-
-	for(uint i = 0; i < dirContentsTemp.size(); i++) {
-		dirContents.push_back(dirContentsTemp[i]);
-	}
+	getDirectoryContents(dirContents, {"/"});
 
 	while(1) {
 		Gui::clearTextBufs();
@@ -110,13 +104,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 			selection = 0;
 			sPos = 0;
-			dirContents.clear();
-			std::vector<DirEntry> dirContentsTemp;
-			getDirectoryContents(dirContentsTemp, {"/"});
-
-			for(uint i = 0; i < dirContentsTemp.size(); i++) {
-				dirContents.push_back(dirContentsTemp[i]);
-			}
+			getDirectoryContents(dirContents, {"/"});
 		}
 
 

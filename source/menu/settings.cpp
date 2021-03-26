@@ -636,14 +636,13 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 					sPos = 0;
 					page = 0;
 				}
+
+				break;
 			}
 		}
-	}
 
-	if (hDown & KEY_TOUCH) {
 		if (touching(touch, langButtons[6])) {
 			/* Download Font. */
-			std::string l = config->language();
 			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 			config->customfont(true);
 			Init::UnloadFont();

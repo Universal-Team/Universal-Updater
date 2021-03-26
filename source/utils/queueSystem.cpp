@@ -105,9 +105,6 @@ void QueueSystem::QueueHandle() {
 	while(QueueRuns) {
 		Result ret = NONE; // No Error as of yet.
 
-		queueEntries[0]->total = queueEntries[0]->obj.size();
-		queueEntries[0]->current = QueueSystem::LastElement;
-
 		for(int i = QueueSystem::LastElement; ret == NONE && i < queueEntries[0]->total && !QueueSystem::CancelCallback; i++) {
 			queueEntries[0]->current++;
 

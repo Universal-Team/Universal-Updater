@@ -107,8 +107,6 @@ namespace StoreUtils {
 
 	void search(const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl, bool isAND);
 
-	void FilterUpdateAvailable();
-
 	void ResetAll();
 
 	void RefreshUpdateAVL();

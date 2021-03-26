@@ -107,11 +107,11 @@ std::string StringUtils::GetMarkString(int marks) {
 	return out;
 }
 
-std::string StringUtils::format(const std::string &fmt_str, ...) {
+std::string StringUtils::format(const char *fmt_str, ...) {
 	va_list ap;
 	char *fp = nullptr;
 	va_start(ap, fmt_str);
-	vasprintf(&fp, fmt_str.c_str(), ap);
+	vasprintf(&fp, fmt_str, ap);
 	va_end(ap);
 
 	std::unique_ptr<char, decltype(free) *> formatted(fp, free);

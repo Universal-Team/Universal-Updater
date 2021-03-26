@@ -188,80 +188,58 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		}
 
 		if (hRepeat & KEY_DOWN) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (StoreUtils::store->GetDownloadIndex() < (int)entries.size() - 1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + 1);
 			else StoreUtils::store->SetDownloadIndex(0);
 		}
 
 		if (hRepeat & KEY_UP) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (StoreUtils::store->GetDownloadIndex() > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - 1);
 			else StoreUtils::store->SetDownloadIndex(entries.size() - 1);
 		}
 
 
 		if (hRepeat & KEY_RIGHT) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES < (int)entries.size()-1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES);
 			else StoreUtils::store->SetDownloadIndex(entries.size()-1);
 		}
 
 		if (hRepeat & KEY_LEFT) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES);
 			else StoreUtils::store->SetDownloadIndex(0);
 		}
 
 		if (smallDelay == 0 && hDown & KEY_TOUCH) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
-			bool didTouch = false;
-
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
 						if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()])) {
 							StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
 						}
-
-						didTouch = true;
-						break;
 					}
+
+					break;
 				}
-			}
 
-			if (!didTouch) {
-				for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
-					if (touching(touch, installedPos[i])) {
-						if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-							if (installs[i + StoreUtils::store->GetDownloadSIndex()]) {
-								StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
-								installs[i + StoreUtils::store->GetDownloadSIndex()] = false;
-							}
+				if (touching(touch, installedPos[i])) {
+					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
+						if (installs[i + StoreUtils::store->GetDownloadSIndex()]) {
+							StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
+							installs[i + StoreUtils::store->GetDownloadSIndex()] = false;
 						}
-
-						didTouch = true;
-						break;
 					}
+
+					break;
 				}
 			}
 		}
 
 		if (smallDelay == 0 && hDown & KEY_A) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()])) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
 
 		if (hDown & KEY_X) {
-			if (entries.size() <= 0) return; // Smaller *than* 0 -> Invalid.
-
 			if (installs[StoreUtils::store->GetDownloadIndex()]) {
 				StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[StoreUtils::store->GetDownloadIndex()]);
 				installs[StoreUtils::store->GetDownloadIndex()] = false;

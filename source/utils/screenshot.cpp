@@ -32,7 +32,7 @@ C2D_Image Screenshot::Convert(const std::string &filename) {
 	std::vector<u8> ImageBuffer;
 	unsigned width, height;
 	C2D_Image img;
-	lodepng::decode(ImageBuffer, width, height, filename.c_str());
+	lodepng::decode(ImageBuffer, width, height, filename);
 
 	img.tex = new C3D_Tex;
 	img.subtex = new Tex3DS_SubTexture({(u16)width, (u16)height, 0.0f, 1.0f, width / 512.0f, 1.0f - (height / 512.0f)});

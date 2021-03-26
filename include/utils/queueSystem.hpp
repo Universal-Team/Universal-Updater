@@ -54,18 +54,6 @@ enum RequestType {
 	PROMPT_ERROR = 3 // Error message prompt. Unused right now.
 };
 
-class Queue {
-public:
-	Queue(nlohmann::json object, const C2D_Image &img, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) :
-		obj(object), icn(img), name(name), unistoreName(uName), entryName(eName), lastUpdated(lUpdated) { };
-
-	QueueStatus status = QueueStatus::None;
-	nlohmann::json obj;
-	C2D_Image icn;
-	int total, current;
-	std::string name = "", unistoreName = "", entryName = "", lastUpdated = "";
-};
-
 /* Of course also a namespace to that part, so we can do that in a Thread. */
 namespace QueueSystem {
 	extern int RequestNeeded, RequestAnswer;
@@ -77,6 +65,18 @@ namespace QueueSystem {
 	void AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated); // Adds to Queue.
 	void ClearQueue(); // Clears the Queue.
 	void Resume();
+};
+
+class Queue {
+public:
+	Queue(nlohmann::json object, const C2D_Image &img, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) :
+		obj(object), icn(img), total(object.size()), current(QueueSystem::LastElement), name(name), unistoreName(uName), entryName(eName), lastUpdated(lUpdated) { };
+
+	QueueStatus status = QueueStatus::None;
+	nlohmann::json obj;
+	C2D_Image icn;
+	int total, current;
+	std::string name = "", unistoreName = "", entryName = "", lastUpdated = "";
 };
 
 #endif

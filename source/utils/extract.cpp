@@ -68,7 +68,6 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 	archive *a = archive_read_new();
 	archive_entry *entry;
 
-	a = archive_read_new();
 	archive_read_support_format_all(a);
 
 	if (archive_read_open_filename(a, archivePath.c_str(), 0x4000) != ARCHIVE_OK) {
