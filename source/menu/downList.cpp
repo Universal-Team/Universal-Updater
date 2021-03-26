@@ -175,7 +175,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			smallDelay--;
 		}
 
-		if ((hDown & KEY_Y) || (hDown & KEY_START) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) {
+		if ((hDown & (KEY_Y | KEY_START) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
 			if (is3DSX) { // Only allow if 3DSX.
 				if (StoreUtils::entries.size() <= 0) return; // Smaller than 0 -> No No.
 
@@ -233,13 +233,13 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			}
 		}
 
-		if (smallDelay == 0 && hDown & KEY_A) {
+		if (smallDelay == 0 && hDown & KEY_A && !entries.empty()) {
 			if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()])) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
 
-		if (hDown & KEY_X) {
+		if (hDown & KEY_X && !entries.empty()) {
 			if (installs[StoreUtils::store->GetDownloadIndex()]) {
 				StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[StoreUtils::store->GetDownloadIndex()]);
 				installs[StoreUtils::store->GetDownloadIndex()] = false;
