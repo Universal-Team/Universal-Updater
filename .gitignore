@@ -13,6 +13,7 @@
 *.DS_Store
 romfs/gfx/*.t3x
 include/version.hpp
+cppcheck.log
 
 bannertool*
 makerom*
