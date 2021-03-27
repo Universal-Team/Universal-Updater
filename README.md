@@ -34,9 +34,28 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
 
 
 ## Compilation
-### Setting up your enviromment
 
-To build Universal-Updater from source, you will need to setup devkitARM with libctru and 3ds-curl. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S 3ds-dev 3ds-curl`. You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH. Once you clone the repo (and its submodules), simply run `make` in the source code directory.
+### Setting up your environment
+
+To build Universal-Updater from source, you will need to install devkitARM with libctru and 3ds-curl. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run `(sudo dkp-)pacman -S 3ds-dev 3ds-curl` to install everything.
+
+You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
+
+### Cloning the repository
+
+To download the source you will need to clone the repository with submodules, this can be done by running:
+```
+git clone --recursive https://github.com/Universal-Team/Universal-Updater.git
+```
+
+If you've already cloned it, you can use the following command to update all of the submodules:
+```
+git submodule update --init --recursive
+```
+
+### Building
+
+Once you've cloned the repository (with submodules), simply run `make` in the root of the repository.
 
 ## Screenshots
 
