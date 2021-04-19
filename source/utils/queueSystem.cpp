@@ -63,6 +63,7 @@ void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std
 
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 		queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
+		aptSetHomeAllowed(false);
 	}
 }
 
@@ -84,6 +85,7 @@ void QueueSystem::ClearQueue() {
 	Use this, to go back to the queue after the Request.
 */
 void QueueSystem::Resume() {
+	aptSetHomeAllowed(false);
 	QueueSystem::Wait = false;
 	QueueRuns = true;
 
@@ -388,4 +390,6 @@ void QueueSystem::QueueHandle() {
 			ret = NONE; // Reset.
 		}
 	}
+
+	aptSetHomeAllowed(true);
 }
