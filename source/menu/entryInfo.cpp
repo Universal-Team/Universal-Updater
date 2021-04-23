@@ -33,7 +33,7 @@ static const Structs::ButtonPos btn = { 45, 215, 24, 24 };
 static const Structs::ButtonPos sshot = { 75, 215, 24, 24 };
 static const Structs::ButtonPos notes = { 105, 215, 24, 24 };
 extern bool checkWifiStatus();
-extern bool QueueRuns;
+extern bool exiting, QueueRuns;
 
 /*
 	Draw the Entry Info part.
@@ -97,6 +97,12 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 
 		if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) {
 			if (entry->GetReleaseNotes() != "") mode = 7;
+		}
+
+		if (hDown & KEY_SELECT && entry->GetWiki() != "") {
+			GSPGPU_ReleaseRight();
+			APT_PrepareToStartSystemApplet(APPID_WEB);
+			APT_StartSystemApplet(APPID_WEB, entry->GetWiki().c_str(), entry->GetWiki().size(), 0);
 		}
 	}
 }
