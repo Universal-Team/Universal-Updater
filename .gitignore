@@ -20,5 +20,4 @@ makerom*
 *.pfs0
 *.nso
 *.nacp
-Makefile
 
