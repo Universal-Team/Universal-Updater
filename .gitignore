@@ -21,4 +21,4 @@ makerom*
 *.nso
 *.nacp
 Makefile
-
+.gitignore
