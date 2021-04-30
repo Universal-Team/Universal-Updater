@@ -27,8 +27,8 @@
 #include "extract.hpp"
 #include "queueSystem.hpp"
 #include "scriptUtils.hpp"
-#include <archive.h>
-#include <archive_entry.h>
+#include <archive.hpp>
+#include <archive_entry.hpp>
 #include <regex>
 
 int filesExtracted = 0, extractFilesCount = 0;
