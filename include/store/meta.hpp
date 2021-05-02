@@ -79,18 +79,16 @@ public:
 	/* Remove installed state from a download list entry. */
 	void RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
 		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
-		int idx = -1;
+		if (installs.empty()) return;
 
-		if (!installs.empty()) {
-			for (int i = 0; i < (int)installs.size(); i++) {
-				if (installs[i] == name) {
-					idx = i;
-					break;
-				}
+		for (int i = 0; i < (int)installs.size(); i++) {
+			if (installs[i] == name) {
+				this->metadataJson[unistoreName][entry]["installed"].erase(i);
+				break;
 			}
 		}
 
-		if (idx != -1) this->metadataJson[unistoreName][entry]["installed"].erase(idx);
+		if (this->metadataJson[unistoreName][entry]["installed"].empty() && this->metadataJson[unistoreName][entry].contains("updated")) this->metadataJson[unistoreName][entry].erase("updated");
 	}
 
 	void ImportMetadata();
