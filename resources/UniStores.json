@@ -11,17 +11,11 @@
 		"url": "https://github.com/DS-Homebrew/twlmenu-extras/raw/master/unistore/twlmenu-skins.unistore",
 		"description": "A collection of skins for TWiLight Menu++\nfrom DS-Homebrew/twlmenu-extras on GitHub\n\n(The 'Console' is the theme in TWiLight)"
 	},
-	"3DEins-Sets": {
-		"title": "3DEins-Sets",
-		"author": "SuperSaiyajinStackZ",
-		"url": "https://github.com/SuperSaiyajinStackZ/3DEins-3DZwei-Sets/raw/master/unistore/3DEins-Sets.unistore",
-		"description": "You can find CardSets for 3DEins on this store.\nThis store is made by SuperSaiyajinStackZ.\nCardsets are hosted by SuperSaiyajinStackZ as well."
-	},
-	"3DZwei-Sets": {
-		"title": "3DZwei-Sets",
-		"author": "SuperSaiyajinStackZ",
-		"url": "https://github.com/SuperSaiyajinStackZ/3DEins-3DZwei-Sets/raw/master/unistore/3DZwei-Sets.unistore",
-		"description": "You can find CardSets for 3DZwei on this store.\nThis store is made by SuperSaiyajinStackZ.\nCardsets are hosted by SuperSaiyajinStackZ as well."
+	"Universal-Team Game Sets": {
+		"title": "Universal-Team Game Sets",
+		"author": "Universal-Team",
+		"url": "https://game-sets.universal-team.net/unistore/ut-game-sets.unistore",
+		"description": "Additional card sets for Universal-Team games\n\n(The 'Console' is the game)"
 	},
 	"Universal-DB": {
 		"title": "Universal-DB",
