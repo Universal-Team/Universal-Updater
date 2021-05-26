@@ -123,34 +123,40 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 	ret = FSFILE_GetSize(fileHandle, &size);
 	if (R_FAILED(ret)) {
 		printf("Error in:\nFSFILE_GetSize\n");
+		FSFILE_Close(fileHandle);
 		return ret;
 	}
 
-	if (getAvailableSpace() < size) return -1; // Out of space.
+	if (getAvailableSpace() >= size) {
+		ret = AM_StartCiaInstall(media, &ciaHandle);
+		if (R_FAILED(ret)) {
+			printf("Error in:\nAM_StartCiaInstall\n");
+			FSFILE_Close(fileHandle);
+			return ret;
+		}
 
-	ret = AM_StartCiaInstall(media, &ciaHandle);
-	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_StartCiaInstall\n");
-		return ret;
-	}
+		u32 toRead = 0x200000;
+		u8 *buf = new u8[toRead];
 
-	u32 toRead = 0x200000;
-	u8 *buf = new u8[toRead];
+		if (!buf) {
+			FSFILE_Close(fileHandle);
+			return -1;
+		}
 
-	if (!buf) return -1;
+		installSize = size;
+		do {
+			FSFILE_Read(fileHandle, &bytes_read, installOffset, buf, toRead);
+			FSFILE_Write(ciaHandle, &bytes_written, installOffset, buf, toRead, FS_WRITE_FLUSH);
+			installOffset += bytes_read;
+		} while(installOffset < installSize);
+		delete[] buf;
 
-	installSize = size;
-	do {
-		FSFILE_Read(fileHandle, &bytes_read, installOffset, buf, toRead);
-		FSFILE_Write(ciaHandle, &bytes_written, installOffset, buf, toRead, FS_WRITE_FLUSH);
-		installOffset += bytes_read;
-	} while(installOffset < installSize);
-	delete[] buf;
-
-	ret = AM_FinishCiaInstall(ciaHandle);
-	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_FinishCiaInstall\n");
-		return ret;
+		ret = AM_FinishCiaInstall(ciaHandle);
+		if (R_FAILED(ret)) {
+			printf("Error in:\nAM_FinishCiaInstall\n");
+			FSFILE_Close(fileHandle);
+			return ret;
+		}
 	}
 
 	ret = FSFILE_Close(fileHandle);
