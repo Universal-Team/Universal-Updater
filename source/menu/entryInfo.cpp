@@ -50,11 +50,8 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		Gui::DrawStringCentered(17, 20, 0.4, UIThemes->TextColor(), entry->GetAuthor(), 273, 0, font);
 		Gui::DrawStringCentered(17, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
-		Gui::DrawStringCentered(53, 130, 0.4, UIThemes->TextColor(), "Free space: " + std::to_string(getAvailableSpace()), 273, 0, font);
-		Gui::DrawStringCentered(53, 145, 0.4, UIThemes->TextColor(), "Free space: " + StringUtils::formatBytes(getAvailableSpace()), 273, 0, font);
-
-		//Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
-		//Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
+		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
+		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
 		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
 		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);
 		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
