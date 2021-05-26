@@ -25,6 +25,7 @@
 */
 
 #include "fileBrowse.hpp"
+#include "files.hpp"
 #include "json.hpp"
 #include "structs.hpp"
 #include <3ds.h>
@@ -236,6 +237,11 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			return -1;
 		}
 
+		if(getAvailableSpace() < copySize) {
+			fclose(sourceFile);
+			return -1;
+		}
+
 		FILE *destinationFile = fopen(destinationPath, "wb");
 		if (!destinationFile) {
 			fclose(sourceFile);
@@ -245,7 +251,15 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		while(1) {
 			/* Copy file to destination path. */
 			int numr = fread(copyBuf, sizeof(u32), copyBufSize, sourceFile);
-			fwrite(copyBuf, sizeof(u32), numr, destinationFile);
+			int written = fwrite(copyBuf, sizeof(u32), numr, destinationFile);
+
+			if(written != numr) {
+				fclose(sourceFile);
+				fclose(destinationFile);
+
+				return -1;
+			}
+
 			copyOffset += copyBufSize * sizeof(u32);
 
 			if (copyOffset > copySize) {
