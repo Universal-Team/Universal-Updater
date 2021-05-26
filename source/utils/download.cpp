@@ -103,11 +103,14 @@ static void commitToFileThreadFunc(void *args) {
 }
 
 static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userdata) {
+	if (getAvailableSpace() < (u64)downloadTotal) return 0; // Out of space.
+	if (writeError) return 0;
+	if (QueueSystem::CancelCallback) return 0;
+
 	(void)userdata;
 	const size_t bsz = size * nmemb;
 	size_t tofill = 0;
-	if (writeError) return 0;
-	if (QueueSystem::CancelCallback) return 0;
+
 
 	if (!g_buffers[g_index]) {
 		LightEvent_Init(&waitCommit, RESET_STICKY);
@@ -594,6 +597,7 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 	}
 
 	if (nlohmann::json::accept(result_buf)) {
+		if (getAvailableSpace() < result_written) return false; // Out of space.
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
 		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
@@ -733,6 +737,7 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 		return false;
 	}
 
+	if (getAvailableSpace() < result_written) return false; // Out of space.
 	C2D_SpriteSheet sheet = C2D_SpriteSheetLoadFromMem(result_buf, result_written);
 
 	if (sheet) {

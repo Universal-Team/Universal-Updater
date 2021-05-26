@@ -25,6 +25,7 @@
 */
 
 #include "extract.hpp"
+#include "files.hpp"
 #include "queueSystem.hpp"
 #include "scriptUtils.hpp"
 #include <archive.hpp>
@@ -65,6 +66,8 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 }
 
 Result extractArchive(const std::string &archivePath, const std::string &wantedFile, const std::string &outputPath) {
+	if (getAvailableSpace() < extractSize) return -1; // Out of space.
+
 	archive *a = archive_read_new();
 	archive_entry *entry;
 

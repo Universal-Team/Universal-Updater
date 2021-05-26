@@ -272,8 +272,7 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 			Overlays::ShowCredits();
 
 		} else if (touching(touch, mainButtons[6])) {
-			if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
-			else exiting = true;
+			if (!QueueRuns) exiting = true;
 		}
 	}
 
@@ -313,8 +312,7 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 
 			case 6:
-				if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
-				else exiting = true;
+				if (!QueueRuns) exiting = true;
 				break;
 		}
 	}

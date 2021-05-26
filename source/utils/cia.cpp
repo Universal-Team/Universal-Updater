@@ -126,6 +126,8 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 		return ret;
 	}
 
+	if (getAvailableSpace() < size) return -1; // Out of space.
+
 	ret = AM_StartCiaInstall(media, &ciaHandle);
 	if (R_FAILED(ret)) {
 		printf("Error in:\nAM_StartCiaInstall\n");

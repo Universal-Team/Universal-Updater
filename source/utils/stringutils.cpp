@@ -65,14 +65,15 @@ std::string StringUtils::FetchStringsFromVector(const std::vector<std::string> &
 /*
 	adapted from GM9i's byte parsing.
 */
-std::string StringUtils::formatBytes(int bytes) {
+std::string StringUtils::formatBytes(u64 bytes) {
 	char out[32];
 
-	if (bytes == 1)							snprintf(out, sizeof(out), "%d Byte", bytes);
-	else if (bytes < 1024)					snprintf(out, sizeof(out), "%d Bytes", bytes);
-	else if (bytes < 1024 * 1024)			snprintf(out, sizeof(out), "%.1f KiB", (float)bytes / 1024);
-	else if (bytes < 1024 * 1024 * 1024)	snprintf(out, sizeof(out), "%.1f MiB", (float)bytes / 1024 / 1024);
-	else									snprintf(out, sizeof(out), "%.1f GiB", (float)bytes / 1024 / 1024 / 1024);
+	if (bytes == 1)					snprintf(out, sizeof(out), "%lld Byte", bytes);
+	else if (bytes < 1ull << 10)	snprintf(out, sizeof(out), "%lld Bytes", bytes);
+	else if (bytes < 1ull << 20)	snprintf(out, sizeof(out), "%.1f KiB", (float)bytes / 1024);
+	else if (bytes < 1ull << 30)	snprintf(out, sizeof(out), "%.1f MiB", (float)bytes / 1024 / 1024);
+	else if (bytes < 1ull << 40)	snprintf(out, sizeof(out), "%.1f GiB", (float)bytes / 1024 / 1024 / 1024);
+	else							snprintf(out, sizeof(out), "%.1f TiB", (float)bytes / 1024 / 1024 / 1024 / 1024);
 
 	return out;
 }

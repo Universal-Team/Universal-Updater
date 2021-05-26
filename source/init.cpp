@@ -196,10 +196,6 @@ Result Init::MainLoop() {
 
 		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
 
-		if (aptCheckHomePressRejected()) {
-			if (Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"))) aptSetHomeAllowed(true);
-		};
-
 		if (exiting) {
 			if (hDown & KEY_START) fullExit = true; // Make it optionally faster.
 
