@@ -25,6 +25,7 @@
 */
 
 #include "common.hpp"
+#include "files.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
