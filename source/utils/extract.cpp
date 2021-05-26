@@ -124,7 +124,17 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 						return EXTRACT_ERROR_ARCHIVE;
 					}
 
-					fwrite(buf, 1, size, file);
+					size_t written = fwrite(buf, 1, size, file);
+
+					/* Failed to write, likely out of space. */
+					if (written != size) {
+						fclose(file);
+						delete[] buf;
+						archive_read_close(a);
+						archive_read_free(a);
+						return EXTRACT_ERROR_WRITEFILE;
+					}
+
 					sizeLeft -= size;
 					writeOffset += size;
 				}
