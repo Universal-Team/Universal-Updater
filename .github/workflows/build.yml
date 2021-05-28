@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: universalteam/devkitarm
+    container: devkitpro/devkitarm
     name: Build with Docker using devkitARM
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
@@ -26,9 +26,11 @@ jobs:
       commit_message: ${{ steps.build.outputs.commit_message }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: recursive
+      - name: List versions
+        run: sudo dkp-pacman -Sl
       - name: Install tools
         run: |
           sudo apt-get update
