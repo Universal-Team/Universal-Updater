@@ -29,8 +29,6 @@ jobs:
         uses: actions/checkout@v1
         with:
           submodules: recursive
-      - name: List versions
-        run: sudo dkp-pacman -Sl
       - name: Install tools
         run: |
           sudo apt-get update
