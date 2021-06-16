@@ -69,7 +69,7 @@
 	"EXTRACTING": "Estrazione... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Errore d'estrazione!",
 	"FEATURE_SIDE_EFFECTS": "Questa funzionalità potrebbe avere degli effetti collaterali mentre la coda è in esecuzione.\nSei sicuro di voler continuare?",
-	"FETCHING_METADATA": "Recupero di metadata antica in corso...",
+	"FETCHING_METADATA": "Recupero di metadata vecchia in corso...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Recupero degli UniStore consigliati...",
 	"FILES": "File: %d / %d",
 	"FILE_EXTRACTED": "File estratto.",
