@@ -49,7 +49,7 @@
 	"DIRECTORY_SETTINGS_BTN": "Configurações do diretório...",
 	"DONE": "Feito!",
 	"DOWNLOAD_ERROR": "Erro ao transferir!",
-	"DOWNLOAD_FAILED": "Falha ao transferir!",
+	"DOWNLOAD_FAILED": "Download Falhou!",
 	"DOWNLOAD_SPEED": "Velocidade: %lld KiB/s",
 	"DOWNLOADING": "A descarregar... %s / %s (%.2f%%)",
 	"DOWNLOADING_COMPATIBLE_FONT": "A descarregar fonte compatível...",
