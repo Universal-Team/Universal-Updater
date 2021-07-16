@@ -50,13 +50,11 @@ Result getExtractedSize(const std::string &archivePath, const std::string &wante
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		int size = archive_entry_size(entry);
-		if (size > 0) { // Ignore folders.
-			std::smatch match;
-			std::string entryName(archive_entry_pathname(entry));
-			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
-				extractSize += size;
-				extractFilesCount++;
-			}
+		std::smatch match;
+		std::string entryName(archive_entry_pathname(entry));
+		if (std::regex_search(entryName, match, std::regex(wantedFile))) {
+			extractSize += size;
+			extractFilesCount++;
 		}
 	}
 
@@ -80,73 +78,77 @@ Result extractArchive(const std::string &archivePath, const std::string &wantedF
 	}
 
 	while(archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-		if (archive_entry_size(entry) > 0) { // Ignore folders.
-			std::smatch match;
-			std::string entryName(archive_entry_pathname(entry));
-			if (std::regex_search(entryName, match, std::regex(wantedFile))) {
-				extractingFile = outputPath + match.suffix().str();
-				filesExtracted++;
+		std::smatch match;
+		std::string entryName(archive_entry_pathname(entry));
+		if (std::regex_search(entryName, match, std::regex(wantedFile))) {
+			extractingFile = outputPath + match.suffix().str();
+			filesExtracted++;
 
-				/* make directories. */
-				for (char *slashpos = strchr(extractingFile.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
-					char bak = *(slashpos);
-					*(slashpos) = '\0';
+			/* Make directories. */
+			for (char *slashpos = strchr(extractingFile.c_str() + 1, '/'); slashpos != NULL; slashpos = strchr(slashpos + 1, '/')) {
+				char bak = *(slashpos);
+				*(slashpos) = '\0';
 
-					mkdir(extractingFile.c_str(), 0777);
+				mkdir(extractingFile.c_str(), 0777);
 
-					*(slashpos) = bak;
+				*(slashpos) = bak;
+			}
+
+			/* If directory then mkdir it and skip extraction. */
+			if (S_ISDIR(archive_entry_mode(entry))) {
+				mkdir(extractingFile.c_str(), 0777);
+				continue;
+			}
+
+			uint sizeLeft = archive_entry_size(entry);
+
+			FILE *file = fopen(extractingFile.c_str(), "wb");
+			if (!file) {
+				archive_read_close(a);
+				archive_read_free(a);
+				return EXTRACT_ERROR_WRITEFILE;
+			}
+
+			u8 *buf = new u8[0x30000];
+			if (!buf) {
+				fclose(file);
+				archive_read_close(a);
+				archive_read_free(a);
+				return EXTRACT_ERROR_ALLOC;
+			}
+
+			while(sizeLeft > 0) {
+				u64 toRead = std::min(0x30000u, sizeLeft);
+				ssize_t size = archive_read_data(a, buf, toRead);
+
+				/* Archive error, stop extracting. */
+				if (size < 0) {
+					fclose(file);
+					delete[] buf;
+					archive_read_close(a);
+					archive_read_free(a);
+					return EXTRACT_ERROR_ARCHIVE;
 				}
 
-				uint sizeLeft = archive_entry_size(entry);
+				ssize_t written = fwrite(buf, 1, size, file);
 
-				FILE *file = fopen(extractingFile.c_str(), "wb");
-				if (!file) {
+				/* Failed to write, likely out of space. */
+				if (written != size) {
+					fclose(file);
+					delete[] buf;
 					archive_read_close(a);
 					archive_read_free(a);
 					return EXTRACT_ERROR_WRITEFILE;
 				}
 
-				u8 *buf = new u8[0x30000];
-				if (!buf) {
-					fclose(file);
-					archive_read_close(a);
-					archive_read_free(a);
-					return EXTRACT_ERROR_ALLOC;
-				}
-
-				while(sizeLeft > 0) {
-					u64 toRead = std::min(0x30000u, sizeLeft);
-					ssize_t size = archive_read_data(a, buf, toRead);
-
-					/* Archive error, stop extracting. */
-					if (size < 0) {
-						fclose(file);
-						delete[] buf;
-						archive_read_close(a);
-						archive_read_free(a);
-						return EXTRACT_ERROR_ARCHIVE;
-					}
-
-					ssize_t written = fwrite(buf, 1, size, file);
-
-					/* Failed to write, likely out of space. */
-					if (written != size) {
-						fclose(file);
-						delete[] buf;
-						archive_read_close(a);
-						archive_read_free(a);
-						return EXTRACT_ERROR_WRITEFILE;
-					}
-
-					sizeLeft -= size;
-					writeOffset += size;
-				}
-
-				fclose(file);
-				delete[] buf;
-
-				if (QueueSystem::CancelCallback) goto exit; // Cancel Extraction.
+				sizeLeft -= size;
+				writeOffset += size;
 			}
+
+			fclose(file);
+			delete[] buf;
+
+			if (QueueSystem::CancelCallback) goto exit; // Cancel Extraction.
 		}
 	}
 
