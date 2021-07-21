@@ -61,7 +61,7 @@ git submodule update --init --recursive
 
 Once you've cloned the repository (with submodules), simply run `make` in the root of the repository.
 
-If you're testing in Citra, run `make citra` instead of just `make` to disable the Wi-Fi check.
+If you're testing in Citra, run `make citra` instead of just `make` to disable the Wi-Fi check. (Note: `source/utils/download.cpp` must be rebuilt for this to take affect, save the file if it's already been built)
 
 ## Screenshots
 
