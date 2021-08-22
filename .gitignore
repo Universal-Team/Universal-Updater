@@ -1,0 +1,10 @@
+*.d
+*.o
+*.lst
+*.map
+*.3dsx
+*.cia
+*.nds
+*.elf
+*.smdh
+*.bin
