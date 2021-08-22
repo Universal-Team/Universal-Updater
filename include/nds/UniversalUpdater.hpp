@@ -47,7 +47,7 @@ public:
 
 	uint32_t Down = 0, Repeat = 0;
 	touchPosition T = { 0, 0 };
-	bool Exiting = true;
+	bool Exiting = false;
 };
 
 #endif
