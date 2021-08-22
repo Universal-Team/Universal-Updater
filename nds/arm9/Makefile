@@ -42,7 +42,7 @@ CFLAGS	:=	-g -Wall -Wno-psabi -O2 \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9 -D_GNU_SOURCE=1
-CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
+CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20 -Wno-volatile
 
 ASFLAGS	:=	-g $(ARCH) -march=armv5te -mtune=arm946e-s
 
