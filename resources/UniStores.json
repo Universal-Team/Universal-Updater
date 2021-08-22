@@ -28,5 +28,11 @@
 		"author": "LinuxCat",
 		"url": "https://github.com/LinUwUxCat/LinuxCat-s-Store/raw/master/unistore/linuxcat-store.unistore",
 		"description": "A store where everything is not made by me but most of it is."
+	},
+	"RetroArch Cores": {
+		"title": "RetroArch Cores",
+		"author": "Libretro",
+		"url": "https://db.universal-team.net/unistore/retroarch.unistore",
+		"description": "RetroArch cores"
 	}
 }
