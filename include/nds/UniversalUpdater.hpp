@@ -28,6 +28,7 @@
 #define _UNIVERSAL_UPDATER_HPP
 
 #include "UniStore.hpp"
+#include "font.hpp"
 
 #include <memory>
 #include <nds.h>
@@ -42,6 +43,7 @@ public:
 	void Draw();
 	int Handler(char *ARGV[]);
 
+	static Font *font;
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<UniStore> Store = nullptr;
 

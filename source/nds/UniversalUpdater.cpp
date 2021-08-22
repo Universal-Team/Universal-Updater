@@ -27,7 +27,10 @@
 #include <fat.h>
 #include "nitrofs.h"
 #include "UniversalUpdater.hpp"
+#include "graphics.hpp"
+#include "tonccpy.h"
 
+Font *UU::font;
 
 /*
 	Initialize everything as needed.
@@ -53,6 +56,19 @@ void UU::Initialize(char *ARGV[]) {
 			}
 		}
 	}
+	
+	/* Initialize graphics. */
+	Graphics::init();
+	font = new Font({std::string("/_nds/Universal-Updater/font.nftr"), "nitro:/graphics/font/test.nftr"});
+
+	u16 palette[] = {
+		0x0000,
+		0xB9CE,
+		0xD6B5,
+		0xFFFF,
+	};
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 
 	/* Load UniStore. */
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
@@ -85,12 +101,14 @@ int UU::Handler(char *ARGV[]) {
 	this->Initialize(ARGV);
 
 	if (this->Store) {
-		iprintf("Title: %s\n", this->Store->GetEntryTitle(0).c_str());
-		iprintf("Author: %s\n", this->Store->GetEntryAuthor(0).c_str());
-		iprintf("Description: %s\n", this->Store->GetEntryDescription(0).c_str());
-		iprintf("License: %s\n", this->Store->GetEntryLicense(0).c_str());
-		iprintf("Index: %d\n", 0);
+		this->font->print("Title: " + this->Store->GetEntryTitle(0), 0, font->height() * 0, false);
+		this->font->print("Author: " + this->Store->GetEntryAuthor(0), 0, font->height() * 1, false);
+		this->font->print("Description: " + this->Store->GetEntryDescription(0), 0, font->height() * 2, false);
+		this->font->print("License: " + this->Store->GetEntryLicense(0), 0, font->height() * 3, false);
+		this->font->print("Index: " + std::to_string(0), 0, font->height() * 4, false);
 	}
+
+	this->font->update();
 
 	while(!this->Exiting) {
 		swiWaitForVBlank();
