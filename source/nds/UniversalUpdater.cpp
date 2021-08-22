@@ -33,12 +33,29 @@
 	Initialize everything as needed.
 */
 void UU::Initialize(char *ARGV[]) {
-	consoleDemoInit();
-	fatInitDefault();
-	
-	if (nitroFSInit(ARGV[0])) {
-		this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
+	if (!fatInitDefault()) {
+		consoleDemoInit();
+		iprintf("FAT init failed!\n");
+		while (1) swiWaitForVBlank();
 	}
+
+	/* Try init NitroFS at a few likely locations. */
+	if (!nitroFSInit(ARGV[0])) {
+		if (!nitroFSInit("Universal-Updater.nds")) {
+			if (!nitroFSInit("/_nds/Universal-Updater/Universal-Updater.nds")) {
+				consoleDemoInit();
+				iprintf("NitroFS init failed!\n\n");
+				iprintf("Copy Universal-Updater.nds to\n\n");
+				iprintf("/_nds/Universal-Updater/\n");
+				iprintf("           Universal-Updater.nds\n");
+				iprintf("or launch using TWiLight Menu++\nor nds-hb-menu.");
+				while (1) swiWaitForVBlank();
+			}
+		}
+	}
+
+	/* Load UniStore. */
+	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
 };
 
 
