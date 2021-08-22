@@ -24,33 +24,18 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#include "UniversalUpdater.hpp"
+
+std::unique_ptr<UU> UU::App = nullptr;
 
 
-#ifdef _3DS
-	#include <3ds.h>
-#elif ARM9
-	#include <nds.h>
-#endif
+int main(int ARGC, char *ARGV[]) {
+	UU::App = std::make_unique<UU>();
 
-#include <memory>
-#include <string>
+	#ifdef ARM9
+		return UU::App->Handler(ARGV);
 
-
-class UU {
-public:
-	void Initialize();
-	void ScanInput();
-
-	void Draw();
-	int Handler();
-
-	static std::unique_ptr<UU> App;
-
-	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
-	uint16_t TX = 0, TY = 0; // Touch X and Y.
-	bool Exiting = false;
+	#else
+		return UU::App->Handler();
+	#endif
 };
-
-#endif

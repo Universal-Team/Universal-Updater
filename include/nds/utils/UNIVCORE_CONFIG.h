@@ -24,48 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "UniversalUpdater.hpp"
+#ifndef _UNIVERSAL_UPDATER_UNIVCORE_CONFIG
+#define _UNIVERSAL_UPDATER_UNIVCORE_CONFIG
 
+#define TEXT_BUFFERED
+#define TEXT_TOP_LAYER 2
+#define TEXT_BOTTOM_LAYER 2
 
-std::unique_ptr<UU> UU::App = nullptr;
-
-
-/*
-	Initialize everything as needed.
-*/
-void UU::Initialize() {
-
-};
-
-
-/*
-	Scan the key input.
-*/
-void UU::ScanInput() {
-
-};
-
-
-/*
-	Draws Universal-Updater's UI.
-*/
-void UU::Draw() {
-	
-};
-
-
-/*
-	Main Handler of the app. Handle Input and display stuff here.
-*/
-int UU::Handler() {
-	this->Initialize();
-
-	return 0;
-};
-
-
-
-int main() {
-	UU::App = std::make_unique<UU>();
-	return UU::App->Handler();
-};
+#endif

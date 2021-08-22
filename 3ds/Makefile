@@ -55,9 +55,9 @@ CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 #---------------------------------------------------------------------------------
 TARGET		:=	Universal-Updater
 BUILD		:=	build
-SOURCES		:=	../shared/source ../shared/source/Actions source source/Actions
+SOURCES		:=	Universal-Core ../source ../source/3ds ../source/3ds/data ../source/3ds/menus ../source/actions ../source/store
 DATA		:=	data
-INCLUDES	:=	../shared/include ../shared/include/Actions include
+INCLUDES	:=	Universal-Core ../include ../include/3ds ../include/3ds/data ../include/3ds/menus ../include/actions ../include/store
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
@@ -91,7 +91,7 @@ LIBS	:= -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -larchive -lbz2 -llzma -lm -lz 
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CURDIR)/libs $(PORTLIBS) $(CTRULIB)
+LIBDIRS	:= ../libs $(PORTLIBS) $(CTRULIB)
 
 
 #---------------------------------------------------------------------------------

@@ -1,0 +1,83 @@
+{
+    "storeContent": [
+        {
+            "info": {
+                "title": "Universal-Updater",
+                "author": "Universal-Team",
+                "description": "A multiapp, JSON script-based updater for Nintendo 3DS",
+                "category": ["utility"],
+                "console": ["3DS"],
+                "icon_index": 0,
+                "sheet_index": 0,
+                "last_updated": "2020-07-02 at 14:03 (UTC)",
+                "license": "gpl-3.0",
+                "version": "v2.5.1"
+            },
+            "Download Universal-Updater.3dsx (2 MiB)": [
+                {
+                    "file": "https://github.com/Universal-Team/Universal-Updater/releases/download/v2.5.1/Universal-Updater.3dsx",
+                    "message": "Downloading Universal-Updater.3dsx...",
+                    "output": "%3DSX%/Universal-Updater.3dsx",
+                    "type": "downloadFile"
+                }
+            ],
+            "Download Universal-Updater.cia (1 MiB)": [
+                {
+                    "file": "https://github.com/Universal-Team/Universal-Updater/releases/download/v2.5.1/Universal-Updater.cia",
+                    "message": "Downloading Universal-Updater.cia...",
+                    "output": "sdmc:/Universal-Updater.cia",
+                    "type": "downloadFile"
+                },
+                {
+                    "file": "/Universal-Updater.cia",
+                    "message": "Installing Universal-Updater.cia...",
+                    "type": "installCia"
+                },
+                {
+                    "file": "sdmc:/Universal-Updater.cia",
+                    "message": "Deleting Universal-Updater.cia.",
+                    "type": "deleteFile"
+                }
+            ],
+            "[nightly] Download Universal-Updater.3dsx": [
+                {
+                    "file": "https://github.com/Universal-Team/extras/raw/master/builds/Universal-Updater/Universal-Updater.3dsx",
+                    "message": "Downloading Universal-Updater.3dsx...",
+                    "output": "%3DSX%/Universal-Updater.3dsx",
+                    "type": "downloadFile"
+                }
+            ],
+            "[nightly] Download Universal-Updater.cia": [
+                {
+                    "file": "https://github.com/Universal-Team/extras/raw/master/builds/Universal-Updater/Universal-Updater.cia",
+                    "message": "Downloading Universal-Updater.cia...",
+                    "output": "sdmc:/Universal-Updater.cia",
+                    "type": "downloadFile"
+                },
+                {
+                    "file": "/Universal-Updater.cia",
+                    "message": "Installing Universal-Updater.cia...",
+                    "type": "installCia"
+                },
+                {
+                    "file": "sdmc:/Universal-Updater.cia",
+                    "message": "Deleting Universal-Updater.cia.",
+                    "type": "deleteFile"
+                }
+            ]
+        }
+    ],
+    "storeInfo": {
+        "title": "Universal-DB",
+        "author": "Universal-Team",
+        "description": "Universal-DB - An online database of 3DS and DS homebrew",
+        "url": "https://db.universal-team.net/unistore/universal-db-beta.unistore",
+        "file": "universal-db-beta.unistore",
+        "sheetURL": "https://db.universal-team.net/unistore/universal-db.t3x",
+        "sheet": "universal-db.t3x",
+        "bg_index": 1,
+        "bg_sheet": 0,
+        "revision": 91,
+        "version": 3
+    }
+}

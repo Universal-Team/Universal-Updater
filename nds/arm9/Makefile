@@ -24,10 +24,10 @@ CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 # all directories are relative to this makefile
 #---------------------------------------------------------------------------------
 BUILD		:=	build
-CORESOURCE	:=	../../shared/source ../../shared/source/Actions
-COREINCLUDE	:=	../../shared/include ../../shared/include/Actions
-SOURCES		:=	$(CORESOURCE) source source/Actions
-INCLUDES	:=	$(COREINCLUDE) include
+CORESOURCE	:=	../Universal-Core/source ../../source ../../source/actions
+COREINCLUDE	:=	../Universal-Core/include ../../include ../../include/actions
+SOURCES		:=	$(CORESOURCE) ../../source/nds ../../source/nds/data ../../source/nds/menus ../../source/nds/utils ../../source/store
+INCLUDES	:=	$(COREINCLUDE) ../../include/nds ../../include/nds/data ../../include/nds/menus ../../include/nds/utils ../../include/store
 MUSIC		:=
 
 #---------------------------------------------------------------------------------
@@ -51,13 +51,13 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lfat -lmm9 -lnds9
+LIBS	:=	-larchive -lbz2 -llzma -lm -lz -lfat -lnds9
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(LIBNDS)
+LIBDIRS	:=	../../libs $(PORTLIBS) $(LIBNDS)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

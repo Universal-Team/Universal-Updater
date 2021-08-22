@@ -8,3 +8,5 @@
 *.elf
 *.smdh
 *.bin
+3ds/build/sprites.h
+*.t3x
