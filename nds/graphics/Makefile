@@ -1,26 +1,18 @@
-
-
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
-
-include $(DEVKITARM)/ds_rules
-
 ifeq ($(OS),Windows_NT)
-BMP2DS 	?= bmp2ds.exe
+BMP2DS	?= bmp2ds.exe
 else
-BMP2DS 	?= bmp2ds
+BMP2DS	?= bmp2ds
 endif
 
-GRAPHICS	:= .
+GRAPHICS	:=	graphics
 
-OUT			:=	../nitrofiles/graphics
+OUT			:=	../nitrofiles
 
-INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
+INPUTS		:=	$(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
 
-TARGETS		:= $(INPUTS:.bmp=.gfx)
+TARGETS		:=	$(INPUTS:.bmp=.gfx)
 
-.PHONY	:	bmp2ds clean all directories
+.PHONY	:	all clean
 
 all	:	$(TARGETS)
 	@echo graphics ...
