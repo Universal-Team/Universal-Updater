@@ -27,6 +27,7 @@
 #ifndef _UNIVERSAL_UPDATER_HPP
 #define _UNIVERSAL_UPDATER_HPP
 
+#include "ConfigData.hpp"
 #include "GFXData.hpp"
 #include "screenCommon.hpp"
 #include "structs.hpp"
@@ -52,6 +53,7 @@ public:
 	bool Touched(const Structs::ButtonPos Pos) const;
 
 	static std::unique_ptr<UU> App;
+	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
 	

@@ -25,6 +25,7 @@
 */
 
 #include "Extracting.hpp"
+#include "Utils.hpp"
 #include <archive.hpp>
 #include <archive_entry.hpp>
 #include <regex>
@@ -65,6 +66,12 @@ void Extracting::FetchSize() {
 void Extracting::Handler() {
 	this->FetchSize(); // Fetch size.
 	if (this->CurState != Extracting::Error::Good) {
+		this->Done = true;
+		return;
+	}
+
+	if (Utils::AvailableSpace() < this->ExtractSize) {
+		this->CurState = Extracting::Error::OutOfSpace;
 		this->Done = true;
 		return;
 	}
@@ -168,4 +175,10 @@ void Extracting::Handler() {
 		archive_read_close(Archive);
 		archive_read_free(Archive);
 		this->Done = true;
+};
+
+
+/* TODO: Come up with a good way. */
+void Extracting::Cancel() {
+
 };

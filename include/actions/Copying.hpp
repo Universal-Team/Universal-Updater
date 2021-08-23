@@ -24,40 +24,48 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_EXTRACTING_HPP
-#define _UNIVERSAL_UPDATER_EXTRACTING_HPP
+#ifndef _UNIVERSAL_UPDATER_COPYING_HPP
+#define _UNIVERSAL_UPDATER_COPYING_HPP
 
 #include "Action.hpp"
+#include "BrowseData.hpp"
+#include <memory>
 #include <string>
 
 
-class Extracting : public Action {
+/*
+	Handles Copying of Files.
+*/
+class Copying : public Action {
 public:
-	enum class Error : uint8_t { Good = 0, Archive, Alloc, Find, ReadFile, OpenFile, WriteFile, OutOfSpace };
+	enum class Error : uint8_t { Good = 0, SourceNotExist, DestNotExist, WrittenNotRead, Unknown, OutOfSpace };
 
-	Extracting(const std::string &ArchivePath, const std::string &WantedFile, const std::string &OutputPath)
-		: ArchivePath(ArchivePath), WantedFile(WantedFile), OutputPath(OutputPath) { };
+	Copying(const std::string &Source, const std::string &Dest)
+		: Source(Source), Dest(Dest) { };
 
 	void Handler() override;
 
 	/* Some returns. */
-	std::pair<int, int> Files() const override { return { this->FilesExtracted, this->FileCount }; };
-	std::pair<uint32_t, uint32_t> Progress() const override { return { this->ExtractOffs, this->ExtractSize }; };
-	std::string CurrentFile() const override { return this->CFile; };
+	std::pair<int, int> Files() const override { return { 0, 0 }; };
+	std::pair<uint32_t, uint32_t> Progress() const override { return { this->CopyOffs, this->CopySize }; };
+	std::string CurrentFile() const override { return ""; };
 	uint8_t State() const override { return (uint8_t)this->CurState; };
-	Action::ActionType Type() const override { return Action::ActionType::Extracting; };
+	Action::ActionType Type() const override { return Action::ActionType::Copying; };
 	bool IsDone() const override { return this->Done; };
-
+	
 	void Cancel() override;
 private:
-	/* TODO: Maybe sort out what is really needed or so. That looks like a mess. */
-	int FilesExtracted = 0, FileCount = 0; // The amount of files that are extracted, the amount of files that need to be extracted.
-	uint32_t ExtractOffs = 0, ExtractSize = 0; // Current Extract offset, Size to extract completely.
-	std::string CFile = ""; // The current file which is being extracted.
+	uint32_t CopyOffs = 0, CopySize = 0;
 	Error CurState = Error::Good; // The current state of the operation.
 	bool Done = false; // Is the operation already done?
-	std::string ArchivePath = "", WantedFile = "", OutputPath = "";
-	void FetchSize(); // Fetch the File Count and the total extract size.
+	std::string Source = "", Dest = "";
+
+	/* Some Helpers. */
+	static constexpr int CopyBufSize = 0x8000;
+	uint32_t CopyBuf[CopyBufSize];
+	
+	void FileCopy(const std::string &Source, const std::string &Dest);
+	void DirCopy(const BrowseData::DirEntry &Entry, const std::string &Source, const std::string &Dest);
 };
 
 #endif

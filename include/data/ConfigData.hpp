@@ -24,45 +24,38 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _UNIVERSAL_UPDATER_CONFIG_DATA_HPP
+#define _UNIVERSAL_UPDATER_CONFIG_DATA_HPP
 
-#include "ConfigData.hpp"
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
-
-
-#include <memory>
-#include <nds.h>
+#include "JSON.hpp"
 #include <string>
 
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
-
+class ConfigData {
 public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
+	ConfigData() { this->Load(); };
+	void Load();
+	void Initialize();
+	void Sav();
 
-	void Draw();
-	int Handler(char *ARGV[]);
+private:
+	template <class T>
+	T Get(const std::string &Key, const T IfNotFound) {
+		if (this->CFG.is_discarded() || !this->CFG.contains(Key)) return IfNotFound;
 
-	bool Touched(const Structs::ButtonPos Pos) const;
+		return this->CFG.at(Key).get_ref<const T &>();
+	};
 
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
+	template <class T>
+	void Set(const std::string &Key, const T Data) {
+		if (!this->CFG.is_discarded()) this->CFG[Key] = Data;
+	};
 
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	/* Returns the language code of the system language. */
+	std::string SysLang(void) const;
+
+	bool ChangesMade = false;
+	nlohmann::json CFG = nullptr;
 };
 
 #endif

@@ -24,45 +24,38 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _UNIVERSAL_UPDATER_MOVING_HPP
+#define _UNIVERSAL_UPDATER_MOVING_HPP
 
-#include "ConfigData.hpp"
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
-
-
-#include <memory>
-#include <nds.h>
+#include "Action.hpp"
 #include <string>
 
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
-
+/*
+	Handles Moving / Renaming of Files.
+*/
+class Moving : public Action {
 public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
+	enum class Error : uint8_t { Good = 0, SourceNotExist, OutOfSpace };
 
-	void Draw();
-	int Handler(char *ARGV[]);
+	Moving(const std::string &OldName, const std::string &NewName)
+		: OldName(OldName), NewName(NewName) { };
 
-	bool Touched(const Structs::ButtonPos Pos) const;
+	void Handler() override;
 
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	/* Some returns. */
+	std::pair<int, int> Files() const override { return { 0, 0 }; };
+	std::pair<uint32_t, uint32_t> Progress() const override { return { 0, 0 }; };
+	std::string CurrentFile() const override { return ""; };
+	uint8_t State() const override { return (uint8_t)this->CurState; };
+	Action::ActionType Type() const override { return Action::ActionType::Moving; };
+	bool IsDone() const override { return this->Done; };
+	
+	void Cancel() override;
+private:
+	Error CurState = Error::Good; // The current state of the operation.
+	bool Done = false; // Is the operation already done?
+	std::string OldName = "", NewName = "";
 };
 
 #endif

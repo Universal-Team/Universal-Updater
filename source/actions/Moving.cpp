@@ -9,10 +9,10 @@
 *
 *   This program is distributed in the hope that it will be useful,
 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   MERCHANTABILITY or FITNESS FOR Archive PARTICULAR PURPOSE.  See the
 *   GNU General Public License for more details.
 *
-*   You should have received a copy of the GNU General Public License
+*   You should have received Archive copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *   Additional Terms 7.b and 7.c of GPLv3 apply to this file:
@@ -24,45 +24,36 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
-
-#include "ConfigData.hpp"
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
+#include "Moving.hpp"
+#include <cstring>
+#include <dirent.h>
+#include <unistd.h>
 
 
-#include <memory>
-#include <nds.h>
-#include <string>
+void Moving::Handler() {
+	if (access(this->OldName.c_str(), F_OK) != 0) {
+		this->CurState = Moving::Error::SourceNotExist;
+		this->Done = true;
+		return;
+	}
 
+	/* Make directories. */
+	for (char *Slashpos = strchr(this->NewName.c_str() + 1, '/'); Slashpos != NULL; Slashpos = strchr(Slashpos + 1, '/')) {
+		char Bak = *(Slashpos);
+		*(Slashpos) = '\0';
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+		mkdir(this->NewName.c_str(), 0x777);
 
-public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
+		*(Slashpos) = Bak;
+	}
 
-	void Draw();
-	int Handler(char *ARGV[]);
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	rename(this->OldName.c_str(), this->NewName.c_str());
+	this->CurState = Moving::Error::Good;
+	this->Done = true;
 };
 
-#endif
+
+/* TODO: Come up with a good way. */
+void Moving::Cancel() {
+
+};

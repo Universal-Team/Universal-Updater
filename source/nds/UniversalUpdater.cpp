@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include <dirent.h>
 #include <fat.h>
 #include "nitrofs.h"
 #include "UniversalUpdater.hpp"
@@ -58,6 +59,12 @@ void UU::Initialize(char *ARGV[]) {
 		}
 	}
 	
+	/* Create Directories. */
+	mkdir("/_nds", 0x777);
+	mkdir("/_nds/Universal-Updater", 0x777);
+	mkdir("/_nds/Universal-Updater/stores", 0x777);
+	mkdir("/_nds/Universal-Updater/shortcuts", 0x777);
+
 	/* Initialize graphics. */
 	Gui::init();
 	this->SmallFont = std::make_unique<Font>(std::vector<std::string>({ "/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/test.nftr" }));
@@ -71,6 +78,7 @@ void UU::Initialize(char *ARGV[]) {
 
 	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();
+	this->CData = std::make_unique<ConfigData>();
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
@@ -126,8 +134,10 @@ int UU::Handler(char *ARGV[]) {
 		this->_Tabs->Handler();
 	}
 
+	this->CData->Sav();
 	return 0;
 };
+
 
 bool UU::Touched(const Structs::ButtonPos Pos) const {
 	return ((this->T.px >= Pos.x && this->T.px <= (Pos.x + Pos.w)) && (this->T.py >= Pos.y && this->T.py <= (Pos.y + Pos.h)));

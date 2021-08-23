@@ -25,6 +25,7 @@
 */
 
 #include "UniversalUpdater.hpp"
+#include <dirent.h>
 
 
 /*
@@ -36,7 +37,14 @@ void UU::Initialize() {
 	Gui::init();
 	hidSetRepeatParameters(20, 8);
 
+	/* Create Directories. */
+	mkdir("sdmc:/3ds", 0x777);
+	mkdir("sdmc:/3ds/Universal-Updater", 0x777);
+	mkdir("sdmc:/3ds/Universal-Updater/stores", 0x777);
+	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0x777);
+	
 	this->GData = std::make_unique<GFXData>();
+	this->CData = std::make_unique<ConfigData>();
 	this->Store = std::make_unique<UniStore>("romfs:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
@@ -93,6 +101,7 @@ int UU::Handler() {
 		this->_Tabs->Handler();
 	}
 
+	this->CData->Sav();
 	Gui::exit();
 	gfxExit();
 	romfsExit();

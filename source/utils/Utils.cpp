@@ -24,45 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
-
-#include "ConfigData.hpp"
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
+#include "Utils.hpp"
+#include <sys/stat.h>
+#include <sys/statvfs.h>
 
 
-#include <memory>
-#include <nds.h>
-#include <string>
+uint64_t Utils::AvailableSpace() {
+	struct statvfs ST;
 
+	#ifdef _3DS
+		statvfs("sdmc:/", &ST);
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+	#elif ARM9
+		statvfs("sd:/", &ST);
+	#endif
 
-public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
-
-	void Draw();
-	int Handler(char *ARGV[]);
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	return (uint64_t)ST.f_bsize * (uint64_t)ST.f_bavail;
 };
-
-#endif

@@ -34,7 +34,21 @@
 
 class UniStore {
 public:
+	struct Info {
+		std::string Title;
+		std::string Author;
+		std::string URL;
+		std::string File; // Used to check, if File does NOT contain a slash or so.
+		std::string FileName;
+		std::string Description;
+		int Version;
+		int Revision;
+		int StoreSize;
+	};
+
 	static constexpr int UNISTORE_VERSION = 4;
+	static Info GetInfo(const std::string &File, const std::string &FName);
+	static std::vector<Info> GetUniStoreInfo(const std::string &Path);
 
 	UniStore(const std::string &FullPath, const std::string &FileName);
 	~UniStore();

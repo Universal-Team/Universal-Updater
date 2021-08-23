@@ -24,7 +24,75 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "BrowseData.hpp"
 #include "UniStore.hpp"
+#include <unistd.h>
+
+
+/*
+	Return UniStore info.
+
+	const std::string &File: Const Reference to the path of the file.
+	const std::string &FName: Const Reference to the filename, without path.
+*/
+UniStore::Info UniStore::GetInfo(const std::string &File, const std::string &FName) {
+	UniStore::Info Temp = { "", "", "", "", FName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, entries.
+
+	if (FName.length() > 4) {
+		if(*(uint32_t *)(FName.c_str() + FName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
+	}
+
+	nlohmann::json JSON;
+
+	FILE *Tmp = fopen(File.c_str(), "rt");
+
+	if (Tmp) {
+		JSON = nlohmann::json::parse(Tmp, nullptr, false);
+		fclose(Tmp);
+	}
+
+	if (JSON.is_discarded()) JSON = { };
+
+	if (!JSON.contains("storeInfo")) return Temp; // storeInfo does not exist.
+
+	/* Fetch Info. */
+	if (JSON["storeInfo"].contains("title") && JSON["storeInfo"]["title"].is_string()) Temp.Title = JSON["storeInfo"]["title"];
+	if (JSON["storeInfo"].contains("file") && JSON["storeInfo"]["file"].is_string()) Temp.File = JSON["storeInfo"]["file"];
+	if (JSON["storeInfo"].contains("author") && JSON["storeInfo"]["author"].is_string()) Temp.Author = JSON["storeInfo"]["author"];
+	if (JSON["storeInfo"].contains("url") && JSON["storeInfo"]["url"].is_string()) Temp.URL = JSON["storeInfo"]["url"];
+	if (JSON["storeInfo"].contains("description") && JSON["storeInfo"]["description"].is_string()) Temp.Description = JSON["storeInfo"]["description"];
+	if (JSON["storeInfo"].contains("version") && JSON["storeInfo"]["version"].is_number()) Temp.Version = JSON["storeInfo"]["version"];
+	if (JSON["storeInfo"].contains("revision") && JSON["storeInfo"]["revision"].is_number()) Temp.Revision = JSON["storeInfo"]["revision"];
+	if (JSON.contains("storeContent")) Temp.StoreSize = JSON["storeContent"].size();
+
+	return Temp;
+};
+
+
+/*
+	Return UniStore info vector.
+
+	const std::string &Path: Const Reference to the path, where to check.
+*/
+std::vector<UniStore::Info> UniStore::GetUniStoreInfo(const std::string &Path) {
+	std::vector<UniStore::Info> _Info;
+	std::vector<BrowseData::DirEntry> DirContents;
+
+	if (access(Path.c_str(), F_OK) != 0) return { }; // Folder does not exist.
+
+	std::unique_ptr<BrowseData> BData = std::make_unique<BrowseData>(Path, std::vector<std::string>({ "unistore" }));
+	DirContents = BData->GetDirEntries();
+
+	for(uint Idx = 0; Idx < DirContents.size(); Idx++) {
+		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
+		if ((Path + DirContents[Idx].Name).find(".unistore") != std::string::npos) _Info.push_back( UniStore::GetInfo(Path + DirContents[Idx].Name, DirContents[Idx].Name) );
+	}
+
+	return _Info;
+};
+
+
+
 
 
 /*

@@ -32,7 +32,7 @@
 
 class Action {
 public:
-	enum class ActionType : uint8_t { None = 0, Extracting = 1 };
+	enum class ActionType : uint8_t { None = 0, Extracting, Moving, Copying };
 
 	virtual void Handler() = 0; // The main function that handles things.
 
@@ -42,6 +42,7 @@ public:
 	virtual uint8_t State() const = 0; // The current state.
 	virtual ActionType Type() const = 0; // The Action Type.
 	virtual bool IsDone() const = 0; // If the action is done or nah.
+	virtual void Cancel() = 0; // Call this to cancel the action.
 };
 
 #endif
