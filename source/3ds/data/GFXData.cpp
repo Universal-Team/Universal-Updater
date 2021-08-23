@@ -24,42 +24,41 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
-
+#include "Common.hpp"
 #include "GFXData.hpp"
-#include "screenCommon.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
 
 
-#include <3ds.h>
-#include <memory>
-#include <string>
-
-
-class UU {
-public:
-	void Initialize();
-	void ScanInput();
-
-	void Draw();
-	int Handler();
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	
-	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
-private:
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+GFXData::GFXData() {
+	Gui::loadSheet("romfs:/gfx/sprites.t3x", this->Sprites);
 };
 
-#endif
+
+GFXData::~GFXData() {
+	Gui::unloadSheet(this->Sprites);
+};
+
+
+void GFXData::DrawTop() {
+	Gui::ScreenDraw(Top);
+	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
+	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTLINE);
+};
+
+
+void GFXData::DrawBottom() {
+	Gui::ScreenDraw(Bottom);
+	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
+};
+
+
+void GFXData::DrawSprite(const int Idx, const int X, const int Y) {
+	Gui::DrawSprite(this->Sprites, Idx, X, Y);
+};
+
+
+void GFXData::DrawSpriteBlend(const int Idx, const int X, const int Y, const uint32_t Color) {
+	C2D_ImageTint Tint;
+	C2D_PlainImageTint(&Tint, Color, 1.0f);
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(this->Sprites, Idx), X, Y, 0.5f, &Tint);
+};

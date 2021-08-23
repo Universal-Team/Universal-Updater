@@ -24,42 +24,31 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _UNIVERSAL_UPDATER_TABS_HPP
+#define _UNIVERSAL_UPDATER_TABS_HPP
 
-#include "GFXData.hpp"
-#include "screenCommon.hpp"
 #include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
+#include <vector>
 
 
-#include <3ds.h>
-#include <memory>
-#include <string>
-
-
-class UU {
+/* TODO: Should the actual Tabs be handled here as well? Or inside UniversalUpdater? */
+class Tabs {
 public:
-	void Initialize();
-	void ScanInput();
+	enum class Tab : uint8_t { EntryInfo = 0, DownloadList, QueueSystem, Search, Sort, Settings };
 
 	void Draw();
-	int Handler();
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	
-	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	void Handler();
 private:
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+	Tab ActiveTab = Tab::EntryInfo, LastTab = Tab::EntryInfo;
+
+	static constexpr Structs::ButtonPos TabPos[6] = {
+		{ 0, 0, 40, 40 },
+		{ 0, 40, 40, 40 },
+		{ 0, 80, 40, 40 },
+		{ 0, 120, 40, 40 },
+		{ 0, 160, 40, 40 },
+		{ 0, 200, 40, 40 }
+	};
 };
 
 #endif

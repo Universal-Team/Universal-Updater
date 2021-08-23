@@ -43,7 +43,7 @@ public:
 	void Draw();
 	int Handler(char *ARGV[]);
 
-	static Font *font;
+	std::unique_ptr<Font> SmallFont = nullptr;
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<UniStore> Store = nullptr;
 

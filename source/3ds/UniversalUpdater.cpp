@@ -34,8 +34,12 @@ void UU::Initialize() {
 	romfsInit();
 	gfxInitDefault();
 	Gui::init();
+	hidSetRepeatParameters(20, 8);
 
+	this->GData = std::make_unique<GFXData>();
 	this->Store = std::make_unique<UniStore>("romfs:/test.unistore", "test.unistore");
+
+	this->_Tabs = std::make_unique<Tabs>();
 };
 
 
@@ -54,7 +58,24 @@ void UU::ScanInput() {
 	Draws Universal-Updater's UI.
 */
 void UU::Draw() {
-	
+	Gui::clearTextBufs();
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+
+	this->GData->DrawTop();
+
+	Gui::DrawStringCentered(0, 3, 0.5f, TEXT_COLOR, "Universal-Updater");
+	Gui::DrawStringCentered(0, 30, 0.45f, TEXT_COLOR, "Title: " + this->Store->GetEntryTitle(0));
+	Gui::DrawStringCentered(0, 50, 0.45f, TEXT_COLOR, "Author: " + this->Store->GetEntryAuthor(0));
+	Gui::DrawStringCentered(0, 70, 0.45f, TEXT_COLOR, "Description: " + this->Store->GetEntryDescription(0));
+	Gui::DrawStringCentered(0, 90, 0.45f, TEXT_COLOR, "License: " + this->Store->GetEntryLicense(0));
+	Gui::DrawStringCentered(0, 110, 0.45f, TEXT_COLOR, "Index: " + std::to_string(0));
+
+	this->GData->DrawBottom();
+	this->_Tabs->Draw();
+
+	C3D_FrameEnd(0);
 };
 
 
@@ -65,7 +86,9 @@ int UU::Handler() {
 	this->Initialize();
 
 	while(aptMainLoop() && !this->Exiting) {
-
+		this->Draw();
+		this->ScanInput();
+		this->_Tabs->Handler();
 	}
 
 	Gui::exit();
@@ -73,4 +96,9 @@ int UU::Handler() {
 	romfsExit();
 
 	return 0;
+};
+
+
+bool UU::Touched(const Structs::ButtonPos Pos) const {
+	return ((this->T.px >= Pos.x && this->T.px <= (Pos.x + Pos.w)) && (this->T.py >= Pos.y && this->T.py <= (Pos.y + Pos.h)));
 };

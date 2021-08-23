@@ -24,42 +24,35 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _UNIVERSAL_UPDATER_GFX_DATA_HPP
+#define _UNIVERSAL_UPDATER_GFX_DATA_HPP
 
-#include "GFXData.hpp"
-#include "screenCommon.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
-
-
-#include <3ds.h>
-#include <memory>
+#include "sprites.h"
+#include <citro2d.h>
 #include <string>
 
+/* For now hardcoded; TODO: Themes. */
+#define BAR_COLOR		C2D_Color32(50, 73, 98, 255)
+#define BAR_OUTLINE 	C2D_Color32(25, 30, 53, 255)
+#define BG_COLOR		C2D_Color32(38, 44, 77, 255)
+#define TEXT_COLOR		C2D_Color32(255, 255, 255, 255)
+#define TABS_SELECTED	C2D_Color32(108, 130, 155, 255)
+#define TABS_UNSELECTED	C2D_Color32(77, 101, 128, 255)
+#define TAB_ICON_COLOR	C2D_Color32(173, 204, 239, 255)
 
-class UU {
+
+class GFXData {
 public:
-	void Initialize();
-	void ScanInput();
+	GFXData();
+	~GFXData();
 
-	void Draw();
-	int Handler();
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	
-	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	void DrawTop();
+	void DrawBottom();
+	void DrawSprite(const int Idx, const int X, const int Y);
+	void DrawSpriteBlend(const int Idx, const int X, const int Y, const uint32_t Color = TAB_ICON_COLOR);
 private:
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+	C2D_SpriteSheet Sprites = nullptr;
+	C2D_Font Font = nullptr;
 };
 
 #endif

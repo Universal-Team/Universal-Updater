@@ -30,7 +30,6 @@
 #include "graphics.hpp"
 #include "tonccpy.h"
 
-Font *UU::font;
 
 /*
 	Initialize everything as needed.
@@ -59,16 +58,16 @@ void UU::Initialize(char *ARGV[]) {
 	
 	/* Initialize graphics. */
 	Graphics::init();
-	font = new Font({std::string("/_nds/Universal-Updater/font.nftr"), "nitro:/graphics/font/test.nftr"});
+	this->SmallFont = std::make_unique<Font>(std::vector<std::string>({ "/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/test.nftr" }));
 
-	u16 palette[] = {
+	constexpr uint16_t Palette[] = {
 		0x0000,
 		0xB9CE,
 		0xD6B5,
-		0xFFFF,
+		0xFFFF
 	};
-	tonccpy(BG_PALETTE, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	tonccpy(BG_PALETTE, Palette, sizeof(Palette));
+	tonccpy(BG_PALETTE_SUB, Palette, sizeof(Palette));
 
 	/* Load UniStore. */
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
@@ -101,14 +100,14 @@ int UU::Handler(char *ARGV[]) {
 	this->Initialize(ARGV);
 
 	if (this->Store) {
-		this->font->print("Title: " + this->Store->GetEntryTitle(0), 0, font->height() * 0, false);
-		this->font->print("Author: " + this->Store->GetEntryAuthor(0), 0, font->height() * 1, false);
-		this->font->print("Description: " + this->Store->GetEntryDescription(0), 0, font->height() * 2, false);
-		this->font->print("License: " + this->Store->GetEntryLicense(0), 0, font->height() * 3, false);
-		this->font->print("Index: " + std::to_string(0), 0, font->height() * 4, false);
+		this->SmallFont->print("Title: " + this->Store->GetEntryTitle(0), 0, this->SmallFont->height() * 0, false);
+		this->SmallFont->print("Author: " + this->Store->GetEntryAuthor(0), 0, this->SmallFont->height() * 1, false);
+		this->SmallFont->print("Description: " + this->Store->GetEntryDescription(0), 0, this->SmallFont->height() * 2, false);
+		this->SmallFont->print("License: " + this->Store->GetEntryLicense(0), 0, this->SmallFont->height() * 3, false);
+		this->SmallFont->print("Index: " + std::to_string(0), 0, this->SmallFont->height() * 4, false);
 	}
 
-	this->font->update();
+	this->SmallFont->update();
 
 	while(!this->Exiting) {
 		swiWaitForVBlank();
