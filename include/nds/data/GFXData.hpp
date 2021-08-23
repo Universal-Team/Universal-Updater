@@ -24,43 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _UNIVERSAL_UPDATER_GFX_DATA_HPP
+#define _UNIVERSAL_UPDATER_GFX_DATA_HPP
 
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
+#include "gui.hpp"
+#include "image.hpp"
+#include "sprites.hpp"
 
-/* Menus. */
-#include "Tabs.hpp"
-
-
-#include <memory>
-#include <nds.h>
 #include <string>
+#include <vector>
+
+/* For now hardcoded; TODO: Themes. */
+#define BAR_COLOR		0x10
+#define BAR_OUTLINE 	0x11
+#define BG_COLOR		0x12
+#define TEXT_COLOR		0x13
+#define TABS_SELECTED	0x14
+#define TABS_UNSELECTED	0x15
+#define TAB_ICON_COLOR	0x16
 
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
-
+class GFXData {
 public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
+	GFXData();
+	~GFXData();
 
-	void Draw();
-	int Handler(char *ARGV[]);
+	void DrawTop();
+	void DrawBottom();
+	void DrawSprite(const int Idx, const int X, const int Y);
+	void DrawSpriteBlend(const int Idx, const int X, const int Y, int Color = TAB_ICON_COLOR);
+private:
+	std::vector<Image> Sprites;
 
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	bool top = false;
 };
 
 #endif

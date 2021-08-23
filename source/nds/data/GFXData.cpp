@@ -24,43 +24,55 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
-
-#include "font.hpp"
 #include "GFXData.hpp"
-#include "structs.hpp"
-#include "UniStore.hpp"
 
-/* Menus. */
-#include "Tabs.hpp"
+#include "Common.hpp"
+#include "gui.hpp"
 
-
-#include <memory>
 #include <nds.h>
-#include <string>
 
 
-class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
+GFXData::GFXData() {
+	const std::string Images[] = {
+		"nitro:/graphics/download.gfx",
+		"nitro:/graphics/info.gfx",
+		"nitro:/graphics/noIcon.gfx",
+		"nitro:/graphics/queue.gfx",
+		"nitro:/graphics/search.gfx",
+		"nitro:/graphics/settings.gfx",
+		"nitro:/graphics/sort.gfx"
+	};
 
-public:
-	void Initialize(char *ARGV[]);
-	void ScanInput();
-
-	void Draw();
-	int Handler(char *ARGV[]);
-
-	bool Touched(const Structs::ButtonPos Pos) const;
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
+	for (const std::string &Img : Images)
+		this->Sprites.emplace_back(Image(Img));
 };
 
-#endif
+
+GFXData::~GFXData() { };
+
+
+void GFXData::DrawTop() {
+	Gui::ScreenDraw(true);
+	Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
+	Gui::Draw_Rect(0, 26, 320, 214, BG_COLOR);
+	Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTLINE);
+};
+
+
+void GFXData::DrawBottom() {
+	Gui::ScreenDraw(false);
+	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
+};
+
+
+void GFXData::DrawSprite(const int Idx, const int X, const int Y) {
+	if (Idx < (int)this->Sprites.size()) this->Sprites[Idx].draw(X, Y, false);
+};
+
+
+void GFXData::DrawSpriteBlend(const int Idx, const int X, const int Y, int color) {
+	if (Idx < (int)this->Sprites.size()) {
+		if (color) color -= this->Sprites[Idx].palOfs() + 1;
+		this->Sprites[Idx].drawSpecial(X, Y, 1.0f, 1.0f, color, false);
+	}
+};

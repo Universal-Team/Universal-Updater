@@ -55,9 +55,9 @@ CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 #---------------------------------------------------------------------------------
 TARGET		:=	Universal-Updater
 BUILD		:=	build
-SOURCES		:=	Universal-Core ../source ../source/3ds ../source/3ds/data ../source/3ds/menus ../source/actions ../source/store
+SOURCES		:=	Universal-Core ../source ../source/3ds ../source/3ds/data ../source/3ds/menus ../source/actions ../source/menus ../source/store
 DATA		:=	data
-INCLUDES	:=	Universal-Core ../include ../include/3ds ../include/3ds/data ../include/3ds/menus ../include/actions ../include/store
+INCLUDES	:=	Universal-Core ../include ../include/3ds ../include/3ds/data ../include/3ds/menus ../include/actions ../include/menus ../include/store
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx

@@ -41,7 +41,7 @@ void Tabs::Draw() {
 	UU::App->GData->DrawSpriteBlend(sprites_sort_idx, this->TabPos[4].x, this->TabPos[4].y);
 	UU::App->GData->DrawSpriteBlend(sprites_settings_idx, this->TabPos[5].x, this->TabPos[5].y);
 
-	Gui::Draw_Rect(40, 0, 1, 240, BAR_OUTLINE);
+	// Gui::Draw_Rect(40, 0, 1, 240, BAR_OUTLINE);
 };
 
 

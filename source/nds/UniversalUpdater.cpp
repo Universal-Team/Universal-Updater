@@ -27,7 +27,7 @@
 #include <fat.h>
 #include "nitrofs.h"
 #include "UniversalUpdater.hpp"
-#include "graphics.hpp"
+#include "gui.hpp"
 #include "tonccpy.h"
 
 
@@ -35,6 +35,8 @@
 	Initialize everything as needed.
 */
 void UU::Initialize(char *ARGV[]) {
+	keysSetRepeat(20, 8);
+
 	if (!fatInitDefault()) {
 		consoleDemoInit();
 		iprintf("FAT init failed!\n");
@@ -57,20 +59,21 @@ void UU::Initialize(char *ARGV[]) {
 	}
 	
 	/* Initialize graphics. */
-	Graphics::init();
+	Gui::init();
 	this->SmallFont = std::make_unique<Font>(std::vector<std::string>({ "/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/test.nftr" }));
 
 	constexpr uint16_t Palette[] = {
-		0x0000,
-		0xB9CE,
-		0xD6B5,
-		0xFFFF
+		0x0000, 0xB9CE, 0xD6B5, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+		0xB126, 0x9883, 0xA4A5, 0xFFFF, 0xCE0D, 0xC189, 0xF735
 	};
 	tonccpy(BG_PALETTE, Palette, sizeof(Palette));
 	tonccpy(BG_PALETTE_SUB, Palette, sizeof(Palette));
 
-	/* Load UniStore. */
+	/* Load classes. */
+	this->GData = std::make_unique<GFXData>();
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
+
+	this->_Tabs = std::make_unique<Tabs>();
 };
 
 
@@ -82,6 +85,8 @@ void UU::ScanInput() {
 	this->Down = keysDown();
 	this->Repeat = keysDownRepeat();
 	touchRead(&this->T);
+	this->T.px = this->T.px * 5 / 4;
+	this->T.py = this->T.py * 5 / 4;
 };
 
 
@@ -89,7 +94,21 @@ void UU::ScanInput() {
 	Draws Universal-Updater's UI.
 */
 void UU::Draw() {
-	
+	this->GData->DrawTop();
+
+	this->SmallFont->DrawString(0, 3, "Universal-Updater", Alignment::center);
+	this->SmallFont->DrawString(0, 30, "Title: " + this->Store->GetEntryTitle(0), Alignment::center);
+	this->SmallFont->DrawString(0, 50, "Author: " + this->Store->GetEntryAuthor(0), Alignment::center);
+	this->SmallFont->DrawString(0, 70, "Description: " + this->Store->GetEntryDescription(0), Alignment::center);
+	this->SmallFont->DrawString(0, 90, "License: " + this->Store->GetEntryLicense(0), Alignment::center);
+	this->SmallFont->DrawString(0, 110, "Index: " + std::to_string(0), Alignment::center);
+
+	this->SmallFont->update(true);
+
+	this->GData->DrawBottom();
+	this->_Tabs->Draw();
+
+	this->SmallFont->update(false);
 };
 
 
@@ -99,19 +118,17 @@ void UU::Draw() {
 int UU::Handler(char *ARGV[]) {
 	this->Initialize(ARGV);
 
-	if (this->Store) {
-		this->SmallFont->print("Title: " + this->Store->GetEntryTitle(0), 0, this->SmallFont->height() * 0, false);
-		this->SmallFont->print("Author: " + this->Store->GetEntryAuthor(0), 0, this->SmallFont->height() * 1, false);
-		this->SmallFont->print("Description: " + this->Store->GetEntryDescription(0), 0, this->SmallFont->height() * 2, false);
-		this->SmallFont->print("License: " + this->Store->GetEntryLicense(0), 0, this->SmallFont->height() * 3, false);
-		this->SmallFont->print("Index: " + std::to_string(0), 0, this->SmallFont->height() * 4, false);
-	}
-
-	this->SmallFont->update();
-
-	while(!this->Exiting) {
+	while (!this->Exiting) {
 		swiWaitForVBlank();
+
+		this->Draw();
+		this->ScanInput();
+		this->_Tabs->Handler();
 	}
 
 	return 0;
+};
+
+bool UU::Touched(const Structs::ButtonPos Pos) const {
+	return ((this->T.px >= Pos.x && this->T.px <= (Pos.x + Pos.w)) && (this->T.py >= Pos.y && this->T.py <= (Pos.y + Pos.h)));
 };

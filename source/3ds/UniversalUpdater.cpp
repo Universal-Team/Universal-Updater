@@ -86,6 +86,8 @@ int UU::Handler() {
 	this->Initialize();
 
 	while(aptMainLoop() && !this->Exiting) {
+		gspWaitForVBlank();
+
 		this->Draw();
 		this->ScanInput();
 		this->_Tabs->Handler();

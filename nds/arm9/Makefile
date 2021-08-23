@@ -24,10 +24,10 @@ CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 # all directories are relative to this makefile
 #---------------------------------------------------------------------------------
 BUILD		:=	build
-CORESOURCE	:=	../Universal-Core/source ../../source ../../source/actions
-COREINCLUDE	:=	../Universal-Core/include ../../include ../../include/actions
-SOURCES		:=	$(CORESOURCE) ../../source/nds ../../source/nds/data ../../source/nds/menus ../../source/nds/utils ../../source/store
-INCLUDES	:=	$(COREINCLUDE) ../../include/nds ../../include/nds/data ../../include/nds/menus ../../include/nds/utils ../../include/store
+CORESOURCE	:=	../Universal-Core/source ../../source ../../source/actions ../../source/menus ../../source/store
+COREINCLUDE	:=	../Universal-Core/include ../../include ../../include/actions ../../include/menus ../../include/store
+SOURCES		:=	$(CORESOURCE) ../../source/nds ../../source/nds/data ../../source/nds/menus ../../source/nds/utils
+INCLUDES	:=	$(COREINCLUDE) ../../include/nds ../../include/nds/data ../../include/nds/menus ../../include/nds/utils
 MUSIC		:=
 
 #---------------------------------------------------------------------------------
