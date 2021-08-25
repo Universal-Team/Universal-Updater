@@ -67,7 +67,6 @@ void UU::Initialize(char *ARGV[]) {
 
 	/* Initialize graphics. */
 	Gui::init();
-	this->SmallFont = std::make_unique<Font>(std::vector<std::string>({ "/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/test.nftr" }));
 
 	constexpr uint16_t Palette[] = {
 		0x0000, 0xB9CE, 0xD6B5, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -104,30 +103,28 @@ void UU::ScanInput() {
 	Draws Universal-Updater's UI.
 */
 void UU::Draw() {
+	Font::clear(true);
+
 	this->GData->DrawTop();
 
 	/* Ensure it isn't a nullptr. */
 	if (this->Store) {
-		this->SmallFont->DrawString(0, 3, this->Store->GetUniStoreTitle(), Alignment::center);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, this->Store->GetUniStoreTitle(), 390);
 		this->TList->Draw();
 		this->_Tabs->DrawTop();
 
-		this->SmallFont->DrawString(0, 30, "Title: " + this->Store->GetEntryTitle(0), Alignment::center);
-		this->SmallFont->DrawString(0, 50, "Author: " + this->Store->GetEntryAuthor(0), Alignment::center);
-		this->SmallFont->DrawString(0, 70, "Description: " + this->Store->GetEntryDescription(0), Alignment::center);
-		this->SmallFont->DrawString(0, 90, "License: " + this->Store->GetEntryLicense(0), Alignment::center);
-		this->SmallFont->DrawString(0, 110, "Index: " + std::to_string(0), Alignment::center);
-
 	} else {
-		this->SmallFont->DrawString(0, 3, "Invalid UniStore", Alignment::center);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, "Invalid UniStore", 390);
 	}
 
-	this->SmallFont->update(true);
+	Font::update(true);
+
+	Font::clear(false);
 
 	this->GData->DrawBottom();
 	this->_Tabs->DrawBottom();
 
-	this->SmallFont->update(false);
+	Font::update(false);
 };
 
 
@@ -137,15 +134,19 @@ void UU::Draw() {
 int UU::Handler(char *ARGV[]) {
 	this->Initialize(ARGV);
 
+	// TODO: It only redraws on button press, forcing an initial draw for now
+	this->Draw();
+
 	while (!this->Exiting) {
 		swiWaitForVBlank();
 
-		this->Draw();
 		this->ScanInput();
 
 		/* Handle Top List if possible. */
 		if (this->_Tabs->HandleTopScroll()) this->TList->Handler();
 		this->_Tabs->Handler(); // Tabs are always handled.
+
+		if (this->Repeat) this->Draw();
 	}
 
 	this->CData->Sav();

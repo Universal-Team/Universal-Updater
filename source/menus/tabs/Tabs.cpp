@@ -89,7 +89,7 @@ void Tabs::Handler() {
 			break;
 			
 		case Tab::QueueSystem:
-		case Tab::Search:	
+		case Tab::Search:
 		case Tab::Sort:
 		case Tab::Settings:
 			break;

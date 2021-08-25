@@ -41,8 +41,8 @@ void TopList::Draw() {
 				/* TODO: Handle Icons. */
 				/* TODO: Handle Update display. */
 
-				Gui::DrawStringCentered(29, this->List[Idx].y + 5, 0.6f, TEXT_COLOR, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
-				Gui::DrawStringCentered(29, this->List[Idx].y + 24, 0.6f, TEXT_COLOR, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
+				Gui::DrawStringCentered(29, this->List[Idx].y + 5, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
+				Gui::DrawStringCentered(29, this->List[Idx].y + 24, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
 			}
 		}
 	}

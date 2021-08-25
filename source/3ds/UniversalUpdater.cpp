@@ -77,12 +77,12 @@ void UU::Draw() {
 
 	/* Ensure it isn't a nullptr. */
 	if (this->Store) {
-		Gui::DrawStringCentered(0, 3, 0.6f, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, this->Store->GetUniStoreTitle(), 390);
 		this->TList->Draw();
 		this->_Tabs->DrawTop();
 
 	} else {
-		Gui::DrawStringCentered(0, 3, 0.6f, TEXT_COLOR, "Invalid UniStore", 390);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, "Invalid UniStore", 390);
 	}
 
 	this->GData->DrawBottom();

@@ -40,6 +40,13 @@
 #define TABS_UNSELECTED	C2D_Color32(77, 101, 128, 255)
 #define TAB_ICON_COLOR	C2D_Color32(173, 204, 239, 255)
 
+/* Text colors. */
+#define TEXT_WHITE	C2D_Color32(255, 255, 255, 255)
+
+/* Text sizes. */
+#define TEXT_LARGE	0.6f
+#define TEXT_MEDIUM	0.5f
+#define TEXT_SMALL	0.4f
 
 class GFXData {
 public:

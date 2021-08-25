@@ -61,7 +61,6 @@ public:
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Font> SmallFont = nullptr;
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 
 	uint32_t Down = 0, Repeat = 0;

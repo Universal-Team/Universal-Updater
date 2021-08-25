@@ -43,6 +43,13 @@
 #define TABS_UNSELECTED	0x15
 #define TAB_ICON_COLOR	0x16
 
+/* Text colors. */
+#define TEXT_WHITE	Palette::white
+
+/* Text sizes. */
+#define TEXT_LARGE	1.0f
+#define TEXT_MEDIUM	0.8f
+#define TEXT_SMALL	0.7f
 
 class GFXData {
 public:
@@ -51,8 +58,11 @@ public:
 
 	void DrawTop();
 	void DrawBottom();
+	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);
 	void DrawSpriteBlend(const int Idx, const int X, const int Y, int Color = TAB_ICON_COLOR);
+	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
+	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
 private:
 	std::vector<Image> Sprites;
 

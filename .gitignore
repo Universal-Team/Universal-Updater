@@ -10,5 +10,6 @@
 *.bin
 3ds/build/sprites.h
 *.t3x
+*.gfx
 *.DS_Store
 *.vscode

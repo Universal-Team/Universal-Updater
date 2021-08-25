@@ -37,16 +37,16 @@ void EntryInfo::Draw() {
 		Gui::Draw_Rect(40, 36, 280, 1, BAR_OUTLINE);
 
 		/* Basic Info. */
-		Gui::DrawStringCentered(17, 0, 0.6, TEXT_COLOR, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 273, 0);
-		Gui::DrawStringCentered(17, 20, 0.4, TEXT_COLOR, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 273, 0);
-		Gui::DrawStringCentered(17, 50, 0.4, TEXT_COLOR, UU::App->Store->GetEntryDescription(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0, nullptr, C2D_WordWrap);
+		Gui::DrawStringCentered(17, 0, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 273, 0);
+		Gui::DrawStringCentered(17, 20, TEXT_SMALL, TEXT_WHITE, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 273, 0);
+		Gui::DrawStringCentered(17, 50, TEXT_SMALL, TEXT_WHITE, UU::App->Store->GetEntryDescription(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0, nullptr, C2D_WordWrap);
 
 		/* Other Info. */
-		Gui::DrawString(53, 130, 0.45, TEXT_COLOR, "Version: " + UU::App->Store->GetEntryVersion(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
-		Gui::DrawString(53, 145, 0.45, TEXT_COLOR, "Category: " + Utils::VectorToString(UU::App->Store->GetEntryCategories(UU::App->Store->Indexes[UU::App->Store->SelectedIndex])), 248, 0);
-		Gui::DrawString(53, 160, 0.45, TEXT_COLOR, "Console: " + Utils::VectorToString(UU::App->Store->GetEntryConsoles(UU::App->Store->Indexes[UU::App->Store->SelectedIndex])), 248, 0);
-		Gui::DrawString(53, 175, 0.45, TEXT_COLOR, "Last Updated: " + UU::App->Store->GetEntryLastUpdated(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
-		Gui::DrawString(53, 190, 0.45, TEXT_COLOR, "License: " + UU::App->Store->GetEntryLicense(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
+		Gui::DrawString(53, 130, TEXT_MEDIUM, TEXT_WHITE, "Version: " + UU::App->Store->GetEntryVersion(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
+		Gui::DrawString(53, 145, TEXT_MEDIUM, TEXT_WHITE, "Category: " + Utils::VectorToString(UU::App->Store->GetEntryCategories(UU::App->Store->Indexes[UU::App->Store->SelectedIndex])), 248, 0);
+		Gui::DrawString(53, 160, TEXT_MEDIUM, TEXT_WHITE, "Console: " + Utils::VectorToString(UU::App->Store->GetEntryConsoles(UU::App->Store->Indexes[UU::App->Store->SelectedIndex])), 248, 0);
+		Gui::DrawString(53, 175, TEXT_MEDIUM, TEXT_WHITE, "Last Updated: " + UU::App->Store->GetEntryLastUpdated(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
+		Gui::DrawString(53, 190, TEXT_MEDIUM, TEXT_WHITE, "License: " + UU::App->Store->GetEntryLicense(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]), 248, 0);
 	}
 };
 
