@@ -48,8 +48,11 @@ public:
 
 	void DrawTop();
 	void DrawBottom();
+	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);
 	void DrawSpriteBlend(const int Idx, const int X, const int Y, const uint32_t Color = TAB_ICON_COLOR);
+	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
+	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
 private:
 	C2D_SpriteSheet Sprites = nullptr;
 	C2D_Font Font = nullptr;

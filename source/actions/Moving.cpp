@@ -25,8 +25,7 @@
 */
 
 #include "Moving.hpp"
-#include <cstring>
-#include <dirent.h>
+#include "Utils.hpp"
 #include <unistd.h>
 
 
@@ -38,14 +37,8 @@ void Moving::Handler() {
 	}
 
 	/* Make directories. */
-	for (char *Slashpos = strchr(this->NewName.c_str() + 1, '/'); Slashpos != NULL; Slashpos = strchr(Slashpos + 1, '/')) {
-		char Bak = *(Slashpos);
-		*(Slashpos) = '\0';
-
-		mkdir(this->NewName.c_str(), 0x777);
-
-		*(Slashpos) = Bak;
-	}
+	Utils::MakeDirs(this->NewName);
+	
 
 	rename(this->OldName.c_str(), this->NewName.c_str());
 	this->CurState = Moving::Error::Good;

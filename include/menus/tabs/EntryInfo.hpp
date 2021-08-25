@@ -24,31 +24,19 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_TABS_HPP
-#define _UNIVERSAL_UPDATER_TABS_HPP
+#ifndef _UNIVERSAL_UPDATER_ENTRY_INFO_HPP
+#define _UNIVERSAL_UPDATER_ENTRY_INFO_HPP
 
 #include "structs.hpp"
 #include <vector>
 
 
-/* TODO: Should the actual Tabs be handled here as well? Or inside UniversalUpdater? */
-class Tabs {
+class EntryInfo {
 public:
-	enum class Tab : uint8_t { EntryInfo = 0, DownloadList, QueueSystem, Search, Sort, Settings };
-
 	void Draw();
 	void Handler();
 private:
-	Tab ActiveTab = Tab::EntryInfo, LastTab = Tab::EntryInfo;
 
-	static constexpr Structs::ButtonPos TabPos[6] = {
-		{ 0, 0, 40, 40 },
-		{ 0, 40, 40, 40 },
-		{ 0, 80, 40, 40 },
-		{ 0, 120, 40, 40 },
-		{ 0, 160, 40, 40 },
-		{ 0, 200, 40, 40 }
-	};
 };
 
 #endif

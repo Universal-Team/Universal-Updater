@@ -24,16 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_UTILS_HPP
-#define _UNIVERSAL_UPDATER_UTILS_HPP
+#ifndef _UNIVERSAL_UPDATER_TOP_LIST_HPP
+#define _UNIVERSAL_UPDATER_TOP_LIST_HPP
 
-#include <string>
+#include "structs.hpp"
 #include <vector>
 
-namespace Utils {
-	uint64_t AvailableSpace();
-	void MakeDirs(const std::string &Dest);
-	std::string VectorToString(const std::vector<std::string> &Fetch);
+
+class TopList {
+public:
+	void Draw();
+	void Handler();
+private:
+	static constexpr Structs::ButtonPos List[3] = {
+		{ 20, 45, 360, 50 },
+		{ 20, 105, 360, 50 },
+		{ 20, 165, 360, 50 }
+	};
 };
 
 #endif

@@ -25,11 +25,11 @@ CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 #---------------------------------------------------------------------------------
 BUILD		:=	build
 SOURCES		:=	../Universal-Core/source \
-					../../source ../../source/actions ../../source/data ../../source/menus ../../source/store ../../source/utils \
+					../../source ../../source/actions ../../source/data ../../source/menus ../../source/menus/tabs ../../source/store ../../source/utils \
 					../../source/nds ../../source/nds/data ../../source/nds/menus ../../source/nds/utils
 
 INCLUDES	:=	../Universal-Core/include \
-					../../include ../../include/actions ../../include/data ../../include/menus ../../include/store ../../include/utils \
+					../../include ../../include/actions ../../include/data ../../include/menus ../../include/menus/tabs ../../include/store ../../include/utils \
 					../../include/nds ../../include/nds/data ../../include/nds/menus ../../include/nds/utils
 
 MUSIC		:=

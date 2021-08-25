@@ -51,6 +51,28 @@ void GFXData::DrawBottom() {
 	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 };
 
+/*
+	Draw the box.
+
+	const int XPos: The X-Position where to draw the box.
+	const int YPos: The Y-Position where to draw the box.
+	const int Width: The Width of the button.
+	const int Height: The Height of the button.
+	const bool Selected: If selected, or not.
+*/
+void GFXData::DrawBox(const int XPos, const int YPos, const int Width, const int Height, const bool Selected) {
+	Gui::Draw_Rect(XPos, YPos, Width, Height, BAR_COLOR); // Draw middle BG.
+
+	if (Selected) {
+		static constexpr int Depth = 3;
+
+		Gui::Draw_Rect(XPos - Depth, YPos - Depth, Width + Depth * 2, Depth, BAR_OUTLINE); // Top.
+		Gui::Draw_Rect(XPos - Depth, YPos - Depth, Depth, Height + Depth * 2, BAR_OUTLINE); // Left.
+		Gui::Draw_Rect(XPos + Width, YPos - Depth, Depth, Height + Depth * 2, BAR_OUTLINE); // Right.
+		Gui::Draw_Rect(XPos - Depth, YPos + Height, Width + Depth * 2, Depth, BAR_OUTLINE); // Bottom.
+	}
+};
+
 
 void GFXData::DrawSprite(const int Idx, const int X, const int Y) {
 	Gui::DrawSprite(this->Sprites, Idx, X, Y);
@@ -61,4 +83,28 @@ void GFXData::DrawSpriteBlend(const int Idx, const int X, const int Y, const uin
 	C2D_ImageTint Tint;
 	C2D_PlainImageTint(&Tint, Color, 1.0f);
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(this->Sprites, Idx), X, Y, 0.5f, &Tint);
+};
+
+
+/*
+	Draw the checkbox.
+
+	const int XPos: The X-Position where to draw the box.
+	const int YPos: The Y-Position where to draw the box.
+	const bool Selected: if checked, or not.
+*/
+void GFXData::DrawCheckbox(const int XPos, const int YPos, const bool Selected) {
+	this->DrawSpriteBlend((Selected ? sprites_checked_idx : sprites_unchecked_idx), XPos, YPos, TEXT_COLOR);
+};
+
+
+/*
+	Draw the toggle.
+	
+	const int XPos: The X-Position where to draw the toggle.
+	const int YPos: The Y-Position where to draw the toggle.
+	const bool Toggled: if toggled, or not.
+*/
+void GFXData::DrawToggle(const int XPos, const int YPos, const bool Toggled) {
+	this->DrawSpriteBlend((Toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), XPos, YPos, TEXT_COLOR);
 };

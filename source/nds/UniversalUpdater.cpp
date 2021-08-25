@@ -79,9 +79,11 @@ void UU::Initialize(char *ARGV[]) {
 	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();
 	this->CData = std::make_unique<ConfigData>();
+	this->TData = std::make_unique<ThemeData>();
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
+	this->TList = std::make_unique<TopList>();
 };
 
 
@@ -104,17 +106,26 @@ void UU::ScanInput() {
 void UU::Draw() {
 	this->GData->DrawTop();
 
-	this->SmallFont->DrawString(0, 3, "Universal-Updater", Alignment::center);
-	this->SmallFont->DrawString(0, 30, "Title: " + this->Store->GetEntryTitle(0), Alignment::center);
-	this->SmallFont->DrawString(0, 50, "Author: " + this->Store->GetEntryAuthor(0), Alignment::center);
-	this->SmallFont->DrawString(0, 70, "Description: " + this->Store->GetEntryDescription(0), Alignment::center);
-	this->SmallFont->DrawString(0, 90, "License: " + this->Store->GetEntryLicense(0), Alignment::center);
-	this->SmallFont->DrawString(0, 110, "Index: " + std::to_string(0), Alignment::center);
+	/* Ensure it isn't a nullptr. */
+	if (this->Store) {
+		this->SmallFont->DrawString(0, 3, this->Store->GetUniStoreTitle(), Alignment::center);
+		this->TList->Draw();
+		this->_Tabs->DrawTop();
+
+		this->SmallFont->DrawString(0, 30, "Title: " + this->Store->GetEntryTitle(0), Alignment::center);
+		this->SmallFont->DrawString(0, 50, "Author: " + this->Store->GetEntryAuthor(0), Alignment::center);
+		this->SmallFont->DrawString(0, 70, "Description: " + this->Store->GetEntryDescription(0), Alignment::center);
+		this->SmallFont->DrawString(0, 90, "License: " + this->Store->GetEntryLicense(0), Alignment::center);
+		this->SmallFont->DrawString(0, 110, "Index: " + std::to_string(0), Alignment::center);
+
+	} else {
+		this->SmallFont->DrawString(0, 3, "Invalid UniStore", Alignment::center);
+	}
 
 	this->SmallFont->update(true);
 
 	this->GData->DrawBottom();
-	this->_Tabs->Draw();
+	this->_Tabs->DrawBottom();
 
 	this->SmallFont->update(false);
 };
@@ -131,7 +142,10 @@ int UU::Handler(char *ARGV[]) {
 
 		this->Draw();
 		this->ScanInput();
-		this->_Tabs->Handler();
+
+		/* Handle Top List if possible. */
+		if (this->_Tabs->HandleTopScroll()) this->TList->Handler();
+		this->_Tabs->Handler(); // Tabs are always handled.
 	}
 
 	this->CData->Sav();

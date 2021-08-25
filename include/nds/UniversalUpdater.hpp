@@ -31,10 +31,12 @@
 #include "font.hpp"
 #include "GFXData.hpp"
 #include "structs.hpp"
+#include "ThemeData.hpp"
 #include "UniStore.hpp"
 
 /* Menus. */
 #include "Tabs.hpp"
+#include "TopList.hpp"
 
 
 #include <memory>
@@ -44,6 +46,7 @@
 
 class UU {
 	std::unique_ptr<Tabs> _Tabs = nullptr;
+	std::unique_ptr<TopList> TList = nullptr;
 
 public:
 	void Initialize(char *ARGV[]);
@@ -59,6 +62,7 @@ public:
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
 	std::unique_ptr<Font> SmallFont = nullptr;
+	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 
 	uint32_t Down = 0, Repeat = 0;
 	touchPosition T = { 0, 0 };

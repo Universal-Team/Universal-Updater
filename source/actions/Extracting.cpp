@@ -96,14 +96,7 @@ void Extracting::Handler() {
 			this->FilesExtracted++;
 
 			/* Make directories. */
-			for (char *Slashpos = strchr(this->CFile.c_str() + 1, '/'); Slashpos != NULL; Slashpos = strchr(Slashpos + 1, '/')) {
-				char Bak = *(Slashpos);
-				*(Slashpos) = '\0';
-
-				mkdir(this->CFile.c_str(), 0x777);
-
-				*(Slashpos) = Bak;
-			}
+			Utils::MakeDirs(this->CFile);
 
 			/* If directory then mkdir it and skip extraction. */
 			if (S_ISDIR(archive_entry_mode(Entry))) {

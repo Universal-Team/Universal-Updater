@@ -24,16 +24,43 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_UTILS_HPP
-#define _UNIVERSAL_UPDATER_UTILS_HPP
+#ifndef _UNIVERSAL_UPDATER_TABS_HPP
+#define _UNIVERSAL_UPDATER_TABS_HPP
 
-#include <string>
+#include "DownList.hpp"
+#include "EntryInfo.hpp"
+#include "structs.hpp"
 #include <vector>
 
-namespace Utils {
-	uint64_t AvailableSpace();
-	void MakeDirs(const std::string &Dest);
-	std::string VectorToString(const std::vector<std::string> &Fetch);
+
+/* TODO: Should the actual Tabs be handled here as well? Or inside UniversalUpdater? */
+class Tabs {
+public:
+	enum class Tab : uint8_t { EntryInfo = 0, DownloadList, QueueSystem, Search, Sort, Settings };
+	
+	Tabs();
+	void DrawTop();
+	void DrawBottom();
+	void Handler();
+
+	/* Only allow top scroll if in EntryInfo, Search or Sorting. */
+	bool HandleTopScroll() const {
+		return (this->ActiveTab != Tab::DownloadList && this->ActiveTab != Tab::QueueSystem && this->ActiveTab != Tab::Settings);
+	};
+private:
+	Tab ActiveTab = Tab::EntryInfo, LastTab = Tab::EntryInfo;
+
+	static constexpr Structs::ButtonPos TabPos[6] = {
+		{ 0, 0, 40, 40 },
+		{ 0, 40, 40, 40 },
+		{ 0, 80, 40, 40 },
+		{ 0, 120, 40, 40 },
+		{ 0, 160, 40, 40 },
+		{ 0, 200, 40, 40 }
+	};
+
+	std::unique_ptr<DownList> DList = nullptr;
+	std::unique_ptr<EntryInfo> EInfo = nullptr;
 };
 
 #endif

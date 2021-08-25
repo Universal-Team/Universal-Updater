@@ -31,10 +31,12 @@
 #include "GFXData.hpp"
 #include "screenCommon.hpp"
 #include "structs.hpp"
+#include "ThemeData.hpp"
 #include "UniStore.hpp"
 
 /* Menus. */
 #include "Tabs.hpp"
+#include "TopList.hpp"
 
 
 #include <3ds.h>
@@ -56,12 +58,14 @@ public:
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
+	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 	
 	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
 	touchPosition T = { 0, 0 };
 	bool Exiting = false;
 private:
 	std::unique_ptr<Tabs> _Tabs = nullptr;
+	std::unique_ptr<TopList> TList = nullptr;
 };
 
 #endif

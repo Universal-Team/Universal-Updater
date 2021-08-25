@@ -45,9 +45,11 @@ void UU::Initialize() {
 	
 	this->GData = std::make_unique<GFXData>();
 	this->CData = std::make_unique<ConfigData>();
+	this->TData = std::make_unique<ThemeData>();
 	this->Store = std::make_unique<UniStore>("romfs:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
+	this->TList = std::make_unique<TopList>();
 };
 
 
@@ -73,15 +75,18 @@ void UU::Draw() {
 
 	this->GData->DrawTop();
 
-	Gui::DrawStringCentered(0, 3, 0.5f, TEXT_COLOR, "Universal-Updater");
-	Gui::DrawStringCentered(0, 30, 0.45f, TEXT_COLOR, "Title: " + this->Store->GetEntryTitle(0));
-	Gui::DrawStringCentered(0, 50, 0.45f, TEXT_COLOR, "Author: " + this->Store->GetEntryAuthor(0));
-	Gui::DrawStringCentered(0, 70, 0.45f, TEXT_COLOR, "Description: " + this->Store->GetEntryDescription(0));
-	Gui::DrawStringCentered(0, 90, 0.45f, TEXT_COLOR, "License: " + this->Store->GetEntryLicense(0));
-	Gui::DrawStringCentered(0, 110, 0.45f, TEXT_COLOR, "Index: " + std::to_string(0));
+	/* Ensure it isn't a nullptr. */
+	if (this->Store) {
+		Gui::DrawStringCentered(0, 3, 0.6f, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
+		this->TList->Draw();
+		this->_Tabs->DrawTop();
+
+	} else {
+		Gui::DrawStringCentered(0, 3, 0.6f, TEXT_COLOR, "Invalid UniStore", 390);
+	}
 
 	this->GData->DrawBottom();
-	this->_Tabs->Draw();
+	this->_Tabs->DrawBottom();
 
 	C3D_FrameEnd(0);
 };
@@ -98,7 +103,10 @@ int UU::Handler() {
 
 		this->Draw();
 		this->ScanInput();
-		this->_Tabs->Handler();
+
+		/* Handle Top List if possible. */
+		if (this->_Tabs->HandleTopScroll()) this->TList->Handler();
+		this->_Tabs->Handler(); // Tabs are always handled.
 	}
 
 	this->CData->Sav();

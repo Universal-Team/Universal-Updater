@@ -25,6 +25,7 @@
 */
 
 #include "Utils.hpp"
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 
@@ -40,4 +41,30 @@ uint64_t Utils::AvailableSpace() {
 	#endif
 
 	return (uint64_t)ST.f_bsize * (uint64_t)ST.f_bavail;
+};
+
+
+void Utils::MakeDirs(const std::string &Dest) {
+	for (char *Slashpos = strchr(Dest.c_str() + 1, '/'); Slashpos != NULL; Slashpos = strchr(Slashpos + 1, '/')) {
+		char Bak = *(Slashpos);
+		*(Slashpos) = '\0';
+
+		mkdir(Dest.c_str(), 0x777);
+
+		*(Slashpos) = Bak;
+	}
+};
+
+
+std::string Utils::VectorToString(const std::vector<std::string> &Fetch) {
+	std::string Temp = "";
+
+	if (Fetch.size() < 1) return ""; // Smaller than 1 --> Return empty.
+
+	for (size_t Idx = 0; Idx < Fetch.size(); Idx++) {
+		if (Idx != Fetch.size() - 1) Temp += Fetch[Idx] + ", ";
+		else Temp += Fetch[Idx];
+	}
+
+	return Temp;
 };

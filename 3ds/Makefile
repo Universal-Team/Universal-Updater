@@ -57,12 +57,12 @@ TARGET		:=	Universal-Updater
 BUILD		:=	build
 SOURCES		:=	Universal-Core \
 					../source ../source/3ds ../source/3ds/data ../source/3ds/menus \
-					../source/actions ../source/data ../source/menus ../source/store ../source/utils
+					../source/actions ../source/data ../source/menus ../source/menus/tabs ../source/store ../source/utils
 
 DATA		:=	data
 INCLUDES	:=	Universal-Core \
 					../include ../include/3ds ../include/3ds/data ../include/3ds/menus \
-					../include/actions ../include/data ../include/menus ../include/store ../include/utils
+					../include/actions ../include/data ../include/menus ../include/menus/tabs ../include/store ../include/utils
 
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs

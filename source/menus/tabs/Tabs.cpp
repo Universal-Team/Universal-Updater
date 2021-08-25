@@ -28,7 +28,22 @@
 #include "Tabs.hpp"
 
 
-void Tabs::Draw() {
+/* Init Tab components. */
+Tabs::Tabs() {
+	this->EInfo = std::make_unique<EntryInfo>();
+	this->DList = std::make_unique<DownList>();
+};
+
+
+/*
+	Mainly used for the Download List, because it has an overlay for the top screen.
+*/
+void Tabs::DrawTop() {
+	if (this->ActiveTab == Tabs::Tab::DownloadList) this->DList->DrawTopOvl();
+};
+
+
+void Tabs::DrawBottom() {
 	for (uint8_t Idx = 0; Idx < 6; Idx++) {
 		if (Idx == (uint8_t)this->ActiveTab) Gui::Draw_Rect(this->TabPos[Idx].x, this->TabPos[Idx].y, this->TabPos[Idx].w, this->TabPos[Idx].h, TABS_SELECTED);
 		else Gui::Draw_Rect(this->TabPos[Idx].x, this->TabPos[Idx].y, this->TabPos[Idx].w, this->TabPos[Idx].h, TABS_UNSELECTED);
@@ -41,18 +56,51 @@ void Tabs::Draw() {
 	UU::App->GData->DrawSpriteBlend(sprites_sort_idx, this->TabPos[4].x, this->TabPos[4].y);
 	UU::App->GData->DrawSpriteBlend(sprites_settings_idx, this->TabPos[5].x, this->TabPos[5].y);
 
+	/* Draw Active Tab. */
+	switch(this->ActiveTab) {
+		case Tab::EntryInfo:
+			this->EInfo->Draw();
+			break;
+
+		case Tab::DownloadList:
+			this->DList->Draw();
+			break;
+
+		case Tab::QueueSystem:
+		case Tab::Search:
+		case Tab::Sort:
+		case Tab::Settings:
+			break;
+	}
+
 	// Gui::Draw_Rect(40, 0, 1, 240, BAR_OUTLINE);
 };
 
 
 void Tabs::Handler() {
-	/* TODO: Handle active tab. */
+	/* Handle active tab. */
+	switch(this->ActiveTab) {
+		case Tab::EntryInfo:
+			this->EInfo->Handler();
+			break;
 
+		case Tab::DownloadList:
+			this->DList->Handler();
+			break;
+			
+		case Tab::QueueSystem:
+		case Tab::Search:	
+		case Tab::Sort:
+		case Tab::Settings:
+			break;
+	}
 	
-	/* Tab Handler. */
+	/* Tab Switch Handler. */
 	if (UU::App->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 6; Idx++) {
 			if (UU::App->Touched(this->TabPos[Idx])) {
+				if ((Tabs::Tab)Idx == Tabs::Tab::DownloadList) this->DList->Reset();
+
 				this->ActiveTab = (Tabs::Tab)Idx;
 				break;
 			}
@@ -64,6 +112,7 @@ void Tabs::Handler() {
 			this->LastTab = this->ActiveTab;
 
 			uint8_t T = (uint8_t)this->ActiveTab + 1;
+			if ((Tabs::Tab)T == Tabs::Tab::DownloadList) this->DList->Reset();
 			this->ActiveTab = (Tab)T;
 		}
 	}
@@ -73,6 +122,7 @@ void Tabs::Handler() {
 			this->LastTab = this->ActiveTab;
 
 			uint8_t T = (uint8_t)this->ActiveTab - 1;
+			if ((Tabs::Tab)T == Tabs::Tab::DownloadList) this->DList->Reset();
 			this->ActiveTab = (Tab)T;
 		}
 	}

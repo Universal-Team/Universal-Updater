@@ -57,6 +57,7 @@ public:
 	void UpdateUniStore(const std::string &File);
 	void LoadUniStore(const std::string &File);
 	void LoadSpriteSheets();
+	void ResetIndexes();
 
 	/* Here get UniStore related things. */
 	std::string GetUniStoreTitle() const;
@@ -77,6 +78,9 @@ public:
 	std::vector<std::string> GetScreenshotList(const int Idx) const;
 	std::vector<std::string> GetScreenshotNames(const int Idx) const;
 	std::string GetReleaseNotes(const int Idx) const;
+
+	std::vector<size_t> Indexes;
+	size_t SelectedIndex = 0, ScreenIndex = 0;
 private:
 	std::string FileName = "";
 	bool Valid = false;

@@ -142,6 +142,10 @@ void UniStore::UpdateUniStore(const std::string &File) {
 	const std::string &File: The file of the UniStore.
 */
 void UniStore::LoadUniStore(const std::string &File) {
+	/* Reset UniStore related stuff. */
+	this->Indexes.clear();
+	this->SelectedIndex = 0;
+
 	FILE *In = fopen(File.c_str(), "rt");
 
 	if (!In) {
@@ -173,6 +177,8 @@ void UniStore::LoadUniStore(const std::string &File) {
 	} else {
 		printf("UniStore invalid!");
 	}
+
+	this->ResetIndexes();
 };
 
 
@@ -183,6 +189,20 @@ void UniStore::LoadUniStore(const std::string &File) {
 */
 void UniStore::LoadSpriteSheets() {
 
+};
+
+
+
+void UniStore::ResetIndexes() {
+	this->SelectedIndex = 0;
+	this->Indexes.clear();
+
+	if (this->Valid) {
+		/* Push valid indexes back. */
+		for (size_t Idx = 0; Idx < this->UniStoreJSON["storeContent"].size(); Idx++) {
+			this->Indexes.push_back(Idx);
+		}
+	}
 };
 
 

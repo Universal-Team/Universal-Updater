@@ -79,6 +79,8 @@ void Copying::FileCopy(const std::string &Source, const std::string &Dest) {
 			return;
 		}
 		
+		/* Make directories. */
+		Utils::MakeDirs(Dest);
 
 		FILE *DestFile = fopen(Dest.c_str(), "wb");
 		if (!DestFile) {
