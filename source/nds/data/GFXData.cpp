@@ -85,7 +85,6 @@ void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, c
 	Image Img = Spritesheet(this->UniStoreSheetPaths[Sheet], {(u32)Idx})[Idx];
 	Spr.clear();
 	Spr.drawImage((Spr.width() - Img.width()) / 2, (Spr.height() - Img.height()) / 2, Img);
-	Spr.update();
 };
 
 
