@@ -17,6 +17,17 @@ VERSION_MICRO := 0
 CURRENT_VERSION := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 
 #---------------------------------------------------------------------------------
+# External tools
+#---------------------------------------------------------------------------------
+ifeq ($(OS),Windows_NT)
+PYTHON	?= py -3
+
+else
+PYTHON	?= python3
+
+endif
+
+#---------------------------------------------------------------------------------
 # BUILD is the directory where object files & intermediate files will be placed
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
@@ -142,7 +153,7 @@ $(ARM9ELF)	:	$(TDXFILES) $(OFILES)
 $(NITRO_FILES)/graphics/%.tdx: $(CURDIR)/../$(GRAPHICS)/%.tds
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
-	@python3 ../$(GRAPHICS)/img2tdx.py $< -o $@ --header ../$(BUILD)/$(notdir ${@:.tdx=.h})
+	@$(PYTHON) ../$(GRAPHICS)/img2tdx.py $< -o $@ --header ../$(BUILD)/$(notdir ${@:.tdx=.h})
 
 -include $(DEPSDIR)/*.d
 

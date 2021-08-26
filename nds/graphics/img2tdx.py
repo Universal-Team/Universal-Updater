@@ -3,11 +3,16 @@
 import argparse
 import os
 import struct
-from sys import argv
+from sys import argv, platform
 
-if os.system("grit > /dev/null") != 0:
-	print("Fatal: GRIT must be in your PATH")
-	exit()
+if platform == "win32":
+	if os.system("where /q grit") != 0:
+		print("Fatal: GRIT must be in your PATH")
+		exit()
+else:
+	if os.system("which -s grit") != 0:
+		print("Fatal: GRIT must be in your PATH")
+		exit()
 
 gritArgs = "-ftr -fh!"
 
@@ -40,7 +45,7 @@ for path in paths:
 			files.append(grf.read())
 	else:
 		grfPath = path[:path.rfind('.')] + ".grf"
-		if os.system("grit '%s' %s -o'%s'" % (path, gritArgs, grfPath)) == 0:
+		if os.system('grit "%s" %s -o"%s"' % (path.replace("/", os.path.sep), gritArgs, grfPath)) == 0:
 			with open(grfPath, "rb") as grf:
 				files.append(grf.read())
 			os.remove(grfPath)
