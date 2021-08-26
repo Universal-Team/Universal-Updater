@@ -49,8 +49,7 @@ jobs:
         run: |
           make
           mkdir -p ~/artifacts
-          cp Universal-Updater.3dsx ~/artifacts
-          cp Universal-Updater.cia ~/artifacts
+          cp bin/Universal-Updater.* ~/artifacts
           echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
           echo ::set-output name=commit_hash::$(git log --format=%h -1)
 

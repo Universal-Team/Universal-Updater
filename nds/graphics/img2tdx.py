@@ -10,7 +10,7 @@ if platform == "win32":
 		print("Fatal: GRIT must be in your PATH")
 		exit()
 else:
-	if os.system("which -s grit") != 0:
+	if os.system("which grit > /dev/null") != 0:
 		print("Fatal: GRIT must be in your PATH")
 		exit()
 
