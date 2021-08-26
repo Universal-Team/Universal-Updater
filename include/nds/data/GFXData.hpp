@@ -28,6 +28,7 @@
 #define _UNIVERSAL_UPDATER_GFX_DATA_HPP
 
 #include "gui.hpp"
+#include "sprite.hpp"
 #include "sprites.h"
 #include "spritesheet.hpp"
 
@@ -72,7 +73,9 @@ public:
 private:
 	Spritesheet Sprites;
 
-	bool top = false;
+	std::array<Sprite *, 3> UniStoreSprites;
+
+	std::vector<std::string> UniStoreSheetPaths; // Paths to UniStore Icon SpriteSheets.
 };
 
 #endif

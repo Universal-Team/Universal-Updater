@@ -32,10 +32,22 @@
 #include <nds.h>
 
 
-GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") { };
+GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") {
+	for(size_t i = 0; i < UniStoreSprites.size(); i++) {
+		// TODO: Spacing for grid layout:
+		// UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 20 + (i % 5) * 60, 45 + (i / 5) * 60);
+		UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 20, 45 + i * 60 + 5);
+	}
+
+	Sprite::update(true);
+};
 
 
-GFXData::~GFXData() { };
+GFXData::~GFXData() {
+	for(Sprite *UniStoreSprite : UniStoreSprites) {
+		if (UniStoreSprite) delete UniStoreSprite;
+	}
+};
 
 
 void GFXData::DrawTop() {
@@ -53,17 +65,27 @@ void GFXData::DrawBottom() {
 
 
 void GFXData::LoadUniStoreSheet(const std::string &SheetFile) {
-
+	/* Ensure it exist. */
+	if (access(SheetFile.c_str(), F_OK) == 0) {
+		this->UniStoreSheetPaths.push_back(SheetFile);
+	}
 };
 
 
 void GFXData::UnloadUniStoreSheets() {
-
+	UniStoreSheetPaths.clear();
 };
 
 
 void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos) {
+	// TODO: Grid layout:
+	// Sprite &Spr = this->UniStoreSprites[((YPos - 45) / 60) * 5 + ((XPos - 20) / 60)];
+	Sprite &Spr = *this->UniStoreSprites[(YPos - 45) / 60];
 
+	Image Img = Spritesheet(this->UniStoreSheetPaths[Sheet], {(u32)Idx})[Idx];
+	Spr.clear();
+	Spr.drawImage((Spr.width() - Img.width()) / 2, (Spr.height() - Img.height()) / 2, Img);
+	Spr.update();
 };
 
 
