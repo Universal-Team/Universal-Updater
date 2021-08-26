@@ -36,6 +36,7 @@
 
 /* Menus. */
 #include "Tabs.hpp"
+#include "TopGrid.hpp"
 #include "TopList.hpp"
 
 
@@ -55,9 +56,11 @@
 
 class UU {
 	std::unique_ptr<Tabs> _Tabs = nullptr;
+	std::unique_ptr<TopGrid> TGrid = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;
 
 public:
+	enum class TopMode : uint8_t { Grid = 0, List };
 	void Initialize(char *ARGV[]);
 	void ScanInput();
 
@@ -65,6 +68,7 @@ public:
 	int Handler(char *ARGV[]);
 
 	bool Touched(const Structs::ButtonPos Pos) const;
+	void SwitchTopMode();
 
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<ConfigData> CData = nullptr;
@@ -75,6 +79,7 @@ public:
 	uint32_t Down = 0, Repeat = 0;
 	touchPosition T = { 0, 0 };
 	bool Exiting = false;
+	TopMode TMode = TopMode::Grid;
 };
 
 #endif

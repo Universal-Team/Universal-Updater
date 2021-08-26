@@ -82,6 +82,7 @@ void UU::Initialize(char *ARGV[]) {
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
+	this->TGrid = std::make_unique<TopGrid>();
 	this->TList = std::make_unique<TopList>();
 };
 
@@ -110,7 +111,17 @@ void UU::Draw() {
 	/* Ensure it isn't a nullptr. */
 	if (this->Store) {
 		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, this->Store->GetUniStoreTitle(), 390);
-		this->TList->Draw();
+
+		switch(this->TMode) {
+			case TopMode::Grid:
+				this->TGrid->Draw();
+				break;
+
+			case TopMode::List:
+				this->TList->Draw();
+				break;
+		}
+
 		this->_Tabs->DrawTop();
 
 	} else {
@@ -143,9 +154,23 @@ int UU::Handler(char *ARGV[]) {
 		this->ScanInput();
 
 		/* Handle Top List if possible. */
-		if (this->_Tabs->HandleTopScroll()) this->TList->Handler();
+		if (this->_Tabs->HandleTopScroll()) {
+			switch(this->TMode) {
+				case TopMode::Grid:
+					this->TGrid->Handler();
+					break;
+
+				case TopMode::List:
+					this->TList->Handler();
+					break;
+			}
+		}
+
 		this->_Tabs->Handler(); // Tabs are always handled.
 
+		/* Test for now. */
+		if (this->Down & KEY_X) this->SwitchTopMode();
+		
 		if (this->Repeat) this->Draw();
 	}
 
@@ -156,4 +181,19 @@ int UU::Handler(char *ARGV[]) {
 
 bool UU::Touched(const Structs::ButtonPos Pos) const {
 	return ((this->T.px >= Pos.x && this->T.px <= (Pos.x + Pos.w)) && (this->T.py >= Pos.y && this->T.py <= (Pos.y + Pos.h)));
+};
+
+
+void UU::SwitchTopMode() {
+	switch(this->TMode) {
+		case TopMode::Grid:
+			this->TList->Update();
+			this->TMode = TopMode::List;
+			break;
+
+		case TopMode::List:
+			this->TGrid->Update();
+			this->TMode = TopMode::Grid;
+			break;
+	}
 };

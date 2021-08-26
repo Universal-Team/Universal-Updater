@@ -57,22 +57,22 @@ void TopList::Draw() {
 void TopList::Handler() {
 	if (UU::App->Store) { // Ensure, Store is not a nullptr.
 		if (UU::App->Repeat & KEY_DOWN) {
-			if (UU::App->Store->SelectedIndex < UU::App->Store->Indexes.size() - 1) UU::App->Store->SelectedIndex = UU::App->Store->SelectedIndex + 1;
+			if (UU::App->Store->SelectedIndex < UU::App->Store->Indexes.size() - 1) UU::App->Store->SelectedIndex++;
 			else UU::App->Store->SelectedIndex = 0;
 		}
 
 		if (UU::App->Repeat & KEY_RIGHT) {
-			if (UU::App->Store->SelectedIndex < UU::App->Store->Indexes.size() - 3) UU::App->Store->SelectedIndex = UU::App->Store->SelectedIndex + 3;
+			if (UU::App->Store->SelectedIndex < UU::App->Store->Indexes.size() - 3) UU::App->Store->SelectedIndex += 3;
 			else UU::App->Store->SelectedIndex = UU::App->Store->Indexes.size() - 1;
 		}
 
 		if (UU::App->Repeat & KEY_LEFT) {
-			if (UU::App->Store->SelectedIndex - 2 > 0) UU::App->Store->SelectedIndex = UU::App->Store->SelectedIndex - 3;
+			if (UU::App->Store->SelectedIndex >= 3) UU::App->Store->SelectedIndex -= 3;
 			else UU::App->Store->SelectedIndex = 0;
 		}
 
 		if (UU::App->Repeat & KEY_UP) {
-			if (UU::App->Store->SelectedIndex > 0) UU::App->Store->SelectedIndex = UU::App->Store->SelectedIndex - 1;
+			if (UU::App->Store->SelectedIndex > 0) UU::App->Store->SelectedIndex--;
 			else UU::App->Store->SelectedIndex = UU::App->Store->Indexes.size() - 1;
 		}
 
@@ -82,4 +82,10 @@ void TopList::Handler() {
 		if (UU::App->Store->SelectedIndex < UU::App->Store->ScreenIndex) UU::App->Store->ScreenIndex = UU::App->Store->SelectedIndex;
 		else if (UU::App->Store->SelectedIndex > UU::App->Store->ScreenIndex + 3 - 1) UU::App->Store->ScreenIndex = UU::App->Store->SelectedIndex - 3 + 1;
 	}
+};
+
+
+void TopList::Update() {
+	if (UU::App->Store->SelectedIndex < UU::App->Store->ScreenIndex) UU::App->Store->ScreenIndex = UU::App->Store->SelectedIndex;
+	else if (UU::App->Store->SelectedIndex > UU::App->Store->ScreenIndex + 3 - 1) UU::App->Store->ScreenIndex = UU::App->Store->SelectedIndex - 3 + 1;
 };

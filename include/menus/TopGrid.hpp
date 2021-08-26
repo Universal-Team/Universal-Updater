@@ -24,23 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_TOP_LIST_HPP
-#define _UNIVERSAL_UPDATER_TOP_LIST_HPP
+#ifndef _UNIVERSAL_UPDATER_TOP_GRID_HPP
+#define _UNIVERSAL_UPDATER_TOP_GRID_HPP
 
 #include "structs.hpp"
 #include <vector>
 
 
-class TopList {
+class TopGrid {
 public:
 	void Draw();
 	void Handler();
 	void Update();
 private:
-	static constexpr Structs::ButtonPos List[3] = {
-		{ 20, 45, 360, 50 },
-		{ 20, 105, 360, 50 },
-		{ 20, 165, 360, 50 }
+	uint8_t Box = 0;
+
+	static constexpr Structs::ButtonPos GridBoxes[15] = {
+		{ 25, 45, 50, 50 },
+		{ 100, 45, 50, 50 },
+		{ 175, 45, 50, 50 },
+		{ 250, 45, 50, 50 },
+		{ 325, 45, 50, 50 },
+
+		{ 25, 105, 50, 50 },
+		{ 100, 105, 50, 50 },
+		{ 175, 105, 50, 50 },
+		{ 250, 105, 50, 50 },
+		{ 325, 105, 50, 50 },
+
+		{ 25, 165, 50, 50 },
+		{ 100, 165, 50, 50 },
+		{ 175, 165, 50, 50 },
+		{ 250, 165, 50, 50 },
+		{ 325, 165, 50, 50 }
 	};
 };
 
