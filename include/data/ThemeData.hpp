@@ -30,15 +30,6 @@
 #include "JSON.hpp"
 #include <string>
 
-
-/* We're forced to handle it like this, because we cannot include UniversalUpdater.hpp here properly. */
-#ifdef _3DS
-	typedef uint32_t ThemeColor; // RGBA8.
-#elif ARM9
-	typedef uint16_t ThemeColor; // BGR15.
-#endif
-
-
 class ThemeData {
 public:
 	ThemeData();
@@ -46,29 +37,29 @@ public:
 	void LoadTheme(const std::string &ThemeName);
 	std::vector<std::pair<std::string, std::string>> ThemeNames();
 	
-	ThemeColor BarColor() const { return this->vBarColor; };
-	ThemeColor BGColor() const { return this->vBGColor; };
-	ThemeColor BarOutline() const { return this->vBarOutline; };
-	ThemeColor TextColor() const { return this->vTextColor; };
-	ThemeColor EntryBar() const { return this->vEntryBar; };
-	ThemeColor EntryOutline() const { return this->vEntryOutline; };
-	ThemeColor BoxInside() const { return this->vBoxInside; };
-	ThemeColor BoxSelected() const { return this->vBoxSelected; };
-	ThemeColor BoxUnselected() const { return this->vBoxUnselected; };
-	ThemeColor ProgressbarOut() const { return this->vProgressbarOut; };
-	ThemeColor ProgressbarIn() const { return this->vProgressbarIn; };
-	ThemeColor SearchBar() const { return this->vSearchBar; };
-	ThemeColor SearchBarOutline() const { return this->vSearchBarOutline; };
-	ThemeColor SideBarSelected() const { return this->vSideBarSelected; };
-	ThemeColor SideBarUnselected() const { return this->vSideBarUnselected; };
-	ThemeColor MarkSelected() const { return this->vMarkSelected; };
-	ThemeColor MarkUnselected() const { return this->vMarkUnselected; };
-	ThemeColor DownListPrev() const { return this->vDownListPrev; };
-	ThemeColor SideBarIconColor() const { return this->vSideBarIconColor; };
+	uint32_t BarColor() const { return this->vBarColor; };
+	uint32_t BGColor() const { return this->vBGColor; };
+	uint32_t BarOutline() const { return this->vBarOutline; };
+	uint32_t TextColor() const { return this->vTextColor; };
+	uint32_t EntryBar() const { return this->vEntryBar; };
+	uint32_t EntryOutline() const { return this->vEntryOutline; };
+	uint32_t BoxInside() const { return this->vBoxInside; };
+	uint32_t BoxSelected() const { return this->vBoxSelected; };
+	uint32_t BoxUnselected() const { return this->vBoxUnselected; };
+	uint32_t ProgressbarOut() const { return this->vProgressbarOut; };
+	uint32_t ProgressbarIn() const { return this->vProgressbarIn; };
+	uint32_t SearchBar() const { return this->vSearchBar; };
+	uint32_t SearchBarOutline() const { return this->vSearchBarOutline; };
+	uint32_t SideBarSelected() const { return this->vSideBarSelected; };
+	uint32_t SideBarUnselected() const { return this->vSideBarUnselected; };
+	uint32_t MarkSelected() const { return this->vMarkSelected; };
+	uint32_t MarkUnselected() const { return this->vMarkUnselected; };
+	uint32_t DownListPrev() const { return this->vDownListPrev; };
+	uint32_t SideBarIconColor() const { return this->vSideBarIconColor; };
 private:
-	ThemeColor GetThemeColor(const std::string &ThemeName, const std::string &Key, const ThemeColor DefaultColor);
+	uint32_t GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor);
 
-	ThemeColor vBarColor = 0, vBGColor = 0, vBarOutline = 0, vTextColor = 0, vEntryBar = 0, vEntryOutline = 0,
+	uint32_t vBarColor = 0, vBGColor = 0, vBarOutline = 0, vTextColor = 0, vEntryBar = 0, vEntryOutline = 0,
 			 vBoxInside = 0, vBoxSelected = 0, vBoxUnselected = 0, vProgressbarOut = 0, vProgressbarIn = 0,
 			 vSearchBar = 0, vSearchBarOutline = 0, vSideBarSelected = 0, vSideBarUnselected = 0,
 			 vMarkSelected = 0, vMarkUnselected = 0, vDownListPrev = 0, vSideBarIconColor = 0;

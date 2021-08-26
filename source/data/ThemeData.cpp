@@ -149,9 +149,9 @@ std::vector<std::pair<std::string, std::string>> ThemeData::ThemeNames() {
 
 	const std::string &ThemeName: The name of the Theme.
 	const std::string &Key: The color "key".
-	const ThemeColor DefaultColor: The default color to return.
+	const uint32_t DefaultColor: The default color to return.
 */
-ThemeColor ThemeData::GetThemeColor(const std::string &ThemeName, const std::string &Key, const ThemeColor DefaultColor) {
+uint32_t ThemeData::GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor) {
 	if (this->ThemeJSON.contains(ThemeName) && this->ThemeJSON[ThemeName].is_object() && this->ThemeJSON[ThemeName].contains(Key) && this->ThemeJSON[ThemeName][Key].is_string()) {
 		const std::string ColorString = this->ThemeJSON[ThemeName][Key].get_ref<const std::string &>();
 
