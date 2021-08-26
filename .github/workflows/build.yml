@@ -1,0 +1,167 @@
+name: Build Universal-Updater
+
+on:
+  push:
+    branches-ignore: [translation]
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches: ["*"]
+    paths-ignore:
+      - 'README.md'
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm
+    name: Build with Docker using devkitARM
+    outputs:
+      commit_tag: ${{ steps.build.outputs.commit_tag }}
+      commit_hash: ${{ steps.build.outputs.commit_hash }}
+      author_name: ${{ steps.build.outputs.author_name }}
+      committer_name: ${{ steps.build.outputs.committer_name }}
+      commit_subject: ${{ steps.build.outputs.commit_subject }}
+      commit_message: ${{ steps.build.outputs.commit_message }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install p7zip-full -y
+
+          curl -L https://github.com/Steveice10/bannertool/releases/download/1.2.0/bannertool.zip -o bannertool.zip
+          sudo 7z e bannertool.zip linux-x86_64/bannertool
+          sudo chmod +x bannertool
+          mv bannertool /usr/local/bin
+          rm bannertool.zip
+          curl -L https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.17/makerom-v0.17-ubuntu_x86_64.zip -o makerom-v0.17-ubuntu_x86_64.zip
+          sudo 7z e makerom-v0.17-ubuntu_x86_64.zip
+          sudo chmod +x makerom
+          mv makerom /usr/local/bin
+          rm makerom-v0.17-ubuntu_x86_64.zip
+      - name: Build
+        id: build
+        run: |
+          make
+          mkdir -p ~/artifacts
+          cp Universal-Updater.3dsx ~/artifacts
+          cp Universal-Updater.cia ~/artifacts
+          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+
+          # Webhook info
+          echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
+          echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
+          echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
+          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
+      - name: Publish build to GH Actions
+        uses: actions/upload-artifact@v2
+        with:
+          path: ~/artifacts/*
+          name: build
+
+  # Only run this for non-PR jobs.
+  publish_build:
+    runs-on: ubuntu-latest
+    name: Publish build to Universal-Team/extras
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    needs: build
+    env:
+      COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
+      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+    outputs:
+      current_date: ${{ steps.commit.outputs.current_date }}
+    steps:
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install qrencode -y
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
+      - name: Upload to ${{ github.repository }} release
+        if: ${{ startsWith(github.ref, 'refs/tags') }}
+        run: |
+          ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
+      - name: Commit and push to Universal-Team/extras
+        id: commit
+        run: |
+          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo ::set-output name=current_date::$CURRENT_DATE
+
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
+          mkdir -p extras/builds/Universal-Updater/
+          cd extras/builds/Universal-Updater/
+          qrencode -o Universal-Updater.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.cia
+          qrencode -o Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$COMMIT_TAG/Universal-Updater.cia
+          cp ${{ github.workspace }}/build/* .
+          git stage .
+          git commit -m "Universal-Updater | $COMMIT_HASH"
+          git tag v$CURRENT_DATE
+          git push origin master v$CURRENT_DATE
+      - name: Release to Universal-Team/extras
+        run: |
+          AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+          CONTENT_TYPE="Content-Type: application/json"
+          API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal-Updater | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\n\n$COMMIT_MESSAGE\", \"prerelease\": true}"
+
+          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
+
+          ID=$(echo $RESPONSE | jq --raw-output '.id')
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/Universal-Team/extras/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
+
+  send_webhook:
+    runs-on: ubuntu-latest
+    needs: [publish_build, build]
+    name: Send Discord webhook
+    if: ${{ !startsWith(github.ref, 'refs/pull') }}
+    env:
+      CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
+      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+    steps:
+      - name: Send success webhook
+        if: ${{ success() }}
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+          chmod +x send.sh
+          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.png
+          ./send.sh success ${{ secrets.WEBHOOK_URL }}
+      - name: Send failure webhook
+        if: ${{ failure() }}
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+          chmod +x send.sh
+          ./send.sh failure ${{ secrets.WEBHOOK_URL }}
