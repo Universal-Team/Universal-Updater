@@ -30,13 +30,12 @@
 #include "JSON.hpp"
 #include <string>
 
+
+/* We're forced to handle it like this, because we cannot include UniversalUpdater.hpp here properly. */
 #ifdef _3DS
 	typedef uint32_t ThemeColor; // RGBA8.
-	#define THEME_JSON "sdmc:/3ds/Universal-Updater/Themes.json"
-
 #elif ARM9
 	typedef uint16_t ThemeColor; // BGR15.
-	#define THEME_JSON "/_nds/Universal-Updater/Themes.json"
 #endif
 
 

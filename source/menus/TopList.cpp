@@ -38,7 +38,12 @@ void TopList::Draw() {
 			}
 
 			if (UU::App->Store->Indexes.size() > Idx + UU::App->Store->ScreenIndex) {
-				/* TODO: Handle Icons. */
+				UU::App->GData->DrawUniStoreIcon(
+					UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
+					UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
+					this->List[Idx].x + 1, this->List[Idx].y + 1
+				);
+
 				/* TODO: Handle Update display. */
 
 				Gui::DrawStringCentered(29, this->List[Idx].y + 5, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);

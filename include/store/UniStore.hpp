@@ -71,6 +71,8 @@ public:
 	std::vector<std::string> GetEntryConsoles(const int Idx) const;
 	std::string GetEntryLastUpdated(const int Idx) const;
 	std::string GetEntryLicense(const int Idx) const;
+	int GetEntryIcon(const int Idx) const;
+	int GetEntrySheet(const int Idx) const;
 
 	/* Some other returns. */
 	std::vector<std::string> GetDownloadList(const int Idx) const;

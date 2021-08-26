@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "Common.hpp"
 #include "ThemeData.hpp"
 #include <regex>
 #include <unistd.h>

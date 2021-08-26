@@ -30,6 +30,7 @@
 #include "sprites.h"
 #include <citro2d.h>
 #include <string>
+#include <vector>
 
 /* For now hardcoded; TODO: Themes. */
 #define BAR_COLOR		C2D_Color32(50, 73, 98, 255)
@@ -55,6 +56,12 @@ public:
 
 	void DrawTop();
 	void DrawBottom();
+
+	/* UniStore Sprite Handler. */
+	void LoadUniStoreSheet(const std::string &SheetFile);
+	void UnloadUniStoreSheets();
+	void DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos);
+
 	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);
 	void DrawSpriteBlend(const int Idx, const int X, const int Y, const uint32_t Color = TAB_ICON_COLOR);
@@ -63,6 +70,8 @@ public:
 private:
 	C2D_SpriteSheet Sprites = nullptr;
 	C2D_Font Font = nullptr;
+
+	std::vector<C2D_SpriteSheet> UniStoreSheets; // UniStore Icon SpriteSheets.
 };
 
 #endif

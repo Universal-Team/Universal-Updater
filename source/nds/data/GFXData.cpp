@@ -65,6 +65,21 @@ void GFXData::DrawBottom() {
 };
 
 
+void GFXData::LoadUniStoreSheet(const std::string &SheetFile) {
+
+};
+
+
+void GFXData::UnloadUniStoreSheets() {
+
+};
+
+
+void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos) {
+
+};
+
+
 /*
 	Draw the box.
 

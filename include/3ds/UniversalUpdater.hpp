@@ -44,6 +44,12 @@
 #include <string>
 
 
+/* Include Definitions for Universal-Updater here. */
+#define CONFIG_PATH "sdmc:/3ds/Universal-Updater/Config.json"
+#define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
+#define THEME_JSON "sdmc:/3ds/Universal-Updater/Themes.json"
+
+
 class UU {
 public:
 	void Initialize();

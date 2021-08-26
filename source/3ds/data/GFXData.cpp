@@ -26,6 +26,7 @@
 
 #include "Common.hpp"
 #include "GFXData.hpp"
+#include <unistd.h>
 
 
 GFXData::GFXData() {
@@ -50,6 +51,58 @@ void GFXData::DrawBottom() {
 	Gui::ScreenDraw(Bottom);
 	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 };
+
+
+void GFXData::LoadUniStoreSheet(const std::string &SheetFile) {
+	/* Ensure it exist. */
+	if (access(SheetFile.c_str(), F_OK) == 0) {
+		this->UniStoreSheets.push_back(C2D_SpriteSheet(nullptr));
+		Gui::loadSheet(SheetFile.c_str(), this->UniStoreSheets.back());
+	}
+};
+
+
+void GFXData::UnloadUniStoreSheets() {
+	if (this->UniStoreSheets.empty()) return;
+	
+	for (size_t Idx = this->UniStoreSheets.size() - 1; Idx > 0; Idx--) {
+		Gui::unloadSheet(this->UniStoreSheets[Idx]);
+		this->UniStoreSheets.pop_back(); // Remove.
+	}
+};
+
+
+void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos) {
+	/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
+	if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
+		this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+		return;
+	}
+
+	bool DrawNoIcon = true;
+
+	/* Check, if we can draw that one icon. */
+	if (Sheet < (int)this->UniStoreSheets.size()) {
+		if (Idx < (int)C2D_SpriteSheetCount(this->UniStoreSheets[Sheet])) {
+			DrawNoIcon = false;
+		}
+	}
+
+	if (!DrawNoIcon) {
+		/* Center. */
+		const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Sheet], Idx);
+
+		/* Only max 48x48 allowed. */
+		if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+		else {
+			const uint8_t OffsW = (48 - TempImg.subtex->width) / 2; // Center W.
+			const uint8_t OffsH = (48 - TempImg.subtex->height) / 2; // Center H.
+
+			C2D_DrawImageAt(TempImg, XPos + OffsW, YPos + OffsH, 0.5);
+		}
+	} else this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+};
+
 
 /*
 	Draw the box.

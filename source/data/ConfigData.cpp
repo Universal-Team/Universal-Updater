@@ -28,13 +28,6 @@
 #include "ConfigData.hpp"
 #include <unistd.h>
 
-#ifdef _3DS
-	#define CONFIG_PATH "sdmc:/3ds/Universal-Updater/Config.json"
-
-#elif ARM9
-	#define CONFIG_PATH "/_nds/Universal-Updater/Config.json"
-#endif
-
 
 /* Detects system language and is used later to set app language to system language. */
 std::string ConfigData::SysLang(void) const {

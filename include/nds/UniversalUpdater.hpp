@@ -44,6 +44,12 @@
 #include <string>
 
 
+/* Include Definitions for Universal-Updater here. */
+#define CONFIG_PATH "/_nds/Universal-Updater/Config.json"
+#define _STORE_PATH "/_nds/Universal-Updater/stores/"
+#define THEME_JSON "/_nds/Universal-Updater/Themes.json"
+
+
 class UU {
 	std::unique_ptr<Tabs> _Tabs = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;

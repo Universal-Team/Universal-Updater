@@ -26,6 +26,7 @@
 
 #include "BrowseData.hpp"
 #include "UniStore.hpp"
+#include "UniversalUpdater.hpp"
 #include <unistd.h>
 
 
@@ -119,9 +120,7 @@ UniStore::UniStore(const std::string &FullPath, const std::string &FileName) {
 
 	This basically unloads all the Spritesheets and such that have been loaded to free up the RAM.
 */
-UniStore::~UniStore() {
-
-};
+UniStore::~UniStore() { UU::App->GData->UnloadUniStoreSheets(); };
 
 
 /*
@@ -145,6 +144,7 @@ void UniStore::LoadUniStore(const std::string &File) {
 	/* Reset UniStore related stuff. */
 	this->Indexes.clear();
 	this->SelectedIndex = 0;
+	UU::App->GData->UnloadUniStoreSheets();
 
 	FILE *In = fopen(File.c_str(), "rt");
 
@@ -179,6 +179,7 @@ void UniStore::LoadUniStore(const std::string &File) {
 	}
 
 	this->ResetIndexes();
+	this->LoadSpriteSheets();
 };
 
 
@@ -188,7 +189,29 @@ void UniStore::LoadUniStore(const std::string &File) {
 	TODO: Find a good way to handle this for 3DS and NDS cleanly.
 */
 void UniStore::LoadSpriteSheets() {
+	if (this->Valid) {
+		if (this->UniStoreJSON["storeInfo"].contains("sheet")) {
+			std::vector<std::string> SheetLocs = { "" };
 
+			if (this->UniStoreJSON["storeInfo"]["sheet"].is_array()) {
+				SheetLocs = this->UniStoreJSON["storeInfo"]["sheet"].get<std::vector<std::string>>();
+
+			} else if (this->UniStoreJSON["storeInfo"]["sheet"].is_string()) {
+				SheetLocs[0] = this->UniStoreJSON["storeInfo"]["sheet"];
+
+			} else {
+				return;
+			}
+
+			for (size_t Idx = 0; Idx < SheetLocs.size(); Idx++) {
+				if (SheetLocs[Idx] != "") {
+					if (SheetLocs[Idx].find("/") == std::string::npos) {
+						UU::App->GData->LoadUniStoreSheet((std::string(_STORE_PATH) + SheetLocs[Idx]));
+					}
+				}
+			}
+		}
+	}
 };
 
 
@@ -366,6 +389,50 @@ std::string UniStore::GetEntryLicense(const int Idx) const {
 	}
 
 	return "";
+};
+
+
+/*
+	Return the index of the icon at the specific index.
+
+	const int Idx: The index.
+*/
+int UniStore::GetEntryIcon(const int Idx) const {
+	if (!this->Valid) return -1;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return -1;
+
+	#ifdef _3DS
+		if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("icon_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"].is_number()) {
+			return this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"];
+		}
+
+	#elif ARM9
+		/* TODO: Add icon index existing check for it's own key. */
+	#endif
+
+	return -1;
+};
+
+
+/*
+	Return the index of the sheet at the specific index.
+
+	const int Idx: The index.
+*/
+int UniStore::GetEntrySheet(const int Idx) const {
+	if (!this->Valid) return -1;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return -1;
+
+	#ifdef _3DS
+		if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("sheet_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"].is_number()) {
+			return this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"];
+		}
+
+	#elif ARM9
+		/* Ehh, that's likely not needed for NDS. */
+	#endif
+
+	return 0;
 };
 
 
