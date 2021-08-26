@@ -49,6 +49,9 @@
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
 #define THEME_JSON "sdmc:/3ds/Universal-Updater/Themes.json"
 
+#define SHEET_PATH_KEY "sheet"
+#define SHEET_URL_KEY "sheetURL"
+
 
 class UU {
 public:

@@ -49,6 +49,9 @@
 #define _STORE_PATH "/_nds/Universal-Updater/stores/"
 #define THEME_JSON "/_nds/Universal-Updater/Themes.json"
 
+#define SHEET_PATH_KEY "dsSheet"
+#define SHEET_URL_KEY "dsSheetURL"
+
 
 class UU {
 	std::unique_ptr<Tabs> _Tabs = nullptr;

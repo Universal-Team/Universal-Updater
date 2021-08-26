@@ -190,14 +190,14 @@ void UniStore::LoadUniStore(const std::string &File) {
 */
 void UniStore::LoadSpriteSheets() {
 	if (this->Valid) {
-		if (this->UniStoreJSON["storeInfo"].contains("sheet")) {
+		if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY)) {
 			std::vector<std::string> SheetLocs = { "" };
 
-			if (this->UniStoreJSON["storeInfo"]["sheet"].is_array()) {
-				SheetLocs = this->UniStoreJSON["storeInfo"]["sheet"].get<std::vector<std::string>>();
+			if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
+				SheetLocs = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
 
-			} else if (this->UniStoreJSON["storeInfo"]["sheet"].is_string()) {
-				SheetLocs[0] = this->UniStoreJSON["storeInfo"]["sheet"];
+			} else if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
+				SheetLocs[0] = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
 
 			} else {
 				return;
@@ -401,14 +401,9 @@ int UniStore::GetEntryIcon(const int Idx) const {
 	if (!this->Valid) return -1;
 	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return -1;
 
-	#ifdef _3DS
-		if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("icon_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"].is_number()) {
-			return this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"];
-		}
-
-	#elif ARM9
-		/* TODO: Add icon index existing check for it's own key. */
-	#endif
+	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("icon_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"].is_number()) {
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["icon_index"];
+	}
 
 	return -1;
 };
@@ -423,14 +418,9 @@ int UniStore::GetEntrySheet(const int Idx) const {
 	if (!this->Valid) return -1;
 	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return -1;
 
-	#ifdef _3DS
-		if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("sheet_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"].is_number()) {
-			return this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"];
-		}
-
-	#elif ARM9
-		/* Ehh, that's likely not needed for NDS. */
-	#endif
+	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("sheet_index") && this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"].is_number()) {
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["sheet_index"];
+	}
 
 	return 0;
 };
