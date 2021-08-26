@@ -31,7 +31,7 @@ SOURCES		:=	../Universal-Core/source \
 INCLUDES	:=	../Universal-Core/include \
 					../../include ../../include/actions ../../include/data ../../include/menus ../../include/menus/tabs ../../include/store ../../include/utils \
 					../../include/nds ../../include/nds/data ../../include/nds/menus ../../include/nds/utils
-
+GRAPHICS	:=	../graphics
 MUSIC		:=
 
 #---------------------------------------------------------------------------------
@@ -81,6 +81,7 @@ CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) # soundbank.bin
+TDSFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.tds)))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -99,9 +100,11 @@ endif
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
+export TDXFILES	:=	$(addprefix $(NITRO_FILES)/graphics/,$(TDSFILES:.tds=.tdx))
+
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
+					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+					-I$(CURDIR)/$(BUILD)
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
@@ -115,7 +118,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) *.elf *.nds* *.bin
+	@rm -fr $(BUILD) *.elf *.nds* *.bin $(NITRO_FILES)/graphics/*.tdx
 
 #---------------------------------------------------------------------------------
 else
@@ -123,7 +126,7 @@ else
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-$(ARM9ELF)	:	$(OFILES)
+$(ARM9ELF)	:	$(TDXFILES) $(OFILES)
 	@echo linking $(notdir $@)
 	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
 
@@ -134,6 +137,12 @@ $(ARM9ELF)	:	$(OFILES)
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
+
+#---------------------------------------------------------------------------------
+$(NITRO_FILES)/graphics/%.tdx: $(CURDIR)/../$(GRAPHICS)/%.tds
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@python3 ../$(GRAPHICS)/img2tdx.py $< -o $@ --header ../$(BUILD)/$(notdir ${@:.tdx=.h})
 
 -include $(DEPSDIR)/*.d
 

@@ -28,8 +28,8 @@
 #define _UNIVERSAL_UPDATER_GFX_DATA_HPP
 
 #include "gui.hpp"
-#include "image.hpp"
-#include "sprites.hpp"
+#include "sprites.h"
+#include "spritesheet.hpp"
 
 #include <string>
 #include <vector>
@@ -70,7 +70,7 @@ public:
 	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
 	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
 private:
-	std::vector<Image> Sprites;
+	Spritesheet Sprites;
 
 	bool top = false;
 };

@@ -9,7 +9,8 @@
 *.smdh
 *.bin
 3ds/build/sprites.h
+nds/arm9/build/sprites.h
 *.t3x
-*.gfx
+*.tdx
 *.DS_Store
 *.vscode

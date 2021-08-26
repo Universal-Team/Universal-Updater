@@ -32,20 +32,7 @@
 #include <nds.h>
 
 
-GFXData::GFXData() {
-	const std::string Images[] = {
-		"nitro:/graphics/download.gfx",
-		"nitro:/graphics/info.gfx",
-		"nitro:/graphics/noIcon.gfx",
-		"nitro:/graphics/queue.gfx",
-		"nitro:/graphics/search.gfx",
-		"nitro:/graphics/settings.gfx",
-		"nitro:/graphics/sort.gfx"
-	};
-
-	for (const std::string &Img : Images)
-		this->Sprites.emplace_back(Image(Img));
-};
+GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") { };
 
 
 GFXData::~GFXData() { };
@@ -111,8 +98,8 @@ void GFXData::DrawSprite(const int Idx, const int X, const int Y) {
 
 void GFXData::DrawSpriteBlend(const int Idx, const int X, const int Y, int color) {
 	if (Idx < (int)this->Sprites.size()) {
-		if (color) color -= this->Sprites[Idx].palOfs() + 1;
-		this->Sprites[Idx].drawSpecial(X, Y, 1.0f, 1.0f, color, false);
+		this->Sprites[Idx].changePaletteStart(color - 1);
+		this->Sprites[Idx].draw(X, Y);
 	}
 };
 

@@ -1,0 +1,13 @@
+-gb -gB8 -gzl
+
+sprites/checked.bmp
+sprites/download.bmp
+sprites/info.bmp
+sprites/noIcon.bmp
+sprites/queue0.bmp
+sprites/search.bmp
+sprites/settings.bmp
+sprites/sort.bmp
+sprites/toggle_off.bmp
+sprites/toggle_on.bmp
+sprites/unchecked.bmp
