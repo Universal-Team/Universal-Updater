@@ -34,12 +34,10 @@
 
 GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") {
 	for(size_t i = 0; i < UniStoreSprites.size(); i++) {
-		// TODO: Spacing for grid layout:
-		// UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 20 + (i % 5) * 60, 45 + (i / 5) * 60);
-		UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 20, 45 + i * 60 + 5);
+		UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	}
 
-	Sprite::update(true);
+	UpdateUniStoreSprites();
 };
 
 
@@ -53,7 +51,7 @@ GFXData::~GFXData() {
 void GFXData::DrawTop() {
 	Gui::ScreenDraw(true);
 	Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
-	Gui::Draw_Rect(0, 26, 320, 214, BG_COLOR);
+	Gui::Draw_Rect(0, 26, 320, 215, BG_COLOR);
 	Gui::Draw_Rect(0, 25, 320, 1, BAR_OUTLINE);
 };
 
@@ -77,14 +75,47 @@ void GFXData::UnloadUniStoreSheets() {
 };
 
 
-void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos) {
-	// TODO: Grid layout:
-	// Sprite &Spr = this->UniStoreSprites[((YPos - 45) / 60) * 5 + ((XPos - 20) / 60)];
-	Sprite &Spr = *this->UniStoreSprites[(YPos - 45) / 60];
+void GFXData::UpdateUniStoreSprites() {
+	for(size_t i = 0; i < this->UniStoreSprites.size(); i++) {
+		switch(UU::App->TMode) {
+			case UU::TopMode::Grid:
+				this->UniStoreSprites[i]->visibility(true);
+				this->UniStoreSprites[i]->position(TOP_GRID_X(i) + 5, TOP_GRID_Y(i) + 5);
+				break;
+			case UU::TopMode::List:
+				if (i < 3) {
+					this->UniStoreSprites[i]->visibility(true);
+					this->UniStoreSprites[i]->position(TOP_LIST_X + 5, TOP_LIST_Y(i) + 5);
+				} else {
+					this->UniStoreSprites[i]->visibility(false);
+				}
+				break;
+		}
+	}
 
-	Image Img = Spritesheet(this->UniStoreSheetPaths[Sheet], {(u32)Idx})[Idx];
-	Spr.clear();
-	Spr.drawImage((Spr.width() - Img.width()) / 2, (Spr.height() - Img.height()) / 2, Img);
+	Sprite::update(true);
+}
+
+
+void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) {
+	std::vector<u32> SheetIndexes[this->UniStoreSheetPaths.size()];
+	for (const std::pair<int, int> &Index : Indexes) {
+		if (Index.first > 0) SheetIndexes[Index.second].push_back(Index.first);
+	}
+
+	std::vector<Spritesheet> Sheets;
+	for (size_t i = 0; i < this->UniStoreSheetPaths.size(); i++) {
+		Sheets.emplace_back(this->UniStoreSheetPaths[i], SheetIndexes[i]);
+	}
+
+	for (size_t i = 0; i < 15; i++) {
+		Sprite &Spr = *this->UniStoreSprites[i];
+		Spr.clear();
+		if ((UU::App->TMode == UU::TopMode::Grid || i < 3) && i < Indexes.size() && Indexes[i].second < (int)this->UniStoreSheetPaths.size()) {
+			Image &Img = Sheets[Indexes[i].second][Indexes[i].first];
+			Spr.drawImage((Spr.width() - Img.width()) / 2, (Spr.height() - Img.height()) / 2, Img);
+		}
+	}
 };
 
 

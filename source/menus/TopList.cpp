@@ -31,25 +31,28 @@
 
 void TopList::Draw() {
 	if (!UU::App->Store->Indexes.empty()) {
+		std::vector<std::pair<int, int>> Indexes;
+
 		for (size_t Idx = 0; Idx < 3 && Idx < UU::App->Store->Indexes.size(); Idx++) {
 
 			if (Idx + UU::App->Store->ScreenIndex == UU::App->Store->SelectedIndex) {
-				UU::App->GData->DrawBox(this->List[Idx].x, this->List[Idx].y, this->List[Idx].w, this->List[Idx].h);
+				UU::App->GData->DrawBox(TOP_LIST_X, TOP_LIST_Y(Idx), TOP_LIST_W, TOP_LIST_H);
 			}
 
 			if (UU::App->Store->Indexes.size() > Idx + UU::App->Store->ScreenIndex) {
-				UU::App->GData->DrawUniStoreIcon(
+				Indexes.push_back({
 					UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
-					UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
-					this->List[Idx].x + 1, this->List[Idx].y + 1
-				);
+					UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex])
+				});
 
 				/* TODO: Handle Update display. */
 
-				Gui::DrawStringCentered(29, this->List[Idx].y + 5, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
-				Gui::DrawStringCentered(29, this->List[Idx].y + 24, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), 300, 0);
+				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 5, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
+				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 24, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
 			}
 		}
+
+		UU::App->GData->DrawUniStoreIcons(Indexes);
 	}
 };
 

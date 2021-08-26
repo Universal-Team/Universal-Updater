@@ -72,35 +72,54 @@ void GFXData::UnloadUniStoreSheets() {
 };
 
 
-void GFXData::DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos) {
-	/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
-	if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
-		this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
-		return;
-	}
-
-	bool DrawNoIcon = true;
-
-	/* Check, if we can draw that one icon. */
-	if (Sheet < (int)this->UniStoreSheets.size()) {
-		if (Idx < (int)C2D_SpriteSheetCount(this->UniStoreSheets[Sheet])) {
-			DrawNoIcon = false;
+void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) {
+	for(size_t Pos = 0; Pos < Indexes.size(); Pos++) {
+		int XPos = 0, YPos = 0;
+		switch(UU::App->TMode) {
+			case UU::TopMode::Grid:
+				XPos = TOP_GRID_X(Pos) + 1;
+				YPos = TOP_GRID_Y(Pos) + 1;
+				break;
+			case UU::TopMode::List:
+				if(Pos >= 3)
+					return;
+				XPos = TOP_LIST_X + 1;
+				YPos = TOP_LIST_Y(Pos) + 1;
+				break;
 		}
-	}
 
-	if (!DrawNoIcon) {
-		/* Center. */
-		const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Sheet], Idx);
+		int Idx = Indexes[Pos].first;
+		int Sheet = Indexes[Pos].second;
 
-		/* Only max 48x48 allowed. */
-		if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
-		else {
-			const uint8_t OffsW = (48 - TempImg.subtex->width) / 2; // Center W.
-			const uint8_t OffsH = (48 - TempImg.subtex->height) / 2; // Center H.
-
-			C2D_DrawImageAt(TempImg, XPos + OffsW, YPos + OffsH, 0.5);
+		/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
+		if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
+			this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+			return;
 		}
-	} else this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+
+		bool DrawNoIcon = true;
+
+		/* Check, if we can draw that one icon. */
+		if (Sheet < (int)this->UniStoreSheets.size()) {
+			if (Idx < (int)C2D_SpriteSheetCount(this->UniStoreSheets[Sheet])) {
+				DrawNoIcon = false;
+			}
+		}
+
+		if (!DrawNoIcon) {
+			/* Center. */
+			const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Sheet], Idx);
+
+			/* Only max 48x48 allowed. */
+			if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+			else {
+				const uint8_t OffsW = (48 - TempImg.subtex->width) / 2; // Center W.
+				const uint8_t OffsH = (48 - TempImg.subtex->height) / 2; // Center H.
+
+				C2D_DrawImageAt(TempImg, XPos + OffsW, YPos + OffsH, 0.5);
+			}
+		} else this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+	}
 };
 
 

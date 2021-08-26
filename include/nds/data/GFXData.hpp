@@ -52,6 +52,17 @@
 #define TEXT_MEDIUM	0.8f
 #define TEXT_SMALL	0.7f
 
+/* Top grid/list positions. */
+#define TOP_GRID_X(Pos) (15 + (Pos % 5) * 60)
+#define TOP_GRID_Y(Pos) (45 + (Pos / 5) * 60)
+#define TOP_GRID_W 50
+#define TOP_GRID_H 50
+
+#define TOP_LIST_X 15
+#define TOP_LIST_Y(Pos) (45 + Pos * 60)
+#define TOP_LIST_W 288
+#define TOP_LIST_H 50
+
 class GFXData {
 public:
 	GFXData();
@@ -63,7 +74,8 @@ public:
 	/* UniStore Sprite Handler. */
 	void LoadUniStoreSheet(const std::string &SheetFile);
 	void UnloadUniStoreSheets();
-	void DrawUniStoreIcon(const int Idx, const int Sheet, const int XPos, const int YPos);
+	void UpdateUniStoreSprites();
+	void DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes);
 	
 	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);
@@ -73,7 +85,7 @@ public:
 private:
 	Spritesheet Sprites;
 
-	std::array<Sprite *, 3> UniStoreSprites;
+	std::array<Sprite *, 15> UniStoreSprites;
 
 	std::vector<std::string> UniStoreSheetPaths; // Paths to UniStore Icon SpriteSheets.
 };

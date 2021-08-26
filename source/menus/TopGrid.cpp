@@ -29,22 +29,26 @@
 
 
 void TopGrid::Draw() {
+	std::vector<std::pair<int, int>> Indexes;
+
 	for (size_t Idx = 0, Idx2 = 0 + (UU::App->Store->ScreenIndex * 5); Idx2 < 15 + (UU::App->Store->ScreenIndex * 5) && Idx2 < UU::App->Store->Indexes.size(); Idx2++, Idx++) {
 		/* Box. */
-		if (Idx == this->Box) UU::App->GData->DrawBox(this->GridBoxes[this->Box].x, this->GridBoxes[this->Box].y, 50, 50, true);
+		if (Idx == this->Box) UU::App->GData->DrawBox(TOP_GRID_X(this->Box), TOP_GRID_Y(this->Box), TOP_GRID_W, TOP_GRID_H, true);
+
 
 		/* Ensure, Indexes is larger than the index. */
 		if (UU::App->Store->Indexes.size() > Idx2) {
-			/* Draw Icon. */
-			UU::App->GData->DrawUniStoreIcon(
+			/* Get icon index. */
+			Indexes.push_back({
 				UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx2]),
-				UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx2]),
-				this->GridBoxes[Idx].x + 1, this->GridBoxes[Idx].y + 1
-			);
+				UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx2])
+			});
 
 			/* Update Available mark TODO. */
 		}
 	}
+
+	UU::App->GData->DrawUniStoreIcons(Indexes);
 };
 
 

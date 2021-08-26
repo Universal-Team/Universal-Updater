@@ -196,4 +196,6 @@ void UU::SwitchTopMode() {
 			this->TMode = TopMode::Grid;
 			break;
 	}
+
+	this->GData->UpdateUniStoreSprites();
 };

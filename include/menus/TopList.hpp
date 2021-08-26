@@ -36,12 +36,6 @@ public:
 	void Draw();
 	void Handler();
 	void Update();
-private:
-	static constexpr Structs::ButtonPos List[3] = {
-		{ 20, 45, 360, 50 },
-		{ 20, 105, 360, 50 },
-		{ 20, 165, 360, 50 }
-	};
 };
 
 #endif
