@@ -61,6 +61,7 @@ public:
 
 	/* Here get UniStore related things. */
 	std::string GetUniStoreTitle() const;
+	bool UniStoreValid() const { return this->Valid; };
 
 	/* Entry related Info. */
 	std::string GetEntryTitle(const int Idx) const;

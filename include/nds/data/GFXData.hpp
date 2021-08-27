@@ -75,7 +75,7 @@ public:
 	void LoadUniStoreSheet(const std::string &SheetFile);
 	void UnloadUniStoreSheets();
 	void UpdateUniStoreSprites();
-	void DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes);
+	void DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes);
 	
 	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);

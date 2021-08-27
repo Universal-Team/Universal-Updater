@@ -40,7 +40,7 @@ UniStore::Info UniStore::GetInfo(const std::string &File, const std::string &FNa
 	UniStore::Info Temp = { "", "", "", "", FName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, entries.
 
 	if (FName.length() > 4) {
-		if(*(uint32_t *)(FName.c_str() + FName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
+		if (*(uint32_t *)(FName.c_str() + FName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
 	}
 
 	nlohmann::json JSON;
@@ -146,6 +146,8 @@ void UniStore::LoadUniStore(const std::string &File) {
 	this->SelectedIndex = 0;
 	UU::App->GData->UnloadUniStoreSheets();
 
+	if (access(File.c_str(), F_OK) != 0) return;
+	
 	FILE *In = fopen(File.c_str(), "rt");
 
 	if (!In) {

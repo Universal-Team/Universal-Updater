@@ -29,7 +29,7 @@
 
 
 void TopGrid::Draw() {
-	std::vector<std::pair<int, int>> Indexes;
+	std::vector<std::tuple<int, int, bool>> Indexes;
 
 	for (size_t Idx = 0, Idx2 = 0 + (UU::App->Store->ScreenIndex * 5); Idx2 < 15 + (UU::App->Store->ScreenIndex * 5) && Idx2 < UU::App->Store->Indexes.size(); Idx2++, Idx++) {
 		/* Box. */
@@ -41,10 +41,13 @@ void TopGrid::Draw() {
 			/* Get icon index. */
 			Indexes.push_back({
 				UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx2]),
-				UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx2])
-			});
+				UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx2]),
 
-			/* Update Available mark TODO. */
+				UU::App->MData->UpdateAvailable(UU::App->Store->GetUniStoreTitle(),
+					UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx2]),
+					UU::App->Store->GetEntryLastUpdated(UU::App->Store->Indexes[Idx2])
+				)
+			});
 		}
 	}
 

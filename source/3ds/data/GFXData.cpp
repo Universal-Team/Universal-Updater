@@ -72,14 +72,16 @@ void GFXData::UnloadUniStoreSheets() {
 };
 
 
-void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) {
+void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes) {
 	for(size_t Pos = 0; Pos < Indexes.size(); Pos++) {
 		int XPos = 0, YPos = 0;
+
 		switch(UU::App->TMode) {
 			case UU::TopMode::Grid:
 				XPos = TOP_GRID_X(Pos) + 1;
 				YPos = TOP_GRID_Y(Pos) + 1;
 				break;
+
 			case UU::TopMode::List:
 				if (Pos >= 3) return;
 				XPos = TOP_LIST_X + 1;
@@ -87,12 +89,14 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) 
 				break;
 		}
 
-		int Idx = Indexes[Pos].first;
-		int Sheet = Indexes[Pos].second;
+		const int Idx = std::get<0>(Indexes[Pos]);
+		const int Sheet = std::get<1>(Indexes[Pos]);
+		const bool Updated = std::get<2>(Indexes[Pos]);
 
 		/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
 		if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
 			this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+			if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
 			return;
 		}
 
@@ -118,6 +122,8 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) 
 				C2D_DrawImageAt(TempImg, XPos + OffsW, YPos + OffsH, 0.5);
 			}
 		} else this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+
+		if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
 	}
 };
 

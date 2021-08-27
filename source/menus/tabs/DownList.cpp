@@ -68,7 +68,7 @@ void DownList::Draw() {
 				auto Result = std::find(Installed.begin(), Installed.end(), Entries[Idx + this->ScreenIndex]);
 				if (Result != Installed.end()) {
 					/* Uncomment it, when the installed sprite has been added to the NDS version. */
-					//UU::App->GData->DrawSpriteBlend(sprites_installed_idx, this->InstallPos[Idx].x, this->InstallPos[Idx].y);
+					UU::App->GData->DrawSpriteBlend(sprites_installed_idx, this->InstallPos[Idx].x, this->InstallPos[Idx].y);
 				}
 			}
 

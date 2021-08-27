@@ -81,7 +81,7 @@ void UU::Initialize(char *ARGV[]) {
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
 	this->MData = std::make_unique<Meta>();
-	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
+	this->Store = std::make_unique<UniStore>("/_nds/Universal-Updater/stores/universal-db.unistore", "universal-db.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
 	this->TGrid = std::make_unique<TopGrid>();
@@ -111,7 +111,7 @@ void UU::Draw() {
 	this->GData->DrawTop();
 
 	/* Ensure it isn't a nullptr. */
-	if (this->Store) {
+	if (this->Store && this->Store->UniStoreValid()) {
 		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, this->Store->GetUniStoreTitle(), 390);
 
 		switch(this->TMode) {
