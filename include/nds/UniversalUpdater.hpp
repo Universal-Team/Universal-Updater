@@ -30,6 +30,7 @@
 #include "ConfigData.hpp"
 #include "font.hpp"
 #include "GFXData.hpp"
+#include "Meta.hpp"
 #include "structs.hpp"
 #include "ThemeData.hpp"
 #include "UniStore.hpp"
@@ -53,6 +54,10 @@
 #define SHEET_PATH_KEY "dsSheet"
 #define SHEET_URL_KEY "dsSheetURL"
 
+/* Meta data related things. */
+#define _META_PATH "/_nds/Universal-Updater/MetaData.json"
+#define _OLD_UPDATE_PATH "/_nds/Universal-Updater/updates.json" // Technically not needed.
+
 
 class UU {
 	std::unique_ptr<Tabs> _Tabs = nullptr;
@@ -73,6 +78,7 @@ public:
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
+	std::unique_ptr<Meta> MData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 

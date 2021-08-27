@@ -43,9 +43,11 @@ void UU::Initialize() {
 	mkdir("sdmc:/3ds/Universal-Updater/stores", 0x777);
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0x777);
 	
+	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
+	this->MData = std::make_unique<Meta>();
 	this->Store = std::make_unique<UniStore>("romfs:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();
@@ -110,8 +112,6 @@ int UU::Handler() {
 	this->Initialize();
 
 	while(aptMainLoop() && !this->Exiting) {
-		gspWaitForVBlank();
-
 		this->Draw();
 		this->ScanInput();
 

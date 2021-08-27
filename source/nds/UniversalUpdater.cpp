@@ -79,6 +79,7 @@ void UU::Initialize(char *ARGV[]) {
 	this->GData = std::make_unique<GFXData>();
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
+	this->MData = std::make_unique<Meta>();
 	this->Store = std::make_unique<UniStore>("nitro:/test.unistore", "test.unistore");
 
 	this->_Tabs = std::make_unique<Tabs>();

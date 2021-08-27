@@ -36,15 +36,12 @@ void DownList::DrawTopOvl() {
 	if (!UU::App->Store->Indexes.empty() && UU::App->Store->SelectedIndex <= UU::App->Store->Indexes.size() - 1) {
 		const std::vector<std::string> Entries = UU::App->Store->GetDownloadList(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]);
 		
-
 		if (!Entries.empty()) {
 			Gui::Draw_Rect(0, 174, 400, 66, BAR_OUTLINE);
 			Gui::DrawString(70, 174 + 15, TEXT_MEDIUM, TEXT_WHITE, Entries[this->SelectedIndex], 310, 0);
 
 			const std::string Size = UU::App->Store->GetFileSizes(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], Entries[this->SelectedIndex]);
-			if (Size != "") {
-				Gui::DrawString(70, 174 + 30, TEXT_MEDIUM, TEXT_WHITE, "Size: " +  Size, 310, 0);
-			}
+			if (Size != "") Gui::DrawString(70, 174 + 30, TEXT_MEDIUM, TEXT_WHITE, "Size: " +  Size, 310, 0);
 		}
 	}
 };
@@ -60,6 +57,7 @@ void DownList::Draw() {
 	/* Ensure the Selected Index is in scope of the indexes size. */
 	if (!UU::App->Store->Indexes.empty() && UU::App->Store->SelectedIndex <= UU::App->Store->Indexes.size() - 1) {
 		const std::vector<std::string> Entries = UU::App->Store->GetDownloadList(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]);
+		const std::vector<std::string> Installed = UU::App->MData->GetInstalled(UU::App->Store->GetUniStoreTitle(), UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]));
 
 		if (!Entries.empty()) {
 			for (size_t Idx = 0; Idx < DOWNLOAD_ENTRIES && Idx < Entries.size(); Idx++) {
@@ -67,9 +65,12 @@ void DownList::Draw() {
 			
 				Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[Idx].y + 4, TEXT_SMALL, TEXT_WHITE, Entries[Idx + this->ScreenIndex], 235, 0);
 
-				/* TODO: Handle Install icon display. */
+				auto Result = std::find(Installed.begin(), Installed.end(), Entries[Idx + this->ScreenIndex]);
+				if (Result != Installed.end()) {
+					/* Uncomment it, when the installed sprite has been added to the NDS version. */
+					//UU::App->GData->DrawSpriteBlend(sprites_installed_idx, this->InstallPos[Idx].x, this->InstallPos[Idx].y);
+				}
 			}
-
 
 		} else { // If no downloads available..
 			Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[0].y + 4, TEXT_MEDIUM, TEXT_WHITE, "No Downloads available.", 235, 0);

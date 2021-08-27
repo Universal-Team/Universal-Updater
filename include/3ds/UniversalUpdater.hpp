@@ -29,6 +29,7 @@
 
 #include "ConfigData.hpp"
 #include "GFXData.hpp"
+#include "Meta.hpp"
 #include "screenCommon.hpp"
 #include "structs.hpp"
 #include "ThemeData.hpp"
@@ -53,6 +54,10 @@
 #define SHEET_PATH_KEY "sheet"
 #define SHEET_URL_KEY "sheetURL"
 
+/* Meta data related things. */
+#define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
+#define _OLD_UPDATE_PATH "sdmc:/3ds/Universal-Updater/updates.json"
+
 
 class UU {
 public:
@@ -69,6 +74,7 @@ public:
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
+	std::unique_ptr<Meta> MData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 	
