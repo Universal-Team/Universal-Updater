@@ -33,6 +33,14 @@
 
 
 GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") {
+	// Configure palettes
+	Sprites[sprites_toggle_off_idx].paletteStart(0x30);
+	Sprites[sprites_toggle_off_idx].copyPalette();
+	Sprites[sprites_toggle_on_idx].paletteStart(0x38);
+	Sprites[sprites_toggle_on_idx].copyPalette();
+	Sprites[sprites_update_app_idx].paletteStart(0x40);
+	Sprites[sprites_update_app_idx].copyPalette();
+
 	for(size_t i = 0; i < UniStoreSprites.size(); i++) {
 		UniStoreSprites[i] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	}
@@ -150,7 +158,7 @@ void GFXData::DrawSprite(const int Idx, const int X, const int Y) {
 
 void GFXData::DrawSpriteBlend(const int Idx, const int X, const int Y, int color) {
 	if (Idx < (int)this->Sprites.size()) {
-		this->Sprites[Idx].changePaletteStart(color - 1);
+		this->Sprites[Idx].paletteStart(color);
 		this->Sprites[Idx].draw(X, Y);
 	}
 };

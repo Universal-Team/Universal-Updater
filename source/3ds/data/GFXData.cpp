@@ -81,8 +81,7 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::pair<int, int>> Indexes) 
 				YPos = TOP_GRID_Y(Pos) + 1;
 				break;
 			case UU::TopMode::List:
-				if(Pos >= 3)
-					return;
+				if (Pos >= 3) return;
 				XPos = TOP_LIST_X + 1;
 				YPos = TOP_LIST_Y(Pos) + 1;
 				break;
