@@ -39,6 +39,19 @@ GFXData::~GFXData() {
 };
 
 
+void GFXData::StartFrame() {
+	Gui::clearTextBufs();
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+};
+
+
+void GFXData::EndFrame() {
+	C3D_FrameEnd(0);
+};
+
+
 void GFXData::DrawTop() {
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
@@ -67,8 +80,9 @@ void GFXData::UnloadUniStoreSheets() {
 	
 	for (size_t Idx = this->UniStoreSheets.size() - 1; Idx > 0; Idx--) {
 		Gui::unloadSheet(this->UniStoreSheets[Idx]);
-		this->UniStoreSheets.pop_back(); // Remove.
 	}
+
+	this->UniStoreSheets.clear(); // Clear.
 };
 
 

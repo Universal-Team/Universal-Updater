@@ -105,8 +105,6 @@ void UU::ScanInput() {
 	Draws Universal-Updater's UI.
 */
 void UU::Draw() {
-	Font::clear(true);
-
 	this->GData->DrawTop();
 
 	/* Ensure it isn't a nullptr. */
@@ -129,14 +127,10 @@ void UU::Draw() {
 		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 	}
 
-	Font::update(true);
-
-	Font::clear(false);
-
+	this->GData->UpdateFont(true);
 	this->GData->DrawBottom();
 	this->_Tabs->DrawBottom();
-
-	Font::update(false);
+	this->GData->UpdateFont(false);
 };
 
 

@@ -24,23 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
-#include "SettingsMenu.hpp"
-#include "UniStoreSelector.hpp"
-#include "Utils.hpp"
+#ifndef _UNIVERSAL_UPDATER_UNISTORE_SELECTOR_HPP
+#define _UNIVERSAL_UPDATER_UNISTORE_SELECTOR_HPP
+
+#include "structs.hpp"
+#include "UniStore.hpp"
+#include <string>
 
 
-void SettingsMenu::Draw() {
-	/* Draw Top bar. */
-	Gui::Draw_Rect(40, 0, 280, 25, BAR_COLOR);
-	Gui::Draw_Rect(40, 25, 280, 1, BAR_OUTLINE);
-	Gui::DrawStringCentered(17, 2, TEXT_MEDIUM, TEXT_COLOR, "Settings", 273, 0);
+class UniStoreSelector {
+public:
+	void Handler();
+private:
+	size_t ScreenIndex = 0, SelectedIndex = 0;
+	std::vector<UniStore::Info> Infos;
+	bool Done = false;
+
+	void DeleteUniStore(const std::string &File);
+	void DownloadUniStore();
+	void UpdateUniStore();
+
+	static constexpr Structs::ButtonPos Pos[10] = {
+		{ 10, 34, 300, 22 },
+		{ 10, 64, 300, 22 },
+		{ 10, 94, 300, 22 },
+		{ 10, 124, 300, 22 },
+		{ 10, 154, 300, 22 },
+		{ 10, 184, 300, 22 },
+
+		{ 112, 215, 16, 16 }, // Delete.
+		{ 154, 215, 16, 16 }, // Update.
+		{ 200, 215, 16, 16 }, // Add.
+		{ 4, 0, 24, 24 } // Back.
+	};
 };
 
-
-void SettingsMenu::Handler() {
-	if (UU::App->Down & KEY_SELECT) {
-		std::unique_ptr<UniStoreSelector> Selector = std::make_unique<UniStoreSelector>();
-		Selector->Handler();
-	}
-};
+#endif

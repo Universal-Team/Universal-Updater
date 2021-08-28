@@ -62,6 +62,10 @@ public:
 	GFXData();
 	~GFXData();
 
+	void StartFrame();
+	void EndFrame();
+	void UpdateFont(const bool Top) { };
+
 	void DrawTop();
 	void DrawBottom();
 

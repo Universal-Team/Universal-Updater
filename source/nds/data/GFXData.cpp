@@ -27,6 +27,7 @@
 #include "GFXData.hpp"
 
 #include "Common.hpp"
+#include "font.hpp"
 #include "gui.hpp"
 
 #include <nds.h>
@@ -56,7 +57,21 @@ GFXData::~GFXData() {
 };
 
 
+void GFXData::StartFrame() {
+	Gui::clearTextBufs();
+};
+
+
+void GFXData::EndFrame() {
+
+};
+
+
+void GFXData::UpdateFont(const bool Top) { Font::update(Top); };
+
+
 void GFXData::DrawTop() {
+	Font::clear(true);
 	Gui::ScreenDraw(true);
 	Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 26, 320, 215, BG_COLOR);
@@ -65,6 +80,7 @@ void GFXData::DrawTop() {
 
 
 void GFXData::DrawBottom() {
+	Font::clear(false);
 	Gui::ScreenDraw(false);
 	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 };
@@ -102,7 +118,16 @@ void GFXData::UpdateUniStoreSprites() {
 	}
 
 	Sprite::update(true);
-}
+};
+
+
+void GFXData::HideUniStoreSprites() {
+	for(size_t Idx = 0; Idx < this->UniStoreSprites.size(); Idx++) {
+		this->UniStoreSprites[Idx]->visibility(false);
+	}
+
+	Sprite::update(true);
+};
 
 
 void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes) {

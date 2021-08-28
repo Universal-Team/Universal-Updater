@@ -71,11 +71,7 @@ void UU::ScanInput() {
 	Draws Universal-Updater's UI.
 */
 void UU::Draw() {
-	Gui::clearTextBufs();
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-
+	this->GData->StartFrame();
 	this->GData->DrawTop();
 
 	/* Ensure it isn't a nullptr. */
@@ -100,8 +96,7 @@ void UU::Draw() {
 
 	this->GData->DrawBottom();
 	this->_Tabs->DrawBottom();
-
-	C3D_FrameEnd(0);
+	this->GData->EndFrame();
 };
 
 
