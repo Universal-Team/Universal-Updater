@@ -38,10 +38,10 @@ void DownList::DrawTopOvl() {
 		
 		if (!Entries.empty()) {
 			Gui::Draw_Rect(0, 174, 400, 66, BAR_OUTLINE);
-			Gui::DrawString(70, 174 + 15, TEXT_MEDIUM, TEXT_WHITE, Entries[this->SelectedIndex], 310, 0);
+			Gui::DrawString(70, 174 + 15, TEXT_MEDIUM, TEXT_COLOR, Entries[this->SelectedIndex], 310, 0);
 
 			const std::string Size = UU::App->Store->GetFileSizes(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], Entries[this->SelectedIndex]);
-			if (Size != "") Gui::DrawString(70, 174 + 30, TEXT_MEDIUM, TEXT_WHITE, "Size: " +  Size, 310, 0);
+			if (Size != "") Gui::DrawString(70, 174 + 30, TEXT_MEDIUM, TEXT_COLOR, "Size: " +  Size, 310, 0);
 		}
 	}
 };
@@ -52,7 +52,7 @@ void DownList::Draw() {
 	/* Draw Top bar. */
 	Gui::Draw_Rect(40, 0, 280, 25, BAR_COLOR);
 	Gui::Draw_Rect(40, 25, 280, 1, BAR_OUTLINE);
-	Gui::DrawStringCentered(17, 2, TEXT_MEDIUM, TEXT_WHITE, "Available Downloads", 273, 0);
+	Gui::DrawStringCentered(17, 2, TEXT_MEDIUM, TEXT_COLOR, "Available Downloads", 273, 0);
 
 	/* Ensure the Selected Index is in scope of the indexes size. */
 	if (!UU::App->Store->Indexes.empty() && UU::App->Store->SelectedIndex <= UU::App->Store->Indexes.size() - 1) {
@@ -63,7 +63,7 @@ void DownList::Draw() {
 			for (size_t Idx = 0; Idx < DOWNLOAD_ENTRIES && Idx < Entries.size(); Idx++) {
 				if (this->SelectedIndex == Idx + this->ScreenIndex) Gui::Draw_Rect(this->DownPos[Idx].x, this->DownPos[Idx].y, this->DownPos[Idx].w, this->DownPos[Idx].h, BAR_OUTLINE);
 			
-				Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[Idx].y + 4, TEXT_SMALL, TEXT_WHITE, Entries[Idx + this->ScreenIndex], 235, 0);
+				Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[Idx].y + 4, TEXT_SMALL, TEXT_COLOR, Entries[Idx + this->ScreenIndex], 235, 0);
 
 				auto Result = std::find(Installed.begin(), Installed.end(), Entries[Idx + this->ScreenIndex]);
 				if (Result != Installed.end()) {
@@ -73,7 +73,7 @@ void DownList::Draw() {
 			}
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[0].y + 4, TEXT_MEDIUM, TEXT_WHITE, "No Downloads available.", 235, 0);
+			Gui::DrawStringCentered(46 - 160 + (241 / 2), this->DownPos[0].y + 4, TEXT_MEDIUM, TEXT_COLOR, "No Downloads available.", 235, 0);
 		}
 	}
 };

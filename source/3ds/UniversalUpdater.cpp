@@ -80,7 +80,7 @@ void UU::Draw() {
 
 	/* Ensure it isn't a nullptr. */
 	if (this->Store && this->Store->UniStoreValid()) {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, this->Store->GetUniStoreTitle(), 390);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
 
 		switch(this->TMode) {
 			case TopMode::Grid:
@@ -95,7 +95,7 @@ void UU::Draw() {
 		this->_Tabs->DrawTop();
 
 	} else {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_WHITE, "Invalid UniStore", 390);
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 	}
 
 	this->GData->DrawBottom();

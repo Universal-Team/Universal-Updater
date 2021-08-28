@@ -36,16 +36,13 @@
 #include <vector>
 
 /* For now hardcoded; TODO: Themes. */
-#define BAR_COLOR		0x10
-#define BAR_OUTLINE		0x14
-#define BG_COLOR		0x18
-#define TEXT_COLOR		0x1C
-#define TABS_SELECTED	0x20
-#define TABS_UNSELECTED	0x24
-#define TAB_ICON_COLOR	0x28
-
-/* Text colors. */
-#define TEXT_WHITE	Palette::white
+#define BAR_COLOR		0x04
+#define BAR_OUTLINE		0x08
+#define BG_COLOR		0x0C
+#define TEXT_COLOR		0x10
+#define TABS_SELECTED	0x14
+#define TABS_UNSELECTED	0x18
+#define TAB_ICON_COLOR	0x1C
 
 /* Text sizes. */
 #define TEXT_LARGE	1.0f

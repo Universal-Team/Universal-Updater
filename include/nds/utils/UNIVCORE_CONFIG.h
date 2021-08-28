@@ -29,9 +29,6 @@
 
 #define UNIVCORE_TEXT_BUFFERED
 
-#define UNIVCORE_TEXT_PALETTES white
-#define UNIVCORE_TEXT_DEFAULT_PALETTE white
-
 #define UNIVCORE_3DS_SIZE
 
 #endif

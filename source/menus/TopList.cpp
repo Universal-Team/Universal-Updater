@@ -49,8 +49,8 @@ void TopList::Draw() {
 					)
 				});
 
-				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 5, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
-				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 24, TEXT_LARGE, TEXT_WHITE, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
+				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 5, TEXT_LARGE, TEXT_COLOR, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
+				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 24, TEXT_LARGE, TEXT_COLOR, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
 			}
 		}
 
