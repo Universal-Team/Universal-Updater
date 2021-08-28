@@ -219,7 +219,7 @@ void UniStore::LoadSpriteSheets() {
 
 
 void UniStore::ResetIndexes() {
-	this->SelectedIndex = 0;
+	this->SelectedIndex = 0, this->ScreenIndex = 0;
 	this->Indexes.clear();
 
 	if (this->Valid) {

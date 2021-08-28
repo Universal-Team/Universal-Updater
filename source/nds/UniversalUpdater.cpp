@@ -187,11 +187,11 @@ void UU::SwitchTopMode(const UU::TopMode TMode) {
 
 	switch(this->TMode) {
 		case TopMode::Grid:
-			this->TList->Update();
+			this->TGrid->Update();
 			break;
 
 		case TopMode::List:
-			this->TGrid->Update();
+			this->TList->Update();
 			break;
 	}
 

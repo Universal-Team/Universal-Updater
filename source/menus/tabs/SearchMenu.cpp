@@ -217,6 +217,7 @@ void SearchMenu::Handler() {
 				UU::App->Store->ResetIndexes();
 				this->DoSearch();
 				UU::App->_Tabs->SortEntries(); // Resort.
+				UU::App->SwitchTopMode(UU::App->TMode); // We don't switch actually, it's more for a refresh.
 			}
 		}
 	}
@@ -228,5 +229,6 @@ void SearchMenu::Handler() {
 		this->Marks = 0;
 		UU::App->Store->ResetIndexes();
 		UU::App->_Tabs->SortEntries(); // Resort.
+		UU::App->SwitchTopMode(UU::App->TMode); // We don't switch actually, it's more for a refresh.
 	}
 };
