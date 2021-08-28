@@ -48,7 +48,7 @@
 
 /* Include Definitions for Universal-Updater here. */
 #define CONFIG_PATH "/_nds/Universal-Updater/Config.json"
-#define _STORE_PATH "/_nds/Universal-Updater/stores/"
+#define _STORE_PATH "nitro:/"
 #define THEME_JSON "/_nds/Universal-Updater/Themes.json"
 
 #define SHEET_PATH_KEY "dsSheet"
