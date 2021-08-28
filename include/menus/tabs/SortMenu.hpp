@@ -33,11 +33,14 @@
 class SortMenu {
 public:
 	enum class SortType : uint8_t { Title = 0, Author, LastUpdated };
+	SortMenu() { this->SortCurrent(); };
 	void Draw();
 	void Handler();
+
+	void SortCurrent() { this->DoSort(this->SType); }; // Needed for Search.
 private:
-	bool Ascending = true;
-	SortType SType = SortType::Title;
+	bool Ascending = false;
+	SortType SType = SortType::LastUpdated;
 
 	uint8_t GetType(const SortMenu::SortType SType) const;
 	void DoSort(const SortMenu::SortType SType);

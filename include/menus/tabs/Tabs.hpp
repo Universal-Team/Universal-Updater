@@ -52,6 +52,7 @@ public:
 
 	void PrevTab();
 	void SwitchTab(const Tab T);
+	void SortEntries() { this->SoMenu->SortCurrent(); };
 private:
 	Tab ActiveTab = Tab::EntryInfo, LastTab = Tab::EntryInfo;
 
