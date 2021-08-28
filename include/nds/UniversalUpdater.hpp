@@ -60,7 +60,6 @@
 
 
 class UU {
-	std::unique_ptr<Tabs> _Tabs = nullptr;
 	std::unique_ptr<TopGrid> TGrid = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;
 
@@ -73,13 +72,14 @@ public:
 	int Handler(char *ARGV[]);
 
 	bool Touched(const Structs::ButtonPos Pos) const;
-	void SwitchTopMode();
+	void SwitchTopMode(const UU::TopMode TMode);
 
 	static std::unique_ptr<UU> App;
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<Meta> MData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
+	std::unique_ptr<Tabs> _Tabs = nullptr; // Make it public now.
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
 
 	uint32_t Down = 0, Repeat = 0;

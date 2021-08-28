@@ -81,7 +81,7 @@ void TopList::Handler() {
 			else UU::App->Store->SelectedIndex = UU::App->Store->Indexes.size() - 1;
 		}
 
-		/* TODO: Handle A Press for going to the Download List. */
+		if (UU::App->Down & KEY_A) UU::App->_Tabs->SwitchTab(Tabs::Tab::DownloadList);
 		
 		/* Scroll Logic. */
 		if (UU::App->Store->SelectedIndex < UU::App->Store->ScreenIndex) UU::App->Store->ScreenIndex = UU::App->Store->SelectedIndex;

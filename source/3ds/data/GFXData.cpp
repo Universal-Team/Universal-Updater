@@ -185,3 +185,15 @@ void GFXData::DrawCheckbox(const int XPos, const int YPos, const bool Selected) 
 void GFXData::DrawToggle(const int XPos, const int YPos, const bool Toggled) {
 	this->DrawSpriteBlend((Toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), XPos, YPos, TEXT_COLOR);
 };
+
+
+/*
+	Draw the sort.
+	
+	const int XPos: The X-Position where to draw the sort.
+	const int YPos: The Y-Position where to draw the sort.
+	const bool Checked: if the sort is checked, or not.
+*/
+void GFXData::DrawSort(const int XPos, const int YPos, const bool Checked) {
+	this->DrawSpriteBlend((Checked ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), XPos, YPos, TEXT_COLOR);
+};

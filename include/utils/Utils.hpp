@@ -34,6 +34,7 @@ namespace Utils {
 	uint64_t AvailableSpace();
 	void MakeDirs(const std::string &Dest);
 	std::string VectorToString(const std::vector<std::string> &Fetch);
+	std::string LowerCase(const std::string &STR);
 };
 
 #endif

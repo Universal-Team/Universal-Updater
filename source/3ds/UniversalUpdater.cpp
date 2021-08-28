@@ -129,9 +129,6 @@ int UU::Handler() {
 		}
 
 		this->_Tabs->Handler(); // Tabs are always handled.
-
-		/* Test for now. */
-		if (this->Down & KEY_X) this->SwitchTopMode();
 	}
 
 	this->CData->Sav();
@@ -148,16 +145,16 @@ bool UU::Touched(const Structs::ButtonPos Pos) const {
 };
 
 
-void UU::SwitchTopMode() {
+void UU::SwitchTopMode(const UU::TopMode TMode) {
+	this->TMode = TMode;
+
 	switch(this->TMode) {
 		case TopMode::Grid:
 			this->TList->Update();
-			this->TMode = TopMode::List;
 			break;
 
 		case TopMode::List:
 			this->TGrid->Update();
-			this->TMode = TopMode::Grid;
 			break;
 	}
 };

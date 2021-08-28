@@ -75,6 +75,7 @@ public:
 	void DrawSpriteBlend(const int Idx, const int X, const int Y, const uint32_t Color = TAB_ICON_COLOR);
 	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
 	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
+	void DrawSort(const int XPos, const int YPos, const bool Checked);
 private:
 	C2D_SpriteSheet Sprites = nullptr;
 	C2D_Font Font = nullptr;

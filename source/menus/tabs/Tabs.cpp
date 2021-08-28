@@ -32,6 +32,10 @@
 Tabs::Tabs() {
 	this->EInfo = std::make_unique<EntryInfo>();
 	this->DList = std::make_unique<DownList>();
+	this->QMenu = std::make_unique<QueueMenu>();
+	this->SeMenu = std::make_unique<SearchMenu>();
+	this->SoMenu = std::make_unique<SortMenu>();
+	this->SMenu = std::make_unique<SettingsMenu>();
 };
 
 
@@ -67,9 +71,19 @@ void Tabs::DrawBottom() {
 			break;
 
 		case Tab::QueueSystem:
+			this->QMenu->Draw();
+			break;
+
 		case Tab::Search:
+			this->SeMenu->Draw();
+			break;
+
 		case Tab::Sort:
+			this->SoMenu->Draw();
+			break;
+
 		case Tab::Settings:
+			this->SMenu->Draw();
 			break;
 	}
 
@@ -89,9 +103,19 @@ void Tabs::Handler() {
 			break;
 			
 		case Tab::QueueSystem:
+			this->QMenu->Handler();
+			break;
+
 		case Tab::Search:
+			this->SeMenu->Handler();
+			break;
+
 		case Tab::Sort:
+			this->SoMenu->Handler();
+			break;
+
 		case Tab::Settings:
+			this->SMenu->Handler();
 			break;
 	}
 	
@@ -99,31 +123,39 @@ void Tabs::Handler() {
 	if (UU::App->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 6; Idx++) {
 			if (UU::App->Touched(this->TabPos[Idx])) {
-				if ((Tabs::Tab)Idx == Tabs::Tab::DownloadList) this->DList->Reset();
-
-				this->ActiveTab = (Tabs::Tab)Idx;
+				this->SwitchTab((Tabs::Tab)Idx);
 				break;
 			}
 		}
 	}
 
-	if (UU::App->Repeat & KEY_R) {
-		if (this->ActiveTab != Tab::Settings) {
-			this->LastTab = this->ActiveTab;
-
-			uint8_t T = (uint8_t)this->ActiveTab + 1;
-			if ((Tabs::Tab)T == Tabs::Tab::DownloadList) this->DList->Reset();
-			this->ActiveTab = (Tab)T;
-		}
-	}
-
 	if (UU::App->Repeat & KEY_L) {
 		if (this->ActiveTab != Tab::EntryInfo) {
-			this->LastTab = this->ActiveTab;
-
-			uint8_t T = (uint8_t)this->ActiveTab - 1;
-			if ((Tabs::Tab)T == Tabs::Tab::DownloadList) this->DList->Reset();
-			this->ActiveTab = (Tab)T;
+			const uint8_t T = (uint8_t)this->ActiveTab - 1;
+			this->SwitchTab((Tabs::Tab)T);
 		}
 	}
+	
+	if (UU::App->Repeat & KEY_R) {
+		if (this->ActiveTab != Tab::Settings) {
+			const uint8_t T = (uint8_t)this->ActiveTab + 1;
+			this->SwitchTab((Tabs::Tab)T);
+		}
+	}
+};
+
+
+void Tabs::PrevTab() {
+	if (this->LastTab == Tabs::Tab::DownloadList) this->DList->Reset();
+	const Tabs::Tab T = this->ActiveTab;
+
+	this->ActiveTab = this->LastTab;
+	this->LastTab = T;
+};
+
+
+void Tabs::SwitchTab(const Tabs::Tab T) {
+	if (T == Tabs::Tab::DownloadList) this->DList->Reset();
+	this->LastTab = this->ActiveTab;
+	this->ActiveTab = T;
 };

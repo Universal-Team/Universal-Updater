@@ -104,6 +104,8 @@ void DownList::Handler() {
 		if (UU::App->Down & KEY_A) {
 			/* TODO: Handle add to queue. */
 		}
+
+		if (UU::App->Down & KEY_B) UU::App->_Tabs->PrevTab(); // Go back to previous tab.
 	}
 
 	/* Scroll Handle. */

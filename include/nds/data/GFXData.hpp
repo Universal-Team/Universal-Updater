@@ -79,6 +79,7 @@ public:
 	void DrawSpriteBlend(const int Idx, const int X, const int Y, int Color = TAB_ICON_COLOR);
 	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
 	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
+	void DrawSort(const int XPos, const int YPos, const bool Checked);
 private:
 	Spritesheet Sprites;
 

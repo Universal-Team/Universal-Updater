@@ -34,12 +34,12 @@
 
 GFXData::GFXData() : Sprites("nitro:/graphics/sprites.tdx") {
 	/* Configure palettes. */
-	Sprites[sprites_toggle_off_idx].paletteStart(0x30);
-	Sprites[sprites_toggle_off_idx].copyPalette();
-	Sprites[sprites_toggle_on_idx].paletteStart(0x38);
-	Sprites[sprites_toggle_on_idx].copyPalette();
-	Sprites[sprites_update_app_idx].paletteStart(0x40);
-	Sprites[sprites_update_app_idx].copyPalette();
+	this->Sprites[sprites_toggle_off_idx].paletteStart(0x30);
+	this->Sprites[sprites_toggle_off_idx].copyPalette();
+	this->Sprites[sprites_toggle_on_idx].paletteStart(0x38);
+	this->Sprites[sprites_toggle_on_idx].copyPalette();
+	this->Sprites[sprites_update_app_idx].paletteStart(0x40);
+	this->Sprites[sprites_update_app_idx].copyPalette();
 
 	for(size_t Idx = 0; Idx < this->UniStoreSprites.size(); Idx++) {
 		this->UniStoreSprites[Idx] = new Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp);
@@ -198,4 +198,16 @@ void GFXData::DrawCheckbox(const int XPos, const int YPos, const bool Selected) 
 */
 void GFXData::DrawToggle(const int XPos, const int YPos, const bool Toggled) {
 	this->DrawSpriteBlend((Toggled ? sprites_toggle_on_idx : sprites_toggle_off_idx), XPos, YPos, TEXT_COLOR);
+};
+
+
+/*
+	Draw the sort.
+	
+	const int XPos: The X-Position where to draw the sort.
+	const int YPos: The Y-Position where to draw the sort.
+	const bool Checked: if the sort is checked, or not.
+*/
+void GFXData::DrawSort(const int XPos, const int YPos, const bool Checked) {
+	this->DrawSpriteBlend((Checked ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), XPos, YPos, TEXT_COLOR);
 };

@@ -126,7 +126,7 @@ void TopGrid::Handler() {
 			}
 		}
 
-		/* TODO: Handle A Press for going to the Download List. */
+		if (UU::App->Down & KEY_A) UU::App->_Tabs->SwitchTab(Tabs::Tab::DownloadList);
 	}
 };
 

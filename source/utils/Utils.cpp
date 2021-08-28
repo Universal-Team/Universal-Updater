@@ -37,7 +37,7 @@ uint64_t Utils::AvailableSpace() {
 		statvfs("sdmc:/", &ST);
 
 	#elif ARM9
-		statvfs("sd:/", &ST);
+		statvfs("/", &ST);
 	#endif
 
 	return (uint64_t)ST.f_bsize * (uint64_t)ST.f_bavail;
@@ -67,4 +67,12 @@ std::string Utils::VectorToString(const std::vector<std::string> &Fetch) {
 	}
 
 	return Temp;
+};
+
+
+std::string Utils::LowerCase(const std::string &STR) {
+	std::string Lower;
+	transform(STR.begin(), STR.end(), std::back_inserter(Lower), tolower); // Transform the string to lowercase.
+
+	return Lower;
 };
