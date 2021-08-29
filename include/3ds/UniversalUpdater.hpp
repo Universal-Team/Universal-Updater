@@ -68,7 +68,6 @@ public:
 	void Draw();
 	int Handler();
 
-	bool Touched(const Structs::ButtonPos Pos) const;
 	void SwitchTopMode(const UU::TopMode TMode);
 
 	static std::unique_ptr<UU> App;

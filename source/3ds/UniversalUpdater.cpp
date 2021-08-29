@@ -135,11 +135,6 @@ int UU::Handler() {
 };
 
 
-bool UU::Touched(const Structs::ButtonPos Pos) const {
-	return ((this->T.px >= Pos.x && this->T.px <= (Pos.x + Pos.w)) && (this->T.py >= Pos.y && this->T.py <= (Pos.y + Pos.h)));
-};
-
-
 void UU::SwitchTopMode(const UU::TopMode TMode) {
 	this->TMode = TMode;
 

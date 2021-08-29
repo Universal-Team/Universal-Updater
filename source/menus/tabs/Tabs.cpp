@@ -122,7 +122,7 @@ void Tabs::Handler() {
 	/* Tab Switch Handler. */
 	if (UU::App->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 6; Idx++) {
-			if (UU::App->Touched(this->TabPos[Idx])) {
+			if (this->TabPos[Idx].Touched(UU::App->T)) {
 				this->SwitchTab((Tabs::Tab)Idx);
 				break;
 			}

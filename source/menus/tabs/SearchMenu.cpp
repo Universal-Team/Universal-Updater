@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "keyboard.hpp"
 #include "SearchMenu.hpp"
 #include "Utils.hpp"
 
@@ -152,7 +153,7 @@ void SearchMenu::Handler() {
 
 		/* Includes. */
 		for (uint8_t Idx = 0; Idx < 4; Idx++) {
-			if (UU::App->Touched(this->SearchPos[Idx + 1])) {
+			if (this->SearchPos[Idx + 1].Touched(UU::App->T)) {
 				this->Includes[Idx] = !this->Includes[Idx];
 				DidTouch = true;
 				break;
@@ -161,13 +162,14 @@ void SearchMenu::Handler() {
 
 		/* Search bar. */
 		if (!DidTouch) {
-			if (UU::App->Touched(this->SearchPos[0])) {
+			if (this->SearchPos[0].Touched(UU::App->T)) {
+				UCKeyboard Kbd = UCKeyboard("nitro:/keyboard.json", BG_COLOR, BAR_COLOR, BAR_OUTLINE, TABS_UNSELECTED, TABS_SELECTED, TABS_SELECTED, TEXT_COLOR, TAB_ICON_COLOR);
 				if (UU::App->Store && UU::App->Store->UniStoreValid()) {
-					this->SearchText = "Stack"; // TODO: Replace with keyboard.
+					this->SearchText = Kbd.GetString(0, "Stack");
 					DidTouch = true;
 
 				} else {
-					this->SearchText = "Stack"; // TODO: Replace with keyboard.
+					this->SearchText = Kbd.GetString(0, "Stack");
 					DidTouch = true;
 				}
 			}
@@ -175,38 +177,38 @@ void SearchMenu::Handler() {
 
 		/* Filters. */
 		if (!DidTouch) {
-			if (UU::App->Touched(this->SearchPos[5])) {
+			if (this->SearchPos[5].Touched(UU::App->T)) {
 				this->Marks = this->Marks ^ (int)SearchMenu::FavoriteMarks::Star;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[6])) {
+			} else if (this->SearchPos[6].Touched(UU::App->T)) {
 				this->Marks = this->Marks ^ (int)SearchMenu::FavoriteMarks::Heart;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[7])) {
+			} else if (this->SearchPos[7].Touched(UU::App->T)) {
 				this->Marks = this->Marks ^ (int)SearchMenu::FavoriteMarks::Diamond;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[8])) {
+			} else if (this->SearchPos[8].Touched(UU::App->T)) {
 				this->Marks = this->Marks ^ (int)SearchMenu::FavoriteMarks::Clubs;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[9])) {
+			} else if (this->SearchPos[9].Touched(UU::App->T)) {
 				this->Marks = this->Marks ^ (int)SearchMenu::FavoriteMarks::Spade;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[10])) {
+			} else if (this->SearchPos[10].Touched(UU::App->T)) {
 				this->UpdateFilter = !this->UpdateFilter;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[11])) {
+			} else if (this->SearchPos[11].Touched(UU::App->T)) {
 				/* Add them to Queue TODO. */
 
-			} else if (UU::App->Touched(this->SearchPos[12])) {
+			} else if (this->SearchPos[12].Touched(UU::App->T)) {
 				this->IsAnd = true;
 				DidTouch = true;
 
-			} else if (UU::App->Touched(this->SearchPos[13])) {
+			} else if (this->SearchPos[13].Touched(UU::App->T)) {
 				this->IsAnd = false;
 				DidTouch = true;
 			}

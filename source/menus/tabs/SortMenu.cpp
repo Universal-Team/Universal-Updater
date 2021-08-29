@@ -160,28 +160,28 @@ void SortMenu::Handler() {
 	if (UU::App->Store && UU::App->Store->UniStoreValid() && UU::App->Store->Indexes.size() > 0) {
 		if (UU::App->Down & KEY_TOUCH) {
 
-			if (UU::App->Touched(this->SortPos[0])) {
+			if (this->SortPos[0].Touched(UU::App->T)) {
 				this->DoSort(SortMenu::SortType::Title);
 
-			} else if (UU::App->Touched(this->SortPos[1])) {
+			} else if (this->SortPos[1].Touched(UU::App->T)) {
 				this->DoSort(SortMenu::SortType::Author);
 
-			} else if (UU::App->Touched(this->SortPos[2])) {
+			} else if (this->SortPos[2].Touched(UU::App->T)) {
 				this->DoSort(SortMenu::SortType::LastUpdated);
 
-			} else if (UU::App->Touched(this->SortPos[3])) {
+			} else if (this->SortPos[3].Touched(UU::App->T)) {
 				this->Ascending = true;
 				this->DoSort(this->SType);
 
-			} else if (UU::App->Touched(this->SortPos[4])) {
+			} else if (this->SortPos[4].Touched(UU::App->T)) {
 				this->Ascending = false;
 				this->DoSort(this->SType);
 
-			} else if (UU::App->Touched(this->SortPos[5])) {
+			} else if (this->SortPos[5].Touched(UU::App->T)) {
 				if (UU::App->TMode == UU::TopMode::List) return;
 				UU::App->SwitchTopMode(UU::TopMode::List);
 
-			} else if (UU::App->Touched(this->SortPos[6])) {
+			} else if (this->SortPos[6].Touched(UU::App->T)) {
 				if (UU::App->TMode == UU::TopMode::Grid) return;
 				UU::App->SwitchTopMode(UU::TopMode::Grid);
 			}

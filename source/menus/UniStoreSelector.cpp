@@ -211,7 +211,7 @@ void UniStoreSelector::Handler() {
 
 				if (UU::App->Down & KEY_TOUCH) {
 					for (uint8_t Idx = 0; Idx < 6; Idx++) {
-						if (UU::App->Touched(this->Pos[Idx])) {
+						if (this->Pos[Idx].Touched(UU::App->T)) {
 							if (Idx + this->ScreenIndex < this->Infos.size() && this->Infos[Idx + this->ScreenIndex].File != "") { // Ensure to check for this.
 								if (!(this->Infos[Idx + this->ScreenIndex].File.find("/") != std::string::npos)) {
 									if (this->Infos[Idx + this->ScreenIndex].Version == -1) printf("UniStore not valid.");
@@ -234,7 +234,7 @@ void UniStoreSelector::Handler() {
 				}
 
 				/* Delete UniStore. For now comment out. */
-				if ((UU::App->Down & KEY_X) || (UU::App->Down & KEY_TOUCH && UU::App->Touched(this->Pos[6]))) {
+				if ((UU::App->Down & KEY_X) || (UU::App->Down & KEY_TOUCH && this->Pos[6].Touched(UU::App->T))) {
 					if (this->Infos[this->SelectedIndex].FileName != "") {
 						//this->DeleteUniStore(this->Infos[this->SelectedIndex].FileName);
 						//this->SelectedIndex = 0;
@@ -244,7 +244,7 @@ void UniStoreSelector::Handler() {
 				}
 
 				/* Download latest UniStore. */
-				if ((UU::App->Down & KEY_START) || (UU::App->Down & KEY_TOUCH && UU::App->Touched(this->Pos[7]))) {
+				if ((UU::App->Down & KEY_START) || (UU::App->Down & KEY_TOUCH && this->Pos[7].Touched(UU::App->T))) {
 
 				}
 
@@ -253,12 +253,12 @@ void UniStoreSelector::Handler() {
 			}
 
 			/* UniStore QR Code / URL Download. */
-			if ((UU::App->Down & KEY_Y) || (UU::App->Down & KEY_TOUCH && UU::App->Touched(this->Pos[8]))) {
+			if ((UU::App->Down & KEY_Y) || (UU::App->Down & KEY_TOUCH && this->Pos[8].Touched(UU::App->T))) {
 
 			}
 
 			/* Go out of the menu. */
-			if ((UU::App->Down & KEY_B) || (UU::App->Down & KEY_TOUCH && UU::App->Touched(this->Pos[9]))) this->Done = true;
+			if ((UU::App->Down & KEY_B) || (UU::App->Down & KEY_TOUCH && this->Pos[9].Touched(UU::App->T))) this->Done = true;
 	}
 
 	#ifdef ARM9
