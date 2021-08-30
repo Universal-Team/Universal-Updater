@@ -24,13 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "UniversalUpdater.hpp"
+
+#include "gui.hpp"
+#include "nitrofs.h"
+#include "tonccpy.h"
+#include "WiFi.hpp"
+
 #include <dirent.h>
 #include <fat.h>
-#include "nitrofs.h"
-#include "UniversalUpdater.hpp"
-#include "gui.hpp"
-#include "tonccpy.h"
-
 
 /*
 	Initialize everything as needed.
@@ -64,6 +66,20 @@ void UU::Initialize(char *ARGV[]) {
 	mkdir("/_nds/Universal-Updater", 0x777);
 	mkdir("/_nds/Universal-Updater/stores", 0x777);
 	mkdir("/_nds/Universal-Updater/shortcuts", 0x777);
+
+	/* Initialize Wi-Fi. */
+	// TODO: Move below GUI init and use proper graphics.
+	consoleDemoInit();
+	WiFi::Init();
+	printf("Connecting to Wi-Fi...\n");
+	while(!WiFi::Connected()) {
+		swiWaitForVBlank();
+
+		uint32_t IP = WiFi::IpAddress();
+		uint8_t *IPBytes = (uint8_t *)IP;
+
+		iprintf("\x1b[s\x1b[0;0HCur IP: \x1b[36m%u.%u.%u.%u        \x1b[u\x1b[37m", IPBytes[0], IPBytes[1], IPBytes[2], IPBytes[3]);
+	}
 
 	/* Initialize graphics. */
 	Gui::init({"sd:/_nds/Universal-Updater/font.nftr", "fat:/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/default.nftr"});
