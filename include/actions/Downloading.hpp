@@ -28,8 +28,8 @@
 #define _UNIVERSAL_UPDATER_DOWNLOADING_HPP
 
 #include <curl/curl.h>
-#include <string>
 
-int downloadToFile(const std::string &URL, const std::string &Path);
+int downloadToFile(const char *URL, const char *Path);
+int downloadToMemory(const char *URL, void *Buffer, size_t Size);
 
 #endif

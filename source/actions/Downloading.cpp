@@ -28,20 +28,39 @@
 
 #include <string.h>
 
+#ifdef _3DS
+#define RESULT_BUF_SIZE 1 << 30 // 1 MiB
+#elif ARM9
+#define RESULT_BUF_SIZE 1 << 30 // 1 MiB
+#endif
+
 #define USER_AGENT "Universal-Updater-v4.0.0"
 
-static size_t Result_Size = 0;
-static size_t Result_Written = 0;
+static size_t ResultSize = 0;
+static size_t ResultWritten = 0;
+
+static char *ResultBuf = nullptr;
+static size_t BufWritten = 0;
+static size_t BufSize = 0;
+
 static FILE *Out = nullptr;
 
 
-static size_t handle_data(char *Ptr, size_t Size, size_t NMemb, void *UserData) {
-	Result_Written += Size * NMemb;
-	iprintf("handle_data - %d\n", Result_Written);
+static size_t handle_data(const char *Ptr, size_t Size, size_t NMemb, const void *UserData) {
+	size_t RealSize = Size * NMemb;
+	ResultWritten += RealSize;
 
-	if (!Out) return 0;
+	if (BufWritten + RealSize > RESULT_BUF_SIZE) {
+		if (!Out) return 0;
+		size_t ret = fwrite(ResultBuf, 1, BufWritten, Out);
+		if (ret != BufWritten) return ret;
+		BufWritten = 0;
+	}
 
-	return fwrite(Ptr, Size, NMemb, Out) * Size;
+	if (!ResultBuf) return 0;
+	memcpy(ResultBuf + BufWritten, Ptr, RealSize);
+	BufWritten += RealSize;
+	return RealSize;
 };
 
 static int setupContext(CURL *Hnd, const char * url) {
@@ -60,21 +79,37 @@ static int setupContext(CURL *Hnd, const char * url) {
 	return 0;
 };
 
-int downloadToFile(const std::string &URL, const std::string &Path) {
+int downloadToFile(const char *URL, const char *Path) {
 	int Ret = 0;
 
+	BufSize = RESULT_BUF_SIZE;
+	ResultBuf = new char[BufSize];
+	if (!ResultBuf) {
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
+		return -1;
+	}
+
+
 	CURL *Hnd = curl_easy_init();
-	Ret = setupContext(Hnd, URL.c_str());
+	Ret = setupContext(Hnd, URL);
 	if (Ret != 0) {
-		Result_Size = 0;
-		Result_Written = 0;
+		delete[] ResultBuf;
+		ResultBuf = nullptr;
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
 		return Ret;
 	}
 
-	Out = fopen(Path.c_str(), "wb");
+	Out = fopen(Path, "wb");
 	if(!Out) {
-		Result_Size = 0;
-		Result_Written = 0;
+		delete[] ResultBuf;
+		ResultBuf = nullptr;
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
 		return -2;
 	}
 
@@ -83,15 +118,60 @@ int downloadToFile(const std::string &URL, const std::string &Path) {
 
 	if (CRes != CURLE_OK) {
 		printf("Error in:\ncurl\n");
+		delete[] ResultBuf;
+		ResultBuf = nullptr;
 		fclose(Out);
-		Result_Size = 0;
-		Result_Written = 0;
-		return -1;
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
+		return -3;
+	}
+
+	if (BufWritten > 0) {
+		fwrite(ResultBuf, 1, BufWritten, Out);
+	}
+
+	delete[] ResultBuf;
+	ResultBuf = nullptr;
+	fclose(Out);
+	BufSize = 0;
+	ResultSize = 0;
+	ResultWritten = 0;
+
+	return 0;
+};
+
+int downloadToMemory(const char *URL, void *Buffer, size_t Size) {
+	int Ret = 0;
+
+	BufSize = Size;
+	ResultBuf = (char *)Buffer;
+
+	CURL *Hnd = curl_easy_init();
+	Ret = setupContext(Hnd, URL);
+	if (Ret != 0) {
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
+		return Ret;
+	}
+
+	CURLcode CRes = curl_easy_perform(Hnd);
+	curl_easy_cleanup(Hnd);
+
+	if (CRes != CURLE_OK) {
+		printf("Error in:\ncurl\n");
+		fclose(Out);
+		BufSize = 0;
+		ResultSize = 0;
+		ResultWritten = 0;
+		return -3;
 	}
 
 	fclose(Out);
-	Result_Size = 0;
-	Result_Written = 0;
+	BufSize = 0;
+	ResultSize = 0;
+	ResultWritten = 0;
 
 	return 0;
 };
