@@ -180,10 +180,12 @@ void SortMenu::Handler() {
 			} else if (this->SortPos[5].Touched(UU::App->T)) {
 				if (UU::App->TMode == UU::TopMode::List) return;
 				UU::App->SwitchTopMode(UU::TopMode::List);
+				UU::App->CData->List(true);
 
 			} else if (this->SortPos[6].Touched(UU::App->T)) {
 				if (UU::App->TMode == UU::TopMode::Grid) return;
 				UU::App->SwitchTopMode(UU::TopMode::Grid);
+				UU::App->CData->List(false);
 			}
 		}
 	}

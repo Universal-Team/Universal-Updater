@@ -116,6 +116,7 @@ void GFXData::UpdateUniStoreSprites() {
 	}
 
 	Sprite::update(true);
+	if (!this->SpritesDrawn) this->SpritesDrawn = true; // Not hidden.
 };
 
 
@@ -125,6 +126,7 @@ void GFXData::HideUniStoreSprites() {
 	}
 
 	Sprite::update(true);
+	if (this->SpritesDrawn) this->SpritesDrawn = false; // Hidden.
 };
 
 

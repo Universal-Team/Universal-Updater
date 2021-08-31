@@ -55,7 +55,11 @@ Meta::Meta() {
 
 	if (this->MetaDataJSON.is_discarded()) this->MetaDataJSON = { };
 
-	/* TODO: fetch old MetaData from Universal-Updater v2.5.1 and below and only do it one time at first start ever -> TODO: Config. */
+	if (UU::App->CData->MetaData()) {
+		UU::App->MSData->DisplayWaitMsg("Importing old MetaData...");
+		this->ImportMetadata();
+		UU::App->CData->MetaData(false);
+	}
 };
 
 

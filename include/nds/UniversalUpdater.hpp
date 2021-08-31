@@ -31,6 +31,7 @@
 #include "font.hpp"
 #include "GFXData.hpp"
 #include "Meta.hpp"
+#include "MSGData.hpp"
 #include "structs.hpp"
 #include "ThemeData.hpp"
 #include "UniStore.hpp"
@@ -77,6 +78,7 @@ public:
 	std::unique_ptr<ConfigData> CData = nullptr;
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<Meta> MData = nullptr;
+	std::unique_ptr<MSGData> MSData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
 	std::unique_ptr<Tabs> _Tabs = nullptr; // Make it public now.
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.

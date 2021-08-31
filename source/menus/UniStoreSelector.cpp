@@ -82,7 +82,7 @@ void UniStoreSelector::DeleteUniStore(const std::string &File) {
 /*
 	Download a UniStore.. including the SpriteSheets, if found.
 
-	TODO: Wi-Fi related stuff.
+	TODO: Proper idea of handling.
 */
 void UniStoreSelector::DownloadUniStore() {
 
@@ -92,7 +92,7 @@ void UniStoreSelector::DownloadUniStore() {
 /*
 	Update a UniStore.. including the SpriteSheets, if found.
 
-	TODO: Wi-Fi related stuff.
+	TODO: Proper idea of handling.
 */
 void UniStoreSelector::UpdateUniStore() {
 
@@ -189,19 +189,20 @@ void UniStoreSelector::Handler() {
 					if (this->Infos[this->SelectedIndex].File != "") { // Ensure to check for this.
 						if (!(this->Infos[this->SelectedIndex].File.find("/") != std::string::npos)) {
 							/* Load selected one. */
-							if (this->Infos[this->SelectedIndex].Version == -1) printf("UniStore not valid.");
-							else if (this->Infos[this->SelectedIndex].Version < 3) printf("UniStore too old.");
-							else if (this->Infos[this->SelectedIndex].Version > UU::App->Store->UNISTORE_VERSION) printf("UniStore too new.");
+							if (this->Infos[this->SelectedIndex].Version == -1) UU::App->MSData->PromptMsg("UniStore invalid!");
+							else if (this->Infos[this->SelectedIndex].Version < 3) UU::App->MSData->PromptMsg("UniStore too old!");
+							else if (this->Infos[this->SelectedIndex].Version > UU::App->Store->UNISTORE_VERSION) UU::App->MSData->PromptMsg("UniStore too new!");
 							else {
 								UU::App->Store = nullptr; // Needs to be set to nullptr first for some reason to properly load the Icons...
 								UU::App->Store = std::make_unique<UniStore>(_STORE_PATH + this->Infos[this->SelectedIndex].FileName, this->Infos[this->SelectedIndex].FileName);
 								UU::App->_Tabs->SortEntries();
 								UU::App->SwitchTopMode(UU::App->TMode);
+								UU::App->CData->LastStore(this->Infos[this->SelectedIndex].FileName);
 								this->Done = true;
 							}
 
 						} else {
-							printf("UniStore contains a slash and hence is invalid.");
+							UU::App->MSData->PromptMsg("UniStore contains a slash and hence is invalid.");
 						}
 					}
 				}
@@ -211,19 +212,20 @@ void UniStoreSelector::Handler() {
 						if (this->Pos[Idx].Touched(UU::App->T)) {
 							if (Idx + this->ScreenIndex < this->Infos.size() && this->Infos[Idx + this->ScreenIndex].File != "") { // Ensure to check for this.
 								if (!(this->Infos[Idx + this->ScreenIndex].File.find("/") != std::string::npos)) {
-									if (this->Infos[Idx + this->ScreenIndex].Version == -1) printf("UniStore not valid.");
-									else if (this->Infos[Idx + this->ScreenIndex].Version < 3) printf("UniStore too old.");
-									else if (this->Infos[Idx + this->ScreenIndex].Version > UU::App->Store->UNISTORE_VERSION) printf("UniStore too new.");
+									if (this->Infos[Idx + this->ScreenIndex].Version == -1) UU::App->MSData->PromptMsg("UniStore invalid!");
+									else if (this->Infos[Idx + this->ScreenIndex].Version < 3) UU::App->MSData->PromptMsg("UniStore too old!");
+									else if (this->Infos[Idx + this->ScreenIndex].Version > UU::App->Store->UNISTORE_VERSION) UU::App->MSData->PromptMsg("UniStore too new!");
 									else {
 										UU::App->Store = nullptr; // Needs to be set to nullptr first for some reason to properly load the Icons...
 										UU::App->Store = std::make_unique<UniStore>(_STORE_PATH + this->Infos[Idx + this->ScreenIndex].FileName, this->Infos[Idx + this->ScreenIndex].FileName);
 										UU::App->_Tabs->SortEntries();
 										UU::App->SwitchTopMode(UU::App->TMode);
+										UU::App->CData->LastStore(this->Infos[Idx + this->ScreenIndex].FileName);
 										this->Done = true;
 									}
 
 								} else {
-									printf("UniStore contains a slash and hence is invalid.");
+									UU::App->MSData->PromptMsg("UniStore contains a slash and hence is invalid.");
 								}
 							}
 						}
@@ -233,10 +235,10 @@ void UniStoreSelector::Handler() {
 				/* Delete UniStore. For now comment out. */
 				if ((UU::App->Down & KEY_X) || (UU::App->Down & KEY_TOUCH && this->Pos[6].Touched(UU::App->T))) {
 					if (this->Infos[this->SelectedIndex].FileName != "") {
-						//this->DeleteUniStore(this->Infos[this->SelectedIndex].FileName);
-						//this->SelectedIndex = 0;
-						//this->Infos = UU::App->Store->GetUniStoreInfo(_STORE_PATH);
-						// HasDrawn = false;
+						this->DeleteUniStore(this->Infos[this->SelectedIndex].FileName);
+						this->SelectedIndex = 0;
+						this->Infos = UU::App->Store->GetUniStoreInfo(_STORE_PATH);
+						HasDrawn = false;
 					}
 				}
 

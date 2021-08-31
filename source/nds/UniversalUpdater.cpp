@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "DownloadFile.hpp"
 #include "UniversalUpdater.hpp"
 
 #include "gui.hpp"
@@ -33,6 +34,8 @@
 
 #include <dirent.h>
 #include <fat.h>
+#include <unistd.h>
+
 
 /*
 	Initialize everything as needed.
@@ -78,6 +81,7 @@ void UU::Initialize(char *ARGV[]) {
 	tonccpy(BG_PALETTE_SUB, Palette, sizeof(Palette));
 
 	this->GData = std::make_unique<GFXData>();
+	this->MSData = std::make_unique<MSGData>();
 
 	/* Initialize Wi-Fi if not using no$gba. */
 	if (strncmp((const char *)0x4FFFA00, "no$gba", 6) != 0) {
@@ -95,20 +99,70 @@ void UU::Initialize(char *ARGV[]) {
 	}
 
 	/* Load classes. */
-	this->GData->StartFrame();
-	this->GData->DrawTop();
-	Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Loading...");
-	this->GData->DrawBottom();
-	this->GData->EndFrame();
-
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
 	this->MData = std::make_unique<Meta>();
-	this->Store = std::make_unique<UniStore>("/_nds/Universal-Updater/stores/universal-db.unistore", "universal-db.unistore");
+
+	bool DidDownload = false;
+	this->MSData->DisplayWaitMsg("Checking UniStore...");
+
+	/* Check if LastStore is accessible. */
+	if (this->CData->LastStore() != "universal-db.unistore" && this->CData->LastStore() != "") {
+		if (access((_STORE_PATH + this->CData->LastStore()).c_str(), F_OK) != 0) {
+			this->CData->LastStore("universal-db.unistore");
+
+		} else {
+			/* check version and file here. */
+			const UniStore::Info _Info = UniStore::GetInfo((_STORE_PATH + this->CData->LastStore()), this->CData->LastStore());
+
+			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
+				this->CData->LastStore("universal-db.unistore");
+			}
+
+			if (_Info.File != "") { // Ensure to check for this.
+				if ((_Info.File.find("/") != std::string::npos)) {
+					this->CData->LastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
+				}
+			}
+		}
+	}
+
+	/* If Universal-DB --> Get! */
+	if (this->CData->LastStore() == "universal-db.unistore" || this->CData->LastStore() == "") {
+		if (access(_STORE_PATH "universal-db.unistore", F_OK) != 0) {
+			std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
+			this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
+			DL->Handler();
+
+			DL = nullptr;
+			DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.tdx", _STORE_PATH "universal-db.tdx");
+			this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
+			DL->Handler();
+			DidDownload = true;
+
+		} else {
+			const UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH "universal-db.unistore", "universal-db.unistore");
+
+			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
+				std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
+				this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
+				DL->Handler();
+
+				DL = nullptr;
+				DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.tdx", _STORE_PATH "universal-db.tdx");
+				this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
+				DL->Handler();
+				DidDownload = true;
+			}
+		}
+	}
+
+	this->Store = std::make_unique<UniStore>(_STORE_PATH + this->CData->LastStore(), this->CData->LastStore(), DidDownload);
 
 	this->_Tabs = std::make_unique<Tabs>();
 	this->TGrid = std::make_unique<TopGrid>();
 	this->TList = std::make_unique<TopList>();
+	this->GData->UpdateUniStoreSprites();
 };
 
 

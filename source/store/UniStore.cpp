@@ -25,10 +25,13 @@
 */
 
 #include "BrowseData.hpp"
+#include "DownloadFile.hpp"
 #include "UniStore.hpp"
 #include "UniversalUpdater.hpp"
 #include <unistd.h>
 
+
+bool UniStore::FirstStart = true;
 
 /*
 	Return UniStore info.
@@ -101,8 +104,9 @@ std::vector<UniStore::Info> UniStore::GetUniStoreInfo(const std::string &Path) {
 
 	const std::string &FullPath: The full path to the UniStore.
 	const std::string &FileName: Same as above, but just the UniStore filename.
+	const bool DidDownload: If it got downloaded a bit ago, so we don't update at all and directly load it.
 */
-UniStore::UniStore(const std::string &FullPath, const std::string &FileName) {
+UniStore::UniStore(const std::string &FullPath, const std::string &FileName, const bool DidDownload) {
 	if (FullPath.length() > 4) {
 		if (*(uint32_t *)(FullPath.c_str() + FullPath.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
 			this->Valid = false;
@@ -111,7 +115,8 @@ UniStore::UniStore(const std::string &FullPath, const std::string &FileName) {
 	}
 
 	this->FileName = FileName;
-	this->LoadUniStore(FullPath);
+	if (!DidDownload) this->UpdateUniStore(FullPath);
+	else this->LoadUniStore(FullPath, true);
 };
 
 
@@ -127,11 +132,99 @@ UniStore::~UniStore() { UU::App->GData->UnloadUniStoreSheets(); };
 	Updates a UniStore inclusive spritesheets to it's latest version.
 
 	const std::string &File: The file of the UniStore to update.
-
-	This function is empty, until DSi-WiFi is properly usable.
 */
 void UniStore::UpdateUniStore(const std::string &File) {
+	bool DoSheet = false;
+	int Rev = -1;
+	this->LoadUniStore(File, false);
 
+	/* Only do this, if valid. */
+	if (this->Valid) {
+		if (this->UniStoreJSON["storeInfo"].contains("revision") && this->UniStoreJSON["storeInfo"]["revision"].is_number()) {
+			Rev = this->UniStoreJSON["storeInfo"]["revision"];
+		}
+
+		/* First start exceptions. */
+		if (UniStore::FirstStart) {
+			UniStore::FirstStart = false;
+
+			if (!UU::App->CData->AutoUpdate()) {
+				this->LoadSpriteSheets();
+				return;
+			}
+		}
+
+		if (this->UniStoreJSON.contains("storeInfo")) {
+			/* TODO: WiFi Check. */
+			if (this->UniStoreJSON["storeInfo"].contains("url") && this->UniStoreJSON["storeInfo"]["url"].is_string()) {
+				if (this->UniStoreJSON["storeInfo"].contains("file") && this->UniStoreJSON["storeInfo"]["file"].is_string()) {
+					const std::string Fl = this->UniStoreJSON["storeInfo"]["file"];
+					if (!(Fl.find("/") != std::string::npos)) {
+						const std::string URL = this->UniStoreJSON["storeInfo"]["url"];
+
+						if (URL != "") {
+							UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
+							std::unique_ptr<Action> USDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + Fl);
+							USDL->Handler();
+
+							/* Check if the revision increased. */
+							UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH + Fl, Fl);
+							if (_Info.Revision > Rev) DoSheet = true;
+						}
+
+					} else {
+						UU::App->MSData->PromptMsg("Filename contains a slash which is invalid.");
+					}
+				}
+			}
+
+			if (DoSheet) {
+				/* SpriteSheet Array. */
+				if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_array()) {
+					if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
+						const std::vector<std::string> Locs = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].get<std::vector<std::string>>();
+						const std::vector<std::string> Sht = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
+
+						/* Loop through the array. */
+						if (Locs.size() == Sht.size()) {
+							for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
+								if (!(Sht[Idx].find("/") != std::string::npos)) {
+									char Msg[150];
+									snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
+									UU::App->MSData->DisplayWaitMsg(Msg);
+
+									std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(Locs[Idx], _STORE_PATH + Sht[Idx]);
+									SDL->Handler();
+
+								} else {
+									UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+									Idx++;
+								}
+							}
+						}
+					}
+
+				/* Single SpriteSheet (No array). */
+				} else if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_string()) {
+					if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
+						const std::string URL = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY];
+						const std::string FL = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
+
+						if (!(FL.find("/") != std::string::npos)) {
+							UU::App->MSData->DisplayWaitMsg("Updating Spritesheet...");
+							std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + FL);
+							SDL->Handler();
+
+						} else {
+							UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+						}
+					}
+				}
+			}
+
+			this->LoadUniStore(File, true);
+		}
+	}
 };
 
 
@@ -140,11 +233,10 @@ void UniStore::UpdateUniStore(const std::string &File) {
 
 	const std::string &File: The file of the UniStore.
 */
-void UniStore::LoadUniStore(const std::string &File) {
+void UniStore::LoadUniStore(const std::string &File, const bool FullInit) {
 	/* Reset UniStore related stuff. */
 	this->Indexes.clear();
 	this->SelectedIndex = 0;
-	UU::App->GData->UnloadUniStoreSheets();
 
 	if (access(File.c_str(), F_OK) != 0) return;
 	
@@ -168,8 +260,8 @@ void UniStore::LoadUniStore(const std::string &File) {
 	/* Check, if valid. */
 	if (this->UniStoreJSON.contains("storeInfo") && this->UniStoreJSON.contains("storeContent")) {
 		if (this->UniStoreJSON["storeInfo"].contains("version") && this->UniStoreJSON["storeInfo"]["version"].is_number()) {
-			if (this->UniStoreJSON["storeInfo"]["version"] < 3) printf("UniStore too Old!");
-			else if (this->UniStoreJSON["storeInfo"]["version"] > this->UNISTORE_VERSION) printf("UniStore too New!");
+			if (this->UniStoreJSON["storeInfo"]["version"] < 3) UU::App->MSData->PromptMsg("UniStore too old!");
+			else if (this->UniStoreJSON["storeInfo"]["version"] > this->UNISTORE_VERSION) UU::App->MSData->PromptMsg("UniStore too new!");
 
 			else if (this->UniStoreJSON["storeInfo"]["version"] == 3 || this->UniStoreJSON["storeInfo"]["version"] == this->UNISTORE_VERSION) {
 				this->Valid = true;
@@ -177,11 +269,14 @@ void UniStore::LoadUniStore(const std::string &File) {
 		}
 
 	} else {
-		printf("UniStore invalid!");
+		UU::App->MSData->PromptMsg("UniStore invalid!");
 	}
 
-	this->ResetIndexes();
-	this->LoadSpriteSheets();
+	if (FullInit) {
+		this->ResetIndexes();
+		UU::App->GData->UnloadUniStoreSheets();
+		this->LoadSpriteSheets();
+	}
 };
 
 

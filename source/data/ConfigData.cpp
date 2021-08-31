@@ -86,7 +86,10 @@ void ConfigData::Load() {
 	fclose(File);
 
 	if (!this->CFG.is_discarded()) {
-		/* TODO: Init things. */
+		this->LastStore(this->Get<std::string>("LastStore", this->LastStore()));
+		this->List(this->Get<bool>("List", this->List()));
+		this->AutoUpdate(this->Get<bool>("AutoUpdate", this->AutoUpdate()));
+		this->MetaData(this->Get<bool>("MetaData", this->MetaData()));
 	}
 };
 
@@ -96,7 +99,10 @@ void ConfigData::Initialize() {
 	FILE *Temp = fopen(CONFIG_PATH, "w");
 
 	const nlohmann::json OBJ = {
-		/* TODO: Fill with initialize stuff. */
+		{ "LastStore", this->LastStore() },
+		{ "List", this->List() },
+		{ "AutoUpdate", this->AutoUpdate() },
+		{ "MetaData", this->MetaData() }
 	};
 
 	const std::string Dump = OBJ.dump(1, '\t');
@@ -109,6 +115,11 @@ void ConfigData::Initialize() {
 void ConfigData::Sav() {
 	if (this->ChangesMade) {
 		FILE *Out = fopen(CONFIG_PATH, "w");
+
+		this->Set<std::string>("LastStore", this->LastStore());
+		this->Set<bool>("List", this->List());
+		this->Set<bool>("AutoUpdate", this->AutoUpdate());
+		this->Set<bool>("MetaData", this->MetaData());
 
 		/* Write changes to file. */
 		const std::string Dump = this->CFG.dump(1, '\t');

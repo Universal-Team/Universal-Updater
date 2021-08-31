@@ -47,15 +47,16 @@ public:
 	};
 
 	static constexpr int UNISTORE_VERSION = 4;
+	static bool FirstStart;
 	static Info GetInfo(const std::string &File, const std::string &FName);
 	static std::vector<Info> GetUniStoreInfo(const std::string &Path);
 
-	UniStore(const std::string &FullPath, const std::string &FileName);
+	UniStore(const std::string &FullPath, const std::string &FileName, const bool DidDownload = false);
 	~UniStore();
 
 	/* Some Utilities. */
 	void UpdateUniStore(const std::string &File);
-	void LoadUniStore(const std::string &File);
+	void LoadUniStore(const std::string &File, const bool FullInit = false);
 	void LoadSpriteSheets();
 	void ResetIndexes();
 
