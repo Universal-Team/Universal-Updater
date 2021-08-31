@@ -41,5 +41,6 @@ checkarm9:
 
 #---------------------------------------------------------------------------------
 clean:
+	$(MAKE) -C arm7 clean
 	$(MAKE) -C arm9 clean
 	rm -f $(TARGET).nds $(TARGET).arm9
