@@ -26,6 +26,7 @@
 
 #include "Utils.hpp"
 #include <cstring>
+#include <regex>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 
@@ -75,4 +76,10 @@ std::string Utils::LowerCase(const std::string &STR) {
 	transform(STR.begin(), STR.end(), std::back_inserter(Lower), tolower); // Transform the string to lowercase.
 
 	return Lower;
+};
+
+
+bool Utils::MatchPattern(const std::string &Pattern, const std::string &Tested) {
+	std::regex PatternRegex(Pattern);
+	return regex_match(Tested, PatternRegex);
 };

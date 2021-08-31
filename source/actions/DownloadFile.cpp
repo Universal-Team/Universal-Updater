@@ -24,18 +24,14 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_UTILS_HPP
-#define _UNIVERSAL_UPDATER_UTILS_HPP
+#include "DownloadFile.hpp"
+#include <string.h>
 
-#include <string>
-#include <vector>
 
-namespace Utils {
-	uint64_t AvailableSpace();
-	void MakeDirs(const std::string &Dest);
-	std::string VectorToString(const std::vector<std::string> &Fetch);
-	std::string LowerCase(const std::string &STR);
-	bool MatchPattern(const std::string &Pattern, const std::string &Tested);
+/*
+	TODO: Proper handling or so.
+*/
+void DownloadFile::Handler() {
+	const int Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Path.c_str());
+	this->Done = true;
 };
-
-#endif

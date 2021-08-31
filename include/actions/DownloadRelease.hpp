@@ -24,18 +24,36 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_UTILS_HPP
-#define _UNIVERSAL_UPDATER_UTILS_HPP
+#ifndef _UNIVERSAL_UPDATER_DOWNLOAD_RELEASE_HPP
+#define _UNIVERSAL_UPDATER_DOWNLOAD_RELEASE_HPP
 
-#include <string>
-#include <vector>
+#include "Action.hpp"
+#include "DownloadUtils.hpp"
 
-namespace Utils {
-	uint64_t AvailableSpace();
-	void MakeDirs(const std::string &Dest);
-	std::string VectorToString(const std::vector<std::string> &Fetch);
-	std::string LowerCase(const std::string &STR);
-	bool MatchPattern(const std::string &Pattern, const std::string &Tested);
+
+class DownloadRelease : public Action {
+public:
+	enum class Error : uint8_t { Good = 0, OutOfSpace };
+
+	DownloadRelease(const std::string &Repo, const std::string &File, const std::string &Output, const bool PreRelease = false) :
+		Repo(Repo), File(File), Output(Output), PreRelease(PreRelease) { };
+
+	void Handler() override;
+
+	/* Some returns. */
+	std::pair<int, int> Files() const override { return { 0, 0 }; };
+	std::pair<uint32_t, uint32_t> Progress() const override { return { this->CurProg, this->TotalProg }; };
+	std::string CurrentFile() const override { return ""; };
+	uint8_t State() const override { return (uint8_t)this->CurState; };
+	Action::ActionType Type() const override { return Action::ActionType::DownloadRelease; };
+	bool IsDone() const override { return this->Done; };
+	
+	void Cancel() override { };
+private:
+	uint32_t CurProg = 0, TotalProg = 0;
+	Error CurState = Error::Good;
+	std::string Repo = "", File = "", Output = "", URL = "";
+	bool Done = false, PreRelease = false;
 };
 
 #endif

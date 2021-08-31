@@ -24,18 +24,14 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_UTILS_HPP
-#define _UNIVERSAL_UPDATER_UTILS_HPP
+#ifndef _UNIVERSAL_UPDATER_DOWNLOAD_UTILS_HPP
+#define _UNIVERSAL_UPDATER_DOWNLOAD_UTILS_HPP
 
-#include <string>
-#include <vector>
+#include <curl/curl.h>
 
-namespace Utils {
-	uint64_t AvailableSpace();
-	void MakeDirs(const std::string &Dest);
-	std::string VectorToString(const std::vector<std::string> &Fetch);
-	std::string LowerCase(const std::string &STR);
-	bool MatchPattern(const std::string &Pattern, const std::string &Tested);
+namespace DownloadUtils {
+	int DownloadToFile(const char *URL, const char *Path);
+	int DownloadToMemory(const char *URL, void *Buffer, size_t Size);
 };
 
 #endif

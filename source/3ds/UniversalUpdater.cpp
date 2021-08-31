@@ -35,6 +35,7 @@ void UU::Initialize() {
 	romfsInit();
 	gfxInitDefault();
 	Gui::init();
+	acInit();
 	hidSetRepeatParameters(20, 8);
 
 	/* Create Directories. */
@@ -127,6 +128,7 @@ int UU::Handler() {
 	}
 
 	this->CData->Sav();
+	acExit();
 	Gui::exit();
 	gfxExit();
 	romfsExit();

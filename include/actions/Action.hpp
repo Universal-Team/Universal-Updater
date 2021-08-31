@@ -32,7 +32,7 @@
 
 class Action {
 public:
-	enum class ActionType : uint8_t { None = 0, Extracting, Moving, Copying };
+	enum class ActionType : uint8_t { None = 0, Extracting, Moving, Copying, DownloadFile, DownloadRelease };
 
 	virtual void Handler() = 0; // The main function that handles things.
 
