@@ -67,20 +67,6 @@ void UU::Initialize(char *ARGV[]) {
 	mkdir("/_nds/Universal-Updater/stores", 0x777);
 	mkdir("/_nds/Universal-Updater/shortcuts", 0x777);
 
-	/* Initialize Wi-Fi. */
-	// TODO: Move below GUI init and use proper graphics.
-	consoleDemoInit();
-	WiFi::Init();
-	printf("Connecting to Wi-Fi...\n");
-	while(!WiFi::Connected()) {
-		swiWaitForVBlank();
-
-		uint32_t IP = WiFi::IpAddress();
-		uint8_t *IPBytes = (uint8_t *)IP;
-
-		iprintf("\x1b[s\x1b[0;0HCur IP: \x1b[36m%u.%u.%u.%u        \x1b[u\x1b[37m", IPBytes[0], IPBytes[1], IPBytes[2], IPBytes[3]);
-	}
-
 	/* Initialize graphics. */
 	Gui::init({"sd:/_nds/Universal-Updater/font.nftr", "fat:/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/default.nftr"});
 
@@ -91,8 +77,30 @@ void UU::Initialize(char *ARGV[]) {
 	tonccpy(BG_PALETTE, Palette, sizeof(Palette));
 	tonccpy(BG_PALETTE_SUB, Palette, sizeof(Palette));
 
-	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();
+
+	/* Initialize Wi-Fi if not using no$gba. */
+	if (strncmp((const char *)0x4FFFA00, "no$gba", 6) != 0) {
+		this->GData->StartFrame();
+		this->GData->DrawTop();
+		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Connecting to Wi-Fi...");
+		Gui::DrawStringCentered(0, 30, TEXT_MEDIUM, TEXT_COLOR, "If it doesn't connect, your router\nmay be incompatible at the moment.");
+		this->GData->DrawBottom();
+		this->GData->EndFrame();
+
+		WiFi::Init();
+		while(!WiFi::Connected()) {
+			swiWaitForVBlank();
+		}
+	}
+
+	/* Load classes. */
+	this->GData->StartFrame();
+	this->GData->DrawTop();
+	Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Loading...");
+	this->GData->DrawBottom();
+	this->GData->EndFrame();
+
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
 	this->MData = std::make_unique<Meta>();
