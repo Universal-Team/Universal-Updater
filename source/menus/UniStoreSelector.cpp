@@ -133,7 +133,6 @@ void UniStoreSelector::Handler() {
 			Gui::DrawString(10, 200, TEXT_SMALL, TEXT_COLOR, "- Version: " + std::to_string(this->Infos[this->SelectedIndex].Version), 150, 0);
 			Gui::DrawString(10, 210, TEXT_SMALL, TEXT_COLOR, "- Revision: " + std::to_string(this->Infos[this->SelectedIndex].Revision), 150, 0);
 
-			UU::App->GData->UpdateFont(true);
 			UU::App->GData->DrawBottom();
 
 			Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
@@ -147,14 +146,12 @@ void UniStoreSelector::Handler() {
 			}
 
 		} else {
-			UU::App->GData->UpdateFont(true);
 			UU::App->GData->DrawBottom();
 		}
 
 		UU::App->GData->DrawSpriteBlend(sprites_delete_idx, this->Pos[6].x, this->Pos[6].y, TEXT_COLOR);
 		UU::App->GData->DrawSpriteBlend(sprites_update_idx, this->Pos[7].x, this->Pos[7].y, TEXT_COLOR);
 		UU::App->GData->DrawSpriteBlend(sprites_add_idx, this->Pos[8].x, this->Pos[8].y, TEXT_COLOR);
-		UU::App->GData->UpdateFont(false);
 		UU::App->GData->EndFrame();
 
 		#ifdef ARM9

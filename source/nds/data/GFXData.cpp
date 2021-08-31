@@ -63,11 +63,9 @@ void GFXData::StartFrame() {
 
 
 void GFXData::EndFrame() {
-
+	Gui::updateTextBufs(true);
+	Gui::updateTextBufs(false);
 };
-
-
-void GFXData::UpdateFont(const bool Top) { Font::update(Top); };
 
 
 void GFXData::DrawTop() {
