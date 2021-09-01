@@ -23,6 +23,7 @@
 #define WIFI_IPCINT_AP_MAC      (4)
 #define WIFI_IPCINT_PKTDATA     (5)
 #define WIFI_IPCINT_DBGLOG      (6)
+#define WIFI_IPCINT_PKTSENT     (7)
 
 typedef struct Wifi_FifoMsg
 {
