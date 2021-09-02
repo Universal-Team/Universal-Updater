@@ -155,68 +155,69 @@ void UniStore::UpdateUniStore(const std::string &File) {
 		}
 
 		if (this->UniStoreJSON.contains("storeInfo")) {
-			/* TODO: WiFi Check. */
-			if (this->UniStoreJSON["storeInfo"].contains("url") && this->UniStoreJSON["storeInfo"]["url"].is_string()) {
-				if (this->UniStoreJSON["storeInfo"].contains("file") && this->UniStoreJSON["storeInfo"]["file"].is_string()) {
-					const std::string Fl = this->UniStoreJSON["storeInfo"]["file"];
-					if (!(Fl.find("/") != std::string::npos)) {
-						const std::string URL = this->UniStoreJSON["storeInfo"]["url"];
+			/* Ensure WiFi is available. */
+			if (DownloadUtils::WiFiAvailable()) {
+				if (this->UniStoreJSON["storeInfo"].contains("url") && this->UniStoreJSON["storeInfo"]["url"].is_string()) {
+					if (this->UniStoreJSON["storeInfo"].contains("file") && this->UniStoreJSON["storeInfo"]["file"].is_string()) {
+						const std::string Fl = this->UniStoreJSON["storeInfo"]["file"];
+						if (!(Fl.find("/") != std::string::npos)) {
+							const std::string URL = this->UniStoreJSON["storeInfo"]["url"];
 
-						if (URL != "") {
-							UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
-							std::unique_ptr<Action> USDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + Fl);
-							USDL->Handler();
+							if (URL != "") {
+								UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
+								std::unique_ptr<Action> USDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + Fl);
+								USDL->Handler();
 
-							/* Check if the revision increased. */
-							UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH + Fl, Fl);
-							if (_Info.Revision > Rev) DoSheet = true;
+								/* Check if the revision increased. */
+								UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH + Fl, Fl);
+								if (_Info.Revision > Rev) DoSheet = true;
+							}
+
+						} else {
+							UU::App->MSData->PromptMsg("Filename contains a slash which is invalid.");
 						}
-
-					} else {
-						UU::App->MSData->PromptMsg("Filename contains a slash which is invalid.");
 					}
 				}
-			}
 
-			if (DoSheet) {
-				/* SpriteSheet Array. */
-				if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_array()) {
-					if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
-						const std::vector<std::string> Locs = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].get<std::vector<std::string>>();
-						const std::vector<std::string> Sht = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
+				if (DoSheet) {
+					/* SpriteSheet Array. */
+					if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_array()) {
+						if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
+							const std::vector<std::string> Locs = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].get<std::vector<std::string>>();
+							const std::vector<std::string> Sht = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
 
-						/* Loop through the array. */
-						if (Locs.size() == Sht.size()) {
-							for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
-								if (!(Sht[Idx].find("/") != std::string::npos)) {
-									char Msg[150];
-									snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
-									UU::App->MSData->DisplayWaitMsg(Msg);
+							/* Loop through the array. */
+							if (Locs.size() == Sht.size()) {
+								for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
+									if (!(Sht[Idx].find("/") != std::string::npos)) {
+										char Msg[150];
+										snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
+										UU::App->MSData->DisplayWaitMsg(Msg);
 
-									std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(Locs[Idx], _STORE_PATH + Sht[Idx]);
-									SDL->Handler();
+										std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(Locs[Idx], _STORE_PATH + Sht[Idx]);
+										SDL->Handler();
 
-								} else {
-									UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
-									Idx++;
+									} else {
+										UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+									}
 								}
 							}
 						}
-					}
 
-				/* Single SpriteSheet (No array). */
-				} else if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_string()) {
-					if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
-						const std::string URL = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY];
-						const std::string FL = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
+					/* Single SpriteSheet (No array). */
+					} else if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_string()) {
+						if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
+							const std::string URL = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY];
+							const std::string FL = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
 
-						if (!(FL.find("/") != std::string::npos)) {
-							UU::App->MSData->DisplayWaitMsg("Updating Spritesheet...");
-							std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + FL);
-							SDL->Handler();
+							if (!(FL.find("/") != std::string::npos)) {
+								UU::App->MSData->DisplayWaitMsg("Updating Spritesheet...");
+								std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + FL);
+								SDL->Handler();
 
-						} else {
-							UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+							} else {
+								UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+							}
 						}
 					}
 				}

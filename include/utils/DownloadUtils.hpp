@@ -31,7 +31,8 @@
 
 namespace DownloadUtils {
 	int DownloadToFile(const char *URL, const char *Path);
-	int DownloadToMemory(const char *URL, void *Buffer, size_t Size);
+	int DownloadToMemory(const char *URL, void *Buffer, const size_t Size);
+	bool WiFiAvailable();
 };
 
 #endif

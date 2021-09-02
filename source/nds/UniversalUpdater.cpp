@@ -93,9 +93,10 @@ void UU::Initialize(char *ARGV[]) {
 		this->GData->EndFrame();
 
 		WiFi::Init();
-		while(!WiFi::Connected()) {
-			swiWaitForVBlank();
-		}
+		/* For now Wi-Fi "fully" disabled under DownloadUtils::WiFiAvailable(). */
+		//while(!WiFi::Connected()) {
+		//	swiWaitForVBlank();
+		//}
 	}
 
 	/* Load classes. */
@@ -130,20 +131,7 @@ void UU::Initialize(char *ARGV[]) {
 	/* If Universal-DB --> Get! */
 	if (this->CData->LastStore() == "universal-db.unistore" || this->CData->LastStore() == "") {
 		if (access(_STORE_PATH "universal-db.unistore", F_OK) != 0) {
-			std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
-			this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
-			DL->Handler();
-
-			DL = nullptr;
-			DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.tdx", _STORE_PATH "universal-db.tdx");
-			this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
-			DL->Handler();
-			DidDownload = true;
-
-		} else {
-			const UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH "universal-db.unistore", "universal-db.unistore");
-
-			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
+			if (DownloadUtils::WiFiAvailable()) {
 				std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
 				this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
 				DL->Handler();
@@ -153,6 +141,23 @@ void UU::Initialize(char *ARGV[]) {
 				this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
 				DL->Handler();
 				DidDownload = true;
+			}
+
+		} else {
+			const UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH "universal-db.unistore", "universal-db.unistore");
+
+			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
+				if (DownloadUtils::WiFiAvailable()) {
+					std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
+					this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
+					DL->Handler();
+
+					DL = nullptr;
+					DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.tdx", _STORE_PATH "universal-db.tdx");
+					this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
+					DL->Handler();
+					DidDownload = true;
+				}
 			}
 		}
 	}

@@ -30,10 +30,10 @@
 #ifdef _3DS
 	#include <3ds.h> // For socInit stuff.
 	#include <malloc.h> // memalign and free.
-	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB
+	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 
 #elif ARM9
-	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB
+	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 #endif
 
 #define USER_AGENT "Universal-Updater-v4.0.0"
@@ -50,13 +50,13 @@ static FILE *Out = nullptr;
 
 
 static size_t HandleData(const char *Ptr, size_t Size, size_t NMemb, const void *UserData) {
-	size_t RealSize = Size * NMemb;
+	const size_t RealSize = Size * NMemb;
 	ResultWritten += RealSize;
 
 	if (BufWritten + RealSize > RESULT_BUF_SIZE) {
 		if (!Out) return 0;
-		size_t ret = fwrite(ResultBuf, 1, BufWritten, Out);
-		if (ret != BufWritten) return ret;
+		const size_t Ret = fwrite(ResultBuf, 1, BufWritten, Out);
+		if (Ret != BufWritten) return Ret;
 		BufWritten = 0;
 	}
 
@@ -86,6 +86,8 @@ static int SetupContext(CURL *Hnd, const char *URL) {
 
 
 int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
+	if (!DownloadUtils::WiFiAvailable()) return -1;
+
 	int Ret = 0;
 	CURLcode CRes;
 	CURL *Hnd;
@@ -165,7 +167,9 @@ Cleanup:
 };
 
 
-int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, size_t Size) {
+int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t Size) {
+	if (!DownloadUtils::WiFiAvailable()) return -1;
+
 	int Ret = 0;
 	CURL *Hnd;
 	CURLcode CRes;
@@ -217,4 +221,19 @@ Cleanup:
 	ResultBuf = nullptr;
 
 	return 0;
+};
+
+
+bool DownloadUtils::WiFiAvailable() {
+	bool Res = false;
+
+	#ifdef _3DS
+		uint32_t WifiStatus;
+		if (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus) Res = true;
+
+	#elif ARM9
+		/* TODO: NDS WiFi Available Checks. */
+	#endif
+
+	return Res;
 };
