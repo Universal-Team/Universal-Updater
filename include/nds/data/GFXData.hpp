@@ -45,9 +45,9 @@
 #define TAB_ICON_COLOR	0x1C
 
 /* Text sizes. */
-#define TEXT_LARGE	1.0f
-#define TEXT_MEDIUM	0.8f
-#define TEXT_SMALL	0.7f
+#define TEXT_LARGE	0
+#define TEXT_MEDIUM	1
+#define TEXT_SMALL	2
 
 /* Top grid/list positions. */
 #define TOP_GRID_X(Pos) (15 + (Pos % 5) * 60)

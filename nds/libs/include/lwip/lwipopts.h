@@ -1,9 +1,11 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
+// TODO TCP_MSS 1352?
+
 #define NO_SYS                      0
 #define MEM_LIBC_MALLOC             1
-#define MEMP_MEM_MALLOC             1
+#define MEMP_MEM_MALLOC             0
 #define MEM_ALIGNMENT               4
 #define MEM_SIZE                    (4 * 1024 * 1024)
 #define MEMP_NUM_PBUF               1024

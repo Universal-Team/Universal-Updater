@@ -201,6 +201,8 @@ extern void DSiWifi_SetLogHandler(WifiLogHandler handler);
 extern void DSiWifi_SetConnectHandler(WifiConnectHandler handler);
 extern void DSiWifi_SetReconnectHandler(WifiReconnectHandler handler);
 
+extern void DSiWifi_Shutdown(void);
+
 #ifdef __cplusplus
 };
 #endif
