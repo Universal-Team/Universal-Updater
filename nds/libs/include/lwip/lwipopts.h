@@ -10,7 +10,7 @@
 #define MEMP_NUM_UDP_PCB            20
 #define MEMP_NUM_TCP_PCB            20
 #define MEMP_NUM_TCP_PCB_LISTEN     16
-#define MEMP_NUM_TCP_SEG            128
+#define MEMP_NUM_TCP_SEG            64
 #define MEMP_NUM_REASSDATA          32
 #define MEMP_NUM_ARP_QUEUE          10
 #define PBUF_POOL_SIZE              512
@@ -24,7 +24,7 @@
 #define LWIP_BROADCAST_PING         1
 #define LWIP_MULTICAST_PING         1
 #define LWIP_RAW                    1
-#define TCP_WND                     (4 * TCP_MSS)
+#define TCP_WND                     (2 * TCP_MSS)
 #define TCP_MSS                     1460
 #define TCP_SND_BUF                 (4 * TCP_MSS)
 #define TCP_LISTEN_BACKLOG          1
@@ -50,9 +50,14 @@
 
 #define LWIP_NETBUF_RECVINFO 1
 #define LWIP_SINGLE_NETIF 1
-#define TCP_OVERSIZE 0
-#define MEMP_NUM_NETCONN 16
+#define TCP_OVERSIZE 1
+#define MEMP_NUM_NETCONN 32
+#define MEMP_NUM_NETBUF 4
 #define LWIP_TCPIP_CORE_LOCKING 1
+#define LWIP_TCPIP_CORE_LOCKING_INPUT 1
+#define LWIP_TCP_SACK_OUT 1
+#define LWIP_TCP_MAX_SACK_NUM 4
+#define LWIP_NETIF_TX_SINGLE_PBUF 1
 
 #define SYS_LIGHTWEIGHT_PROT        0
 
@@ -74,8 +79,6 @@
 #define LWIP_ACD 1
 #define LWIP_DHCP_DOES_ACD_CHECK 0
 #define LWIP_TIMEVAL_PRIVATE 0
-#define LWIP_WND_SCALE 1
-#define TCP_RCV_SCALE  7
 #define LWIP_NETIF_HOSTNAME 1
 #define LWIP_PROVIDE_ERRNO 0
 #define LWIP_NETCONN_FULLDUPLEX 0

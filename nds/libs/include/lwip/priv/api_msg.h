@@ -114,6 +114,7 @@ struct api_msg {
       size_t len;
       /** offset into total length/output of bytes written when err == ERR_OK */
       size_t offset;
+      size_t confirmed;
       u8_t apiflags;
 #if LWIP_SO_SNDTIMEO
       u32_t time_started;
