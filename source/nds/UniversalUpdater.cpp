@@ -73,7 +73,7 @@ void UU::Initialize(char *ARGV[]) {
 	mkdir("/_nds/Universal-Updater/shortcuts", 0x777);
 
 	/* Initialize graphics. */
-	Gui::init({"sd:/_nds/Universal-Updater/font.nftr", "fat:/_nds/Universal-Updater/font.nftr", "nitro:/graphics/font/default.nftr"});
+	Gui::init(std::array<std::vector<std::string>, 3>({{"/_nds/Universal-Updater/large.nftr", "nitro:/graphics/font/large.nftr"}, {"/_nds/Universal-Updater/medium.nftr", "nitro:/graphics/font/medium.nftr"}, {"/_nds/Universal-Updater/small.nftr", "nitro:/graphics/font/small.nftr"}}));
 
 	constexpr uint16_t Palette[] = {
 		0x0000, 0xFFFF, 0xFFFF, 0xFFFF, 0xB126, 0xB126, 0xB126, 0xB126, 0x9883, 0x9883, 0x9883, 0x9883, 0xA4A5, 0xA4A5, 0xA4A5, 0xA4A5,
