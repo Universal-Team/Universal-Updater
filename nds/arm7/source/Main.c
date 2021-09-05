@@ -133,5 +133,6 @@ int main() {
 
 		last_keyinput = keyinput;
 	}
+	wifi_card_deinit();
 	return 0;
 }
