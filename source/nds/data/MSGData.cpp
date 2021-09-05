@@ -50,23 +50,21 @@ bool MSGData::PromptMsg(const std::string &MSG) {
 		UU::App->GData->HideUniStoreSprites();
 	}
 
-	bool HasDrawn = false, Result = false;
+	bool Result = false;
 
 	while(1) {
-		swiWaitForVBlank();
+		UU::App->GData->StartFrame();
+		UU::App->GData->DrawTop();
+		Gui::DrawStringCentered(0, 80, TEXT_MEDIUM, TEXT_COLOR, MSG);
+		Gui::DrawStringCentered(0, 210, TEXT_MEDIUM, TEXT_COLOR, "Press A to continue, B to cancel.");
+		UU::App->GData->DrawBottom();
+		UU::App->GData->EndFrame();
 
-		if (!HasDrawn) {
-			HasDrawn = true;
+		do {
+			swiWaitForVBlank();
+			UU::App->ScanInput();
+		} while (!(UU::App->Down & (KEY_A | KEY_B)));
 
-			UU::App->GData->StartFrame();
-			UU::App->GData->DrawTop();
-			Gui::DrawStringCentered(0, 80, TEXT_MEDIUM, TEXT_COLOR, MSG);
-			Gui::DrawStringCentered(0, 210, TEXT_MEDIUM, TEXT_COLOR, "Press A to continue, B to cancel.");
-			UU::App->GData->DrawBottom();
-			UU::App->GData->EndFrame();
-		}
-
-		UU::App->ScanInput();
 		if (UU::App->Down & KEY_A) {
 			Result = true;
 			break;

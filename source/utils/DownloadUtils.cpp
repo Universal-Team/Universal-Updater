@@ -161,10 +161,12 @@ Cleanup:
 		ResultBuf = nullptr;
 	}
 
+	size_t FinalSize = ResultWritten;
+
 	/* Reset some sizes. */
 	ResultSize = 0, BufSize = 0, ResultWritten = 0, BufWritten = 0;
 
-	return 0;
+	return FinalSize;
 };
 
 
@@ -217,11 +219,13 @@ Cleanup:
 		if (SocBuf) free(SocBuf);
 	#endif
 
+	size_t FinalSize = ResultWritten;
+
 	/* Reset some sizes. */
 	ResultSize = 0, BufSize = 0, ResultWritten = 0, BufWritten = 0;
 	ResultBuf = nullptr;
 
-	return 0;
+	return FinalSize;
 };
 
 

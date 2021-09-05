@@ -85,8 +85,8 @@ void Meta::ImportMetadata() {
 	std::vector<UniStore::Info> Info = UniStore::GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
 
 	for (size_t Idx = 0; Idx < Info.size(); Idx++) {
-		if (Info[Idx].Title != "" && OldJSON.contains(Info[Idx].FileName)) {
-			for(auto It = OldJSON[Info[Idx].FileName].begin(); It != OldJSON[Info[Idx].FileName].end(); ++It) {
+		if (Info[Idx].Title != "" && OldJSON.contains(Info[Idx].File)) {
+			for(auto It = OldJSON[Info[Idx].File].begin(); It != OldJSON[Info[Idx].File].end(); ++It) {
 				this->SetUpdated(Info[Idx].Title, It.key().c_str(), It.value().get<std::string>());
 			}
 		}

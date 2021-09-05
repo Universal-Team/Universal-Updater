@@ -55,32 +55,10 @@ void UU::Initialize() {
 	this->MData = std::make_unique<Meta>();
 	this->MSData = std::make_unique<MSGData>();
 
-	bool DidDownload = false;
 	this->MSData->DisplayWaitMsg("Checking UniStore...");
 	
 	/* Check if LastStore is accessible. */
-	if (this->CData->LastStore() != "universal-db.unistore" && this->CData->LastStore() != "") {
-		if (access((_STORE_PATH + this->CData->LastStore()).c_str(), F_OK) != 0) {
-			this->CData->LastStore("universal-db.unistore");
-
-		} else {
-			/* check version and file here. */
-			const UniStore::Info _Info = UniStore::GetInfo((_STORE_PATH + this->CData->LastStore()), this->CData->LastStore());
-
-			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
-				this->CData->LastStore("universal-db.unistore");
-			}
-
-			if (_Info.File != "") { // Ensure to check for this.
-				if ((_Info.File.find("/") != std::string::npos)) {
-					this->CData->LastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
-				}
-			}
-		}
-	}
-
-	/* If Universal-DB --> Get! */
-	if (this->CData->LastStore() == "universal-db.unistore" || this->CData->LastStore() == "") {
+	if (this->CData->LastStore() == "" || access((_STORE_PATH + this->CData->LastStore()).c_str(), F_OK) != 0) {
 		if (access(_STORE_PATH "universal-db.unistore", F_OK) != 0) {
 			if (DownloadUtils::WiFiAvailable()) {
 				std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
@@ -91,29 +69,14 @@ void UU::Initialize() {
 				DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.t3x", _STORE_PATH "universal-db.t3x");
 				this->MSData->DisplayWaitMsg("Downloading universal-db.t3x...");
 				DL->Handler();
-				DidDownload = true;
 			}
 
 		} else {
-			const UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH "universal-db.unistore", "universal-db.unistore");
-
-			if (_Info.Version != 3 && _Info.Version != UniStore::UNISTORE_VERSION) {
-				if (DownloadUtils::WiFiAvailable()) {
-					std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
-					this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
-					DL->Handler();
-
-					DL = nullptr;
-					DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.t3x", _STORE_PATH "universal-db.t3x");
-					this->MSData->DisplayWaitMsg("Downloading universal-db.t3x...");
-					DL->Handler();
-					DidDownload = true;
-				}
-			}
+			this->CData->LastStore("universal-db.unistore");
 		}
 	}
 
-	this->Store = std::make_unique<UniStore>(_STORE_PATH + this->CData->LastStore(), this->CData->LastStore(), DidDownload);
+	this->Store = std::make_unique<UniStore>(this->CData->LastStore());
 
 	this->_Tabs = std::make_unique<Tabs>();
 	this->TGrid = std::make_unique<TopGrid>();

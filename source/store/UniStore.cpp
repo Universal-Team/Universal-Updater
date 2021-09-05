@@ -25,39 +25,45 @@
 */
 
 #include "BrowseData.hpp"
-#include "DownloadFile.hpp"
 #include "DownloadUtils.hpp"
 #include "UniStore.hpp"
 #include "UniversalUpdater.hpp"
 #include <unistd.h>
 
-
-bool UniStore::FirstStart = true;
+const std::string UniStore::emptyString = "";
 
 /*
 	Return UniStore info.
 
-	const std::string &File: Const Reference to the path of the file.
 	const std::string &FName: Const Reference to the filename, without path.
 */
-UniStore::Info UniStore::GetInfo(const std::string &File, const std::string &FName) {
-	UniStore::Info Temp = { "", "", "", "", FName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, entries.
-
+UniStore::Info UniStore::GetInfo(const std::string &FName) {
 	if (FName.length() > 4) {
-		if (*(uint32_t *)(FName.c_str() + FName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
+		if (*(uint32_t *)(FName.c_str() + FName.length() - 4) == (1886349435 & ~(1 << 3))) return { "", "", "", "", "", -1, -1, -1 };
 	}
 
 	nlohmann::json JSON;
 
-	FILE *Tmp = fopen(File.c_str(), "rt");
+	FILE *Tmp = fopen((_STORE_PATH + FName).c_str(), "rt");
 
 	if (Tmp) {
 		JSON = nlohmann::json::parse(Tmp, nullptr, false);
 		fclose(Tmp);
 	}
 
-	if (JSON.is_discarded()) JSON = { };
+	return GetInfo(JSON);
+}
 
+/*
+	Return UniStore info.
+
+	const std::string &FName: Const Reference to the filename, without path.
+*/
+UniStore::Info UniStore::GetInfo(const nlohmann::json &JSON) {
+	/* Title, Author, URL, File, FileName, Desc, Version, Revision, Entries. */
+	UniStore::Info Temp = { "", "", "", "", "", -1, -1, -1 };
+
+	if (JSON.is_discarded()) return Temp;
 	if (!JSON.contains("storeInfo")) return Temp; // storeInfo does not exist.
 
 	/* Fetch Info. */
@@ -68,7 +74,7 @@ UniStore::Info UniStore::GetInfo(const std::string &File, const std::string &FNa
 	if (JSON["storeInfo"].contains("description") && JSON["storeInfo"]["description"].is_string()) Temp.Description = JSON["storeInfo"]["description"];
 	if (JSON["storeInfo"].contains("version") && JSON["storeInfo"]["version"].is_number()) Temp.Version = JSON["storeInfo"]["version"];
 	if (JSON["storeInfo"].contains("revision") && JSON["storeInfo"]["revision"].is_number()) Temp.Revision = JSON["storeInfo"]["revision"];
-	if (JSON.contains("storeContent")) Temp.StoreSize = JSON["storeContent"].size();
+	if (JSON.contains("storeContent") && JSON["storeContent"].is_array()) Temp.StoreSize = JSON["storeContent"].size();
 
 	return Temp;
 };
@@ -90,7 +96,7 @@ std::vector<UniStore::Info> UniStore::GetUniStoreInfo(const std::string &Path) {
 
 	for(uint Idx = 0; Idx < DirContents.size(); Idx++) {
 		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
-		if ((Path + DirContents[Idx].Name).find(".unistore") != std::string::npos) _Info.push_back( UniStore::GetInfo(Path + DirContents[Idx].Name, DirContents[Idx].Name) );
+		if ((Path + DirContents[Idx].Name).find(".unistore") != std::string::npos) _Info.push_back(UniStore::GetInfo(DirContents[Idx].Name));
 	}
 
 	return _Info;
@@ -105,19 +111,16 @@ std::vector<UniStore::Info> UniStore::GetUniStoreInfo(const std::string &Path) {
 
 	const std::string &FullPath: The full path to the UniStore.
 	const std::string &FileName: Same as above, but just the UniStore filename.
-	const bool DidDownload: If it got downloaded a bit ago, so we don't update at all and directly load it.
 */
-UniStore::UniStore(const std::string &FullPath, const std::string &FileName, const bool DidDownload) {
-	if (FullPath.length() > 4) {
-		if (*(uint32_t *)(FullPath.c_str() + FullPath.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
+UniStore::UniStore(const std::string &FileName) : FileName(FileName) {
+	if (this->FileName.size() > 4) {
+		if (*(uint32_t *)(this->FileName.c_str() + this->FileName.size() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
 			this->Valid = false;
 			return;
 		}
 	}
 
-	this->FileName = FileName;
-	if (!DidDownload) this->UpdateUniStore(FullPath);
-	else this->LoadUniStore(FullPath, true);
+	this->Update();
 };
 
 
@@ -130,126 +133,149 @@ UniStore::~UniStore() { UU::App->GData->UnloadUniStoreSheets(); };
 
 
 /*
-	Updates a UniStore inclusive spritesheets to it's latest version.
-
-	const std::string &File: The file of the UniStore to update.
+	Updates a UniStore and its spritesheets to its latest version.
 */
-void UniStore::UpdateUniStore(const std::string &File) {
-	bool DoSheet = false;
+void UniStore::Update() {
+	bool Updated = false;
 	int Rev = -1;
-	this->LoadUniStore(File, false);
+	this->Load();
 
-	/* Only do this, if valid. */
-	if (this->Valid) {
-		if (this->UniStoreJSON["storeInfo"].contains("revision") && this->UniStoreJSON["storeInfo"]["revision"].is_number()) {
-			Rev = this->UniStoreJSON["storeInfo"]["revision"];
-		}
+	/* Only do this if valid. */
+	if (!this->Valid) return;
 
-		/* First start exceptions. */
-		if (UniStore::FirstStart) {
-			UniStore::FirstStart = false;
+	/* Ensure WiFi is available. */
+	if (!DownloadUtils::WiFiAvailable()) {
+		this->ResetIndexes();
+		UU::App->GData->UnloadUniStoreSheets();
+		this->LoadSpriteSheets();
+		return;
+	}
 
-			if (!UU::App->CData->AutoUpdate()) {
-				this->LoadSpriteSheets();
-				return;
-			}
-		}
+	if (this->UniStoreJSON["storeInfo"].contains("revision") && this->UniStoreJSON["storeInfo"]["revision"].is_number()) {
+		Rev = this->UniStoreJSON["storeInfo"]["revision"];
+	}
 
-		if (this->UniStoreJSON.contains("storeInfo")) {
-			/* Ensure WiFi is available. */
-			if (DownloadUtils::WiFiAvailable()) {
-				if (this->UniStoreJSON["storeInfo"].contains("url") && this->UniStoreJSON["storeInfo"]["url"].is_string()) {
-					if (this->UniStoreJSON["storeInfo"].contains("file") && this->UniStoreJSON["storeInfo"]["file"].is_string()) {
-						const std::string Fl = this->UniStoreJSON["storeInfo"]["file"];
-						if (!(Fl.find("/") != std::string::npos)) {
-							const std::string URL = this->UniStoreJSON["storeInfo"]["url"];
+	/* If the UniStore has an info JSON, check for update using that. */
+	if (this->UniStoreJSON["storeInfo"].contains("infoURL") && this->UniStoreJSON["storeInfo"]["infoURL"].is_string()) {
+		char *Buffer = new char[10 << 10];
+		if (Buffer) {
+			UU::App->MSData->DisplayWaitMsg("Checking for UniStore update...");
+			if (DownloadUtils::DownloadToMemory(this->UniStoreJSON["storeInfo"]["infoURL"].get_ref<const std::string &>().c_str(), Buffer, 10 << 10) > 0) {
+				if (nlohmann::json::accept(Buffer)) {
+					Info UpdatedInfo = this->GetInfo({{"storeInfo", nlohmann::json::parse(Buffer)}});
 
-							if (URL != "") {
-								UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
-								std::unique_ptr<Action> USDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + Fl);
-								USDL->Handler();
+					if (UpdatedInfo.Revision > Rev && UpdatedInfo.File != "") {
+						if (UpdatedInfo.File.find('/') == std::string::npos) {
+							UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
 
-								/* Check if the revision increased. */
-								UniStore::Info _Info = UniStore::GetInfo(_STORE_PATH + Fl, Fl);
-								if (_Info.Revision > Rev) DoSheet = true;
-							}
-
+							DownloadUtils::DownloadToFile(UpdatedInfo.URL.c_str(), UpdatedInfo.File.c_str());
+							this->FileName = UpdatedInfo.File;
+							Updated = true;
 						} else {
 							UU::App->MSData->PromptMsg("Filename contains a slash which is invalid.");
 						}
 					}
 				}
+			}
 
-				if (DoSheet) {
-					/* SpriteSheet Array. */
-					if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_array()) {
-						if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
-							const std::vector<std::string> Locs = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].get<std::vector<std::string>>();
-							const std::vector<std::string> Sht = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
+			delete[] Buffer;
+		}
 
-							/* Loop through the array. */
-							if (Locs.size() == Sht.size()) {
-								for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
-									if (!(Sht[Idx].find("/") != std::string::npos)) {
-										char Msg[150];
-										snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
-										UU::App->MSData->DisplayWaitMsg(Msg);
+	} else if (this->UniStoreJSON["storeInfo"].contains("url") && this->UniStoreJSON["storeInfo"]["url"].is_string()) {
+		char *Buffer = new char[1 << 20];
+		if (Buffer) {
+			UU::App->MSData->DisplayWaitMsg("Checking for UniStore update...");
+			size_t Size = DownloadUtils::DownloadToMemory(this->UniStoreJSON["storeInfo"]["url"].get_ref<const std::string &>().c_str(), Buffer, 1 << 20);
+			if (Size > 0 && nlohmann::json::accept(Buffer)) {
+				Info UpdatedInfo = this->GetInfo(nlohmann::json::parse(Buffer));
 
-										std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(Locs[Idx], _STORE_PATH + Sht[Idx]);
-										SDL->Handler();
+				if (UpdatedInfo.Revision > Rev && UpdatedInfo.File != "") {
+					if (UpdatedInfo.File.find('/') == std::string::npos) {
+						UU::App->MSData->DisplayWaitMsg("Updating UniStore...");
 
-									} else {
-										UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
-									}
-								}
-							}
+						FILE *File = fopen((_STORE_PATH + UpdatedInfo.File).c_str(), "wt");
+						if (File) {
+							fwrite(Buffer, 1, Size, File);
+							fclose(File);
+							this->FileName = UpdatedInfo.File;
+							Updated = true;
 						}
+					} else {
+						UU::App->MSData->PromptMsg("Filename contains a slash which is invalid.");
+					}
+				}
+			}
 
-					/* Single SpriteSheet (No array). */
-					} else if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_string()) {
-						if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
-							const std::string URL = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY];
-							const std::string FL = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
+			delete[] Buffer;
+		}
+	}
 
-							if (!(FL.find("/") != std::string::npos)) {
-								UU::App->MSData->DisplayWaitMsg("Updating Spritesheet...");
-								std::unique_ptr<Action> SDL = std::make_unique<DownloadFile>(URL, _STORE_PATH + FL);
-								SDL->Handler();
+	if (Updated) {
+		this->Load();
 
-							} else {
-								UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
-							}
+		/* SpriteSheet Array. */
+		if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_array()) {
+			if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
+				const std::vector<std::string> Locs = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].get<std::vector<std::string>>();
+				const std::vector<std::string> Sht = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
+
+				/* Loop through the array. */
+				if (Locs.size() == Sht.size()) {
+					for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
+						if (Sht[Idx].find("/") == std::string::npos) {
+							char Msg[150];
+							snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
+							UU::App->MSData->DisplayWaitMsg(Msg);
+
+							DownloadUtils::DownloadToFile(Locs[Idx].c_str(), (_STORE_PATH + Sht[Idx]).c_str());
+
+						} else {
+							UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
 						}
 					}
 				}
 			}
 
-			this->LoadUniStore(File, true);
+		/* Single SpriteSheet (No array). */
+		} else if (this->UniStoreJSON["storeInfo"].contains(SHEET_URL_KEY) && this->UniStoreJSON["storeInfo"][SHEET_URL_KEY].is_string()) {
+			if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY) && this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
+				const std::string URL = this->UniStoreJSON["storeInfo"][SHEET_URL_KEY];
+				const std::string FL = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
+
+				if (FL.find("/") == std::string::npos) {
+					UU::App->MSData->DisplayWaitMsg("Updating Spritesheet...");
+					DownloadUtils::DownloadToFile(URL.c_str(), (_STORE_PATH + FL).c_str());
+
+				} else {
+					UU::App->MSData->PromptMsg("SpriteSheet contains a slash which is invalid.");
+				}
+			}
 		}
 	}
-};
+
+	this->ResetIndexes();
+	UU::App->GData->UnloadUniStoreSheets();
+	this->LoadSpriteSheets();
+}
 
 
 /*
 	Load a UniStore from a file.
-
-	const std::string &File: The file of the UniStore.
 */
-void UniStore::LoadUniStore(const std::string &File, const bool FullInit) {
+void UniStore::Load() {
 	/* Reset UniStore related stuff. */
 	this->Indexes.clear();
 	this->SelectedIndex = 0;
 
-	if (access(File.c_str(), F_OK) != 0) return;
+	if (access((_STORE_PATH + this->FileName).c_str(), F_OK) != 0) return;
 	
-	FILE *In = fopen(File.c_str(), "rt");
+	FILE *In = fopen((_STORE_PATH + this->FileName).c_str(), "rt");
 
 	if (!In) {
 		this->Valid = false;
 		return;
 	}
 
-	/* This seems to crash for some reason. */
 	this->UniStoreJSON = nlohmann::json::parse(In, nullptr, false);
 	fclose(In);
 
@@ -273,12 +299,6 @@ void UniStore::LoadUniStore(const std::string &File, const bool FullInit) {
 	} else {
 		UU::App->MSData->PromptMsg("UniStore invalid!");
 	}
-
-	if (FullInit) {
-		this->ResetIndexes();
-		UU::App->GData->UnloadUniStoreSheets();
-		this->LoadSpriteSheets();
-	}
 };
 
 
@@ -288,26 +308,24 @@ void UniStore::LoadUniStore(const std::string &File, const bool FullInit) {
 	TODO: Find a good way to handle this for 3DS and NDS cleanly.
 */
 void UniStore::LoadSpriteSheets() {
-	if (this->Valid) {
-		if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY)) {
-			std::vector<std::string> SheetLocs = { "" };
+	if (!this->Valid) return;
 
-			if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
-				SheetLocs = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
+	if (this->UniStoreJSON["storeInfo"].contains(SHEET_PATH_KEY)) {
+		std::vector<std::string> SheetLocs;
 
-			} else if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
-				SheetLocs[0] = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY];
+		if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_array()) {
+			SheetLocs = this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].get<std::vector<std::string>>();
 
-			} else {
-				return;
-			}
+		} else if (this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY].is_string()) {
+			SheetLocs = {this->UniStoreJSON["storeInfo"][SHEET_PATH_KEY]};
 
-			for (size_t Idx = 0; Idx < SheetLocs.size(); Idx++) {
-				if (SheetLocs[Idx] != "") {
-					if (SheetLocs[Idx].find("/") == std::string::npos) {
-						UU::App->GData->LoadUniStoreSheet((std::string(_STORE_PATH) + SheetLocs[Idx]));
-					}
-				}
+		} else {
+			return;
+		}
+
+		for (size_t Idx = 0; Idx < SheetLocs.size(); Idx++) {
+			if (SheetLocs[Idx] != "" && SheetLocs[Idx].find("/") == std::string::npos) {
+				UU::App->GData->LoadUniStoreSheet(_STORE_PATH + SheetLocs[Idx]);
 			}
 		}
 	}
@@ -331,12 +349,12 @@ void UniStore::ResetIndexes() {
 /*
 	Return the Title of the UniStore.
 */
-std::string UniStore::GetUniStoreTitle() const {
-	if (this->Valid) {
-		if (this->UniStoreJSON["storeInfo"].contains("title")) return this->UniStoreJSON["storeInfo"]["title"];
+const std::string &UniStore::GetUniStoreTitle() const {
+	if (this->Valid && this->UniStoreJSON["storeInfo"].contains("title")) {
+		return this->UniStoreJSON["storeInfo"]["title"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -345,15 +363,15 @@ std::string UniStore::GetUniStoreTitle() const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryTitle(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryTitle(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("title") && this->UniStoreJSON["storeContent"][Idx]["info"]["title"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["title"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["title"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -362,15 +380,15 @@ std::string UniStore::GetEntryTitle(const int Idx) const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryAuthor(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryAuthor(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("author") && this->UniStoreJSON["storeContent"][Idx]["info"]["author"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["author"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["author"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -378,15 +396,15 @@ std::string UniStore::GetEntryAuthor(const int Idx) const {
 	Return the Description of an index.
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryDescription(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryDescription(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("description") && this->UniStoreJSON["storeContent"][Idx]["info"]["description"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["description"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["description"].get_ref<const std::string &>();;
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -396,22 +414,19 @@ std::string UniStore::GetEntryDescription(const int Idx) const {
 	const int Idx: The index.
 */
 std::vector<std::string> UniStore::GetEntryCategories(const int Idx) const {
-	if (!this->Valid) return { "" };
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { "" }; // Empty.
+	if (!this->Valid) return { };
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { };
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("category")) {
 		if (this->UniStoreJSON["storeContent"][Idx]["info"]["category"].is_array()) {
-			return this->UniStoreJSON["storeContent"][Idx]["info"]["category"].get<std::vector<std::string>>();
+			return this->UniStoreJSON["storeContent"][Idx]["info"]["category"];
 
 		} else if (this->UniStoreJSON["storeContent"][Idx]["info"]["category"].is_string()) {
-			std::vector<std::string> Temp;
-			Temp.push_back( this->UniStoreJSON["storeContent"][Idx]["info"]["category"] );
-
-			return Temp;
+			return {this->UniStoreJSON["storeContent"][Idx]["info"]["category"]};
 		}
 	}
 
-	return { "" };
+	return { };
 };
 
 
@@ -420,15 +435,15 @@ std::vector<std::string> UniStore::GetEntryCategories(const int Idx) const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryVersion(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryVersion(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("version") && this->UniStoreJSON["storeContent"][Idx]["info"]["version"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["version"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["version"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -438,22 +453,19 @@ std::string UniStore::GetEntryVersion(const int Idx) const {
 	const int Idx: The index.
 */
 std::vector<std::string> UniStore::GetEntryConsoles(const int Idx) const {
-	if (!this->Valid) return { "" };
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { "" }; // Empty.
+	if (!this->Valid) return { };
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { };
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("console")) {
 		if (this->UniStoreJSON["storeContent"][Idx]["info"]["console"].is_array()) {
-			return this->UniStoreJSON["storeContent"][Idx]["info"]["console"].get<std::vector<std::string>>();
+			return this->UniStoreJSON["storeContent"][Idx]["info"]["console"];
 
 		} else if (this->UniStoreJSON["storeContent"][Idx]["info"]["console"].is_string()) {
-			std::vector<std::string> Temp;
-			Temp.push_back( this->UniStoreJSON["storeContent"][Idx]["info"]["console"] );
-
-			return Temp;
+			return {this->UniStoreJSON["storeContent"][Idx]["info"]["console"]};
 		}
 	}
 
-	return { "" };
+	return { };
 };
 
 
@@ -462,15 +474,15 @@ std::vector<std::string> UniStore::GetEntryConsoles(const int Idx) const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryLastUpdated(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryLastUpdated(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("last_updated") && this->UniStoreJSON["storeContent"][Idx]["info"]["last_updated"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["last_updated"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["last_updated"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -479,15 +491,15 @@ std::string UniStore::GetEntryLastUpdated(const int Idx) const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetEntryLicense(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetEntryLicense(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("license") && this->UniStoreJSON["storeContent"][Idx]["info"]["license"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["license"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["license"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -531,11 +543,10 @@ int UniStore::GetEntrySheet(const int Idx) const {
 	const int Idx: The index.
 */
 std::vector<std::string> UniStore::GetDownloadList(const int Idx) const {
-	if (!this->Valid) return { "" };
+	if (!this->Valid) return { };
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { };
 
 	std::vector<std::string> Temp;
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return Temp;
-
 	for(auto It = this->UniStoreJSON.at("storeContent").at(Idx).begin(); It != this->UniStoreJSON.at("storeContent").at(Idx).end(); It++) {
 		if (It.key() != "info") Temp.push_back(It.key());
 	}
@@ -550,18 +561,17 @@ std::vector<std::string> UniStore::GetDownloadList(const int Idx) const {
 	const int Idx: The index.
 	const std::string &Entry: The entry name.
 */
-std::string UniStore::GetFileSizes(const int Idx, const std::string &Entry) const {
-	if (!this->Valid) return "";
-
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return "";
+const std::string &UniStore::GetFileSizes(const int Idx, const std::string &Entry) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx].contains(Entry) && this->UniStoreJSON["storeContent"][Idx][Entry].type() == nlohmann::json::value_t::object) {
 		if (this->UniStoreJSON["storeContent"][Idx][Entry].contains("size") && this->UniStoreJSON["storeContent"][Idx][Entry]["size"].is_string()) {
-			return this->UniStoreJSON["storeContent"][Idx][Entry]["size"];
+			return this->UniStoreJSON["storeContent"][Idx][Entry]["size"].get_ref<const std::string &>();
 		}
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 
@@ -572,7 +582,6 @@ std::string UniStore::GetFileSizes(const int Idx, const std::string &Entry) cons
 */
 std::vector<std::string> UniStore::GetScreenshotList(const int Idx) const {
 	if (!this->Valid) return { };
-
 	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { };
 
 	std::vector<std::string> Screenshots;
@@ -597,7 +606,6 @@ std::vector<std::string> UniStore::GetScreenshotList(const int Idx) const {
 */
 std::vector<std::string> UniStore::GetScreenshotNames(const int Idx) const {
 	if (!this->Valid) return { };
-
 	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return { };
 
 	std::vector<std::string> Screenshots;
@@ -620,15 +628,15 @@ std::vector<std::string> UniStore::GetScreenshotNames(const int Idx) const {
 
 	const int Idx: The index.
 */
-std::string UniStore::GetReleaseNotes(const int Idx) const {
-	if (!this->Valid) return "";
-	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return ""; // Empty.
+const std::string &UniStore::GetReleaseNotes(const int Idx) const {
+	if (!this->Valid) return this->emptyString;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return this->emptyString;
 
 	if (this->UniStoreJSON["storeContent"][Idx]["info"].contains("releasenotes") && this->UniStoreJSON["storeContent"][Idx]["info"]["releasenotes"].is_string()) {
-		return this->UniStoreJSON["storeContent"][Idx]["info"]["releasenotes"];
+		return this->UniStoreJSON["storeContent"][Idx]["info"]["releasenotes"].get_ref<const std::string &>();
 	}
 
-	return "";
+	return this->emptyString;
 };
 
 /*

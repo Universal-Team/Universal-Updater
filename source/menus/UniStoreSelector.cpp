@@ -142,7 +142,7 @@ void UniStoreSelector::Handler() {
 
 			for(size_t Idx = 0; Idx < 6 && Idx < this->Infos.size(); Idx++) {
 				if (this->ScreenIndex + Idx == this->SelectedIndex) Gui::Draw_Rect(this->Pos[Idx].x, this->Pos[Idx].y, this->Pos[Idx].w, this->Pos[Idx].h, BAR_COLOR);
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), this->Pos[Idx].y + 4, TEXT_SMALL, TEXT_COLOR, this->Infos[this->ScreenIndex + Idx].FileName, 295, 0);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), this->Pos[Idx].y + 4, TEXT_SMALL, TEXT_COLOR, this->Infos[this->ScreenIndex + Idx].File, 295, 0);
 			}
 
 		} else {
@@ -194,10 +194,10 @@ void UniStoreSelector::Handler() {
 							else if (this->Infos[this->SelectedIndex].Version > UU::App->Store->UNISTORE_VERSION) UU::App->MSData->PromptMsg("UniStore too new!");
 							else {
 								UU::App->Store = nullptr; // Needs to be set to nullptr first for some reason to properly load the Icons...
-								UU::App->Store = std::make_unique<UniStore>(_STORE_PATH + this->Infos[this->SelectedIndex].FileName, this->Infos[this->SelectedIndex].FileName);
+								UU::App->Store = std::make_unique<UniStore>(this->Infos[this->SelectedIndex].File);
 								UU::App->_Tabs->SortEntries();
 								UU::App->SwitchTopMode(UU::App->TMode);
-								UU::App->CData->LastStore(this->Infos[this->SelectedIndex].FileName);
+								UU::App->CData->LastStore(this->Infos[this->SelectedIndex].File);
 								this->Done = true;
 							}
 
@@ -217,10 +217,10 @@ void UniStoreSelector::Handler() {
 									else if (this->Infos[Idx + this->ScreenIndex].Version > UU::App->Store->UNISTORE_VERSION) UU::App->MSData->PromptMsg("UniStore too new!");
 									else {
 										UU::App->Store = nullptr; // Needs to be set to nullptr first for some reason to properly load the Icons...
-										UU::App->Store = std::make_unique<UniStore>(_STORE_PATH + this->Infos[Idx + this->ScreenIndex].FileName, this->Infos[Idx + this->ScreenIndex].FileName);
+										UU::App->Store = std::make_unique<UniStore>(this->Infos[Idx + this->ScreenIndex].File);
 										UU::App->_Tabs->SortEntries();
 										UU::App->SwitchTopMode(UU::App->TMode);
-										UU::App->CData->LastStore(this->Infos[Idx + this->ScreenIndex].FileName);
+										UU::App->CData->LastStore(this->Infos[Idx + this->ScreenIndex].File);
 										this->Done = true;
 									}
 
@@ -234,8 +234,8 @@ void UniStoreSelector::Handler() {
 
 				/* Delete UniStore. For now comment out. */
 				if ((UU::App->Down & KEY_X) || (UU::App->Down & KEY_TOUCH && this->Pos[6].Touched(UU::App->T))) {
-					if (this->Infos[this->SelectedIndex].FileName != "") {
-						this->DeleteUniStore(this->Infos[this->SelectedIndex].FileName);
+					if (this->Infos[this->SelectedIndex].File != "") {
+						this->DeleteUniStore(this->Infos[this->SelectedIndex].File);
 						this->SelectedIndex = 0;
 						this->Infos = UU::App->Store->GetUniStoreInfo(_STORE_PATH);
 						HasDrawn = false;
