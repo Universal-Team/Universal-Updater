@@ -34,6 +34,8 @@
 #include "wifi_debug.h"
 #include "dsiwifi7.h"
 
+extern void wifi_card_deinit(void);
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -68,22 +70,9 @@ void powerButtonCB() {
 	exitflag = true;
 }
 
-extern void wifi_card_deinit(void);
-
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-	if (isDSiMode()) {
-		REG_SCFG_ROM = 0x101;
-		REG_SCFG_CLK = (BIT(0) | BIT(1) | BIT(2) | BIT(7) | BIT(8));
-		REG_SCFG_EXT = 0x93FFFB06;
-		*(vu16*)(0x04004012) = 0x1988;
-		*(vu16*)(0x04004014) = 0x264C;
-		*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
-	}
-
-	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency
-
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
 
@@ -118,20 +107,10 @@ int main() {
 	installWifiFIFO();
 
 	// Keep the ARM7 mostly idle
-	u32 last_keyinput = REG_KEYINPUT;
 	while (!exitflag) {
-		u32 keyinput = REG_KEYINPUT;
-		if ( 0 == (keyinput & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
+		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-
-		if (!(keyinput & KEY_A) && (last_keyinput & KEY_A)) {
-			wifi_printf("test\n");
-
-			while (!(REG_KEYINPUT & KEY_A));
-		}
-
-		last_keyinput = keyinput;
 	}
 	wifi_card_deinit();
 	return 0;
