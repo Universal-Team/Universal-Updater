@@ -120,7 +120,7 @@ UniStore::UniStore(const std::string &FileName) : FileName(FileName) {
 		}
 	}
 
-	this->Update();
+	this->Update(false);
 };
 
 
@@ -134,8 +134,10 @@ UniStore::~UniStore() { UU::App->GData->UnloadUniStoreSheets(); };
 
 /*
 	Updates a UniStore and its spritesheets to its latest version.
+
+	bool Force: Whether to force an update if auto-update is disabled or not.
 */
-void UniStore::Update() {
+void UniStore::Update(bool Force) {
 	bool Updated = false;
 	int Rev = -1;
 	this->Load();
@@ -144,7 +146,7 @@ void UniStore::Update() {
 	if (!this->Valid) return;
 
 	/* Ensure WiFi is available. */
-	if (!DownloadUtils::WiFiAvailable()) {
+	if (!DownloadUtils::WiFiAvailable() || !(Force || UU::App->CData->AutoUpdate())) {
 		this->ResetIndexes();
 		UU::App->GData->UnloadUniStoreSheets();
 		this->LoadSpriteSheets();

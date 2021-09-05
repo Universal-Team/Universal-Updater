@@ -54,6 +54,7 @@ public:
 	~UniStore();
 
 	/* Some Utilities. */
+	void Update(bool Force);
 	void LoadSpriteSheets();
 	void ResetIndexes();
 
@@ -90,7 +91,6 @@ private:
 	bool Valid = false;
 	nlohmann::json UniStoreJSON = nullptr;
 
-	void Update();
 	void Load();
 };
 
