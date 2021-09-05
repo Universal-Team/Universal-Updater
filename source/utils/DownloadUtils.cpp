@@ -33,6 +33,7 @@
 	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 
 #elif ARM9
+	#include "WiFi.hpp"
 	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 #endif
 
@@ -225,15 +226,13 @@ Cleanup:
 
 
 bool DownloadUtils::WiFiAvailable() {
-	bool Res = false;
-
 	#ifdef _3DS
+		// return true; // For Citra
+
 		uint32_t WifiStatus;
-		if (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus) Res = true;
+		return (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus);
 
 	#elif ARM9
-		/* TODO: NDS WiFi Available Checks. */
+		return WiFi::Connected();
 	#endif
-
-	return Res;
 };

@@ -85,3 +85,8 @@ void DownloadRelease::Handler() {
 
 	this->Done = true;
 };
+
+
+void DownloadRelease::Draw() const {
+	// TODO
+};

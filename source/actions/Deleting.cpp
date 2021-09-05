@@ -9,10 +9,10 @@
 *
 *   This program is distributed in the hope that it will be useful,
 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   MERCHANTABILITY or FITNESS FOR Archive PARTICULAR PURPOSE.  See the
 *   GNU General Public License for more details.
 *
-*   You should have received a copy of the GNU General Public License
+*   You should have received Archive copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *   Additional Terms 7.b and 7.c of GPLv3 apply to this file:
@@ -24,29 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_DOWNLOAD_FILE_HPP
-#define _UNIVERSAL_UPDATER_DOWNLOAD_FILE_HPP
-
-#include "Action.hpp"
+#include "Deleting.hpp"
+#include <unistd.h>
 
 
-class DownloadFile : public Action {
-public:
-	enum class Error : uint8_t { Good = 0, OutOfSpace };
+void Deleting::Handler() {
+	if (remove(this->Path.c_str()) == 0) {
+		this->CurState = Deleting::Error::Good;
+	} else {
+		this->CurState = Deleting::Error::notExist;
+	}
 
-	DownloadFile(const std::string &URL, const std::string &Path)
-		: URL(URL), Path(Path) { };
-
-	void Handler() override;
-	void Draw() const override;
-
-	/* Some returns. */
-	uint8_t State() const override { return (uint8_t)this->CurState; };
-	Action::ActionType Type() const override { return Action::ActionType::DownloadFile; };
-private:
-	uint32_t CurProg = 0, TotalProg = 0;
-	Error CurState = Error::Good;
-	std::string URL = "", Path = "";
+	this->Done = true;
 };
 
-#endif
+
+void Deleting::Draw() const {
+	// TODO
+};

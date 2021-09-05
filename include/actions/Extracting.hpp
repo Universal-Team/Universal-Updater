@@ -39,23 +39,18 @@ public:
 		: ArchivePath(ArchivePath), WantedFile(WantedFile), OutputPath(OutputPath) { };
 
 	void Handler() override;
+	void Draw() const override;
 
 	/* Some returns. */
-	std::pair<int, int> Files() const override { return { this->FilesExtracted, this->FileCount }; };
-	std::pair<uint32_t, uint32_t> Progress() const override { return { this->ExtractOffs, this->ExtractSize }; };
-	std::string CurrentFile() const override { return this->CFile; };
 	uint8_t State() const override { return (uint8_t)this->CurState; };
 	Action::ActionType Type() const override { return Action::ActionType::Extracting; };
-	bool IsDone() const override { return this->Done; };
 
-	void Cancel() override;
 private:
 	/* TODO: Maybe sort out what is really needed or so. That looks like a mess. */
 	int FilesExtracted = 0, FileCount = 0; // The amount of files that are extracted, the amount of files that need to be extracted.
 	uint32_t ExtractOffs = 0, ExtractSize = 0; // Current Extract offset, Size to extract completely.
 	std::string CFile = ""; // The current file which is being extracted.
 	Error CurState = Error::Good; // The current state of the operation.
-	bool Done = false; // Is the operation already done?
 	std::string ArchivePath = "", WantedFile = "", OutputPath = "";
 	void FetchSize(); // Fetch the File Count and the total extract size.
 };

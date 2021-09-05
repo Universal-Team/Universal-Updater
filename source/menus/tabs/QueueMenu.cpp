@@ -26,6 +26,7 @@
 
 #include "Common.hpp"
 #include "QueueMenu.hpp"
+#include "QueueSystem.hpp"
 #include "Utils.hpp"
 
 
@@ -34,6 +35,9 @@ void QueueMenu::Draw() {
 	Gui::Draw_Rect(40, 0, 280, 25, BAR_COLOR);
 	Gui::Draw_Rect(40, 25, 280, 1, BAR_OUTLINE);
 	Gui::DrawStringCentered(17, 2, TEXT_MEDIUM, TEXT_COLOR, "Queue System", 273, 0);
+
+	/* Draw active queue item. */
+	QueueSystem::Draw();
 };
 
 

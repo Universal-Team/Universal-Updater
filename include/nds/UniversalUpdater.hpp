@@ -61,6 +61,8 @@
 
 
 class UU {
+	static void VBlankHandler(void);
+
 	std::unique_ptr<TopGrid> TGrid = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;
 

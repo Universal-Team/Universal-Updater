@@ -26,6 +26,7 @@
 
 
 #include "DownloadFile.hpp"
+#include "DownloadUtils.hpp"
 #include "UniversalUpdater.hpp"
 #include <dirent.h>
 #include <unistd.h>
@@ -174,6 +175,8 @@ int UU::Handler() {
 		this->Draw();
 		this->ScanInput();
 
+		this->_Tabs->Handler(); // Tabs are always handled.
+
 		/* Handle Top List if possible. */
 		if (this->_Tabs->HandleTopScroll()) {
 			switch(this->TMode) {
@@ -186,8 +189,6 @@ int UU::Handler() {
 					break;
 			}
 		}
-
-		this->_Tabs->Handler(); // Tabs are always handled.
 	}
 
 	this->CData->Sav();

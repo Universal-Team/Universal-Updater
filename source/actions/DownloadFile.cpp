@@ -25,6 +25,9 @@
 */
 
 #include "DownloadFile.hpp"
+#include "DownloadUtils.hpp"
+#include "GFXData.hpp"
+#include "gui.hpp"
 #include <string.h>
 
 
@@ -34,4 +37,9 @@
 void DownloadFile::Handler() {
 	const int Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Path.c_str());
 	this->Done = true;
+};
+
+
+void DownloadFile::Draw() const {
+	Gui::DrawString(0, 0, TEXT_LARGE, TEXT_COLOR, this->URL);
 };

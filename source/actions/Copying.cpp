@@ -33,6 +33,11 @@
 void Copying::Handler() { this->FileCopy(this->Source, this->Dest); };
 
 
+void Copying::Draw() const {
+	// TODO
+};
+
+
 void Copying::FileCopy(const std::string &Source, const std::string &Dest) {
 	DIR *IsDir = opendir(Source.c_str());
 
@@ -132,10 +137,4 @@ void Copying::DirCopy(const BrowseData::DirEntry &Entry, const std::string &Sour
 
 	if (((int)DirContents.size()) == 1) mkdir((Dest.c_str() + ("/" + Entry.Name)).c_str(), 0777);
 	if (((int)DirContents.size()) != 1) this->FileCopy(Source + "/" + Entry.Name, Dest + "/" + Entry.Name);
-};
-
-
-/* TODO: Come up with a good way. */
-void Copying::Cancel() {
-
 };

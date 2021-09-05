@@ -46,7 +46,6 @@ void Moving::Handler() {
 };
 
 
-/* TODO: Come up with a good way. */
-void Moving::Cancel() {
-
+void Moving::Draw() const {
+	// TODO
 };

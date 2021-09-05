@@ -24,11 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "DownloadFile.hpp"
 #include "UniversalUpdater.hpp"
 
+#include "DownloadFile.hpp"
+#include "DownloadUtils.hpp"
 #include "gui.hpp"
 #include "nitrofs.h"
+#include "QueueSystem.hpp"
 #include "tonccpy.h"
 #include "WiFi.hpp"
 
@@ -93,10 +95,9 @@ void UU::Initialize(char *ARGV[]) {
 		this->GData->EndFrame();
 
 		WiFi::Init();
-		/* For now Wi-Fi "fully" disabled under DownloadUtils::WiFiAvailable(). */
-		//while(!WiFi::Connected()) {
-		//	swiWaitForVBlank();
-		//}
+		while(!WiFi::Connected()) {
+			swiWaitForVBlank();
+		}
 	}
 
 	/* Load classes. */
@@ -218,6 +219,27 @@ void UU::Draw() {
 	this->GData->EndFrame();
 };
 
+void UU::VBlankHandler() {
+	UU::App->ScanInput();
+
+	UU::App->_Tabs->Handler(); // Tabs are always handled.
+
+	/* Handle Top List if possible. */
+	if (UU::App->_Tabs->HandleTopScroll()) {
+		switch(UU::App->TMode) {
+			case TopMode::Grid:
+				UU::App->TGrid->Handler();
+				break;
+
+			case TopMode::List:
+				UU::App->TList->Handler();
+				break;
+		}
+	}
+
+	if (UU::App->Repeat) UU::App->Draw();
+}
+
 
 /*
 	Main Handler of the app. Handle Input and display stuff here.
@@ -228,27 +250,14 @@ int UU::Handler(char *ARGV[]) {
 	// TODO: It only redraws on button press, forcing an initial draw for now
 	this->Draw();
 
+	/* Enable VBlank handler. */
+	irqSet(IRQ_VBLANK, this->VBlankHandler);
+	irqEnable(IRQ_VBLANK);
+
 	while (!this->Exiting) {
 		swiWaitForVBlank();
 
-		this->ScanInput();
-
-		/* Handle Top List if possible. */
-		if (this->_Tabs->HandleTopScroll()) {
-			switch(this->TMode) {
-				case TopMode::Grid:
-					this->TGrid->Handler();
-					break;
-
-				case TopMode::List:
-					this->TList->Handler();
-					break;
-			}
-		}
-
-		this->_Tabs->Handler(); // Tabs are always handled.
-		
-		if (this->Repeat) this->Draw();
+		QueueSystem::Handler();
 	}
 
 	this->CData->Sav();

@@ -24,43 +24,26 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COPYING_HPP
-#define _UNIVERSAL_UPDATER_COPYING_HPP
+#ifndef _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
+#define _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 
-#include "Action.hpp"
-#include "BrowseData.hpp"
-#include <memory>
-#include <string>
+#include "QueueEntry.hpp"
 
+#include <deque>
 
-/*
-	Handles Copying of Files.
-*/
-class Copying : public Action {
+class QueueSystem {
 public:
-	enum class Error : uint8_t { Good = 0, SourceNotExist, DestNotExist, WrittenNotRead, Unknown, OutOfSpace };
+	static void Handler();
+	static void Draw();
 
-	Copying(const std::string &Source, const std::string &Dest)
-		: Source(Source), Dest(Dest) { };
+	static void Add(size_t EntryIndex, const nlohmann::json *Script) { Queue.emplace_back(EntryIndex, Script); };
+	static void Remove(size_t Idx);
 
-	void Handler() override;
-	void Draw() const override;
+	static size_t Count() { return Queue.size(); };
+	static size_t UniStoreIndex() { return Queue.size() > 0 ? Queue[0].UniStoreIndex() : 0; };
 
-	/* Some returns. */
-	uint8_t State() const override { return (uint8_t)this->CurState; };
-	Action::ActionType Type() const override { return Action::ActionType::Copying; };
-	
 private:
-	uint32_t CopyOffs = 0, CopySize = 0;
-	Error CurState = Error::Good; // The current state of the operation.
-	std::string Source = "", Dest = "";
-
-	/* Some Helpers. */
-	static constexpr int CopyBufSize = 0x8000;
-	uint32_t CopyBuf[CopyBufSize];
-	
-	void FileCopy(const std::string &Source, const std::string &Dest);
-	void DirCopy(const BrowseData::DirEntry &Entry, const std::string &Source, const std::string &Dest);
+	static std::deque<QueueEntry> Queue;
 };
 
 #endif

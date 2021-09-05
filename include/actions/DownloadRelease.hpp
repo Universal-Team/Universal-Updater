@@ -39,21 +39,17 @@ public:
 		Repo(Repo), File(File), Output(Output), PreRelease(PreRelease) { };
 
 	void Handler() override;
+	void Draw() const override;
 
 	/* Some returns. */
-	std::pair<int, int> Files() const override { return { 0, 0 }; };
-	std::pair<uint32_t, uint32_t> Progress() const override { return { this->CurProg, this->TotalProg }; };
-	std::string CurrentFile() const override { return ""; };
 	uint8_t State() const override { return (uint8_t)this->CurState; };
 	Action::ActionType Type() const override { return Action::ActionType::DownloadRelease; };
-	bool IsDone() const override { return this->Done; };
-	
-	void Cancel() override { };
+
 private:
 	uint32_t CurProg = 0, TotalProg = 0;
 	Error CurState = Error::Good;
 	std::string Repo = "", File = "", Output = "", URL = "";
-	bool Done = false, PreRelease = false;
+	bool PreRelease = false;
 };
 
 #endif

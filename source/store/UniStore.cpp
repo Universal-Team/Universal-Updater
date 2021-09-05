@@ -26,6 +26,7 @@
 
 #include "BrowseData.hpp"
 #include "DownloadFile.hpp"
+#include "DownloadUtils.hpp"
 #include "UniStore.hpp"
 #include "UniversalUpdater.hpp"
 #include <unistd.h>
@@ -629,3 +630,28 @@ std::string UniStore::GetReleaseNotes(const int Idx) const {
 
 	return "";
 };
+
+/*
+	Return a const pointer to the script of an entry. Returns nullptr if it can't find the script.
+
+	const int Idx: The index.
+	const std::string &Script: The script.
+*/
+const nlohmann::json *UniStore::GetScript(const int Idx, const std::string &Script) const {
+	if (!this->Valid) return nullptr;
+	if (Idx > (int)this->UniStoreJSON["storeContent"].size() - 1) return nullptr;
+
+	const nlohmann::json &Entry = this->UniStoreJSON["storeContent"][Idx];
+
+	if (Entry.contains(Script)) {
+		if (Entry[Script].is_array()) {
+			return &Entry[Script];
+		} else if (Entry[Script].is_object()) {
+			if (Entry[Script].contains("script") && Entry[Script]["script"].is_array()) {
+				return &Entry[Script]["script"];
+			}
+		}
+	}
+
+	return nullptr;
+}

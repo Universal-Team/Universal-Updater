@@ -171,7 +171,6 @@ void Extracting::Handler() {
 };
 
 
-/* TODO: Come up with a good way. */
-void Extracting::Cancel() {
-
+void Extracting::Draw() const {
+	// TODO
 };

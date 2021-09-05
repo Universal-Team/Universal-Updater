@@ -82,6 +82,7 @@ public:
 	std::vector<std::string> GetScreenshotList(const int Idx) const;
 	std::vector<std::string> GetScreenshotNames(const int Idx) const;
 	std::string GetReleaseNotes(const int Idx) const;
+	const nlohmann::json *GetScript(const int Idx, const std::string &Script) const;
 
 	std::vector<size_t> Indexes;
 	size_t SelectedIndex = 0, ScreenIndex = 0;

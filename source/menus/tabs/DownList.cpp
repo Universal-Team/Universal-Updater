@@ -26,6 +26,7 @@
 
 #include "Common.hpp"
 #include "DownList.hpp"
+#include "QueueSystem.hpp"
 #include "Utils.hpp"
 
 #define DOWNLOAD_ENTRIES 7
@@ -82,12 +83,11 @@ void DownList::Draw() {
 void DownList::Handler() {
 	/* Only do things if selected index is in scope. */
 	if (!UU::App->Store->Indexes.empty() && UU::App->Store->SelectedIndex <= UU::App->Store->Indexes.size() - 1) {
+		/* Create the variable to save vector fetching logic. */
+		const std::vector<std::string> Entries = UU::App->Store->GetDownloadList(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]);
 
 		/* Handle Up / Down stuff. */
 		if (UU::App->Repeat & KEY_DOWN || UU::App->Repeat & KEY_UP) {
-			/* Create the variable to save vector fetching logic. */
-			const std::vector<std::string> Entries = UU::App->Store->GetDownloadList(UU::App->Store->Indexes[UU::App->Store->SelectedIndex]);
-
 			if (!Entries.empty()) {
 				if (UU::App->Repeat & KEY_DOWN) {
 					if (this->SelectedIndex < Entries.size() - 1) this->SelectedIndex++;
@@ -102,7 +102,7 @@ void DownList::Handler() {
 		}
 
 		if (UU::App->Down & KEY_A) {
-			/* TODO: Handle add to queue. */
+			QueueSystem::Add(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], UU::App->Store->GetScript(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], Entries[this->SelectedIndex]));
 		}
 
 		if (UU::App->Down & KEY_B) UU::App->_Tabs->PrevTab(); // Go back to previous tab.

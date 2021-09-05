@@ -24,43 +24,30 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COPYING_HPP
-#define _UNIVERSAL_UPDATER_COPYING_HPP
+#ifndef _UNIVERSAL_UPDATER_QUEUE_ENTRY_HPP
+#define _UNIVERSAL_UPDATER_QUEUE_ENTRY_HPP
 
 #include "Action.hpp"
-#include "BrowseData.hpp"
-#include <memory>
-#include <string>
+#include "JSON.hpp"
 
-
-/*
-	Handles Copying of Files.
-*/
-class Copying : public Action {
+class QueueEntry {
 public:
-	enum class Error : uint8_t { Good = 0, SourceNotExist, DestNotExist, WrittenNotRead, Unknown, OutOfSpace };
+	QueueEntry(size_t Idx, const nlohmann::json *Script) : Idx(Idx), Script(Script) { };
 
-	Copying(const std::string &Source, const std::string &Dest)
-		: Source(Source), Dest(Dest) { };
+	void Handler();
+	void Draw() const;
 
-	void Handler() override;
-	void Draw() const override;
+	void Cancel() { this->Cancelling = true; if (this->CurrentAction) this->CurrentAction->Cancel(); };
 
-	/* Some returns. */
-	uint8_t State() const override { return (uint8_t)this->CurState; };
-	Action::ActionType Type() const override { return Action::ActionType::Copying; };
-	
+	size_t UniStoreIndex() const { return Idx; };
+
 private:
-	uint32_t CopyOffs = 0, CopySize = 0;
-	Error CurState = Error::Good; // The current state of the operation.
-	std::string Source = "", Dest = "";
+	static bool ObjectContains(const nlohmann::json &Item, const std::vector<std::string> Keys);
 
-	/* Some Helpers. */
-	static constexpr int CopyBufSize = 0x8000;
-	uint32_t CopyBuf[CopyBufSize];
-	
-	void FileCopy(const std::string &Source, const std::string &Dest);
-	void DirCopy(const BrowseData::DirEntry &Entry, const std::string &Source, const std::string &Dest);
+	std::unique_ptr<Action> CurrentAction = nullptr;
+	bool Cancelling = false;
+	size_t Idx;
+	const nlohmann::json *Script;
 };
 
 #endif

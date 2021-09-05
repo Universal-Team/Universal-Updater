@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "QueueSystem.hpp"
 #include "Tabs.hpp"
 
 
@@ -59,6 +60,8 @@ void Tabs::DrawBottom() {
 	UU::App->GData->DrawSpriteBlend(sprites_search_idx, this->TabPos[3].x, this->TabPos[3].y);
 	UU::App->GData->DrawSpriteBlend(sprites_sort_idx, this->TabPos[4].x, this->TabPos[4].y);
 	UU::App->GData->DrawSpriteBlend(sprites_settings_idx, this->TabPos[5].x, this->TabPos[5].y);
+
+	Gui::DrawStringCentered(this->TabPos[2].x + this->TabPos[2].w / 2 - 160, this->TabPos[2].y + (this->TabPos[2].h - Gui::GetStringHeight(TEXT_MEDIUM, "0")) / 2, TEXT_MEDIUM, TAB_ICON_COLOR, std::to_string(QueueSystem::Count()));
 
 	/* Draw Active Tab. */
 	switch(this->ActiveTab) {

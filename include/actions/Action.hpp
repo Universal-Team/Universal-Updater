@@ -32,17 +32,20 @@
 
 class Action {
 public:
-	enum class ActionType : uint8_t { None = 0, Extracting, Moving, Copying, DownloadFile, DownloadRelease };
+	enum class ActionType : uint8_t { None = 0, Extracting, Moving, Copying, Deleting, DownloadFile, DownloadRelease };
 
 	virtual void Handler() = 0; // The main function that handles things.
+	virtual void Draw() const = 0; // The function that draws the progress in the queue menu.
 
-	virtual std::pair<int, int> Files() const = 0; // The current file and amount of files, used by extraction.
-	virtual std::pair<uint32_t, uint32_t> Progress() const = 0; // The current progress.
-	virtual std::string CurrentFile() const = 0; // The current file. Overwrite with '""' if not used in the action.
 	virtual uint8_t State() const = 0; // The current state.
 	virtual ActionType Type() const = 0; // The Action Type.
-	virtual bool IsDone() const = 0; // If the action is done or nah.
-	virtual void Cancel() = 0; // Call this to cancel the action.
+
+	bool IsDone() const { return Done; }; // If the action is done or nah.
+	void Cancel() { Cancelling = true; }; // Call this to cancel the action.
+
+protected:
+	bool Done = false;
+	bool Cancelling = false;
 };
 
 #endif
