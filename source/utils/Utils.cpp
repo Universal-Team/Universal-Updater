@@ -50,7 +50,7 @@ void Utils::MakeDirs(const std::string &Dest) {
 		char Bak = *(Slashpos);
 		*(Slashpos) = '\0';
 
-		mkdir(Dest.c_str(), 0x777);
+		mkdir(Dest.c_str(), 0777);
 
 		*(Slashpos) = Bak;
 	}

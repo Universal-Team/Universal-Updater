@@ -43,10 +43,10 @@ void UU::Initialize() {
 	hidSetRepeatParameters(20, 8);
 
 	/* Create Directories. */
-	mkdir("sdmc:/3ds", 0x777);
-	mkdir("sdmc:/3ds/Universal-Updater", 0x777);
-	mkdir("sdmc:/3ds/Universal-Updater/stores", 0x777);
-	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0x777);
+	mkdir("sdmc:/3ds", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
+	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 	
 	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();

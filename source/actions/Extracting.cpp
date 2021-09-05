@@ -100,7 +100,7 @@ void Extracting::Handler() {
 
 			/* If directory then mkdir it and skip extraction. */
 			if (S_ISDIR(archive_entry_mode(Entry))) {
-				mkdir(this->CFile.c_str(), 0x777);
+				mkdir(this->CFile.c_str(), 0777);
 				continue;
 			}
 

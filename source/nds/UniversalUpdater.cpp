@@ -67,10 +67,10 @@ void UU::Initialize(char *ARGV[]) {
 	}
 	
 	/* Create Directories. */
-	mkdir("/_nds", 0x777);
-	mkdir("/_nds/Universal-Updater", 0x777);
-	mkdir("/_nds/Universal-Updater/stores", 0x777);
-	mkdir("/_nds/Universal-Updater/shortcuts", 0x777);
+	mkdir("/_nds", 0777);
+	mkdir("/_nds/Universal-Updater", 0777);
+	mkdir("/_nds/Universal-Updater/stores", 0777);
+	mkdir("/_nds/Universal-Updater/shortcuts", 0777);
 
 	/* Initialize graphics. */
 	Gui::init(std::array<std::vector<std::string>, 3>({{"/_nds/Universal-Updater/large.nftr", "nitro:/graphics/font/large.nftr"}, {"/_nds/Universal-Updater/medium.nftr", "nitro:/graphics/font/medium.nftr"}, {"/_nds/Universal-Updater/small.nftr", "nitro:/graphics/font/small.nftr"}}));
