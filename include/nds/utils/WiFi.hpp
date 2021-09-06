@@ -29,17 +29,15 @@
 
 #include <stdint.h>
 
-namespace WiFi {
-	void Init(void);
+class WiFi {
+private:
+	static void Log(const char *s);
 
-	void Connect(void);
-	void Disconnect(void);
-	void Reconnect(void);
+public:
+	static void Init(void);
 
-	void Log(const char *s);
-
-	uint32_t IpAddress(void);
-	bool Connected(void);
+	static uint32_t IpAddress(void);
+	static bool Connected(void);
 };
 
 #endif

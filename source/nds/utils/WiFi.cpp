@@ -26,39 +26,24 @@
 
 #include "WiFi.hpp"
 
-#include "rpc.h"
-
 #include <dsiwifi9.h>
 #include <lwip/sockets.h>
 
-void WiFi::Init(void) {
-	DSiWifi_SetLogHandler(Log);
-	DSiWifi_SetConnectHandler(Connect);
-	DSiWifi_SetReconnectHandler(Reconnect);
-	DSiWifi_InitDefault(true);
-}
-
-void WiFi::Connect(void) {
-	rpc_init();
-}
-void WiFi::Disconnect(void) {
-	rpc_deinit();
-}
-
-void WiFi::Reconnect(void) {
-	Disconnect();
-	Connect();
-}
-
-void WiFi::Log(const char* s) {
+void WiFi::Log(const char *s) {
 	iprintf("%s", s);
 }
 
-uint32_t WiFi::IpAddress(void) {
+void WiFi::Init() {
+	DSiWifi_SetLogHandler(Log);
+	DSiWifi_InitDefault(INIT_ONLY);
+	DSiWifi_AutoConnect();
+}
+
+uint32_t WiFi::IpAddress() {
 	return DSiWifi_GetIP();
 }
 
-bool WiFi::Connected(void) {
+bool WiFi::Connected() {
 	// TODO: Probably a better check
 	uint32_t Ip = IpAddress();
 	return (Ip >> 0x18) != 0 && (Ip >> 0x18) != 255;
