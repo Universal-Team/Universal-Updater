@@ -28,6 +28,7 @@
 #include "DownloadUtils.hpp"
 #include "GFXData.hpp"
 #include "gui.hpp"
+#include "Utils.hpp"
 #include <string.h>
 
 
@@ -35,6 +36,8 @@
 	TODO: Proper handling or so.
 */
 void DownloadFile::Handler() {
+	Utils::MakeDirs(this->Path);
+
 	const int Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Path.c_str());
 	this->Done = true;
 };

@@ -39,7 +39,7 @@ void DownloadRelease::Handler() {
 
 	int Res = DownloadUtils::DownloadToMemory(APIURL.c_str(), Buffer, 1 << 20);
 
-	if (Res == 0) { // If success.
+	if (Res > 0) { // If success.
 		if (nlohmann::json::accept(Buffer)) {
 			nlohmann::json ParsedAPI = nlohmann::json::parse(Buffer);
 
@@ -80,8 +80,11 @@ void DownloadRelease::Handler() {
 
 	delete[] Buffer;
 	/* If good, we can download. */
-	if (this->URL.empty() || Res != 0) this->Done = true;
-	else Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Output.c_str());
+	if (!this->URL.empty() && Res > 0) {
+		Utils::MakeDirs(this->Output);
+
+		Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Output.c_str());
+	}
 
 	this->Done = true;
 };
