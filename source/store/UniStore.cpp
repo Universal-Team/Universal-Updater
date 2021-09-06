@@ -226,7 +226,7 @@ void UniStore::Update(bool Force) {
 					for (size_t Idx = 0; Idx < Sht.size(); Idx++) {
 						if (Sht[Idx].find("/") == std::string::npos) {
 							char Msg[150];
-							snprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
+							sniprintf(Msg, sizeof(Msg), "Updating SpriteSheet %i of %i...", Idx + 1, Sht.size());
 							UU::App->MSData->DisplayWaitMsg(Msg);
 
 							DownloadUtils::DownloadToFile(Locs[Idx].c_str(), (_STORE_PATH + Sht[Idx]).c_str());

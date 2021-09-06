@@ -78,6 +78,19 @@ std::string Utils::LowerCase(const std::string &STR) {
 	return Lower;
 };
 
+std::string Utils::FormatBytes(const uint64_t bytes) {
+	char out[32];
+
+	if (bytes == 1)					sniprintf(out, sizeof(out), "%lld Byte", bytes);
+	else if (bytes < (1ull << 10))	sniprintf(out, sizeof(out), "%lld Bytes", bytes);
+	else if (bytes < (1ull << 20))	sniprintf(out, sizeof(out), "%.1lld KiB", bytes >> 10);
+	else if (bytes < (1ull << 30))	sniprintf(out, sizeof(out), "%.1lld MiB", bytes >> 20);
+	else if (bytes < (1ull << 40))	snprintf(out, sizeof(out), "%.1f GiB", (float)bytes / (1ull << 30));
+	else							snprintf(out, sizeof(out), "%.1f TiB", (float)bytes / (1ull << 40));
+
+	return out;
+}
+
 
 bool Utils::MatchPattern(const std::string &Pattern, const std::string &Tested) {
 	std::regex PatternRegex(Pattern);

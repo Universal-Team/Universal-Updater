@@ -19,8 +19,8 @@ bool QueueEntry::ObjectContains(const nlohmann::json &Item, const std::vector<st
 void QueueEntry::Handler() {
 	if (!this->Script || !this->Script->is_array()) return;
 
-	for (auto It = this->Script->begin(); It < this->Script->end() && !this->Cancelling; ++It) {
-		const auto &Item = *It;
+	for (this->Step = 0; this->Step < this->Script->size(); this->Step++) {
+		const nlohmann::json &Item = (*this->Script)[this->Step];
 
 		if (!Item.is_object() || !this->ObjectContains(Item, {"type"})) break;
 
@@ -35,6 +35,7 @@ void QueueEntry::Handler() {
 		} else if (Item["type"] == "deleteFile") {
 			if (!this->ObjectContains(Item, {"file"})) break;
 
+			// TODO: Uncomment this after fixing extraction
 			// CurrentAction = std::make_unique<Deleting>(Item["file"]);
 
 		} else if (Item["type"] == "downloadFile") {
@@ -74,7 +75,7 @@ void QueueEntry::Handler() {
 
 		} else if (Item["type"] == "skip") {
 			if (!this->ObjectContains(Item, {"count"})) break;
-			It += Item["count"].get<int>();
+			this->Step += Item["count"].get<int>();
 			continue;
 
 		} else {

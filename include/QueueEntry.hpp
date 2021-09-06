@@ -40,11 +40,14 @@ public:
 	void Cancel() { this->Cancelling = true; if (this->CurrentAction) this->CurrentAction->Cancel(); };
 
 	size_t UniStoreIndex() const { return Idx; };
+	size_t CurrentStep() const { return Step; };
+	size_t TotalSteps() const { if (this->Script && this->Script->is_array()) return this->Script->size(); return 0; };
 
 private:
 	static bool ObjectContains(const nlohmann::json &Item, const std::vector<std::string> Keys);
 
 	std::unique_ptr<Action> CurrentAction = nullptr;
+	size_t Step = 0;
 	bool Cancelling = false;
 	size_t Idx;
 	const nlohmann::json *Script;

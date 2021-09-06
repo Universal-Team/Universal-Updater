@@ -66,6 +66,8 @@ class UU {
 	std::unique_ptr<TopGrid> TGrid = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;
 
+	static int queueMenuRefresh;
+
 public:
 	enum class TopMode : uint8_t { Grid = 0, List };
 	void Initialize(char *ARGV[]);

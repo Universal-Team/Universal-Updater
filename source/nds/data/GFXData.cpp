@@ -69,7 +69,6 @@ void GFXData::EndFrame() {
 
 
 void GFXData::DrawTop() {
-	Font::clear(true);
 	Gui::ScreenDraw(true);
 	Gui::Draw_Rect(0, 0, 320, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 26, 320, 215, BG_COLOR);
@@ -78,7 +77,6 @@ void GFXData::DrawTop() {
 
 
 void GFXData::DrawBottom() {
-	Font::clear(false);
 	Gui::ScreenDraw(false);
 	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 };

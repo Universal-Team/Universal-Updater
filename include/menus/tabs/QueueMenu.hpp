@@ -32,6 +32,13 @@
 
 class QueueMenu {
 public:
+	static constexpr std::array<Structs::ButtonPos, 4> Boxes = {{
+		{47,   36, 266, 90},
+		{47,  139, 266, 90},
+		{292,  37,  20, 20}, // Cancel current Queue.
+		{292, 140,  20, 20} // Remove next Queue.
+	}};
+
 	void Draw();
 	void Handler();
 private:

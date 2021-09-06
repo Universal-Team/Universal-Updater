@@ -40,7 +40,7 @@ public:
 	static void Remove(size_t Idx);
 
 	static size_t Count() { return Queue.size(); };
-	static size_t UniStoreIndex() { return Queue.size() > 0 ? Queue[0].UniStoreIndex() : 0; };
+	static const QueueEntry *Current() { return Queue.size() > 0 ? &Queue[0] : nullptr; };
 
 private:
 	static std::deque<QueueEntry> Queue;

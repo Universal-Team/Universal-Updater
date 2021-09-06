@@ -39,6 +39,9 @@
 #include <unistd.h>
 
 
+int UU::queueMenuRefresh = 0;
+
+
 /*
 	Initialize everything as needed.
 */
@@ -200,7 +203,17 @@ void UU::VBlankHandler() {
 		}
 	}
 
-	if (UU::App->Repeat) UU::App->Draw();
+	if (UU::App->Repeat) {
+		UU::App->Draw();
+	} else if (UU::App->_Tabs->CurrentTab() == Tabs::Tab::QueueSystem) {
+		if(queueMenuRefresh < 60) {
+			queueMenuRefresh++;
+		} else {
+			queueMenuRefresh = 0;
+			Gui::ScreenDraw(false);
+			QueueSystem::Draw();
+		}
+	}
 }
 
 

@@ -25,6 +25,7 @@
 */
 
 #include "DownloadUtils.hpp"
+#include <algorithm>
 #include <cstring>
 
 #ifdef _3DS
@@ -40,7 +41,6 @@
 #define USER_AGENT "Universal-Updater-v4.0.0"
 
 
-static size_t ResultSize = 0;
 static size_t ResultWritten = 0;
 
 static char *ResultBuf = nullptr;
@@ -49,6 +49,10 @@ static size_t BufSize = 0;
 
 static FILE *Out = nullptr;
 
+static CURL *Hnd = nullptr;
+curl_off_t DownloadTotal = 1; // Dont initialize with 0 to avoid division by zero later.
+curl_off_t DownloadNow = 0;
+
 
 static size_t HandleData(const char *Ptr, size_t Size, size_t NMemb, const void *UserData) {
 	const size_t RealSize = Size * NMemb;
@@ -56,7 +60,7 @@ static size_t HandleData(const char *Ptr, size_t Size, size_t NMemb, const void 
 
 	if (BufWritten + RealSize > RESULT_BUF_SIZE) {
 		if (!Out) return 0;
-		const size_t Ret = fwrite(ResultBuf, 1, BufWritten, Out);
+		const size_t Ret = fwrite(ResultBuf, 1LLU, BufWritten, Out);
 		if (Ret != BufWritten) return Ret;
 		BufWritten = 0;
 	}
@@ -68,16 +72,24 @@ static size_t HandleData(const char *Ptr, size_t Size, size_t NMemb, const void 
 	return RealSize;
 };
 
+static int HandleProgress(CURL *hnd, curl_off_t DlTotal, curl_off_t DlNow, curl_off_t UlTotal, curl_off_t UlNow) {
+	DownloadTotal = DlTotal;
+	DownloadNow = DlNow;
+
+	return 0;
+}
+
 
 static int SetupContext(CURL *Hnd, const char *URL) {
 	curl_easy_setopt(Hnd, CURLOPT_BUFFERSIZE, 102400L);
 	curl_easy_setopt(Hnd, CURLOPT_URL, URL);
-	curl_easy_setopt(Hnd, CURLOPT_NOPROGRESS, 1L);
+	curl_easy_setopt(Hnd, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(Hnd, CURLOPT_USERAGENT, USER_AGENT);
 	curl_easy_setopt(Hnd, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(Hnd, CURLOPT_MAXREDIRS, 50L);
 	curl_easy_setopt(Hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(Hnd, CURLOPT_WRITEFUNCTION, HandleData);
+	curl_easy_setopt(Hnd, CURLOPT_XFERINFOFUNCTION, HandleProgress);
 	curl_easy_setopt(Hnd, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(Hnd, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(Hnd, CURLOPT_STDERR, stdout);
@@ -91,14 +103,6 @@ int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
 
 	int Ret = 0;
 	CURLcode CRes;
-	CURL *Hnd;
-
-	BufSize = RESULT_BUF_SIZE;
-	ResultBuf = new char[BufSize];
-	if (!ResultBuf) {
-		BufSize = 0, BufWritten = 0, ResultSize = 0, ResultWritten = 0;
-		return -1;
-	}
 
 	#ifdef _3DS
 		bool SocInitialized = false;
@@ -117,6 +121,13 @@ int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
 		SocInitialized = true;
 	#endif
 
+	BufSize = RESULT_BUF_SIZE;
+	ResultBuf = new char[BufSize];
+	if (!ResultBuf) {
+		Ret = -1;
+		goto Cleanup;
+	}
+
 	Hnd = curl_easy_init();
 	Ret = SetupContext(Hnd, URL);
 	if (Ret != 0) {
@@ -131,6 +142,7 @@ int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
 
 	CRes = curl_easy_perform(Hnd);
 	curl_easy_cleanup(Hnd);
+	Hnd = nullptr;
 	ResultBuf[ResultWritten] = 0;
 	
 	if (CRes != CURLE_OK) {
@@ -161,10 +173,15 @@ Cleanup:
 		ResultBuf = nullptr;
 	}
 
+	if (Hnd) {
+		curl_easy_cleanup(Hnd);
+		Hnd = nullptr;
+	}
+
 	size_t FinalSize = ResultWritten;
 
 	/* Reset some sizes. */
-	ResultSize = 0, BufSize = 0, ResultWritten = 0, BufWritten = 0;
+	ResultWritten = 0, BufSize = 0, BufWritten = 0, DownloadTotal = 1, DownloadNow = 0;
 
 	return FinalSize;
 };
@@ -174,7 +191,6 @@ int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t 
 	if (!DownloadUtils::WiFiAvailable()) return -1;
 
 	int Ret = 0;
-	CURL *Hnd;
 	CURLcode CRes;
 
 	BufSize = Size;
@@ -205,6 +221,7 @@ int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t 
 
 	CRes = curl_easy_perform(Hnd);
 	curl_easy_cleanup(Hnd);
+	Hnd = nullptr;
 	ResultBuf[ResultWritten] = 0;
 
 	if (CRes != CURLE_OK) {
@@ -219,14 +236,33 @@ Cleanup:
 		if (SocBuf) free(SocBuf);
 	#endif
 
+	if (Hnd) {
+		curl_easy_cleanup(Hnd);
+		Hnd = nullptr;
+	}
+
 	size_t FinalSize = ResultWritten;
 
 	/* Reset some sizes. */
-	ResultSize = 0, BufSize = 0, ResultWritten = 0, BufWritten = 0;
+	ResultWritten = 0, BufSize = 0, BufWritten = 0, DownloadTotal = 1, DownloadNow = 0;
 	ResultBuf = nullptr;
 
 	return FinalSize;
 };
+
+
+curl_off_t DownloadUtils::Speed() {
+	curl_off_t downloadSpeed = 0;
+	if (Hnd) curl_easy_getinfo(Hnd, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed);
+
+	return downloadSpeed;
+}
+
+curl_off_t DownloadUtils::CurrentProgress() { return DownloadNow; }
+
+
+/* std::max with 1 so as never to divide by 0 with this. */
+curl_off_t DownloadUtils::TotalSize() { return std::max(1LL, DownloadTotal); }
 
 
 bool DownloadUtils::WiFiAvailable() {
