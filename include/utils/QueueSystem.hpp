@@ -36,7 +36,7 @@ public:
 	static void Handler();
 	static void Draw();
 
-	static void Add(size_t EntryIndex, const nlohmann::json *Script) { Queue.emplace_back(EntryIndex, Script); };
+	static void Add(size_t EntryIndex, const nlohmann::json *Script);
 	static void Remove(size_t Idx);
 
 	static size_t Count() { return Queue.size(); };

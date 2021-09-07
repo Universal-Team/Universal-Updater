@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "QueueSystem.hpp"
 #include "SettingsMenu.hpp"
 #include "UniStoreSelector.hpp"
 #include "Utils.hpp"
@@ -65,8 +66,11 @@ void SettingsMenu::HandleMain() {
 	if (UU::App->Down & KEY_A) {
 		switch(this->Selection) {
 			case 0:
-				UU::App->USelector->InitSelector();
-				UU::App->Draw();
+				/* Don't open while Queue is not empty. */
+				if (QueueSystem::Count() == 0) {
+					UU::App->USelector->InitSelector();
+					UU::App->Draw();
+				}
 				break;
 
 			case 1:

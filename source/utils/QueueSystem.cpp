@@ -25,8 +25,33 @@
 */
 
 #include "QueueSystem.hpp"
+#ifdef _3DS
+	#include <3ds.h>
+	static Thread QueueThread = nullptr;
+#endif
 
 std::deque<QueueEntry> QueueSystem::Queue;
+
+
+void QueueSystem::Add(size_t EntryIndex, const nlohmann::json *Script) {
+	Queue.emplace_back(EntryIndex, Script);
+
+	#ifdef _3DS
+		if (Queue.size() == 1) {
+			if (QueueThread) {
+				threadJoin(QueueThread, U64_MAX);
+				threadFree(QueueThread);
+				QueueThread = nullptr;
+			}
+
+			int32_t Prio = 0;
+
+			svcGetThreadPriority(&Prio, CUR_THREAD_HANDLE);
+			QueueThread = threadCreate((ThreadFunc)QueueSystem::Handler, NULL, 64 * 1024, Prio - 1, -2, false);
+			aptSetHomeAllowed(false);
+		}
+	#endif
+};
 
 
 void QueueSystem::Draw() {
@@ -39,15 +64,16 @@ void QueueSystem::Handler() {
 		Queue[0].Handler();
 		Queue.pop_front();
 	}
+
+	#ifdef _3DS
+		aptSetHomeAllowed(true);
+	#endif
 };
 
 
 void QueueSystem::Remove(size_t Idx) {
-	if(Idx < Queue.size()) {
-		if(Idx == 0) {
-			Queue[0].Cancel();
-		} else {
-			Queue.erase(Queue.begin() + Idx);
-		}
+	if (Idx < Queue.size()) {
+		if (Idx == 0) Queue[0].Cancel();
+		else Queue.erase(Queue.begin() + Idx);
 	}
 };

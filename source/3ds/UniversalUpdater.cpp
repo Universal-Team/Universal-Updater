@@ -41,6 +41,7 @@ void UU::Initialize() {
 	Gui::init();
 	acInit();
 	hidSetRepeatParameters(20, 8);
+	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 
 	/* Create Directories. */
 	mkdir("sdmc:/3ds", 0777);
