@@ -1,3 +1,29 @@
+/*
+*   This file is part of Universal-Updater
+*   Copyright (C) 2019-2021 Universal-Team
+*
+*   This program is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*   Additional Terms 7.b and 7.c of GPLv3 apply to this file:
+*       * Requiring preservation of specified reasonable legal notices or
+*         author attributions in that material or in the Appropriate Legal
+*         Notices displayed by works containing it.
+*       * Prohibiting misrepresentation of the origin of that material,
+*         or requiring that modified versions of such material be marked in
+*         reasonable ways as different from the original version.
+*/
+
 #include "QueueEntry.hpp"
 
 #include "Copying.hpp"
@@ -14,7 +40,8 @@ bool QueueEntry::ObjectContains(const nlohmann::json &Item, const std::vector<st
 	}
 
 	return true;
-}
+};
+
 
 void QueueEntry::Handler() {
 	if (!this->Script || !this->Script->is_array()) return;
@@ -30,23 +57,23 @@ void QueueEntry::Handler() {
 		} else if (Item["type"] == "copy") {
 			if (!this->ObjectContains(Item, {"source", "destination"})) break;
 
-			CurrentAction = std::make_unique<Copying>(Item["source"], Item["destination"]);
+			this->CurrentAction = std::make_unique<Copying>(Item["source"], Item["destination"]);
 
 		} else if (Item["type"] == "deleteFile") {
 			if (!this->ObjectContains(Item, {"file"})) break;
 
 			// TODO: Uncomment this after fixing extraction
-			// CurrentAction = std::make_unique<Deleting>(Item["file"]);
+			// this->CurrentAction = std::make_unique<Deleting>(Item["file"]);
 
 		} else if (Item["type"] == "downloadFile") {
 			if (!this->ObjectContains(Item, {"file", "output"})) break;
 
-			CurrentAction = std::make_unique<DownloadFile>(Item["file"], Item["output"]);
+			this->CurrentAction = std::make_unique<DownloadFile>(Item["file"], Item["output"]);
 
 		} else if (Item["type"] == "downloadRelease") {
 			if (!this->ObjectContains(Item, {"repo", "file", "output"})) break;
 
-			CurrentAction = std::make_unique<DownloadRelease>(Item["repo"], Item["file"], Item["output"], (Item.contains("includePrereleases") && Item["includePrereleases"].is_string()) ? Item["includePrereleases"].get<bool>() : false);
+			this->CurrentAction = std::make_unique<DownloadRelease>(Item["repo"], Item["file"], Item["output"], (Item.contains("includePrereleases") && Item["includePrereleases"].is_string()) ? Item["includePrereleases"].get<bool>() : false);
 
 		} else if (Item["type"] == "exit") {
 			break;
@@ -54,7 +81,7 @@ void QueueEntry::Handler() {
 		} else if (Item["type"] == "extractFile") {
 			if (!this->ObjectContains(Item, {"file", "input", "output"})) break;
 
-			CurrentAction = std::make_unique<Extracting>(Item["file"], Item["input"], Item["output"]);
+			this->CurrentAction = std::make_unique<Extracting>(Item["file"], Item["input"], Item["output"]);
 
 		} else if (Item["type"] == "installCia") {
 			// TODO!
@@ -65,7 +92,7 @@ void QueueEntry::Handler() {
 		} else if (Item["type"] == "move") {
 			if (!this->ObjectContains(Item, {"old", "new"})) break;
 
-			CurrentAction = std::make_unique<Moving>(Item["old"], Item["new"]);
+			this->CurrentAction = std::make_unique<Moving>(Item["old"], Item["new"]);
 
 		} else if (Item["type"] == "promptMessage") {
 			// TODO!
@@ -82,11 +109,11 @@ void QueueEntry::Handler() {
 			CurrentAction = nullptr;
 		}
 
-		if (CurrentAction) CurrentAction->Handler();
+		if (this->CurrentAction) this->CurrentAction->Handler();
 	}
-}
+};
 
 
 void QueueEntry::Draw() const {
-	if (CurrentAction) this->CurrentAction->Draw();
-}
+	if (this->CurrentAction) this->CurrentAction->Draw();
+};

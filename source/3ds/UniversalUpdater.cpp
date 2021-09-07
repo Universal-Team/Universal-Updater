@@ -54,6 +54,7 @@ void UU::Initialize() {
 	this->TData = std::make_unique<ThemeData>();
 	this->MData = std::make_unique<Meta>();
 	this->MSData = std::make_unique<MSGData>();
+	this->USelector = std::make_unique<UniStoreSelector>();
 
 	this->MSData->DisplayWaitMsg("Checking UniStore...");
 	
@@ -102,28 +103,32 @@ void UU::Draw() {
 	this->GData->StartFrame();
 	this->GData->DrawTop();
 
-	/* Ensure it isn't a nullptr. */
-	if (this->Store && this->Store->UniStoreValid()) {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
+	if (!this->USelector->Done) this->USelector->DrawTop();
+	else {
+		/* Ensure it isn't a nullptr. */
+		if (this->Store && this->Store->UniStoreValid()) {
+			Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
 
-		switch(this->TMode) {
-			case TopMode::Grid:
-				this->TGrid->Draw();
-				break;
+			switch(this->TMode) {
+				case TopMode::Grid:
+					this->TGrid->Draw();
+					break;
 
-			case TopMode::List:
-				this->TList->Draw();
-				break;
+				case TopMode::List:
+					this->TList->Draw();
+					break;
+			}
+
+			this->_Tabs->DrawTop();
+
+		} else {
+			Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 		}
-
-		this->_Tabs->DrawTop();
-
-	} else {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 	}
 
 	this->GData->DrawBottom();
-	this->_Tabs->DrawBottom();
+	if (!this->USelector->Done) this->USelector->DrawBottom();
+	else this->_Tabs->DrawBottom();
 	this->GData->EndFrame();
 };
 
@@ -138,18 +143,21 @@ int UU::Handler() {
 		this->Draw();
 		this->ScanInput();
 
-		this->_Tabs->Handler(); // Tabs are always handled.
+		if (!this->USelector->Done) this->USelector->Handler();
+		else {
+			this->_Tabs->Handler(); // Tabs are always handled.
 
-		/* Handle Top List if possible. */
-		if (this->_Tabs->HandleTopScroll()) {
-			switch(this->TMode) {
-				case TopMode::Grid:
-					this->TGrid->Handler();
-					break;
+			/* Handle Top List if possible. */
+			if (this->_Tabs->HandleTopScroll()) {
+				switch(this->TMode) {
+					case TopMode::Grid:
+						this->TGrid->Handler();
+						break;
 
-				case TopMode::List:
-					this->TList->Handler();
-					break;
+					case TopMode::List:
+						this->TList->Handler();
+						break;
+				}
 			}
 		}
 	}

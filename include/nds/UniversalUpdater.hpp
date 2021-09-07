@@ -40,6 +40,7 @@
 #include "Tabs.hpp"
 #include "TopGrid.hpp"
 #include "TopList.hpp"
+#include "UniStoreSelector.hpp"
 
 
 #include <memory>
@@ -66,7 +67,7 @@ class UU {
 	std::unique_ptr<TopGrid> TGrid = nullptr;
 	std::unique_ptr<TopList> TList = nullptr;
 
-	static int queueMenuRefresh;
+	static int QueueMenuRefresh;
 
 public:
 	enum class TopMode : uint8_t { Grid = 0, List };
@@ -84,8 +85,9 @@ public:
 	std::unique_ptr<Meta> MData = nullptr;
 	std::unique_ptr<MSGData> MSData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Tabs> _Tabs = nullptr; // Make it public now.
+	std::unique_ptr<Tabs> _Tabs = nullptr;
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
+	std::unique_ptr<UniStoreSelector> USelector = nullptr;
 
 	uint32_t Down = 0, Repeat = 0;
 	touchPosition T = { 0, 0 };

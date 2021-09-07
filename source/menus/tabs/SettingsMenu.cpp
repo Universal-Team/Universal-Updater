@@ -64,11 +64,10 @@ void SettingsMenu::DrawMain() {
 void SettingsMenu::HandleMain() {
 	if (UU::App->Down & KEY_A) {
 		switch(this->Selection) {
-			case 0: {
-				std::unique_ptr<UniStoreSelector> Selector = std::make_unique<UniStoreSelector>();
-				Selector->Handler();
+			case 0:
+				UU::App->USelector->InitSelector();
+				UU::App->Draw();
 				break;
-			}
 
 			case 1:
 				UU::App->Exiting = true;

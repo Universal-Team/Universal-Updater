@@ -40,6 +40,7 @@
 #include "Tabs.hpp"
 #include "TopGrid.hpp"
 #include "TopList.hpp"
+#include "UniStoreSelector.hpp"
 
 
 #include <3ds.h>
@@ -77,8 +78,9 @@ public:
 	std::unique_ptr<Meta> MData = nullptr;
 	std::unique_ptr<MSGData> MSData = nullptr;
 	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Tabs> _Tabs = nullptr; // Make it public now.
+	std::unique_ptr<Tabs> _Tabs = nullptr;
 	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
+	std::unique_ptr<UniStoreSelector> USelector = nullptr;
 	
 	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
 	touchPosition T = { 0, 0 };

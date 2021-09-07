@@ -34,11 +34,15 @@
 
 class UniStoreSelector {
 public:
+	void InitSelector();
+	void DrawTop();
+	void DrawBottom();
+
 	void Handler();
+	bool Done = true;
 private:
 	size_t ScreenIndex = 0, SelectedIndex = 0;
 	std::vector<UniStore::Info> Infos;
-	bool Done = false;
 
 	void DeleteUniStore(const std::string &File);
 	void DownloadUniStore();

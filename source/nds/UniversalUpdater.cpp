@@ -39,7 +39,7 @@
 #include <unistd.h>
 
 
-int UU::queueMenuRefresh = 0;
+int UU::QueueMenuRefresh = 0;
 
 
 /*
@@ -107,6 +107,7 @@ void UU::Initialize(char *ARGV[]) {
 	this->CData = std::make_unique<ConfigData>();
 	this->TData = std::make_unique<ThemeData>();
 	this->MData = std::make_unique<Meta>();
+	this->USelector = std::make_unique<UniStoreSelector>();
 
 	this->MSData->DisplayWaitMsg("Checking UniStore...");
 
@@ -158,63 +159,72 @@ void UU::Draw() {
 	this->GData->StartFrame();
 
 	this->GData->DrawTop();
+	if (!this->USelector->Done) this->USelector->DrawTop();
+	else {
+		/* Ensure it isn't a nullptr. */
+		if (this->Store && this->Store->UniStoreValid()) {
+			Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
 
-	/* Ensure it isn't a nullptr. */
-	if (this->Store && this->Store->UniStoreValid()) {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, this->Store->GetUniStoreTitle(), 390);
+			switch(this->TMode) {
+				case TopMode::Grid:
+					this->TGrid->Draw();
+					break;
 
-		switch(this->TMode) {
-			case TopMode::Grid:
-				this->TGrid->Draw();
-				break;
+				case TopMode::List:
+					this->TList->Draw();
+					break;
+			}
 
-			case TopMode::List:
-				this->TList->Draw();
-				break;
+			this->_Tabs->DrawTop();
+
+		} else {
+			Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 		}
-
-		this->_Tabs->DrawTop();
-
-	} else {
-		Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Invalid UniStore", 390);
 	}
 
 	this->GData->DrawBottom();
-	this->_Tabs->DrawBottom();
+
+	if (!this->USelector->Done) this->USelector->DrawBottom();
+	else this->_Tabs->DrawBottom();
 
 	this->GData->EndFrame();
 };
 
+
 void UU::VBlankHandler() {
 	UU::App->ScanInput();
 
-	UU::App->_Tabs->Handler(); // Tabs are always handled.
+	if (!UU::App->USelector->Done) {
+		UU::App->USelector->Handler();
+		if (UU::App->USelector->Done) UU::App->Draw();
+		
+	} else {
+		UU::App->_Tabs->Handler(); // Tabs are always handled.
 
-	/* Handle Top List if possible. */
-	if (UU::App->_Tabs->HandleTopScroll()) {
-		switch(UU::App->TMode) {
-			case TopMode::Grid:
-				UU::App->TGrid->Handler();
-				break;
+		/* Handle Top List if possible. */
+		if (UU::App->_Tabs->HandleTopScroll()) {
+			switch(UU::App->TMode) {
+				case TopMode::Grid:
+					UU::App->TGrid->Handler();
+					break;
 
-			case TopMode::List:
-				UU::App->TList->Handler();
-				break;
+				case TopMode::List:
+					UU::App->TList->Handler();
+					break;
+			}
 		}
 	}
 
-	if (UU::App->Repeat) {
-		UU::App->Draw();
-	} else if (UU::App->_Tabs->CurrentTab() == Tabs::Tab::QueueSystem) {
-		if(queueMenuRefresh < 60) {
-			queueMenuRefresh++;
-		} else {
-			queueMenuRefresh = 0;
+	if (UU::App->Repeat) UU::App->Draw();
+	else if (UU::App->_Tabs->CurrentTab() == Tabs::Tab::QueueSystem) {
+		if (QueueMenuRefresh < 60) QueueMenuRefresh++;
+		else {
+			QueueMenuRefresh = 0;
 			Gui::ScreenDraw(false);
 			QueueSystem::Draw();
 		}
 	}
-}
+};
 
 
 /*
