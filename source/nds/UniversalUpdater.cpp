@@ -124,10 +124,9 @@ void UU::Initialize(char *ARGV[]) {
 				this->MSData->DisplayWaitMsg("Downloading universal-db.tdx...");
 				DL->Handler();
 			}
-
-		} else {
-			this->CData->LastStore("universal-db.unistore");
 		}
+
+		this->CData->LastStore("universal-db.unistore");
 	}
 
 	this->Store = std::make_unique<UniStore>(this->CData->LastStore());
