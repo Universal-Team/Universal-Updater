@@ -102,7 +102,7 @@ void DownList::Handler() {
 		}
 
 		if (UU::App->Down & KEY_A) {
-			QueueSystem::Add(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], UU::App->Store->GetScript(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], Entries[this->SelectedIndex]));
+			QueueSystem::Add(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], this->SelectedIndex, UU::App->Store->GetScript(UU::App->Store->Indexes[UU::App->Store->SelectedIndex], Entries[this->SelectedIndex]));
 		}
 
 		if (UU::App->Down & KEY_B) UU::App->_Tabs->PrevTab(); // Go back to previous tab.

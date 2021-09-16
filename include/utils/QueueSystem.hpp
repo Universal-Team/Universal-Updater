@@ -36,8 +36,8 @@ public:
 	static void Handler();
 	static void Draw();
 
-	static void Add(size_t EntryIndex, const nlohmann::json *Script);
-	static void Remove(size_t Idx);
+	static void Add(const size_t EntryIndex, const size_t DLIdx, const nlohmann::json *Script);
+	static void Remove(const size_t Idx);
 
 	static size_t Count() { return Queue.size(); };
 	static const QueueEntry *Current() { return Queue.size() > 0 ? &Queue[0] : nullptr; };

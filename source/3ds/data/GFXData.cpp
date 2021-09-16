@@ -29,14 +29,10 @@
 #include <unistd.h>
 
 
-GFXData::GFXData() {
-	Gui::loadSheet("romfs:/gfx/sprites.t3x", this->Sprites);
-};
+GFXData::GFXData() { Gui::loadSheet("romfs:/gfx/sprites.t3x", this->Sprites); };
 
 
-GFXData::~GFXData() {
-	Gui::unloadSheet(this->Sprites);
-};
+GFXData::~GFXData() { Gui::unloadSheet(this->Sprites); };
 
 
 void GFXData::StartFrame() {
@@ -47,9 +43,7 @@ void GFXData::StartFrame() {
 };
 
 
-void GFXData::EndFrame() {
-	C3D_FrameEnd(0);
-};
+void GFXData::EndFrame() { C3D_FrameEnd(0); };
 
 
 void GFXData::DrawTop() {
@@ -78,7 +72,7 @@ void GFXData::LoadUniStoreSheet(const std::string &SheetFile) {
 void GFXData::UnloadUniStoreSheets() {
 	if (this->UniStoreSheets.empty()) return;
 	
-	for (size_t Idx = this->UniStoreSheets.size() - 1; Idx > 0; Idx--) {
+	for (ssize_t Idx = (ssize_t)this->UniStoreSheets.size() - 1; Idx >= 0; Idx--) {
 		Gui::unloadSheet(this->UniStoreSheets[Idx]);
 	}
 
@@ -109,9 +103,9 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &I
 
 		/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
 		if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
-			this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+			this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
 			if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
-			return;
+			continue;
 		}
 
 		bool DrawNoIcon = true;
@@ -128,14 +122,14 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &I
 			const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Sheet], Idx);
 
 			/* Only max 48x48 allowed. */
-			if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+			if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
 			else {
 				const uint8_t OffsW = (48 - TempImg.subtex->width) / 2; // Center W.
 				const uint8_t OffsH = (48 - TempImg.subtex->height) / 2; // Center H.
 
 				C2D_DrawImageAt(TempImg, XPos + OffsW, YPos + OffsH, 0.5);
 			}
-		} else this->DrawSprite(sprites_noIcon_idx, XPos, YPos);
+		} else this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
 
 		if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
 	}

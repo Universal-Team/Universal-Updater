@@ -33,8 +33,8 @@
 std::deque<QueueEntry> QueueSystem::Queue;
 
 
-void QueueSystem::Add(size_t EntryIndex, const nlohmann::json *Script) {
-	Queue.emplace_back(EntryIndex, Script);
+void QueueSystem::Add(const size_t EntryIndex, const size_t DLIdx, const nlohmann::json *Script) {
+	Queue.emplace_back(EntryIndex, DLIdx, Script);
 
 	#ifdef _3DS
 		if (Queue.size() == 1) {
@@ -71,7 +71,7 @@ void QueueSystem::Handler() {
 };
 
 
-void QueueSystem::Remove(size_t Idx) {
+void QueueSystem::Remove(const size_t Idx) {
 	if (Idx < Queue.size()) {
 		if (Idx == 0) Queue[0].Cancel();
 		else Queue.erase(Queue.begin() + Idx);

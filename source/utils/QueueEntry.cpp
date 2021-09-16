@@ -26,6 +26,7 @@
 
 #include "QueueEntry.hpp"
 
+#include "Common.hpp"
 #include "Copying.hpp"
 #include "Deleting.hpp"
 #include "DownloadFile.hpp"
@@ -33,6 +34,7 @@
 #include "Extracting.hpp"
 #include "Moving.hpp"
 #include "gui.hpp"
+
 
 bool QueueEntry::ObjectContains(const nlohmann::json &Item, const std::vector<std::string> Keys) {
 	for (const std::string &Key : Keys) {
@@ -110,6 +112,30 @@ void QueueEntry::Handler() {
 		}
 
 		if (this->CurrentAction) this->CurrentAction->Handler();
+	}
+
+	/* Only set to META if not cancelled. */
+	if (!this->Cancelling) {
+		/* Set updated state to META. */
+		UU::App->MData->SetUpdated(
+			UU::App->Store->GetUniStoreTitle(), // UniStore Title.
+			UU::App->Store->GetEntryTitle(this->UniStoreIndex()), // Entry Index.
+			UU::App->Store->GetEntryLastUpdated(this->UniStoreIndex()) // Last Updated.
+		);
+
+		/*
+			Set installed state to META.
+
+			TODO: Maybe just pass over a string or so instead of going the vector fetch thing way.
+		*/
+		const std::vector<std::string> DLList = UU::App->Store->GetDownloadList(this->UniStoreIndex());
+		if (!DLList.empty() && this->DownloadIndex() < DLList.size()) {
+			UU::App->MData->SetInstalled(
+				UU::App->Store->GetUniStoreTitle(), // UniStore Title.
+				UU::App->Store->GetEntryTitle(this->UniStoreIndex()), // Entry Index.
+				DLList[this->DownloadIndex()]
+			);
+		}
 	}
 };
 
