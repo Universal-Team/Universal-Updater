@@ -159,7 +159,7 @@ uint32_t ThemeData::GetThemeColor(const std::string &ThemeName, const std::strin
 			return DefaultColor;
 		}
 
-		#ifdef _3DS
+		#ifdef __3DS__
 			const int R = std::stoi(ColorString.substr(1, 2), nullptr, 16);
 			const int G = std::stoi(ColorString.substr(3, 2), nullptr, 16);
 			const int B = std::stoi(ColorString.substr(5, 2), nullptr, 16);

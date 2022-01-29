@@ -34,7 +34,7 @@
 uint64_t Utils::AvailableSpace() {
 	struct statvfs ST;
 
-	#ifdef _3DS
+	#ifdef __3DS__
 		statvfs("sdmc:/", &ST);
 
 	#elif ARM9

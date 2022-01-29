@@ -32,7 +32,7 @@
 /* Detects system language and is used later to set app language to system language. */
 std::string ConfigData::SysLang(void) const {
 	uint8_t Language = 1;
-	#ifdef _3DS // 3DS only for now, does set english on NDS.
+	#ifdef __3DS__ // 3DS only for now, does set english on NDS.
 		CFGU_GetSystemLanguage(&Language);
 	#endif
 

@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <cstring>
 
-#ifdef _3DS
+#ifdef __3DS__
 	#include <3ds.h> // For socInit stuff.
 	#include <malloc.h> // memalign and free.
 	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
@@ -104,7 +104,7 @@ int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
 	int Ret = 0;
 	CURLcode CRes;
 
-	#ifdef _3DS
+	#ifdef __3DS__
 		bool SocInitialized = false;
 
 		void *SocBuf = memalign(0x1000, 0x100000);
@@ -156,7 +156,7 @@ int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
 	}
 
 Cleanup:
-	#ifdef _3DS
+	#ifdef __3DS__
 		if (SocInitialized) socExit();
 		if (SocBuf) free(SocBuf);
 	#endif
@@ -196,7 +196,7 @@ int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t 
 	BufSize = Size;
 	ResultBuf = (char *)Buffer;
 
-	#ifdef _3DS
+	#ifdef __3DS__
 		bool SocInitialized = false;
 
 		void *SocBuf = memalign(0x1000, 0x100000);
@@ -231,7 +231,7 @@ int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t 
 	}
 
 Cleanup:
-	#ifdef _3DS
+	#ifdef __3DS__
 		if (SocInitialized) socExit();
 		if (SocBuf) free(SocBuf);
 	#endif
@@ -266,7 +266,7 @@ curl_off_t DownloadUtils::TotalSize() { return std::max(1LL, DownloadTotal); }
 
 
 bool DownloadUtils::WiFiAvailable() {
-	#ifdef _3DS
+	#ifdef __3DS__
 		// return true; // For Citra
 
 		uint32_t WifiStatus;
