@@ -35,7 +35,7 @@
 
 #define DOWNLOAD_ENTRIES 7
 extern std::string _3dsxPath;
-extern bool is3DSX;
+extern bool exiting, is3DSX, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{ 46, 32, 241, 22 },
@@ -175,7 +175,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			smallDelay--;
 		}
 
-		if ((hDown & (KEY_Y | KEY_START) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
+		if ((hDown & (KEY_Y | KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
 			if (is3DSX) { // Only allow if 3DSX.
 				if (StoreUtils::entries.size() <= 0) return; // Smaller than 0 -> No No.
 
@@ -247,6 +247,10 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		}
 
 		if (hDown & KEY_B) currentMenu = lastMode; // Go back to EntryInfo.
+
+		/* Quit UU. */
+		if (hDown & KEY_START && !QueueRuns)
+			exiting = true;
 
 		/* Scroll Handle. */
 		if (StoreUtils::store->GetDownloadIndex() < StoreUtils::store->GetDownloadSIndex()) StoreUtils::store->SetDownloadSIndex(StoreUtils::store->GetDownloadIndex());

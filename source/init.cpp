@@ -195,9 +195,8 @@ Result Init::MainLoop() {
 		C3D_FrameEnd(0);
 
 		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
-
-		if (exiting) {
-			if (hDown & KEY_START) fullExit = true; // Make it optionally faster.
+		else {
+			if (hidKeysDown() & KEY_START) fullExit = true; // Make it optionally faster.
 
 			if (fadeAlpha < 255) {
 				fadeAlpha += 4;

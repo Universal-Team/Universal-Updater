@@ -316,6 +316,10 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 		}
 	}
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
 }
 
 /*

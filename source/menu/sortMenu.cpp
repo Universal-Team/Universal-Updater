@@ -29,6 +29,7 @@
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
+extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 static const std::vector<Structs::ButtonPos> buttons = {
@@ -158,4 +159,8 @@ void StoreUtils::SortHandle(bool &asc, SortType &st) {
 			}
 		}
 	}
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
 }

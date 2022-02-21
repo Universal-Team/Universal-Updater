@@ -124,5 +124,5 @@ void StoreUtils::MarkHandle(std::unique_ptr<StoreEntry> &entry, bool &showMark) 
 	}
 
 
-	if ((hidKeysDown() & KEY_B || hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_TOUCH && touching(t, markBox[5]))) showMark = false; // Return back to screen.
+	if ((hidKeysDown() & KEY_B || hidKeysDown() & KEY_SELECT) || (hidKeysDown() & KEY_TOUCH && touching(t, markBox[5]))) showMark = false; // Return back to screen.
 }
