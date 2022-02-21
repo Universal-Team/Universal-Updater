@@ -235,6 +235,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			this->installs.clear();
 			this->dwnldList.clear();
 			this->dwnldSizes.clear();
+			this->dwnldTypes.clear();
 
 			if (StoreUtils::store && StoreUtils::store->GetValid()) {
 				const std::vector<std::string> installedNames = StoreUtils::meta->GetInstalled(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTitle());
@@ -244,6 +245,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				if ((int)StoreUtils::entries.size() > StoreUtils::store->GetEntry()) {
 					this->dwnldList = StoreUtils::store->GetDownloadList(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetEntryIndex());
 					this->dwnldSizes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetSizes();
+					this->dwnldTypes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTypes();
 
 					for (int i = 0; i < (int)this->dwnldList.size(); i++) {
 						bool good = false;
@@ -269,7 +271,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 1:
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldList, storeMode, this->lastMode, this->smallDelay, this->installs);
+				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldList, storeMode, this->lastMode, this->smallDelay, this->installs, this->dwnldTypes);
 				break;
 
 			case 2:

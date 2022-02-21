@@ -61,6 +61,7 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	if (!entries.empty()) {
 		for (int i = 0; i < (int)entries.size(); i++) {
 			this->Sizes.push_back( store->GetFileSizes(index, entries[i]) );
+			this->Types.push_back( store->GetFileTypes(index, entries[i]) );
 		}
 	}
 

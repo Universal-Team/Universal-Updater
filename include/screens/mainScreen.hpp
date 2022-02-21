@@ -51,7 +51,7 @@ public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
-	std::vector<std::string> dwnldList, dwnldSizes;
+	std::vector<std::string> dwnldList, dwnldSizes, dwnldTypes;
 
 	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
 		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false, isAND = true;
