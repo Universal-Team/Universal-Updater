@@ -62,7 +62,7 @@ private:
 	SortType sorttype = SortType::LAST_UPDATED;
 
 	/* Title, Author, Category, Console. */
-	std::vector<bool> searchIncludes = { false, false, false, false }, installs = { };
+	std::vector<bool> searchIncludes = { true, false, false, false }, installs = { };
 	std::string searchResult = "", screenshotName = "";
 
 	C2D_Image Screenshot = { nullptr, nullptr };
