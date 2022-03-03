@@ -39,7 +39,7 @@
 	"CURRENTLY_EXTRACTING": "Se extrage:",
 	"CUSTOM_FONT": "Folosiți font personalizat",
 	"CUSTOM_FONT_DESC": "Dacă este pornit, 'sdmc:/3ds/Universal-Updater/font.bcfnt' va fi folosit în loc de fontul sistemului, dacă este găsit.",
-	"DELETE_ERROR": "Eroare de ştergere!",
+	"DELETE_ERROR": "Eroare de Ştergere!",
 	"DELETE_PROMPT": "Sunteți sigur că vreți să ştergeți acest Dosar?",
 	"DELETE_UNNEEDED_FILE": "Se şterg fişier inutil...",
 	"DELETING": "Se şterge...",
