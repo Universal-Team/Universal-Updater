@@ -65,6 +65,8 @@
 	"ENTER_URL": "Introduzca la URL de la UniStore.",
 	"ENTRIES": "Entradas",
 	"EXECUTE_ENTRY": "¿Quieres ejecutar esta entrada?",
+	"NOTE_NIGHTLY": "Note: \"Nightly\" versions are intended for testing\nupcoming features and may be unstable.\n\nIf you simply want to install,\nplease cancel and install the normal version.",
+	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may\nwant to install the normal version if one exists.",
 	"EXIT_APP": "Salir de Universal-Updater",
 	"EXTRACTING": "Extrayendo... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "¡Error de extracción!",

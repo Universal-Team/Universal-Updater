@@ -65,6 +65,8 @@
 	"ENTER_URL": "鍵入 UniStore 的 URL。",
 	"ENTRIES": "條目",
 	"EXECUTE_ENTRY": "您想執行這個條目嗎？",
+	"NOTE_NIGHTLY": "Note: \"Nightly\" versions are intended for testing\nupcoming features and may be unstable.\n\nIf you simply want to install,\nplease cancel and install the normal version.",
+	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may\nwant to install the normal version if one exists.",
 	"EXIT_APP": "退出 Universal-Updater",
 	"EXTRACTING": "提取中... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "提取出錯！",
