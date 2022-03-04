@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/blob/master/app/banner.png"></a><br>
+	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/raw/master/resources/2d-banner.png"></a><br>
 	<b>An easy to use app for installing and updating 3DS homebrew</b><br>
 	<a href="https://universal-team.net/discord" style="padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord%20Server-%23universal--updater-green.svg" alt="Discord Server">
