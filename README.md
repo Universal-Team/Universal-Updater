@@ -89,3 +89,4 @@ If you're testing in Citra, run `make citra` instead of just `make` to disable t
 - [Icons8](https://icons8.com/): Icon Designer
 - [lvandeve](https://github.com/lvandeve): For [LodePNG](https://github.com/lvandeve/lodepng)
 - [PabloMK7](https://github.com/mariohackandglitch): Download Code Improvements
+- [lividhen](https://github.com/lividhen): 3D Banner
