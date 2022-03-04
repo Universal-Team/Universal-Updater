@@ -86,9 +86,9 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_I
 extern std::vector<std::pair<std::string, std::string>> Themes;
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
-static const std::vector<std::string> languages = { "Bruh", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", /* "Nederlands", */ "Polski", "Português", "Português (Brasil)", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", "한국어" };
-static const std::string langsTemp[] = { "br", "de", "en", "es", "fr", "it", /* "lt", */ "hu", /* "nl", */ "pl", "pt", "pt-BR", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", "ko" };
-static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {-1, 0}, /* {-1, 0}, */ {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {sprites_zh_CN_idx, 54}, {sprites_zh_TW_idx, 55}, {sprites_jp_idx, 31}, {sprites_ko_idx, 30} };
+static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", "Nederlands", "Norsk", "Polski", "Português (Portugal)", "Português (Brasil)", "Română", "Türkçe", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", "한국어" };
+static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", /* "lt", */ "hu", "nl", "no", "pl", "pt", "pt-BR", "ro", "tr", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", "ko" };
+static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {sprites_zh_CN_idx, 54}, {sprites_zh_TW_idx, 55}, {sprites_jp_idx, 31}, {sprites_ko_idx, 30} };
 
 /*
 	Main Settings.
@@ -272,8 +272,7 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 			Overlays::ShowCredits();
 
 		} else if (touching(touch, mainButtons[6])) {
-			if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
-			else exiting = true;
+			if (!QueueRuns) exiting = true;
 		}
 	}
 
@@ -313,11 +312,14 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 
 			case 6:
-				if (QueueRuns) exiting = Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"));
-				else exiting = true;
+				if (!QueueRuns) exiting = true;
 				break;
 		}
 	}
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
 }
 
 /*

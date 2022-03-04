@@ -11,28 +11,28 @@
 		"url": "https://github.com/DS-Homebrew/twlmenu-extras/raw/master/unistore/twlmenu-skins.unistore",
 		"description": "A collection of skins for TWiLight Menu++\nfrom DS-Homebrew/twlmenu-extras on GitHub\n\n(The 'Console' is the theme in TWiLight)"
 	},
-	"3DEins-Sets": {
-		"title": "3DEins-Sets",
-		"author": "SuperSaiyajinStackZ",
-		"url": "https://github.com/SuperSaiyajinStackZ/3DEins-3DZwei-Sets/raw/master/unistore/3DEins-Sets.unistore",
-		"description": "You can find CardSets for 3DEins on this store.\nThis store is made by SuperSaiyajinStackZ.\nCardsets are hosted by SuperSaiyajinStackZ as well."
-	},
-	"3DZwei-Sets": {
-		"title": "3DZwei-Sets",
-		"author": "SuperSaiyajinStackZ",
-		"url": "https://github.com/SuperSaiyajinStackZ/3DEins-3DZwei-Sets/raw/master/unistore/3DZwei-Sets.unistore",
-		"description": "You can find CardSets for 3DZwei on this store.\nThis store is made by SuperSaiyajinStackZ.\nCardsets are hosted by SuperSaiyajinStackZ as well."
+	"Universal-Team Game Sets": {
+		"title": "Universal-Team Game Sets",
+		"author": "Universal-Team",
+		"url": "https://game-sets.universal-team.net/unistore/ut-game-sets.unistore",
+		"description": "Additional card sets for Universal-Team games\n\n(The 'Console' is the game)"
 	},
 	"Universal-DB": {
 		"title": "Universal-DB",
 		"author": "Universal-Team",
-		"url": "https://github.com/Universal-Team/db/raw/master/unistore/universal-db.unistore",
+		"url": "https://db.universal-team.net/unistore/universal-db.unistore",
 		"description": "Universal-DB - An online database of 3DS and DS homebrew"
 	},
 	"LinuxCat's Store": {
 		"title": "LinuxCat's Store",
 		"author": "LinuxCat",
-		"url": "https://github.com/L-i-n-u-x-C-a-t/LinuxCat-s-Store/raw/master/unistore/linuxcat-store.unistore",
+		"url": "https://github.com/LinUwUxCat/LinuxCat-s-Store/raw/master/unistore/linuxcat-store.unistore",
 		"description": "A store where everything is not made by me but most of it is."
+	},
+	"RetroArch Cores": {
+		"title": "RetroArch Cores",
+		"author": "Libretro",
+		"url": "https://db.universal-team.net/unistore/retroarch.unistore",
+		"description": "RetroArch cores"
 	}
 }

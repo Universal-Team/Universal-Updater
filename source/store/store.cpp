@@ -507,6 +507,26 @@ std::string Store::GetFileSizes(int index, const std::string &entry) const {
 }
 
 /*
+	Get file script type for each download entry.
+
+	int index: The index.
+	const std::string &entry: The entry name.
+*/
+std::string Store::GetFileTypes(int index, const std::string &entry) const {
+	if (!this->valid) return "";
+
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return "";
+
+	if (this->storeJson["storeContent"][index].contains(entry) && this->storeJson["storeContent"][index][entry].type() == nlohmann::json::value_t::object) {
+		if (this->storeJson["storeContent"][index][entry].contains("type") && this->storeJson["storeContent"][index][entry]["type"].is_string()) {
+			return this->storeJson["storeContent"][index][entry]["type"];
+		}
+	}
+
+	return "";
+}
+
+/*
 	Get Screenshot URL list.
 
 	int index: The Entry Index.

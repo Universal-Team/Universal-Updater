@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: universalteam/devkitarm
+    container: devkitpro/devkitarm
     name: Build with Docker using devkitARM
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
@@ -34,7 +34,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install p7zip-full -y
 
-          curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
+          curl -L https://github.com/Steveice10/bannertool/releases/download/1.2.0/bannertool.zip -o bannertool.zip
           sudo 7z e bannertool.zip linux-x86_64/bannertool
           sudo chmod +x bannertool
           mv bannertool /usr/local/bin

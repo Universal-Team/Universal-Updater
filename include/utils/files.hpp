@@ -34,5 +34,6 @@ Result openFile(Handle *fileHandle, const char *path, bool write);
 Result deleteFile(const char *path);
 Result removeDir(const char *path);
 Result removeDirRecursive(const char *path);
+u64 getAvailableSpace();
 
 #endif

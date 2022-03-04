@@ -65,6 +65,8 @@
 	"ENTER_URL": "Adja meg az UniStore URL-jét.",
 	"ENTRIES": "Bejegyzések",
 	"EXECUTE_ENTRY": "Szeretné futtatni ezt a bejegyzést?",
+	"NOTE_NIGHTLY": "Megjegyzés: Az \"Esti\" verziók az új funkciók teszteléséhez \nkészülnek és instabilak lehetnek.\n\nHa csak simán telepíteni szeretnéd, akkor\nlépj vissza és telepítsd a normál verziót.",
+	"NOTE_PRERELEASE": "Megjegyzés: Ez egy prerelease build és instabil lehet.\n\nHa csak simán telepíteni szeretnéd, akkor\nlépj vissza és telepítsd a normál verziót.",
 	"EXIT_APP": "Kilépés az Universal-Updater-ből",
 	"EXTRACTING": "Kicsomagolás... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Kicsomagolási hiba!",

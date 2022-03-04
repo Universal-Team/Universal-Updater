@@ -25,6 +25,8 @@
 */
 
 #include "files.hpp"
+#include <sys/stat.h>
+#include <sys/statvfs.h>
 
 FS_Path getPathInfo(const char *path, FS_ArchiveID *archive) {
 	*archive = ARCHIVE_SDMC;
@@ -127,4 +129,13 @@ Result removeDirRecursive(const char *path) {
 	FSUSER_CloseArchive(archive);
 
 	return ret;
+}
+
+/* Code borrowed from GodMode9i:
+	https://github.com/DS-Homebrew/GodMode9i/blob/d68ac105e68b4a1fc2c706a08c7a394255c325c2/arm9/source/driveOperations.cpp#L166-L170
+*/
+u64 getAvailableSpace() {
+	struct statvfs st;
+	statvfs("sdmc:/", &st);
+	return (u64)st.f_bsize * (u64)st.f_bavail;
 }

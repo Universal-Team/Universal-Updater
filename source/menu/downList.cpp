@@ -35,7 +35,7 @@
 
 #define DOWNLOAD_ENTRIES 7
 extern std::string _3dsxPath;
-extern bool is3DSX;
+extern bool exiting, is3DSX, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> downloadBoxes = {
 	{ 46, 32, 241, 22 },
@@ -169,13 +169,13 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 	std::vector<bool> &installs: Reference to the installed states.
 */
-void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs) {
+void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
 		if (smallDelay > 0) {
 			smallDelay--;
 		}
 
-		if ((hDown & (KEY_Y | KEY_START) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
+		if ((hDown & (KEY_Y | KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
 			if (is3DSX) { // Only allow if 3DSX.
 				if (StoreUtils::entries.size() <= 0) return; // Smaller than 0 -> No No.
 
@@ -212,7 +212,10 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-						if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()])) {
+						std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()];
+						if (types[i + StoreUtils::store->GetDownloadSIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
+						else if (types[i + StoreUtils::store->GetDownloadSIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
+						if (Msg::promptMsg(Msg)) {
 							StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
 						}
 					}
@@ -234,7 +237,10 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		}
 
 		if (smallDelay == 0 && hDown & KEY_A && !entries.empty()) {
-			if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()])) {
+			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()];
+			if (types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
+			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
+			if (Msg::promptMsg(Msg)) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
@@ -247,6 +253,10 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		}
 
 		if (hDown & KEY_B) currentMenu = lastMode; // Go back to EntryInfo.
+
+		/* Quit UU. */
+		if (hDown & KEY_START && !QueueRuns)
+			exiting = true;
 
 		/* Scroll Handle. */
 		if (StoreUtils::store->GetDownloadIndex() < StoreUtils::store->GetDownloadSIndex()) StoreUtils::store->SetDownloadSIndex(StoreUtils::store->GetDownloadIndex());

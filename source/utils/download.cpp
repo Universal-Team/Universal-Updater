@@ -103,11 +103,14 @@ static void commitToFileThreadFunc(void *args) {
 }
 
 static size_t file_handle_data(char *ptr, size_t size, size_t nmemb, void *userdata) {
+	if (getAvailableSpace() < (u64)downloadTotal) return 0; // Out of space.
+	if (writeError) return 0;
+	if (QueueSystem::CancelCallback) return 0;
+
 	(void)userdata;
 	const size_t bsz = size * nmemb;
 	size_t tofill = 0;
-	if (writeError) return 0;
-	if (QueueSystem::CancelCallback) return 0;
+
 
 	if (!g_buffers[g_index]) {
 		LightEvent_Init(&waitCommit, RESET_STICKY);
@@ -436,7 +439,11 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	@return True if Wi-Fi is connected; false if not.
 */
 bool checkWifiStatus(void) {
-	// return true; // For citra.
+#ifdef CITRA
+	// Citra's Wi-Fi check doesn't work
+	return true;
+#endif
+
 	u32 wifiStatus;
 	bool res = false;
 
@@ -593,83 +600,85 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 		return false;
 	}
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+	if (getAvailableSpace() >= result_written) {
+		if (nlohmann::json::accept(result_buf)) {
+			nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
-			/* Ensure, version == _UNISTORE_VERSION. */
-			if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
-				if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
-					if (currentRev > -1) {
+			if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
+				/* Ensure, version == _UNISTORE_VERSION. */
+				if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
+					if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
+						if (currentRev > -1) {
 
-						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-							const int rev = parsedAPI["storeInfo"]["revision"];
+							if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
+								const int rev = parsedAPI["storeInfo"]["revision"];
 
-							if (rev > currentRev) {
-								Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
-								if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-									fl = parsedAPI["storeInfo"]["file"];
+								if (rev > currentRev) {
+									Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
+									if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+										fl = parsedAPI["storeInfo"]["file"];
 
-									/* Make sure it's not "/", otherwise it breaks. */
-									if (!(fl.find("/") != std::string::npos)) {
+										/* Make sure it's not "/", otherwise it breaks. */
+										if (!(fl.find("/") != std::string::npos)) {
 
-										FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-										fwrite(result_buf, sizeof(char), result_written, out);
-										fclose(out);
+											FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
+											fwrite(result_buf, sizeof(char), result_written, out);
+											fclose(out);
 
-										socExit();
-										free(result_buf);
-										free(socubuf);
-										result_buf = nullptr;
-										result_sz = 0;
-										result_written = 0;
+											socExit();
+											free(result_buf);
+											free(socubuf);
+											result_buf = nullptr;
+											result_sz = 0;
+											result_written = 0;
 
-										return true;
+											return true;
 
-									} else {
-										Msg::waitMsg(Lang::get("FILE_SLASH"));
+										} else {
+											Msg::waitMsg(Lang::get("FILE_SLASH"));
+										}
 									}
+								}
+							}
+
+						} else {
+							if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+								fl = parsedAPI["storeInfo"]["file"];
+
+								/* Make sure it's not "/", otherwise it breaks. */
+								if (!(fl.find("/") != std::string::npos)) {
+
+									FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
+									fwrite(result_buf, sizeof(char), result_written, out);
+									fclose(out);
+
+									socExit();
+									free(result_buf);
+									free(socubuf);
+									result_buf = nullptr;
+									result_sz = 0;
+									result_written = 0;
+
+									return true;
+
+								} else {
+									Msg::waitMsg(Lang::get("FILE_SLASH"));
 								}
 							}
 						}
 
-					} else {
-						if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-							fl = parsedAPI["storeInfo"]["file"];
+					} else if (parsedAPI["storeInfo"]["version"] < 3) {
+						Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 
-							/* Make sure it's not "/", otherwise it breaks. */
-							if (!(fl.find("/") != std::string::npos)) {
+					} else if (parsedAPI["storeInfo"]["version"] > _UNISTORE_VERSION) {
+						Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 
-								FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-								fwrite(result_buf, sizeof(char), result_written, out);
-								fclose(out);
-
-								socExit();
-								free(result_buf);
-								free(socubuf);
-								result_buf = nullptr;
-								result_sz = 0;
-								result_written = 0;
-
-								return true;
-
-							} else {
-								Msg::waitMsg(Lang::get("FILE_SLASH"));
-							}
-						}
 					}
-
-				} else if (parsedAPI["storeInfo"]["version"] < 3) {
-					Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-
-				} else if (parsedAPI["storeInfo"]["version"] > _UNISTORE_VERSION) {
-					Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-
 				}
-			}
 
-		} else {
-			Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+			} else {
+				Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
+			}
 		}
 	}
 
@@ -733,23 +742,25 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 		return false;
 	}
 
-	C2D_SpriteSheet sheet = C2D_SpriteSheetLoadFromMem(result_buf, result_written);
+	if (getAvailableSpace() >= result_written) {
+		C2D_SpriteSheet sheet = C2D_SpriteSheetLoadFromMem(result_buf, result_written);
 
-	if (sheet) {
-		if (C2D_SpriteSheetCount(sheet) > 0) {
-			FILE *out = fopen((std::string(_STORE_PATH) + file).c_str(), "w");
-			fwrite(result_buf, sizeof(char), result_written, out);
-			fclose(out);
+		if (sheet) {
+			if (C2D_SpriteSheetCount(sheet) > 0) {
+				FILE *out = fopen((std::string(_STORE_PATH) + file).c_str(), "w");
+				fwrite(result_buf, sizeof(char), result_written, out);
+				fclose(out);
 
-			socExit();
-			free(result_buf);
-			free(socubuf);
-			result_buf = nullptr;
-			result_sz = 0;
-			result_written = 0;
+				socExit();
+				free(result_buf);
+				free(socubuf);
+				result_buf = nullptr;
+				result_sz = 0;
+				result_written = 0;
 
-			C2D_SpriteSheetFree(sheet);
-			return true;
+				C2D_SpriteSheetFree(sheet);
+				return true;
+			}
 		}
 	}
 

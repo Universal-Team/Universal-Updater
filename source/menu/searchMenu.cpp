@@ -29,6 +29,7 @@
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
+extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> SearchMenu = {
 	{ 51, 41, 262, 30 }, // Search bar.
@@ -232,4 +233,8 @@ void StoreUtils::SearchHandle(std::vector<bool> &searchIncludes, std::string &se
 			StoreUtils::SortEntries(ascending, sorttype);
 		}
 	}
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
 }

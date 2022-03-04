@@ -36,6 +36,7 @@ extern u32 extractSize, writeOffset;
 extern u32 installSize, installOffset;
 extern u32 copyOffset, copySize;
 extern int filesExtracted, extractFilesCount;
+extern bool exiting, QueueRuns;
 
 extern curl_off_t downloadTotal;
 extern curl_off_t downloadNow;
@@ -331,4 +332,8 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 	}
 
 	if (hDown & KEY_B) storeMode = 0; // Go to EntryInfo.
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
 }
