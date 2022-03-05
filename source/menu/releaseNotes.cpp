@@ -106,13 +106,17 @@ void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<
 	int &storeMode: The store mode to properly return back.
 */
 void StoreUtils::ReleaseNotesLogic(int &scrollIndex, int &storeMode) {
-	if (hRepeat & KEY_DOWN) {
-		if (scrollIndex < (int)wrappedNotes.size() - ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font))) scrollIndex++;
-	}
+	int linesPerScreen = ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font));
 
-	if (hRepeat & KEY_UP) {
-		if (scrollIndex > 0) scrollIndex--;
-	}
+	if (hRepeat & KEY_DOWN) scrollIndex++;
+	if (hRepeat & KEY_UP) scrollIndex--;
+	if (hRepeat & KEY_RIGHT) scrollIndex += linesPerScreen;
+	if (hRepeat & KEY_LEFT) scrollIndex -= linesPerScreen;
+
+	/* Ensure it doesn't scroll off screen. */
+	if (scrollIndex < 0) scrollIndex = 0;
+	if (scrollIndex > (int)wrappedNotes.size() - linesPerScreen)
+		scrollIndex = wrappedNotes.size() - linesPerScreen;
 
 	if (hDown & KEY_B) {
 		scrollIndex = 0;
