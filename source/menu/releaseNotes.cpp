@@ -29,11 +29,65 @@
 #include "download.hpp"
 #include "storeUtils.hpp"
 
+std::vector<std::string> wrappedNotes;
+
+size_t StoreUtils::FindSplitPoint(const std::string &str, const std::vector<std::string> splitters) {
+	for (const std::string &splitter : splitters) {
+		size_t pos = str.rfind(splitter);
+		if(pos != std::string::npos)
+			return pos;
+	}
+
+	return std::string::npos;
+}
+
+/* Process release notes into lines */
+void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
+	wrappedNotes.clear();
+
+	size_t splitPos = 0;
+	do {
+		splitPos = releaseNotes.find('\n');
+		std::string substr = releaseNotes.substr(0, splitPos);
+
+		Gui::clearTextBufs();
+		float width = Gui::GetStringWidth(0.5f, substr, font);
+
+		/* If too long to fit on screen, wrap at spaces, slashes, periods, etc. */
+		size_t spacePos;
+		while (width > 390.0f && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
+			splitPos = spacePos;
+			if(substr[splitPos] != ' ')
+				splitPos++;
+
+			while ((substr[splitPos] & 0xC0) == 0x80) // Skip to next if UTF-8 multibyte char
+				splitPos++;
+
+			substr = substr.substr(0, splitPos);
+			Gui::clearTextBufs();
+			width = Gui::GetStringWidth(0.5f, substr, font);
+		}
+
+		wrappedNotes.push_back(substr);
+
+		if(splitPos != std::string::npos) {
+			if(releaseNotes[splitPos] == ' ' || releaseNotes[splitPos] == '\n')
+				splitPos++;
+			releaseNotes = releaseNotes.substr(splitPos);
+		}
+	} while (splitPos != std::string::npos);
+}
+
 void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry) {
 	if (entry && StoreUtils::store) {
 		Gui::ScreenDraw(Top);
 		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-		Gui::DrawString(5, 25 - scrollIndex, 0.5f, UIThemes->TextColor(), entry->GetReleaseNotes(), 390, 0, font, C2D_WordWrap);
+		
+		float fontHeight = Gui::GetStringHeight(0.5f, "", font);
+		for (size_t i = 0; (scrollIndex + i) < wrappedNotes.size() && i < (240.0f - 25.0f) / fontHeight; i++) {
+			Gui::DrawString(5, 25 + i * fontHeight, 0.5f, UIThemes->TextColor(), wrappedNotes[scrollIndex + i], 390, 0, font);
+		}
+
 		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), entry->GetTitle(), 390, 0, font);
@@ -55,10 +109,12 @@ void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<
 	int &storeMode: The store mode to properly return back.
 */
 void StoreUtils::ReleaseNotesLogic(int &scrollIndex, int &storeMode) {
-	if (hRepeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
+	if (hRepeat & KEY_DOWN) {
+		if (scrollIndex < (int)wrappedNotes.size() - ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font))) scrollIndex++;
+	}
 
 	if (hRepeat & KEY_UP) {
-		if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
+		if (scrollIndex > 0) scrollIndex--;
 	}
 
 	if (hDown & KEY_B) {

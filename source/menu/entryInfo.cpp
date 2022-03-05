@@ -97,7 +97,10 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 		}
 
 		if ((hDown & KEY_X) || (hDown & KEY_TOUCH && touching(touch, notes))) {
-			if (entry->GetReleaseNotes() != "") mode = 7;
+			if (entry->GetReleaseNotes() != "") {
+				ProcessReleaseNotes(entry->GetReleaseNotes());
+				mode = 7;
+			}
 		}
 	}
 

@@ -91,6 +91,9 @@ namespace StoreUtils {
 	void SortHandle(bool &asc, SortType &st);
 
 	/* Release Notes. */
+	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
+	void ProcessReleaseNotes(std::string ReleaseNotes);
+
 	void DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry);
 	void ReleaseNotesLogic(int &scrollIndex, int &storeMode);
 
