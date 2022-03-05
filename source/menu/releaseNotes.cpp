@@ -116,7 +116,7 @@ void StoreUtils::ReleaseNotesLogic(int &scrollIndex, int &storeMode) {
 	/* Ensure it doesn't scroll off screen. */
 	if (scrollIndex < 0) scrollIndex = 0;
 	if (scrollIndex > (int)wrappedNotes.size() - linesPerScreen)
-		scrollIndex = wrappedNotes.size() - linesPerScreen;
+		scrollIndex = std::max(0, (int)wrappedNotes.size() - linesPerScreen);
 
 	if (hDown & KEY_B) {
 		scrollIndex = 0;
