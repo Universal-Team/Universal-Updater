@@ -34,8 +34,7 @@ std::vector<std::string> wrappedNotes;
 size_t StoreUtils::FindSplitPoint(const std::string &str, const std::vector<std::string> splitters) {
 	for (const std::string &splitter : splitters) {
 		size_t pos = str.rfind(splitter);
-		if(pos != std::string::npos)
-			return pos;
+		if (pos != std::string::npos) return pos;
 	}
 
 	return std::string::npos;
@@ -57,11 +56,10 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 		size_t spacePos;
 		while (width > 390.0f && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
 			splitPos = spacePos;
-			if(substr[splitPos] != ' ')
-				splitPos++;
+			if (substr[splitPos] != ' ') splitPos++;
 
-			while ((substr[splitPos] & 0xC0) == 0x80) // Skip to next if UTF-8 multibyte char
-				splitPos++;
+			/* Skip to next if UTF-8 multibyte char */
+			while ((substr[splitPos] & 0xC0) == 0x80) splitPos++;
 
 			substr = substr.substr(0, splitPos);
 			Gui::clearTextBufs();
@@ -70,9 +68,8 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 
 		wrappedNotes.push_back(substr);
 
-		if(splitPos != std::string::npos) {
-			if(releaseNotes[splitPos] == ' ' || releaseNotes[splitPos] == '\n')
-				splitPos++;
+		if (splitPos != std::string::npos) {
+			if (releaseNotes[splitPos] == ' ' || releaseNotes[splitPos] == '\n') splitPos++;
 			releaseNotes = releaseNotes.substr(splitPos);
 		}
 	} while (splitPos != std::string::npos);
