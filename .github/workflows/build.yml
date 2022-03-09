@@ -140,7 +140,7 @@ jobs:
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
-    send_success_webhook:
+  send_success_webhook:
     runs-on: ubuntu-latest
     needs: [publish_build, build]
     name: Send success webhook
