@@ -48,7 +48,7 @@ bool ScriptUtils::matchPattern(const std::string &pattern, const std::string &te
 }
 
 /* Remove a File. */
-Result ScriptUtils::removeFile(const std::string &file, const std::string &message, bool isARG) {
+Result ScriptUtils::removeFile(const std::string &file, bool isARG) {
 	std::string out;
 	out = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	out = std::regex_replace(out, std::regex("%3DSX%/(.*)\\.(.*)"), config->_3dsxPath() + (config->_3dsxInFolder() ? "/$1/$1.$2" : "/$1.$2"));
@@ -59,13 +59,12 @@ Result ScriptUtils::removeFile(const std::string &file, const std::string &messa
 	Result ret = NONE;
 	if (access(out.c_str(), F_OK) != 0) return DELETE_ERROR;
 
-	if (isARG) Msg::DisplayMsg(message);
 	deleteFile(out.c_str());
 	return ret;
 }
 
 /* Boot a title. */
-void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::string &message, bool isARG) {
+void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, bool isARG) {
 	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
 	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
 	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
@@ -73,7 +72,6 @@ void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, const std::
 	const u64 ID = std::stoull(TitleID, 0, 16);
 	if (isARG) {
 		if (Msg::promptMsg(MSG)) {
-			Msg::DisplayMsg(message);
 			Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
 		}
 
@@ -135,7 +133,7 @@ Result ScriptUtils::copyFile(const std::string &source, const std::string &desti
 }
 
 /* Rename / Move a file. */
-Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, const std::string &message, bool isARG) {
+Result ScriptUtils::renameFile(const std::string &oldName, const std::string &newName, bool isARG) {
 	Result ret = NONE;
 	if (access(oldName.c_str(), F_OK) != 0) return MOVE_ERROR;
 
@@ -151,8 +149,6 @@ Result ScriptUtils::renameFile(const std::string &oldName, const std::string &ne
 	_new = std::regex_replace(_new, std::regex("%3DSX%"), config->_3dsxPath());
 	_new = std::regex_replace(_new, std::regex("%NDS%"), config->ndsPath());
 	_new = std::regex_replace(_new, std::regex("%FIRM%"), config->firmPath());
-
-	if (isARG) Msg::DisplayMsg(message);
 
 	/* TODO: Kinda avoid that? */
 	makeDirs(_new.c_str());
@@ -361,7 +357,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 
 			if (type == "deleteFile") {
 				bool missing = false;
-				std::string file = "", message = "";
+				std::string file = "";
 
 
 				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
@@ -369,16 +365,12 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				}
 				else missing = true;
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					message = Script[i]["message"];
-				}
-
-				if (!missing) ret = ScriptUtils::removeFile(file, message, true);
+				if (!missing) ret = ScriptUtils::removeFile(file, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "downloadFile") {
 				bool missing = false;
-				std::string file = "", output = "", message = "";
+				std::string file = "", output = "";
 
 				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
 					file = Script[i]["file"];
@@ -390,16 +382,15 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				}
 				else missing = true;
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					message = Script[i]["message"];
-				}
+				char message[256];
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), output.substr(output.find_first_of("/") + 1).c_str());
 
 				if (!missing) ret = ScriptUtils::downloadFile(file, output, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "downloadRelease") {
 				bool missing = false, includePrereleases = false;
-				std::string repo = "", file = "", output = "", message = "";
+				std::string repo = "", file = "", output = "";
 
 				if (Script[i].contains("repo") && Script[i]["repo"].is_string()) {
 					repo = Script[i]["repo"];
@@ -419,16 +410,15 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				if (Script[i].contains("includePrereleases") && Script[i]["includePrereleases"].is_boolean())
 					includePrereleases = Script[i]["includePrereleases"];
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					message = Script[i]["message"];
-				}
+				char message[256];
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), output.substr(output.find_first_of("/") + 1).c_str());
 
 				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "extractFile") {
 				bool missing = false;
-				std::string file = "", input = "", output = "", message = "";
+				std::string file = "", input = "", output = "";
 
 				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
 					file = Script[i]["file"];
@@ -445,16 +435,15 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				}
 				else missing = true;
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					message = Script[i]["message"];
-				}
+				char message[256];
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_EXTRACTING").c_str(), file.substr(file.find_first_of("/") + 1).c_str());
 
 				if (!missing) ret = ScriptUtils::extractFile(file, input, output, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "installCia") {
 				bool missing = false, updateSelf = false;
-				std::string file = "", message = "";
+				std::string file = "";
 
 				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
 					file = Script[i]["file"];
@@ -465,16 +454,15 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 					updateSelf = Script[i]["updateSelf"];
 				}
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					message = Script[i]["message"];
-				}
+				char message[256];
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_INSTALLING").c_str(), file.substr(file.find_first_of("/") + 1).c_str());
 
 				if (!missing) ScriptUtils::installFile(file, updateSelf, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "mkdir") {
 				bool missing = false;
-				std::string directory = "", message = "";
+				std::string directory = "";
 
 				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
 					directory = Script[i]["directory"];
@@ -486,7 +474,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 
 			} else if (type == "rmdir") {
 				bool missing = false;
-				std::string directory = "", message = "", promptmsg = "";
+				std::string directory = "", promptmsg = "";
 
 				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
 					directory = Script[i]["directory"];
@@ -526,7 +514,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				break;
 
 			} else if (type == "copy") {
-				std::string Message = "", source = "", destination = "";
+				std::string source = "", destination = "";
 				bool missing = false;
 
 				if (Script[i].contains("source") && Script[i]["source"].is_string()) {
@@ -539,15 +527,14 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				}
 				else missing = true;
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					Message = Script[i]["message"];
-				}
+				char message[256];
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_COPYING").c_str(), source.substr(source.find_first_of("/") + 1).c_str());
 
-				if (!missing) ret = ScriptUtils::copyFile(source, destination, Message, true);
+				if (!missing) ret = ScriptUtils::copyFile(source, destination, message, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "move") {
-				std::string Message = "", oldFile = "", newFile = "";
+				std::string oldFile = "", newFile = "";
 				bool missing = false;
 
 				if (Script[i].contains("old") && Script[i]["old"].is_string()) {
@@ -560,11 +547,7 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				}
 				else missing = true;
 
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					Message = Script[i]["message"];
-				}
-
-				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, Message, true);
+				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, true);
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "skip") {

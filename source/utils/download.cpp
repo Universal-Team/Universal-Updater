@@ -915,7 +915,7 @@ void UpdateAction() {
 			}
 
 			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
-			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", Lang::get("DELETE_UNNEEDED_FILE"), true);
+			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
 			Msg::waitMsg(Lang::get("UPDATE_DONE"));
 			exiting = true;
 		}
