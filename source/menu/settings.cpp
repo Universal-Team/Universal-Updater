@@ -81,7 +81,7 @@ static const Structs::ButtonPos back = { 45, 0, 24, 24 }; // Back arrow for dire
 static const Structs::ButtonPos Theme = { 40, 196, 280, 24 }; // Themes.
 
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS", "EXIT_APP" };
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS_BTN", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_IN_FOLDER", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
 extern std::vector<std::pair<std::string, std::string>> Themes;
 
