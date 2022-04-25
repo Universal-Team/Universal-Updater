@@ -34,5 +34,11 @@
 		"author": "Libretro",
 		"url": "https://db.universal-team.net/unistore/retroarch.unistore",
 		"description": "RetroArch cores"
+	},
+	"Wordle DS Mods": {
+		"title": "Wordle DS Mods",
+		"author": "Pk11",
+		"url": "https://github.com/Epicpkmn11/WordleDS/raw/mods/unistore/wordle-ds.unistore",
+		"description": "Mods for Wordle DS"
 	}
 }
