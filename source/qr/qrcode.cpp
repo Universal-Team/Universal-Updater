@@ -405,7 +405,7 @@ void QRCode::handler(std::string &result) {
 	}
 
 	if (this->selectedStore < this->sPos) this->sPos = this->selectedStore;
-	else if (this->selectedStore >= this->sPos + 6 - 1) this->sPos = this->selectedStore - 6 + 1;
+	else if (this->selectedStore > this->sPos + 6 - 1) this->sPos = this->selectedStore - 6 + 1;
 }
 
 /*
