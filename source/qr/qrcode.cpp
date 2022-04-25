@@ -402,10 +402,10 @@ void QRCode::handler(std::string &result) {
 				else result = std::string((char *)this->out.data(), this->out.size());
 			}
 		}
-
-		if (this->selectedStore < this->sPos) this->sPos = this->selectedStore;
-		else if (this->selectedStore > this->sPos + 6 - 1) this->sPos = this->selectedStore - 6 + 1;
 	}
+
+	if (this->selectedStore < this->sPos) this->sPos = this->selectedStore;
+	else if (this->selectedStore >= this->sPos + 6 - 1) this->sPos = this->selectedStore - 6 + 1;
 }
 
 /*
