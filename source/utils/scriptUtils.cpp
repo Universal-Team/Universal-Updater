@@ -475,15 +475,20 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 			} else if (type == "rmdir") {
 				bool missing = false;
 				std::string directory = "", promptmsg = "";
+				bool required = false;
 
 				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
 					directory = Script[i]["directory"];
 				}
 				else missing = true;
 
+				if (Script[i].contains("required") && Script[i]["required"].is_boolean()) {
+					required = Script[i]["required"];
+				}
+
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
 				if (!missing && directory != "") {
-					if (access(directory.c_str(), F_OK) != 0) ret = DELETE_ERROR;
+					if (access(directory.c_str(), F_OK) != 0 && required) ret = DELETE_ERROR;
 					else {
 						if (Msg::promptMsg(promptmsg)) removeDirRecursive(directory.c_str());
 					}

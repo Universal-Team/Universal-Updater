@@ -228,16 +228,21 @@ void QueueSystem::QueueHandle() {
 			} else if (type == "rmdir") {
 				bool missing = false;
 				std::string directory = "", message = "", promptmsg = "";
+				bool required = false;
 				queueEntries[0]->status = QueueStatus::Request;
 
 				if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
 					directory = queueEntries[0]->obj[i]["directory"];
 				} else missing = true;
 
+				if (queueEntries[0]->obj[i].contains("required") && queueEntries[0]->obj[i]["required"].is_boolean()) {
+					required = queueEntries[0]->obj[i]["required"];
+				}
+
 				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
 
 				if (!missing && directory != "") {
-					if (access(directory.c_str(), F_OK) != 0) ret = DELETE_ERROR;
+					if (access(directory.c_str(), F_OK) != 0 && required) ret = DELETE_ERROR;
 					else {
 						if (QueueSystem::RequestNeeded == RMDIR_REQUEST) {
 							/* There we already did it. :) */
