@@ -56,7 +56,8 @@ static const std::vector<Structs::ButtonPos> langButtons = {
 
 static const std::vector<Structs::ButtonPos> toggleAbles = {
 	{ 288, 44, 24, 24 },
-	{ 288, 120, 24, 24 }
+	{ 288, 110, 24, 24 },
+	{ 288, 180, 24, 24 }
 };
 
 static const std::vector<Structs::ButtonPos> dirButtons = {
@@ -167,10 +168,15 @@ static void DrawAutoUpdate(int selection) {
 	GFX::DrawToggle(toggleAbles[0].x, toggleAbles[0].y, config->autoupdate());
 	Gui::DrawString(47, 75, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(40, 120, 280, 24, (selection == 1 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-	Gui::DrawString(47, 124, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
+	Gui::Draw_Rect(40, 110, 280, 24, (selection == 1 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 114, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
 	GFX::DrawToggle(toggleAbles[1].x, toggleAbles[1].y, config->updatecheck());
-	Gui::DrawString(47, 151, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::DrawString(47, 141, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
+
+	Gui::Draw_Rect(40, 180, 280, 24, (selection == 2 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 184, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_NIGHTLY"), 210, 0, font);
+	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->updatenightly());
+	Gui::DrawString(47, 211, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_NIGHTLY_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 /*
@@ -442,7 +448,7 @@ static void AutoUpdateLogic(int &page, int &selection) {
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 1) selection++;
+		if (selection < 2) selection++;
 	}
 
 	if (hRepeat & KEY_UP) {
@@ -459,6 +465,9 @@ static void AutoUpdateLogic(int &page, int &selection) {
 
 		} else if (touching(touch, toggleAbles[1])) {
 			config->updatecheck(!config->updatecheck());
+
+		} else if (touching(touch, toggleAbles[2])) {
+			config->updatenightly(!config->updatenightly());
 		}
 	}
 
@@ -470,6 +479,10 @@ static void AutoUpdateLogic(int &page, int &selection) {
 
 			case 1:
 				config->updatecheck(!config->updatecheck());
+				break;
+
+			case 2:
+				config->updatenightly(!config->updatenightly());
 				break;
 		}
 	}

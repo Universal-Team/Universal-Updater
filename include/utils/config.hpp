@@ -78,6 +78,10 @@ public:
 	bool updatecheck() const { return this->v_updateCheck; };
 	void updatecheck(bool v) { this->v_updateCheck = v; if (!this->changesMade) this->changesMade = true; };
 
+	/* Check for nightly/release on startup. */
+	bool updatenightly() const { return this->v_updateNightly; };
+	void updatenightly(bool v) { this->v_updateNightly = v; if (!this->changesMade) this->changesMade = true; };
+
 	/* U-U Update check on startup. */
 	bool usebg() const { return this->v_showBg; };
 	void usebg(bool v) { this->v_showBg = v; if (!this->changesMade) this->changesMade = true; };
@@ -117,7 +121,7 @@ private:
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads", v_theme = "Default";
 
-	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true,
+	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateNightly = false,
 		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false;
 };
 

@@ -46,11 +46,14 @@ endif
 
 CURRENT_VERSION := $(shell git describe --abbrev=0 --tags)
 
+GIT_TAG := $(shell git describe --abbrev=0 --tags)
+GIT_SHA := $(shell git rev-parse --short=7 HEAD)
+
 # If on a tagged commit, use just the tag
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
-GIT_VER := $(shell git tag -l --points-at HEAD)
+GIT_VER := $(GIT_TAG)
 else
-GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short=7 HEAD)
+GIT_VER := $(GIT_TAG)-$(GIT_SHA)
 endif
 
 # Ensure version.hpp exists
@@ -61,7 +64,7 @@ endif
 
 # Print new version if changed
 ifeq (,$(findstring $(GIT_VER), $(shell cat include/version.hpp)))
-$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/version.hpp)
+$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n#define GIT_SHA \"$(GIT_SHA)\"\n\n#endif\n" > include/version.hpp)
 endif
 
 #---------------------------------------------------------------------------------
@@ -121,7 +124,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 $(CITRA)
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -larchive -lbz2 -llzma -lm -lz -lcitro2d -lcitro3d -lctru -lstdc++
+LIBS	:= -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -larchive -lbz2 -llzma -lz -lcitro2d -lcitro3d -lctru -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

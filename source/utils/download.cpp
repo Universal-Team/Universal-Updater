@@ -33,6 +33,7 @@
 #include "screenshot.hpp"
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
+#include "version.hpp"
 
 #include <3ds.h>
 #include <curl/curl.h>
@@ -43,7 +44,7 @@
 #include <unistd.h>
 #include <vector>
 
-#define USER_AGENT APP_TITLE "-" VERSION_STRING
+#define USER_AGENT APP_TITLE "-" VER_NUMBER
 
 static char *result_buf = nullptr;
 static size_t result_sz = 0;
@@ -795,7 +796,11 @@ UUUpdate IsUUUpdateAvailable() {
 
 	CURL *hnd = curl_easy_init();
 
-	ret = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
+	const char *url;
+	if (config->updatenightly()) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/commits";
+	else url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest";
+
+	ret = setupContext(hnd, url);
 	if (ret != 0) {
 		socExit();
 		free(result_buf);
@@ -826,21 +831,39 @@ UUUpdate IsUUUpdateAvailable() {
 	if (nlohmann::json::accept(result_buf)) {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-		if (parsedAPI.contains("tag_name") && parsedAPI["tag_name"].is_string()) {
-			UUUpdate update = { false, "", "" };
-			update.Version = parsedAPI["tag_name"];
+		if (config->updatenightly()) {
+			if (parsedAPI.is_array() && parsedAPI.size() > 0 && parsedAPI[0].contains("sha") && parsedAPI[0]["sha"].is_string()) {
+				socExit();
+				free(result_buf);
+				free(socubuf);
+				result_buf = nullptr;
+				result_sz = 0;
+				result_written = 0;
 
-			socExit();
-			free(result_buf);
-			free(socubuf);
-			result_buf = nullptr;
-			result_sz = 0;
-			result_written = 0;
+				UUUpdate update = { false, "", "" };
+				update.Version = parsedAPI[0]["sha"].get_ref<const std::string &>().substr(0, 7);
+				if (parsedAPI[0].contains("commit") && parsedAPI[0]["commit"].is_object() && parsedAPI[0]["commit"].contains("message") && parsedAPI[0]["commit"]["message"].is_string())
+					update.Notes = parsedAPI[0]["commit"]["message"];
+				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
+				update.Available = strcasecmp(update.Version.c_str(), GIT_SHA) != 0;
+				return update;
+			}
+		} else {
+			if (parsedAPI.contains("tag_name") && parsedAPI["tag_name"].is_string()) {
+				socExit();
+				free(result_buf);
+				free(socubuf);
+				result_buf = nullptr;
+				result_sz = 0;
+				result_written = 0;
 
-			if (parsedAPI["body"].is_string()) update.Notes = parsedAPI["body"];
-			update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
-			update.Available = strcasecmp(StringUtils::lower_case(update.Version).c_str(), StringUtils::lower_case(C_V).c_str()) > 0;
-			return update;
+				UUUpdate update = { false, "", "" };
+				update.Version = parsedAPI["tag_name"];
+				if (parsedAPI["body"].is_string()) update.Notes = parsedAPI["body"];
+				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
+				update.Available = strcasecmp(update.Version.c_str(), C_V) > 0;
+				return update;
+			}
 		}
 	}
 
@@ -904,10 +927,15 @@ void UpdateAction() {
 			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
 		}
 
-		if (ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
-		(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"),
-		false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true) == 0) {
+		Result dlRes;
+		if (config->updatenightly())
+			dlRes = ScriptUtils::downloadFile("https://raw.githubusercontent.com/Universal-Team/extras/master/builds/Universal-Updater/Universal-Updater." + std::string(is3DSX ? "3dsx" : "cia"),
+					(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"), Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
+		else
+			dlRes = ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
+					(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
 
+		if (dlRes == ScriptState::NONE) {
 			if (is3DSX) {
 				Msg::waitMsg(Lang::get("UPDATE_DONE"));
 				exiting = true;

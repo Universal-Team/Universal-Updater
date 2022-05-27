@@ -134,6 +134,7 @@ Config::Config() {
 	if (this->json.contains("Firm_Path")) this->firmPath(this->getString("Firm_Path"));
 	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
+	if (this->json.contains("UpdateNightly")) this->updatenightly(this->getBool("UpdateNightly"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
@@ -173,6 +174,7 @@ void Config::save() {
 		this->setString("Firm_Path", this->firmPath());
 		this->setBool("MetaData", this->metadata());
 		this->setBool("UpdateCheck", this->updatecheck());
+		this->setBool("UpdateNightly", this->updatenightly());
 		this->setBool("UseBG", this->usebg());
 		this->setBool("CustomFont", this->customfont());
 		this->setString("Shortcut_Path", this->shortcut());
