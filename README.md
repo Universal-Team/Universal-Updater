@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://universal-team.net/projects/universal-updater.html"><img src="https://github.com/Universal-Team/Universal-Updater/raw/master/resources/2d-banner.png"></a><br>
-	<b>An easy to use app for installing and updating 3DS homebrew</b><br>
+	<b>An easy to use app for installing and updating 3DS homebrew.</b><br>
 	<a href="https://universal-team.net/discord" style="padding-right: 5px;">
 		<img src="https://img.shields.io/badge/Discord%20Server-%23universal--updater-green.svg" alt="Discord Server">
 	</a>
@@ -13,13 +13,13 @@
 	<a title="Crowdin" target="_blank" href="https://crowdin.com/project/universal-updater"><img src="https://badges.crowdin.net/universal-updater/localized.svg" alt="Translation status on Crowdin"></a>
 </p>
 
-Universal-Updater is a homebrew application for the Nintendo 3DS with the intention to make downloading other homebrew simple and easy. No need to manually copy files or go through installation processes, as it does that all for you.
+Universal-Updater is a homebrew application for the Nintendo 3DS made with the intention to make downloading other homebrew be as simple as it can be. No need to manually copy files or go through installation processes, it does it all for you.
 
 ## Features
 
 - A store format with a concept similar to the Cydia Repositories
    - The default is [Universal-DB](https://db.universal-team.net)
-   - Want to add more? Go to settings, choose "Select Unistore", click the + icon and select one from the list, enter a URL, or scan a QR code
+   - Want to add more? Go to settings, choose "Select Unistore", click the "+" icon and select one from the recommended list, enter a URL, or scan a QR code
 - Customization in sorting and display
    - Several sorting keys: "Title", "Author", and "Last Updated"
    - Direction can be Ascending or Descending
@@ -28,7 +28,7 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
 - Searching and markings to make finding apps easy
 - Viewing screenshots and release notes for apps
 - Shortcuts for easily updating frequently updated apps when using the Homebrew Launcher
-- Translations for users of many languages
+- Provided translations for users who speak different languages
    - To contribute to translations, join our [Crowdin project](https://crwd.in/universal-updater)
    - To request a new language, join our [Discord Server](https://universal-team.net/discord) or contact a project manager on Crowdin
 
