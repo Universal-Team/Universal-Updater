@@ -130,6 +130,7 @@ void MainScreen::Draw(void) const {
 	config->list() ? StoreUtils::DrawList() : StoreUtils::DrawGrid();
 	GFX::DrawTime();
 	GFX::DrawBattery();
+	GFX::DrawWifi();
 	Animation::QueueEntryDone();
 
 	/* Download-ception. */

@@ -174,6 +174,21 @@ void GFX::HandleBattery() {
 }
 
 /*
+	Draws the Wi-Fi signal icon
+*/
+void GFX::DrawWifi() {
+	constexpr int wifiIcons[] = {
+		sprites_wifi_0_idx,
+		sprites_wifi_1_idx,
+		sprites_wifi_2_idx,
+		sprites_wifi_3_idx
+	};
+
+	u8 level = osGetWifiStrength();
+	GFX::DrawIcon(wifiIcons[level], 330, 0, UIThemes->TextColor());
+}
+
+/*
 	Draws the sidebar icons blended with the SideBarIconColor.
 */
 void GFX::DrawIcon(const int Idx, int X, int Y, uint32_t Color, float BlendPower, float ScaleX, float ScaleY) {

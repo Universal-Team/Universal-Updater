@@ -11,6 +11,10 @@ sprites/battery/battery_4.png
 sprites/battery/battery_blink.png
 sprites/battery/battery_charge.png
 sprites/battery/battery_charge_full.png
+sprites/wifi/wifi_0.png
+sprites/wifi/wifi_1.png
+sprites/wifi/wifi_2.png
+sprites/wifi/wifi_3.png
 sprites/cancel.png
 sprites/checked.png
 sprites/delete.png

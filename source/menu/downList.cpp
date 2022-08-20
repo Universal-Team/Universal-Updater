@@ -129,6 +129,7 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 
 	GFX::DrawTime();
 	GFX::DrawBattery();
+	GFX::DrawWifi();
 	Animation::QueueEntryDone();
 
 	GFX::DrawBottom();

@@ -51,6 +51,7 @@ namespace GFX {
 	void DrawTime();
 	void DrawBattery();
 	void HandleBattery();
+	void DrawWifi();
 	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1, float ScaleY = 1);
 };
 
