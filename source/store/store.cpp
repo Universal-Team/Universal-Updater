@@ -483,6 +483,20 @@ std::vector<std::string> Store::GetDownloadList(int index) const {
 		if (it.key() != "info") temp.push_back(it.key());
 	}
 
+	std::sort(temp.begin(), temp.end(), [](const std::string &aString, const std::string &bString) {
+		const char *a = aString.c_str(), *b = bString.c_str();
+		while (*a && *b) {
+			int cmp = toupper(*a) - toupper(*b);
+			if (cmp < 0) return true;
+			else if (cmp > 0) return false;
+
+			a++;
+			b++;
+		}
+
+		return *a == 0;
+	});
+
 	return temp;
 }
 
