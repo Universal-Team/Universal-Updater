@@ -44,7 +44,7 @@
 	"Minecraft 3DS Customization": {
 		"title": "Minecraft 3DS Customization",
 		"author": "susbaconhairman",
-		"url": "https://github.com/susbaconhairman/mc-3ds-unistore/raw/main/mc-3ds.unistore",
+		"url": "https://raw.githubusercontent.com/bigskribbz/mc-3ds-unistore/main/mc-3ds.unistore",
 		"description": "A UniStore for installing custom content for Minecraft: New Nintendo 3DS Edition."
 	}
 }
