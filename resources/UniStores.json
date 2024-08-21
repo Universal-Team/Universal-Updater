@@ -1,10 +1,4 @@
 {
-	"Minecraft 3DS Customization Unistore": {
-		"title": "Minecraft 3DS Customization Unistore",
-		"author": "susbaconhairman",
-		"url": "https://github.com/susbaconhairman/minecraft-3ds-unistore/raw/main/minecraft-3ds.unistore",
-		"description": "A UniStore for Minecraft: New Nintendo 3DS Edition custom content"
-	},
 	"Stack-Store": {
 		"title": "Stack-Store",
 		"author": "SuperSaiyajinStackZ",
@@ -46,5 +40,11 @@
 		"author": "Pk11",
 		"url": "https://github.com/Epicpkmn11/WordleDS/raw/mods/unistore/wordle-ds.unistore",
 		"description": "Mods for Wordle DS"
+	},
+	"Minecraft 3DS Customization Unistore": {
+		"title": "Minecraft 3DS Customization Unistore",
+		"author": "Minecraft 3DS Modding community",
+		"url": "https://raw.githubusercontent.com/NightScript370/minecraft-3ds-unistore/main/minecraft-3ds.unistore",
+		"description": "A UniStore for Minecraft: New Nintendo 3DS Edition custom content"
 	}
 }
