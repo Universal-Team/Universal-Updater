@@ -63,7 +63,7 @@ jobs:
           echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
           echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
       - name: Publish build to GH Actions
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ~/artifacts/*
           name: build
