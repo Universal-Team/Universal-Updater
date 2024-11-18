@@ -102,6 +102,12 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 				mode = 7;
 			}
 		}
+
+		if (hDown & KEY_SELECT && entry->GetWiki() != "") {
+			GSPGPU_ReleaseRight();
+			APT_PrepareToStartSystemApplet(APPID_WEB);
+			APT_StartSystemApplet(APPID_WEB, entry->GetWiki().c_str(), entry->GetWiki().size(), 0);
+		}
 	}
 
 	/* Quit UU. */
