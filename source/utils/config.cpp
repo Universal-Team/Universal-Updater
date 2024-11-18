@@ -66,13 +66,13 @@ void Config::sysLang() {
 			this->language("zh-CN"); // Chinese (Simplified)
 			break;
 
-		// case 7:
-		// 	this->language("ko"); // Korean
-		// 	break;
+		case 7:
+			this->language("ko"); // Korean
+			break;
 
-		// case 8:
-		// 	this->language("nl"); // Dutch
-		// 	break;
+		case 8:
+			this->language("nl"); // Dutch
+			break;
 
 		case 9:
 			this->language("pt"); // Portuguese

@@ -1,5 +1,5 @@
 {
-	"3DSX_IN_FOLDER": "将 3DSX 文件放置到文件夹内",
+	"3DSX_IN_FOLDER": "将 3DSX 文件放入文件夹",
 	"3DSX_IN_FOLDER_DESC": "启用后，3DSX文件将会被放入同名文件夹内，而不是直接放在预设文件夹中",
 	"ACTION_CANCELED": "%s 已取消！",
 	"ACTION_FAILED": "%s 失败！",

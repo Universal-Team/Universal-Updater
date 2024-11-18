@@ -87,9 +87,9 @@ static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_I
 extern std::vector<std::pair<std::string, std::string>> Themes;
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
-static const std::vector<std::string> languages = { "Bruh", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", "Nederlands", "Norsk", "Polski", "Português (Portugal)", "Português (Brasil)", "Română", "Türkçe", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", "琉球諸語", "한국어" };
-static const std::string langsTemp[] = { "br", "da", "de", "en", "es", "fr", "it", /* "lt", */ "hu", "nl", "no", "pl", "pt", "pt-BR", "ro", "tr", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", "ry", "ko" };
-static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {sprites_zh_CN_idx, 54}, {sprites_zh_TW_idx, 55}, {sprites_jp_idx, 31}, {sprites_ry_idx, 42}, {sprites_ko_idx, 30} };
+static const std::vector<std::string> languages = { "Bruh", "Čeština", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", "Nederlands", "Norsk", "Polski", "Português (Portugal)", "Português (Brasil)", "Română", "Türkçe", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", "琉球諸語", "한국어" };
+static const std::string langsTemp[] = { "br", "cs", "da", "de", "en", "es", "fr", "it", /* "lt", */ "hu", "nl", "no", "pl", "pt", "pt-BR", "ro", "tr", "ru", "uk", /* "he", */ "zh-CN", "zh-TW", "jp", "ry", "ko" };
+static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, /* {-1, 0}, */ {sprites_zh_CN_idx, 54}, {sprites_zh_TW_idx, 55}, {sprites_jp_idx, 31}, {sprites_ry_idx, 42}, {sprites_ko_idx, 30} };
 
 /*
 	Main Settings.
