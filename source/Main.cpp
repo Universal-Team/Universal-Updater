@@ -32,7 +32,7 @@ std::unique_ptr<UU> UU::App = nullptr;
 int main(int ARGC, char *ARGV[]) {
 	UU::App = std::make_unique<UU>();
 
-	#ifdef ARM9
+	#ifdef __NDS__
 		return UU::App->Handler(ARGV);
 
 	#else

@@ -135,7 +135,7 @@ int __itcm nitroFSInit(const char *ndsfile) {
 	ndsFile        = NULL;
 	bool noCashGba = (strncmp((const char *)0x4FFFA00, "no$gba", 6) == 0);
 	if(!isDSiMode() || noCashGba) {
-		sysSetCartOwner(BUS_OWNER_ARM9); // give us gba slot ownership
+		sysSetCartOwner(BUS_OWNER___NDS__); // give us gba slot ownership
 		// We has gba rahm
 		// printf("yes i think this is GBA?!\n");
 		if(strncmp(((const char *)GBAROM) + LOADERSTROFFSET, LOADERSTR, strlen(LOADERSTR)) ==

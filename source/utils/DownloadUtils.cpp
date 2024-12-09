@@ -272,7 +272,7 @@ bool DownloadUtils::WiFiAvailable() {
 		uint32_t WifiStatus;
 		return (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus);
 
-	#elif defined(ARM9)
+	#elif defined(__NDS__)
 		return WiFi::Connected();
 	#endif
 };

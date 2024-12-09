@@ -35,7 +35,7 @@ void UniStoreSelector::InitSelector() {
 	this->ScreenIndex = 0, this->SelectedIndex = 0;
 	this->Done = false;
 
-	#ifdef ARM9
+	#ifdef __NDS__
 		UU::App->GData->HideUniStoreSprites(); // Hide the Sprites on the NDS version -- no need to on the 3DS version.
 	#endif
 };
@@ -247,7 +247,7 @@ void UniStoreSelector::Handler() {
 	}
 
 	if (this->Done) {
-		#ifdef ARM9
+		#ifdef __NDS__
 			UU::App->GData->UpdateUniStoreSprites(); // Display the sprites again on the NDS version.
 		#endif
 	}

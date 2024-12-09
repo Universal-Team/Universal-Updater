@@ -165,7 +165,7 @@ uint32_t ThemeData::GetThemeColor(const std::string &ThemeName, const std::strin
 			const int B = std::stoi(ColorString.substr(5, 2), nullptr, 16);
 			return RGBA8(R, G, B, 0xFF);
 
-		#elif ARM9
+		#elif __NDS__
 			/* TODO: Handle BGR15 conversion. */
 		#endif
 
