@@ -33,7 +33,7 @@
 	#include <malloc.h> // memalign and free.
 	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 
-#elif ARM9
+#elif __NDS__
 	#include "WiFi.hpp"
 	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 #endif
@@ -272,7 +272,7 @@ bool DownloadUtils::WiFiAvailable() {
 		uint32_t WifiStatus;
 		return (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus);
 
-	#elif ARM9
+	#elif defined(ARM9)
 		return WiFi::Connected();
 	#endif
 };

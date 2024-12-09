@@ -30,13 +30,9 @@
 #include <stdint.h>
 
 class WiFi {
-private:
-	static void Log(const char *s);
-
 public:
 	static void Init(void);
 
-	static uint32_t IpAddress(void);
 	static bool Connected(void);
 };
 

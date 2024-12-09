@@ -12,7 +12,8 @@
  * \author Daniel King <damaki.gh@gmail.com>
  */
 
-/*  Copyright (C) 2006-2018, Arm Limited (or its affiliates), All Rights Reserved.
+/*
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -26,31 +27,19 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of Mbed TLS (https://tls.mbed.org)
  */
 
 #ifndef MBEDTLS_POLY1305_H
 #define MBEDTLS_POLY1305_H
+#include "mbedtls/private_access.h"
 
-#if !defined(MBEDTLS_CONFIG_FILE)
-#include "config.h"
-#else
-#include MBEDTLS_CONFIG_FILE
-#endif
+#include "mbedtls/build_info.h"
 
 #include <stdint.h>
 #include <stddef.h>
 
-#define MBEDTLS_ERR_POLY1305_BAD_INPUT_DATA         -0x0057 /**< Invalid input parameter(s). */
-
-/* MBEDTLS_ERR_POLY1305_FEATURE_UNAVAILABLE is deprecated and should not be
- * used. */
-#define MBEDTLS_ERR_POLY1305_FEATURE_UNAVAILABLE    -0x0059 /**< Feature not available. For example, s part of the API is not implemented. */
-
-/* MBEDTLS_ERR_POLY1305_HW_ACCEL_FAILED is deprecated and should not be used.
- */
-#define MBEDTLS_ERR_POLY1305_HW_ACCEL_FAILED        -0x005B  /**< Poly1305 hardware accelerator failed. */
+/** Invalid input parameter(s). */
+#define MBEDTLS_ERR_POLY1305_BAD_INPUT_DATA         -0x0057
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,11 +49,11 @@ extern "C" {
 
 typedef struct mbedtls_poly1305_context
 {
-    uint32_t r[4];      /** The value for 'r' (low 128 bits of the key). */
-    uint32_t s[4];      /** The value for 's' (high 128 bits of the key). */
-    uint32_t acc[5];    /** The accumulator number. */
-    uint8_t queue[16];  /** The current partial block of data. */
-    size_t queue_len;   /** The number of bytes stored in 'queue'. */
+    uint32_t MBEDTLS_PRIVATE(r)[4];      /** The value for 'r' (low 128 bits of the key). */
+    uint32_t MBEDTLS_PRIVATE(s)[4];      /** The value for 's' (high 128 bits of the key). */
+    uint32_t MBEDTLS_PRIVATE(acc)[5];    /** The accumulator number. */
+    uint8_t MBEDTLS_PRIVATE(queue)[16];  /** The current partial block of data. */
+    size_t MBEDTLS_PRIVATE(queue_len);   /** The number of bytes stored in 'queue'. */
 }
 mbedtls_poly1305_context;
 

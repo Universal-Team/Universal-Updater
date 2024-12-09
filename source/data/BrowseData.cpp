@@ -25,6 +25,7 @@
 */
 
 #include "BrowseData.hpp"
+#include <algorithm> // sort.
 #include <cstring> // strcasecmp.
 #include <dirent.h> // DIR.
 #include <functional> // sort.

@@ -9,7 +9,8 @@
  *        Korean, but see http://210.104.33.10/ARIA/index-e.html in English)
  *        and also described by the IETF in <em>RFC 5794</em>.
  */
-/*  Copyright (C) 2006-2018, ARM Limited, All Rights Reserved
+/*
+ *  Copyright The Mbed TLS Contributors
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -23,23 +24,18 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
- *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 
 #ifndef MBEDTLS_ARIA_H
 #define MBEDTLS_ARIA_H
+#include "mbedtls/private_access.h"
 
-#if !defined(MBEDTLS_CONFIG_FILE)
-#include "config.h"
-#else
-#include MBEDTLS_CONFIG_FILE
-#endif
+#include "mbedtls/build_info.h"
 
 #include <stddef.h>
 #include <stdint.h>
 
-#include "platform_util.h"
+#include "mbedtls/platform_util.h"
 
 #define MBEDTLS_ARIA_ENCRYPT     1 /**< ARIA encryption. */
 #define MBEDTLS_ARIA_DECRYPT     0 /**< ARIA decryption. */
@@ -48,36 +44,28 @@
 #define MBEDTLS_ARIA_MAX_ROUNDS  16 /**< Maxiumum number of rounds in ARIA. */
 #define MBEDTLS_ARIA_MAX_KEYSIZE 32 /**< Maximum size of an ARIA key in bytes. */
 
-#if !defined(MBEDTLS_DEPRECATED_REMOVED)
-#define MBEDTLS_ERR_ARIA_INVALID_KEY_LENGTH   MBEDTLS_DEPRECATED_NUMERIC_CONSTANT( -0x005C )
-#endif /* !MBEDTLS_DEPRECATED_REMOVED */
-#define MBEDTLS_ERR_ARIA_BAD_INPUT_DATA -0x005C /**< Bad input data. */
+/** Bad input data. */
+#define MBEDTLS_ERR_ARIA_BAD_INPUT_DATA -0x005C
 
-#define MBEDTLS_ERR_ARIA_INVALID_INPUT_LENGTH -0x005E /**< Invalid data input length. */
-
-/* MBEDTLS_ERR_ARIA_FEATURE_UNAVAILABLE is deprecated and should not be used.
- */
-#define MBEDTLS_ERR_ARIA_FEATURE_UNAVAILABLE  -0x005A  /**< Feature not available. For example, an unsupported ARIA key size. */
-
-/* MBEDTLS_ERR_ARIA_HW_ACCEL_FAILED is deprecated and should not be used. */
-#define MBEDTLS_ERR_ARIA_HW_ACCEL_FAILED      -0x0058  /**< ARIA hardware accelerator failed. */
-
-#if !defined(MBEDTLS_ARIA_ALT)
-// Regular implementation
-//
+/** Invalid data input length. */
+#define MBEDTLS_ERR_ARIA_INVALID_INPUT_LENGTH -0x005E
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if !defined(MBEDTLS_ARIA_ALT)
+// Regular implementation
+//
 
 /**
  * \brief The ARIA context-type definition.
  */
 typedef struct mbedtls_aria_context
 {
-    unsigned char nr;           /*!< The number of rounds (12, 14 or 16) */
+    unsigned char MBEDTLS_PRIVATE(nr);           /*!< The number of rounds (12, 14 or 16) */
     /*! The ARIA round keys. */
-    uint32_t rk[MBEDTLS_ARIA_MAX_ROUNDS + 1][MBEDTLS_ARIA_BLOCKSIZE / 4];
+    uint32_t MBEDTLS_PRIVATE(rk)[MBEDTLS_ARIA_MAX_ROUNDS + 1][MBEDTLS_ARIA_BLOCKSIZE / 4];
 }
 mbedtls_aria_context;
 

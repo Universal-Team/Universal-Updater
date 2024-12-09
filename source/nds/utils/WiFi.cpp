@@ -26,25 +26,13 @@
 
 #include "WiFi.hpp"
 
-#include <dsiwifi9.h>
-#include <lwip/sockets.h>
+#include <dswifi9.h>
 
-void WiFi::Log(const char *s) {
-	iprintf("%s", s);
-}
 
 void WiFi::Init() {
-	DSiWifi_SetLogHandler(Log);
-	DSiWifi_InitDefault(INIT_ONLY);
-	DSiWifi_AutoConnect();
-}
-
-uint32_t WiFi::IpAddress() {
-	return DSiWifi_GetIP();
+	Wifi_InitDefault(true);
 }
 
 bool WiFi::Connected() {
-	// TODO: Probably a better check
-	uint32_t Ip = IpAddress();
-	return (Ip >> 0x18) != 0 && (Ip >> 0x18) != 255;
+	return Wifi_AssocStatus() == ASSOCSTATUS_ASSOCIATED;
 }

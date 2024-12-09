@@ -51,7 +51,7 @@ void UU::Initialize(char *ARGV[]) {
 	if (!fatInitDefault()) {
 		consoleDemoInit();
 		iprintf("FAT init failed!\n");
-		while (1) swiWaitForVBlank();
+		while (pmMainLoop()) swiWaitForVBlank();
 	}
 
 	/* Try init NitroFS at a few likely locations. */
@@ -64,7 +64,7 @@ void UU::Initialize(char *ARGV[]) {
 				iprintf("/_nds/Universal-Updater/\n");
 				iprintf("           Universal-Updater.nds\n");
 				iprintf("or launch using TWiLight Menu++\nor nds-hb-menu.");
-				while (1) swiWaitForVBlank();
+				while (pmMainLoop()) swiWaitForVBlank();
 			}
 		}
 	}
@@ -76,7 +76,11 @@ void UU::Initialize(char *ARGV[]) {
 	mkdir("/_nds/Universal-Updater/shortcuts", 0777);
 
 	/* Initialize graphics. */
-	Gui::init(std::array<std::vector<std::string>, 3>({{"/_nds/Universal-Updater/large.nftr", "nitro:/graphics/font/large.nftr"}, {"/_nds/Universal-Updater/medium.nftr", "nitro:/graphics/font/medium.nftr"}, {"/_nds/Universal-Updater/small.nftr", "nitro:/graphics/font/small.nftr"}}));
+	Gui::init(std::array<std::vector<std::string>, UNIVCORE_FONT_COUNT>({{
+		{"/_nds/Universal-Updater/large.nftr", "nitro:/graphics/font/large.nftr"},
+		{"/_nds/Universal-Updater/medium.nftr", "nitro:/graphics/font/medium.nftr"},
+		{"/_nds/Universal-Updater/small.nftr", "nitro:/graphics/font/small.nftr"}
+	}}));
 
 	constexpr uint16_t Palette[] = {
 		0x0000, 0xFFFF, 0xFFFF, 0xFFFF, 0xB126, 0xB126, 0xB126, 0xB126, 0x9883, 0x9883, 0x9883, 0x9883, 0xA4A5, 0xA4A5, 0xA4A5, 0xA4A5,
@@ -236,8 +240,8 @@ int UU::Handler(char *ARGV[]) {
 	this->Draw();
 
 	/* Enable VBlank handler. */
-	irqSet(IRQ_VBLANK, this->VBlankHandler);
-	irqEnable(IRQ_VBLANK);
+	// irqSet(IRQ_VBLANK, this->VBlankHandler);
+	// irqEnable(IRQ_VBLANK);
 
 	while (!this->Exiting) {
 		swiWaitForVBlank();
