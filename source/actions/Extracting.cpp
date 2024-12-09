@@ -25,7 +25,9 @@
 */
 
 #include "Extracting.hpp"
+
 #include "Utils.hpp"
+
 #include <archive.hpp>
 #include <archive_entry.hpp>
 #include <regex>

@@ -26,9 +26,9 @@
 
 #include "GFXData.hpp"
 
-#include "Common.hpp"
 #include "font.hpp"
 #include "gui.hpp"
+#include "UniversalUpdater.hpp"
 
 #include <nds.h>
 

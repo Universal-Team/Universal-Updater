@@ -25,6 +25,7 @@
 */
 
 #include "DownloadFile.hpp"
+
 #include "DownloadUtils.hpp"
 #include "GFXData.hpp"
 #include "gui.hpp"
@@ -32,6 +33,7 @@
 #include "QueueSystem.hpp"
 #include "UniversalUpdater.hpp"
 #include "Utils.hpp"
+
 #include <string.h>
 
 
@@ -41,7 +43,7 @@
 void DownloadFile::Handler() {
 	Utils::MakeDirs(this->Path);
 
-	const int Res = DownloadUtils::DownloadToFile(this->URL.c_str(), this->Path.c_str());
+	DownloadUtils::DownloadToFile(this->URL.c_str(), this->Path.c_str());
 	this->Done = true;
 };
 

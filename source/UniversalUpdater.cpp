@@ -24,31 +24,24 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "UniversalUpdater.hpp"
 
 #include "DownloadFile.hpp"
 #include "DownloadUtils.hpp"
-#include "UniversalUpdater.hpp"
-#include <dirent.h>
-#include <unistd.h>
-
+#include "gui.hpp"
+#include "Platform.hpp"
+#include "Utils.hpp"
 
 /*
 	Initialize everything as needed.
 */
-void UU::Initialize() {
-	romfsInit();
-	gfxInitDefault();
-	Gui::init();
-	acInit();
-	hidSetRepeatParameters(20, 8);
-	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
+void UU::Initialize(char *ARGV[]) {
+	Platform::Initialize(ARGV);
 
 	/* Create Directories. */
-	mkdir("sdmc:/3ds", 0777);
-	mkdir("sdmc:/3ds/Universal-Updater", 0777);
-	mkdir("sdmc:/3ds/Universal-Updater/stores", 0777);
-	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
-	
+	Utils::MakeDirs(_STORE_PATH);
+	Utils::MakeDirs(_SHORTCUT_PATH);
+
 	/* Load classes. */
 	this->GData = std::make_unique<GFXData>();
 	this->CData = std::make_unique<ConfigData>();
@@ -57,25 +50,36 @@ void UU::Initialize() {
 	this->MSData = std::make_unique<MSGData>();
 	this->USelector = std::make_unique<UniStoreSelector>();
 
+	/* Initialize Wi-Fi. */
+	this->GData->StartFrame();
+	this->GData->DrawTop();
+	Gui::DrawStringCentered(0, 3, TEXT_LARGE, TEXT_COLOR, "Connecting to Wi-Fi...");
+	this->GData->DrawBottom();
+	this->GData->EndFrame();
+
+	Platform::WiFi::Init();
+	while(!Platform::WiFi::Connected()) {
+		Platform::waitForVBlank();
+	}
+
 	this->MSData->DisplayWaitMsg("Checking UniStore...");
 	
 	/* Check if LastStore is accessible. */
 	if (this->CData->LastStore() == "" || access((_STORE_PATH + this->CData->LastStore()).c_str(), F_OK) != 0) {
 		if (access(_STORE_PATH "universal-db.unistore", F_OK) != 0) {
-			if (DownloadUtils::WiFiAvailable()) {
-				std::unique_ptr<Action> DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.unistore", _STORE_PATH "universal-db.unistore");
-				this->MSData->DisplayWaitMsg("Downloading universal-db.unistore...");
+			if (Platform::WiFi::Connected()) {
+				std::unique_ptr<Action> DL = std::make_unique<DownloadFile>(DEFAULT_UNISTORE, _STORE_PATH DEFAULT_UNISTORE_NAME);
+				this->MSData->DisplayWaitMsg("Downloading " DEFAULT_UNISTORE_NAME "...");
 				DL->Handler();
 
 				DL = nullptr;
-				DL = std::make_unique<DownloadFile>("https://db.universal-team.net/unistore/universal-db.t3x", _STORE_PATH "universal-db.t3x");
-				this->MSData->DisplayWaitMsg("Downloading universal-db.t3x...");
+				DL = std::make_unique<DownloadFile>(DEFAULT_SPRITESHEET, _STORE_PATH DEFAULT_SPRITESHEET_NAME);
+				this->MSData->DisplayWaitMsg("Downloading " DEFAULT_SPRITESHEET_NAME "...");
 				DL->Handler();
 			}
-
-		} else {
-			this->CData->LastStore("universal-db.unistore");
 		}
+
+		this->CData->LastStore(DEFAULT_UNISTORE_NAME);
 	}
 
 	this->Store = std::make_unique<UniStore>(this->CData->LastStore());
@@ -83,6 +87,7 @@ void UU::Initialize() {
 	this->_Tabs = std::make_unique<Tabs>();
 	this->TGrid = std::make_unique<TopGrid>();
 	this->TList = std::make_unique<TopList>();
+	this->GData->UpdateUniStoreSprites();
 };
 
 
@@ -90,10 +95,10 @@ void UU::Initialize() {
 	Scan the key input.
 */
 void UU::ScanInput() {
-	hidScanInput();
-	this->Down = hidKeysDown();
-	this->Repeat = hidKeysDownRepeat();
-	hidTouchRead(&this->T);
+	Platform::ScanKeys();
+	this->Down = Platform::KeysDown();
+	this->Repeat = Platform::KeysDownRepeat();
+	Platform::TouchRead(&this->T);
 };
 
 
@@ -128,8 +133,10 @@ void UU::Draw() {
 	}
 
 	this->GData->DrawBottom();
+
 	if (!this->USelector->Done) this->USelector->DrawBottom();
 	else this->_Tabs->DrawBottom();
+
 	this->GData->EndFrame();
 };
 
@@ -137,11 +144,13 @@ void UU::Draw() {
 /*
 	Main Handler of the app. Handle Input and display stuff here.
 */
-int UU::Handler() {
-	this->Initialize();
+int UU::Handler(char *ARGV[]) {
+	this->Initialize(ARGV);
+	this->Draw(); // TODO: Maybe remove
 
-	while(aptMainLoop() && !this->Exiting) {
-		this->Draw();
+	while(Platform::MainLoop() && !this->Exiting) {
+		if(UU::App->Repeat) this->Draw(); // TODO: Draw every time
+		Platform::waitForVBlank();
 		this->ScanInput();
 
 		if (!this->USelector->Done) this->USelector->Handler();
@@ -164,10 +173,8 @@ int UU::Handler() {
 	}
 
 	this->CData->Sav();
-	acExit();
-	Gui::exit();
-	gfxExit();
-	romfsExit();
+	
+	Platform::Exit();
 
 	return 0;
 };
@@ -185,4 +192,6 @@ void UU::SwitchTopMode(const UU::TopMode TMode) {
 			this->TList->Update();
 			break;
 	}
+
+	this->GData->UpdateUniStoreSprites();
 };

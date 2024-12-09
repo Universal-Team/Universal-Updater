@@ -25,11 +25,14 @@
 */
 
 #include "DownloadRelease.hpp"
+
+#include "gui.hpp"
 #include "JSON.hpp"
 #include "QueueMenu.hpp"
 #include "QueueSystem.hpp"
 #include "UniversalUpdater.hpp"
 #include "Utils.hpp"
+
 #include <string.h>
 
 

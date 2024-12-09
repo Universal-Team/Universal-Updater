@@ -24,8 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "GFXData.hpp"
+
+#include "gui.hpp"
+#include "UniversalUpdater.hpp"
 #include <unistd.h>
 
 
@@ -37,8 +39,8 @@ GFXData::~GFXData() { Gui::unloadSheet(this->Sprites); };
 
 void GFXData::StartFrame() {
 	Gui::clearTextBufs();
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(ScreenTop, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(ScreenBottom, C2D_Color32(0, 0, 0, 0));
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 };
 
@@ -47,7 +49,7 @@ void GFXData::EndFrame() { C3D_FrameEnd(0); };
 
 
 void GFXData::DrawTop() {
-	Gui::ScreenDraw(Top);
+	Gui::ScreenDraw(ScreenTop);
 	Gui::Draw_Rect(0, 0, 400, 25, BAR_COLOR);
 	Gui::Draw_Rect(0, 26, 400, 214, BG_COLOR);
 	Gui::Draw_Rect(0, 25, 400, 1, BAR_OUTLINE);
@@ -55,7 +57,7 @@ void GFXData::DrawTop() {
 
 
 void GFXData::DrawBottom() {
-	Gui::ScreenDraw(Bottom);
+	Gui::ScreenDraw(ScreenBottom);
 	Gui::Draw_Rect(0, 0, 320, 240, BG_COLOR);
 };
 

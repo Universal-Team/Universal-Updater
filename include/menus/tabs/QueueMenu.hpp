@@ -29,6 +29,8 @@
 
 #include "structs.hpp"
 
+#include <array>
+
 
 class QueueMenu {
 public:

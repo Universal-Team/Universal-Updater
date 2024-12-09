@@ -24,9 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "UniStoreSelector.hpp"
+
+#include "gui.hpp"
+#include "Platform.hpp"
+#include "UniversalUpdater.hpp"
 #include "Utils.hpp"
+
 #include <unistd.h>
 
 
@@ -35,9 +39,7 @@ void UniStoreSelector::InitSelector() {
 	this->ScreenIndex = 0, this->SelectedIndex = 0;
 	this->Done = false;
 
-	#ifdef __NDS__
-		UU::App->GData->HideUniStoreSprites(); // Hide the Sprites on the NDS version -- no need to on the 3DS version.
-	#endif
+	UU::App->GData->HideUniStoreSprites(); // Hide the Sprites on the NDS version -- no need to on the 3DS version.
 };
 
 
@@ -247,8 +249,6 @@ void UniStoreSelector::Handler() {
 	}
 
 	if (this->Done) {
-		#ifdef __NDS__
-			UU::App->GData->UpdateUniStoreSprites(); // Display the sprites again on the NDS version.
-		#endif
+		UU::App->GData->UpdateUniStoreSprites(); // Display the sprites again on the NDS version.
 	}
 };

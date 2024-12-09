@@ -24,33 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
+#ifndef _PLATFORM_NDS_HPP
+#define _PLATFORM_NDS_HPP
 
-#include "ConfigData.hpp"
-#include "font.hpp"
-#include "GFXData.hpp"
-#include "Meta.hpp"
-#include "MSGData.hpp"
-#include "structs.hpp"
-#include "ThemeData.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
-#include "TopGrid.hpp"
-#include "TopList.hpp"
-#include "UniStoreSelector.hpp"
-
-
-#include <memory>
 #include <nds.h>
-#include <string>
-
 
 /* Include Definitions for Universal-Updater here. */
 #define CONFIG_PATH "/_nds/Universal-Updater/Config.json"
 #define _STORE_PATH "/_nds/Universal-Updater/stores/"
+#define _SHORTCUT_PATH "/_nds/Universal-Updater/shortcuts/"
 #define THEME_JSON "/_nds/Universal-Updater/Themes.json"
 
 #define SHEET_PATH_KEY "dsSheet"
@@ -60,39 +42,38 @@
 #define _META_PATH "/_nds/Universal-Updater/MetaData.json"
 #define _OLD_UPDATE_PATH "/_nds/Universal-Updater/updates.json" // Technically not needed.
 
+#define DEFAULT_BASE_URL "https://github.com/Universal-Team/db/raw/master/docs/unistore/"
+#define DEFAULT_UNISTORE_NAME "universal-db.unistore"
+#define DEFAULT_SPRITESHEET_NAME "universal-db.tdx"
+#define DEFAULT_UNISTORE (DEFAULT_BASE_URL DEFAULT_UNISTORE_NAME)
+#define DEFAULT_SPRITESHEET (DEFAULT_BASE_URL DEFAULT_SPRITESHEET_NAME)
 
-class UU {
-	static void VBlankHandler(void);
+typedef Thread *ThreadPtr;
 
-	std::unique_ptr<TopGrid> TGrid = nullptr;
-	std::unique_ptr<TopList> TList = nullptr;
+namespace Platform {
+	inline void ScanKeys(void) { return scanKeys(); }
+	inline u32 KeysDown(void) { return keysDown(); }
+	inline u32 KeysDownRepeat(void) { return keysDownRepeat(); }
+	inline void TouchRead(touchPosition *data) {
+		touchRead(data);
+		data->px = data->px * 5 / 4;
+		data->py = data->py * 5 / 4;
+	}
 
-	static int QueueMenuRefresh;
+	inline bool MainLoop() {return pmMainLoop(); }
+	inline void waitForVBlank(void) { return threadWaitForVBlank(); }
+	inline void AllowExit(bool allow) { (void)allow; /* NOP */ }
 
-public:
-	enum class TopMode : uint8_t { Grid = 0, List };
+	inline int ThreadJoin(ThreadPtr t, u64 timeout_ns) { (void)timeout_ns; return threadJoin(t); }
+	ThreadPtr CreateThread(ThreadFunc entrypoint);
+
 	void Initialize(char *ARGV[]);
-	void ScanInput();
+	inline void Exit() { /* NOP */ }
 
-	void Draw();
-	int Handler(char *ARGV[]);
-
-	void SwitchTopMode(const UU::TopMode TMode);
-
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<Meta> MData = nullptr;
-	std::unique_ptr<MSGData> MSData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Tabs> _Tabs = nullptr;
-	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
-	std::unique_ptr<UniStoreSelector> USelector = nullptr;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
-	TopMode TMode = TopMode::Grid;
-};
+	namespace WiFi {
+		void Init(void);
+		bool Connected(void);
+	}
+}
 
 #endif

@@ -24,9 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "Meta.hpp"
+
+#include "Platform.hpp"
+#include "UniversalUpdater.hpp"
 #include "UniStore.hpp"
+
 #include <unistd.h>
 
 

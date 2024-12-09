@@ -24,9 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
-#include "QueueSystem.hpp"
 #include "Tabs.hpp"
+
+#include "gui.hpp"
+#include "QueueSystem.hpp"
+#include "UniversalUpdater.hpp"
 
 
 /* Init Tab components. */

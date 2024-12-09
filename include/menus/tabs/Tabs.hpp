@@ -35,6 +35,7 @@
 #include "QueueMenu.hpp"
 #include "structs.hpp"
 
+#include <memory>
 
 class Tabs {
 public:

@@ -24,33 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_HPP
-#define _UNIVERSAL_UPDATER_HPP
-
-#include "ConfigData.hpp"
-#include "GFXData.hpp"
-#include "Meta.hpp"
-#include "MSGData.hpp"
-#include "screenCommon.hpp"
-#include "structs.hpp"
-#include "ThemeData.hpp"
-#include "UniStore.hpp"
-
-/* Menus. */
-#include "Tabs.hpp"
-#include "TopGrid.hpp"
-#include "TopList.hpp"
-#include "UniStoreSelector.hpp"
-
+#ifndef _PLATFORM_3DS_HPP
+#define _PLATFORM_3DS_HPP
 
 #include <3ds.h>
-#include <memory>
-#include <string>
-
 
 /* Include Definitions for Universal-Updater here. */
 #define CONFIG_PATH "sdmc:/3ds/Universal-Updater/Config.json"
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
+#define _SHORTCUT_PATH "sdmc:/3ds/Universal-Updater/shortcuts/"
 #define THEME_JSON "sdmc:/3ds/Universal-Updater/Themes.json"
 
 #define SHEET_PATH_KEY "sheet"
@@ -60,35 +42,38 @@
 #define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
 #define _OLD_UPDATE_PATH "sdmc:/3ds/Universal-Updater/updates.json"
 
+#define DEFAULT_BASE_URL "https://github.com/Universal-Team/db/raw/master/docs/unistore/"
+#define DEFAULT_UNISTORE_NAME "universal-db.unistore"
+#define DEFAULT_SPRITESHEET_NAME "universal-db.t3x"
+#define DEFAULT_UNISTORE (DEFAULT_BASE_URL DEFAULT_UNISTORE_NAME)
+#define DEFAULT_SPRITESHEET (DEFAULT_BASE_URL DEFAULT_SPRITESHEET_NAME)
 
-class UU {
-public:
-	enum class TopMode : uint8_t { Grid = 0, List };
-	void Initialize();
-	void ScanInput();
+typedef Thread ThreadPtr;
 
-	void Draw();
-	int Handler();
+namespace Platform {
+	inline void ScanKeys(void) { return hidScanInput(); }
+	inline u32 KeysDown(void) { return hidKeysDown(); }
+	inline u32 KeysDownRepeat(void) { return hidKeysDownRepeat(); }
+	inline void TouchRead(touchPosition *data) { hidTouchRead(data); }
 
-	void SwitchTopMode(const UU::TopMode TMode);
+	inline bool MainLoop() { return aptMainLoop(); }
+	inline void waitForVBlank(void) { return gspWaitForVBlank(); }
+	inline void AllowExit(bool allow) { return aptSetHomeAllowed(allow); }
 
-	static std::unique_ptr<UU> App;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<Meta> MData = nullptr;
-	std::unique_ptr<MSGData> MSData = nullptr;
-	std::unique_ptr<UniStore> Store = nullptr;
-	std::unique_ptr<Tabs> _Tabs = nullptr;
-	std::unique_ptr<ThemeData> TData = nullptr; // TODO: Find a good way to handle the active theme through defines.
-	std::unique_ptr<UniStoreSelector> USelector = nullptr;
-	
-	uint32_t Down = 0, Repeat = 0; // Key Down and Key Repeat.
-	touchPosition T = { 0, 0 };
-	bool Exiting = false;
-	TopMode TMode = TopMode::Grid;
-private:
-	std::unique_ptr<TopGrid> TGrid = nullptr;
-	std::unique_ptr<TopList> TList = nullptr;
+	inline int ThreadJoin(ThreadPtr t, u64 timeout_ns) { return threadJoin(t, timeout_ns); }
+	inline ThreadPtr CreateThread(ThreadFunc entrypoint) {
+		int32_t Prio = 0;
+		svcGetThreadPriority(&Prio, CUR_THREAD_HANDLE);
+		return threadCreate(entrypoint, NULL, 64 * 1024, Prio - 1, -2, false);
+	}
+
+	void Initialize(char *ARGV[]);
+	void Exit(void);
+
+	namespace WiFi {
+		inline void Init(void) { /* NOP */ };
+		bool Connected(void);
+	}
 };
 
 #endif

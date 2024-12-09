@@ -25,17 +25,16 @@
 */
 
 #include "DownloadUtils.hpp"
+
+#include "Platform.hpp"
+
 #include <algorithm>
 #include <cstring>
 
-#ifdef __3DS__
-	#include <3ds.h> // For socInit stuff.
-	#include <malloc.h> // memalign and free.
-	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
+#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
 
-#elif __NDS__
-	#include "WiFi.hpp"
-	#define RESULT_BUF_SIZE (1 << 20) // 1 MiB.
+#ifdef __3DS__
+	#include <malloc.h> // memalign and free.
 #endif
 
 #define USER_AGENT "Universal-Updater-v4.0.0"
@@ -99,7 +98,7 @@ static int SetupContext(CURL *Hnd, const char *URL) {
 
 
 int DownloadUtils::DownloadToFile(const char *URL, const char *Path) {
-	if (!DownloadUtils::WiFiAvailable()) return -1;
+	if (!Platform::WiFi::Connected()) return -1;
 
 	int Ret = 0;
 	CURLcode CRes;
@@ -188,7 +187,7 @@ Cleanup:
 
 
 int DownloadUtils::DownloadToMemory(const char *URL, void *Buffer, const size_t Size) {
-	if (!DownloadUtils::WiFiAvailable()) return -1;
+	if (!Platform::WiFi::Connected()) return -1;
 
 	int Ret = 0;
 	CURLcode CRes;
@@ -263,16 +262,3 @@ curl_off_t DownloadUtils::CurrentProgress() { return DownloadNow; }
 
 /* std::max with 1 so as never to divide by 0 with this. */
 curl_off_t DownloadUtils::TotalSize() { return std::max(1LL, DownloadTotal); }
-
-
-bool DownloadUtils::WiFiAvailable() {
-	#ifdef __3DS__
-		// return true; // For Citra
-
-		uint32_t WifiStatus;
-		return (R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus);
-
-	#elif defined(__NDS__)
-		return WiFi::Connected();
-	#endif
-};

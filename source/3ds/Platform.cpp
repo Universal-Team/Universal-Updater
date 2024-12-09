@@ -24,15 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "WiFi.hpp"
 
-#include <dswifi9.h>
+#include "Platform.hpp"
+
+#include "gui.hpp"
+#include "Utils.hpp"
+
+#include <dirent.h>
 
 
-void WiFi::Init() {
-	Wifi_InitDefault(true);
+/*
+	Initialize everything as needed.
+*/
+void Platform::Initialize(char *ARGV[]) {
+	(void)ARGV;
+
+	romfsInit();
+	gfxInitDefault();
+	Gui::init();
+	acInit();
+	hidSetRepeatParameters(20, 8);
+	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
+};
+
+void Platform::Exit() {
+	acExit();
+	Gui::exit();
+	gfxExit();
+	romfsExit();
 }
 
-bool WiFi::Connected() {
-	return Wifi_AssocStatus() == ASSOCSTATUS_ASSOCIATED;
+bool Platform::WiFi::Connected() {
+	// return true; // For Citra
+
+	uint32_t WifiStatus;
+	return R_SUCCEEDED(ACU_GetWifiStatus(&WifiStatus)) && WifiStatus;
 }

@@ -24,8 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "MSGData.hpp"
+
+#include "gui.hpp"
+#include "UniversalUpdater.hpp"
 
 
 void MSGData::DisplayWaitMsg(const std::string &MSG) {

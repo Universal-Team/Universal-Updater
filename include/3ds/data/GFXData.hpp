@@ -71,6 +71,8 @@ public:
 	/* UniStore Sprite Handler. */
 	void LoadUniStoreSheet(const std::string &SheetFile);
 	void UnloadUniStoreSheets();
+	inline void UpdateUniStoreSprites() { /* NOP */ }
+	inline void HideUniStoreSprites() { /* NOP */ }
 	void DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes);
 
 	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);

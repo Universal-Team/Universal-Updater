@@ -36,8 +36,6 @@ namespace DownloadUtils {
 	curl_off_t Speed();
 	curl_off_t CurrentProgress();
 	curl_off_t TotalSize();
-
-	bool WiFiAvailable();
 };
 
 #endif

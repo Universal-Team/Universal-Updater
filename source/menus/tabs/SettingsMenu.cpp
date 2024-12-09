@@ -24,10 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
-#include "QueueSystem.hpp"
 #include "SettingsMenu.hpp"
+
+#include "gui.hpp"
+#include "QueueSystem.hpp"
 #include "UniStoreSelector.hpp"
+#include "UniversalUpdater.hpp"
 #include "Utils.hpp"
 
 

@@ -24,9 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "DownList.hpp"
+
+#include "gui.hpp"
 #include "QueueSystem.hpp"
+#include "UniversalUpdater.hpp"
 #include "Utils.hpp"
 
 #define DOWNLOAD_ENTRIES 7

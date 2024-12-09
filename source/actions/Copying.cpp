@@ -25,7 +25,9 @@
 */
 
 #include "Copying.hpp"
+
 #include "Utils.hpp"
+
 #include <dirent.h>
 #include <unistd.h>
 

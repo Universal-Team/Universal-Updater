@@ -24,8 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "ThemeData.hpp"
+
+#include "Platform.hpp"
+// #include "UniversalUpdater.hpp"
+
 #include <regex>
 #include <unistd.h>
 

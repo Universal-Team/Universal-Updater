@@ -25,10 +25,10 @@
 */
 
 #include "QueueSystem.hpp"
-#ifdef _3DS
-	#include <3ds.h>
-	static Thread QueueThread = nullptr;
-#endif
+
+#include "Platform.hpp"
+
+static ThreadPtr QueueThread = nullptr;
 
 std::deque<QueueEntry> QueueSystem::Queue;
 
@@ -36,21 +36,16 @@ std::deque<QueueEntry> QueueSystem::Queue;
 void QueueSystem::Add(const size_t EntryIndex, const size_t DLIdx, const nlohmann::json *Script) {
 	Queue.emplace_back(EntryIndex, DLIdx, Script);
 
-	#ifdef _3DS
-		if (Queue.size() == 1) {
-			if (QueueThread) {
-				threadJoin(QueueThread, U64_MAX);
-				threadFree(QueueThread);
-				QueueThread = nullptr;
-			}
-
-			int32_t Prio = 0;
-
-			svcGetThreadPriority(&Prio, CUR_THREAD_HANDLE);
-			QueueThread = threadCreate((ThreadFunc)QueueSystem::Handler, NULL, 64 * 1024, Prio - 1, -2, false);
-			aptSetHomeAllowed(false);
+	if (Queue.size() == 1) {
+		if (QueueThread) {
+			Platform::ThreadJoin(QueueThread, UINT64_MAX);
+			threadFree(QueueThread);
+			QueueThread = nullptr;
 		}
-	#endif
+
+		QueueThread = Platform::CreateThread((ThreadFunc)QueueSystem::Handler);
+		Platform::AllowExit(false);
+	}
 };
 
 
@@ -65,9 +60,7 @@ void QueueSystem::Handler() {
 		Queue.pop_front();
 	}
 
-	#ifdef _3DS
-		aptSetHomeAllowed(true);
-	#endif
+	Platform::AllowExit(true);
 };
 
 

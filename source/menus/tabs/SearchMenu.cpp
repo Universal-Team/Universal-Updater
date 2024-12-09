@@ -24,9 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
-#include "keyboard.hpp"
 #include "SearchMenu.hpp"
+
+#include "gui.hpp"
+#include "keyboard.hpp"
+#include "UniversalUpdater.hpp"
 #include "Utils.hpp"
 
 

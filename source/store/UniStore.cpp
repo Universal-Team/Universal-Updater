@@ -24,10 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "UniStore.hpp"
+
 #include "BrowseData.hpp"
 #include "DownloadUtils.hpp"
-#include "UniStore.hpp"
+#include "Platform.hpp"
 #include "UniversalUpdater.hpp"
+
 #include <unistd.h>
 
 const std::string UniStore::emptyString = "";
@@ -146,7 +149,7 @@ void UniStore::Update(bool Force) {
 	if (!this->Valid) return;
 
 	/* Ensure WiFi is available. */
-	if (!DownloadUtils::WiFiAvailable() || !(Force || UU::App->CData->AutoUpdate())) {
+	if (!Platform::WiFi::Connected() || !(Force || UU::App->CData->AutoUpdate())) {
 		this->ResetIndexes();
 		UU::App->GData->UnloadUniStoreSheets();
 		this->LoadSpriteSheets();

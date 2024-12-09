@@ -24,8 +24,9 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "TopGrid.hpp"
+
+#include "UniversalUpdater.hpp"
 
 
 void TopGrid::Draw() {

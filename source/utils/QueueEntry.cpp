@@ -26,14 +26,14 @@
 
 #include "QueueEntry.hpp"
 
-#include "Common.hpp"
 #include "Copying.hpp"
 #include "Deleting.hpp"
 #include "DownloadFile.hpp"
 #include "DownloadRelease.hpp"
 #include "Extracting.hpp"
-#include "Moving.hpp"
 #include "gui.hpp"
+#include "Moving.hpp"
+#include "UniversalUpdater.hpp"
 
 
 bool QueueEntry::ObjectContains(const nlohmann::json &Item, const std::vector<std::string> Keys) {

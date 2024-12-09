@@ -24,8 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "TopList.hpp"
+
+#include "gui.hpp"
+#include "UniversalUpdater.hpp"
 #include "Utils.hpp"
 
 

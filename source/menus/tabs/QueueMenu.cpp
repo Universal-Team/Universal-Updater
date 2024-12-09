@@ -24,8 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "Common.hpp"
 #include "QueueMenu.hpp"
+
+#include "GFXData.hpp"
+#include "gui.hpp"
 #include "QueueSystem.hpp"
 #include "Utils.hpp"
 
