@@ -59,6 +59,8 @@ public:
 	void DrawCheckbox(const int XPos, const int YPos, const bool Selected);
 	void DrawToggle(const int XPos, const int YPos, const bool Toggled);
 	void DrawSort(const int XPos, const int YPos, const bool Checked);
+
+	bool SpritesDrawn = false;
 private:
 	C2D_SpriteSheet Sprites = nullptr;
 	C2D_Font Font = nullptr;

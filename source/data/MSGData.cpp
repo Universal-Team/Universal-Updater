@@ -5,30 +5,45 @@
 #include "MSGData.hpp"
 
 #include "gui.hpp"
+#include "Platform.hpp"
 #include "UniversalUpdater.hpp"
 
 
 void MSGData::DisplayWaitMsg(const std::string &MSG) {
+	/* Hide the Sprites on a message display. */
+	if (UU::App->GData->SpritesDrawn) {
+		UU::App->GData->SpritesDrawn = false;
+		UU::App->GData->HideUniStoreSprites();
+	}
+
 	UU::App->GData->StartFrame();
 	UU::App->GData->DrawTop();
-	Gui::DrawStringCentered(0, 80, 0.5f, TEXT_COLOR, MSG, 390, 80);
+	Gui::DrawStringCentered(0, 80, TEXT_MEDIUM, TEXT_COLOR, MSG);
 	UU::App->GData->DrawBottom();
 	UU::App->GData->EndFrame();
 };
 
 
 bool MSGData::PromptMsg(const std::string &MSG) {
+	/* Hide the Sprites on a message display. */
+	if (UU::App->GData->SpritesDrawn) {
+		UU::App->GData->SpritesDrawn = false;
+		UU::App->GData->HideUniStoreSprites();
+	}
+
 	bool Result = false;
 
-	while(1) {
+	while(Platform::MainLoop()) {
 		UU::App->GData->StartFrame();
 		UU::App->GData->DrawTop();
-		Gui::DrawStringCentered(0, 80, 0.5f, TEXT_COLOR, MSG, 390, 80);
-		Gui::DrawStringCentered(0, 210, 0.5f, TEXT_COLOR, "Press \uE000 to continue, \uE001 to cancel.", 390, 80);
+		Gui::DrawStringCentered(0, 80, TEXT_MEDIUM, TEXT_COLOR, MSG);
+		Gui::DrawStringCentered(0, 210, TEXT_MEDIUM, TEXT_COLOR, "Press A to continue, B to cancel.");
 		UU::App->GData->DrawBottom();
 		UU::App->GData->EndFrame();
 
+		Platform::waitForVBlank();
 		UU::App->ScanInput();
+
 		if (UU::App->Down & KEY_A) {
 			Result = true;
 			break;
