@@ -40,6 +40,12 @@
 
 class GFXData {
 public:
+	struct UniStoreIcon {
+		int index;
+		int sheet;
+		bool updated;
+	};
+
 	GFXData();
 	~GFXData();
 
@@ -51,10 +57,10 @@ public:
 
 	/* UniStore Sprite Handler. */
 	void LoadUniStoreSheet(const std::string &SheetFile);
-	void UnloadUniStoreSheets();
+	void UnloadUniStoreSheets(void) { /* NOP */ };
 	void UpdateUniStoreSprites();
 	void HideUniStoreSprites();
-	void DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes);
+	void DrawUniStoreIcons(const std::vector<UniStoreIcon> &Icons);
 	
 	void DrawBox(const int XPos, const int YPos, const int Width = 50, const int Height = 50, const bool Selected = false);
 	void DrawSprite(const int Idx, const int X, const int Y);

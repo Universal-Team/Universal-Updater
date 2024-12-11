@@ -11,7 +11,7 @@
 
 void TopList::Draw() {
 	if (!UU::App->Store->Indexes.empty()) {
-		std::vector<std::tuple<int, int, bool>> Indexes;
+		std::vector<GFXData::UniStoreIcon> Icons;
 
 		for (size_t Idx = 0; Idx < 3 && Idx < UU::App->Store->Indexes.size(); Idx++) {
 			if (Idx + UU::App->Store->ScreenIndex == UU::App->Store->SelectedIndex) {
@@ -19,22 +19,21 @@ void TopList::Draw() {
 			}
 
 			if (UU::App->Store->Indexes.size() > Idx + UU::App->Store->ScreenIndex) {
-				Indexes.push_back({
+				Icons.emplace_back(
 					UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
 					UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
-
 					UU::App->MData->UpdateAvailable(UU::App->Store->GetUniStoreTitle(),
 						UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]),
 						UU::App->Store->GetEntryLastUpdated(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex])
 					)
-				});
+				);
 
 				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 5, TEXT_LARGE, TEXT_COLOR, UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
 				Gui::DrawStringCentered(29, TOP_LIST_Y(Idx) + 24, TEXT_LARGE, TEXT_COLOR, UU::App->Store->GetEntryAuthor(UU::App->Store->Indexes[Idx + UU::App->Store->ScreenIndex]), TOP_LIST_W - 60, 0);
 			}
 		}
 
-		UU::App->GData->DrawUniStoreIcons(Indexes);
+		UU::App->GData->DrawUniStoreIcons(Icons);
 	}
 };
 

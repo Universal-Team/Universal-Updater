@@ -57,7 +57,7 @@ void Platform::Initialize(char *ARGV[]) {
 }
 
 ThreadPtr Platform::CreateThread(ThreadFunc entrypoint) {
-	threadPrepare(&thread, entrypoint, NULL, stackEnd, MAIN_THREAD_PRIO + 1);
+	threadPrepare(&thread, entrypoint, NULL, stackEnd, MAIN_THREAD_PRIO);
 	threadStart(&thread);
 
 	return &thread;

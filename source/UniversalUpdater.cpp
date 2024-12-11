@@ -115,6 +115,8 @@ void UU::Draw() {
 	if (!this->USelector->Done) this->USelector->DrawBottom();
 	else this->_Tabs->DrawBottom();
 
+	Platform::waitForVBlank();
+
 	this->GData->EndFrame();
 };
 
@@ -124,11 +126,9 @@ void UU::Draw() {
 */
 int UU::Handler(char *ARGV[]) {
 	this->Initialize(ARGV);
-	this->Draw(); // TODO: Maybe remove
 
 	while(Platform::MainLoop() && !this->Exiting) {
-		if(UU::App->Repeat) this->Draw(); // TODO: Draw every time
-		Platform::waitForVBlank();
+		this->Draw();
 		this->ScanInput();
 
 		if (!this->USelector->Done) this->USelector->Handler();

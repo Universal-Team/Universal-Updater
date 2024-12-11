@@ -9,8 +9,8 @@
 *.elf
 *.smdh
 *.bin
-3ds/build/sprites.h
-nds/build/sprites.h
+3ds/build
+nds/build
 *.t3x
 *.tdx
 *.DS_Store

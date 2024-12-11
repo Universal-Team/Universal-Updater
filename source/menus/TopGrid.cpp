@@ -6,9 +6,8 @@
 
 #include "UniversalUpdater.hpp"
 
-
 void TopGrid::Draw() {
-	std::vector<std::tuple<int, int, bool>> Indexes;
+	std::vector<GFXData::UniStoreIcon> Icons;
 
 	for (size_t Idx = 0, Idx2 = 0 + (UU::App->Store->ScreenIndex * 5); Idx2 < 15 + (UU::App->Store->ScreenIndex * 5) && Idx2 < UU::App->Store->Indexes.size(); Idx2++, Idx++) {
 		/* Box. */
@@ -18,19 +17,18 @@ void TopGrid::Draw() {
 		/* Ensure, Indexes is larger than the index. */
 		if (UU::App->Store->Indexes.size() > Idx2) {
 			/* Get icon index. */
-			Indexes.push_back({
+			Icons.emplace_back(
 				UU::App->Store->GetEntryIcon(UU::App->Store->Indexes[Idx2]),
 				UU::App->Store->GetEntrySheet(UU::App->Store->Indexes[Idx2]),
-
 				UU::App->MData->UpdateAvailable(UU::App->Store->GetUniStoreTitle(),
 					UU::App->Store->GetEntryTitle(UU::App->Store->Indexes[Idx2]),
 					UU::App->Store->GetEntryLastUpdated(UU::App->Store->Indexes[Idx2])
 				)
-			});
+			);
 		}
 	}
 
-	UU::App->GData->DrawUniStoreIcons(Indexes);
+	UU::App->GData->DrawUniStoreIcons(Icons);
 };
 
 

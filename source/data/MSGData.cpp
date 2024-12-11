@@ -11,10 +11,7 @@
 
 void MSGData::DisplayWaitMsg(const std::string &MSG) {
 	/* Hide the Sprites on a message display. */
-	if (UU::App->GData->SpritesDrawn) {
-		UU::App->GData->SpritesDrawn = false;
-		UU::App->GData->HideUniStoreSprites();
-	}
+	UU::App->GData->HideUniStoreSprites();
 
 	UU::App->GData->StartFrame();
 	UU::App->GData->DrawTop();
@@ -26,10 +23,7 @@ void MSGData::DisplayWaitMsg(const std::string &MSG) {
 
 bool MSGData::PromptMsg(const std::string &MSG) {
 	/* Hide the Sprites on a message display. */
-	if (UU::App->GData->SpritesDrawn) {
-		UU::App->GData->SpritesDrawn = false;
-		UU::App->GData->HideUniStoreSprites();
-	}
+	UU::App->GData->HideUniStoreSprites();
 
 	bool Result = false;
 

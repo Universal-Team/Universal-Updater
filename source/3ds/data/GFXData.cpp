@@ -60,8 +60,8 @@ void GFXData::UnloadUniStoreSheets() {
 };
 
 
-void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes) {
-	for(size_t Pos = 0; Pos < Indexes.size(); Pos++) {
+void GFXData::DrawUniStoreIcons(const std::vector<UniStoreIcon> &Icons) {
+	for(size_t Pos = 0; Pos < Icons.size(); Pos++) {
 		int XPos = 0, YPos = 0;
 
 		switch(UU::App->TMode) {
@@ -77,29 +77,27 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &I
 				break;
 		}
 
-		const int Idx = std::get<0>(Indexes[Pos]);
-		const int Sheet = std::get<1>(Indexes[Pos]);
-		const bool Updated = std::get<2>(Indexes[Pos]);
+		const UniStoreIcon &Icon = Icons[Pos];
 
-		/* Idx -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
-		if (Idx < 0 || Sheet < 0 || this->UniStoreSheets.empty()) {
+		/* Index -1 / Sheet -1 or no sheet loaded --> Draw NoIcon. */
+		if (Icon.index < 0 || Icon.sheet < 0 || this->UniStoreSheets.empty()) {
 			this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
-			if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
+			if (Icon.updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
 			continue;
 		}
 
 		bool DrawNoIcon = true;
 
 		/* Check, if we can draw that one icon. */
-		if (Sheet < (int)this->UniStoreSheets.size()) {
-			if (Idx < (int)C2D_SpriteSheetCount(this->UniStoreSheets[Sheet])) {
+		if (Icon.sheet < (int)this->UniStoreSheets.size()) {
+			if (Icon.index < (int)C2D_SpriteSheetCount(this->UniStoreSheets[Icon.sheet])) {
 				DrawNoIcon = false;
 			}
 		}
 
 		if (!DrawNoIcon) {
 			/* Center. */
-			const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Sheet], Idx);
+			const C2D_Image TempImg = C2D_SpriteSheetGetImage(this->UniStoreSheets[Icon.sheet], Icon.index);
 
 			/* Only max 48x48 allowed. */
 			if (TempImg.subtex->width > 48 || TempImg.subtex->height > 48) this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
@@ -111,7 +109,7 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &I
 			}
 		} else this->DrawSprite(sprites_noIcon_idx, XPos + 5, YPos + 5);
 
-		if (Updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
+		if (Icon.updated) this->DrawSprite(sprites_update_app_idx, XPos + 31, YPos + 31);
 	}
 };
 

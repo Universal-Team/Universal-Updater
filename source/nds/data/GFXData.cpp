@@ -41,8 +41,7 @@ void GFXData::StartFrame() {
 
 
 void GFXData::EndFrame() {
-	Gui::updateTextBufs(true);
-	Gui::updateTextBufs(false);
+	Gui::swapBuffers();
 };
 
 
@@ -65,11 +64,6 @@ void GFXData::LoadUniStoreSheet(const std::string &SheetFile) {
 	if (access(SheetFile.c_str(), F_OK) == 0) {
 		this->UniStoreSheetPaths.push_back(SheetFile);
 	}
-};
-
-
-void GFXData::UnloadUniStoreSheets() {
-	this->UniStoreSheetPaths.clear();
 };
 
 
@@ -106,10 +100,10 @@ void GFXData::HideUniStoreSprites() {
 };
 
 
-void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &Indexes) {
+void GFXData::DrawUniStoreIcons(const std::vector<UniStoreIcon> &Icons) {
 	std::vector<uint32_t> SheetIndexes[this->UniStoreSheetPaths.size()];
-	for (const std::tuple<int, int, bool> &Index : Indexes) {
-		if (std::get<0>(Index) > 0) SheetIndexes[std::get<1>(Index)].push_back(std::get<0>(Index));
+	for (const UniStoreIcon &Icon : Icons) {
+		if (Icon.index > 0) SheetIndexes[Icon.sheet].push_back(Icon.index);
 	}
 
 	std::vector<Spritesheet> Sheets;
@@ -118,23 +112,25 @@ void GFXData::DrawUniStoreIcons(const std::vector<std::tuple<int, int, bool>> &I
 	}
 
 	for (size_t Idx = 0; Idx < 15; Idx++) {
-		Sprite &Spr = *this->UniStoreSprites[Idx];
-		Spr.clear();
+		const UniStoreIcon &Icon = Icons[Idx];
 
-		if ((UU::App->TMode == UU::TopMode::Grid || Idx < 3) && Idx < Indexes.size() && std::get<1>(Indexes[Idx]) < (int)this->UniStoreSheetPaths.size()) {
-			Image &Img = Sheets[std::get<1>(Indexes[Idx])][std::get<0>(Indexes[Idx])];
+		Sprite &Spr = *this->UniStoreSprites[Idx];
+		// Spr.clear();
+
+		if (Idx < Icons.size() && Icon.sheet < (int)this->UniStoreSheetPaths.size()) {
+			Image &Img = Sheets[Icon.sheet][Icon.index];
 			Spr.drawImage((Spr.width() - Img.width()) / 2, (Spr.height() - Img.height()) / 2, Img);
 
 			/* If update available... TODO: Handle this properly. */
-			if (std::get<2>(Indexes[Idx])) {
+			if (Icon.updated) {
 				switch(UU::App->TMode) {
 					case UU::TopMode::Grid:
 						this->DrawSprite(sprites_update_app_idx, TOP_GRID_X(Idx) + 32, TOP_GRID_Y(Idx) + 32);
-						break;
+					break;
 
-					case UU::TopMode::List:
+				case UU::TopMode::List:
 						this->DrawSprite(sprites_update_app_idx, TOP_LIST_X + 32, TOP_LIST_Y(Idx) + 32);
-						break;
+					break;
 				}
 			}
 		}
