@@ -1,0 +1,45 @@
+name: Import translations from Crowdin
+
+on:
+  schedule:
+    - cron: "0 0 1,15 * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Setup Crowdin CLI
+        run: |
+          npm i -g @crowdin/cli
+
+      - name: Pull from Crowdin
+        env:
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+          UU_CROWDIN_ID: ${{ secrets.UU_CROWDIN_ID }}
+        run: |
+          ./crowdin-pull.sh
+
+      - name: Commit changes
+        run: |
+          git config user.email "twlbot@flashcarts.net"
+          git config user.name "TWLBot"
+
+          git checkout master
+          git commit -a -m "Automatic translation import"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: master
+          github_token: ${{ secrets.TWLBOT_TOKEN }}
