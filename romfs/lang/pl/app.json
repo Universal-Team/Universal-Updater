@@ -95,6 +95,7 @@
 	"LIST": "Lista",
 	"LOADING_SCREENSHOT": "Ładowanie zrzutu ekranu...",
 	"LOADING_SPRITESHEET": "Ładowanie tekstury %i z %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Typ pliku NAND",
 	"MEDIATYPE_SD": "Typ pliku SD",
 	"MOVE_ERROR": "Błąd przenoszenia!",

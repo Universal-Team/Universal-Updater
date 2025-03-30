@@ -95,6 +95,7 @@
 	"LIST": "清单",
 	"LOADING_SCREENSHOT": "正在加载屏幕截图...",
 	"LOADING_SPRITESHEET": "正在加载贴图集 %i / %i……",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "介质类型 NAND",
 	"MEDIATYPE_SD": "介质类型 SD",
 	"MOVE_ERROR": "移动错误！",

@@ -95,6 +95,7 @@
 	"LIST": "Lista",
 	"LOADING_SCREENSHOT": "Carregando captura de tela...",
 	"LOADING_SPRITESHEET": "Carregando spritesheet %i de %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Armazenado em: NAND",
 	"MEDIATYPE_SD": "Armazenado em: SD",
 	"MOVE_ERROR": "Erro ao mover!",

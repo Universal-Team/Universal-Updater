@@ -95,6 +95,7 @@
 	"LIST": "Liste",
 	"LOADING_SCREENSHOT": "Indlæser Skærmbillede...",
 	"LOADING_SPRITESHEET": "Indlæser Spritesheet %i af %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "MedieType NAND",
 	"MEDIATYPE_SD": "MedieType SD",
 	"MOVE_ERROR": "Flytnings Fejl!",

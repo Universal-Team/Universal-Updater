@@ -95,6 +95,7 @@
 	"LIST": "Список",
 	"LOADING_SCREENSHOT": "Загрузка скриншота...",
 	"LOADING_SPRITESHEET": "Загрузка таблицы спрайтов %i из %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Тип медии NAND",
 	"MEDIATYPE_SD": "Тип медии SD",
 	"MOVE_ERROR": "Ошибка перемещения!",
