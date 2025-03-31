@@ -45,7 +45,7 @@ namespace GFX {
 	void DrawTop(void);
 	void DrawBottom();
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = UIThemes->BoxInside());
+	void DrawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = 0, uint32_t borderClr = 0);
 	void DrawCheckbox(float xPos, float yPos, bool selected);
 	void DrawToggle(float xPos, float yPos, bool toggled);
 	void DrawTime();
