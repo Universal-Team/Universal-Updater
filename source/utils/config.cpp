@@ -136,6 +136,7 @@ Config::Config() {
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
 	if (this->json.contains("UpdateNightly")) this->updatenightly(this->getBool("UpdateNightly"));
 	if (this->json.contains("UseBG")) this->usebg(this->getBool("UseBG"));
+	if (this->json.contains("UseAccentColor")) this->useAccentColor(this->getBool("UseAccentColor"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
@@ -176,6 +177,7 @@ void Config::save() {
 		this->setBool("UpdateCheck", this->updatecheck());
 		this->setBool("UpdateNightly", this->updatenightly());
 		this->setBool("UseBG", this->usebg());
+		this->setBool("UseAccentColor", this->useAccentColor());
 		this->setBool("CustomFont", this->customfont());
 		this->setString("Shortcut_Path", this->shortcut());
 		this->setBool("Display_Changelog", this->changelog());

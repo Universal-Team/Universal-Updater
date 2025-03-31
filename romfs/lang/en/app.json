@@ -155,5 +155,6 @@
 	"UPDATING_SPRITE_SHEET": "Updating Spritesheet...",
 	"UPDATING_SPRITE_SHEET2": "Updating Spritesheet %i of %i...",
 	"UPDATING_UNISTORE": "Updating UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Version"
 }

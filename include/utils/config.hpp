@@ -102,6 +102,10 @@ public:
 	std::string theme() const { return this->v_theme; };
 	void theme(const std::string &v) { this->v_theme = v; if (!this->changesMade) this->changesMade = true; };
 
+	/* If accent color should be used. */
+	bool useAccentColor() const { return this->v_useAccentColor; };
+	void useAccentColor(bool v) { this->v_useAccentColor = v; };
+
 	/* If showing prompt if action failed / succeeded. */
 	bool prompt() const { return this->v_prompt; };
 	void prompt(bool v) { this->v_prompt = v; if (!this->changesMade) this->changesMade = true; };
@@ -122,7 +126,8 @@ private:
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads", v_theme = "Default";
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateNightly = false,
-		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false;
+		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
+		v_useAccentColor = false;
 };
 
 #endif
