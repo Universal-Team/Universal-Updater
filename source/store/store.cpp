@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "gui.hpp"
 #include "scriptUtils.hpp"
+#include "stringutils.hpp"
 #include "store.hpp"
 #include <unistd.h>
 
@@ -634,4 +635,21 @@ std::string Store::GetReleaseNotes(int index) const {
 	}
 
 	return "";
+}
+
+/*
+	Get the accent color of an entry.
+
+	int index: The Entry Index.
+*/
+u32 Store::GetAccentColorEntry(int index) const {
+	if (!this->valid) return 0;
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return 0; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("color") && this->storeJson["storeContent"][index]["info"]["color"].is_string()) {
+		const std::string color = this->storeJson["storeContent"][index]["info"]["color"];
+		return StringUtils::ParseColorHexString(color);
+	}
+
+	return 0;
 }
