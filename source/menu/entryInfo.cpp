@@ -44,11 +44,13 @@ extern bool exiting, QueueRuns;
 */
 void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
-		Gui::Draw_Rect(40, 0, 280, 36, UIThemes->EntryBar());
+		uint32_t accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
+
+		Gui::Draw_Rect(40, 0, 280, 36, accentColor ? accentColor : UIThemes->EntryBar());
 		Gui::Draw_Rect(40, 36, 280, 1, UIThemes->EntryOutline());
 
-		Gui::DrawStringCentered(17, 0, 0.6, UIThemes->TextColor(), entry->GetTitle(), 273, 0, font);
-		Gui::DrawStringCentered(17, 20, 0.4, UIThemes->TextColor(), entry->GetAuthor(), 273, 0, font);
+		Gui::DrawStringCentered(17, 0, 0.6, accentColor ? WHITE : UIThemes->TextColor(), entry->GetTitle(), 273, 0, font);
+		Gui::DrawStringCentered(17, 20, 0.4, accentColor ? WHITE : UIThemes->TextColor(), entry->GetAuthor(), 273, 0, font);
 		Gui::DrawStringCentered(17, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
 		Gui::DrawString(53, 115, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);

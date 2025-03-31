@@ -108,20 +108,25 @@ static bool CreateShortcut(const std::string &entryName, int index, const std::s
 	const std::vector<std::string> &sizes: Const Reference to the download sizes as a vector of strings.
 */
 void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs) {
+	uint32_t accentColor = 0;
+
 	/* For the Top Screen. */
 	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
-			Gui::Draw_Rect(0, 174, 400, 66, UIThemes->DownListPrev());
+			accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
+
+			if (accentColor) Gui::Draw_Rect(0, 173, 400, 1, UIThemes->EntryOutline());
+			Gui::Draw_Rect(0, 174, 400, 66, accentColor ? accentColor : UIThemes->DownListPrev());
 			const C2D_Image tempImg = entry->GetIcon();
 			const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 			const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 			C2D_DrawImageAt(tempImg, 9 + offsetW, 174 + 9 + offsetH, 0.5);
 
-			Gui::DrawString(70, 174 + 15, 0.45f, UIThemes->TextColor(), entries[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
+			Gui::DrawString(70, 174 + 15, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), entries[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
 
 			if (!sizes.empty()) {
 				if (sizes[StoreUtils::store->GetDownloadIndex()] != "") {
-					Gui::DrawString(70, 174 + 30, 0.45f, UIThemes->TextColor(), Lang::get("SIZE") + ": " +  sizes[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
+					Gui::DrawString(70, 174 + 30, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("SIZE") + ": " +  sizes[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
 				}
 			}
 		}
@@ -133,9 +138,9 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	Animation::QueueEntryDone();
 
 	GFX::DrawBottom();
-	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
+	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(17, 2, 0.6, UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
+	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
 
 	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
