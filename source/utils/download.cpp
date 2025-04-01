@@ -79,6 +79,9 @@ static int curlProgress(CURL *hnd,
 	downloadTotal = dltotal;
 	downloadNow = dlnow;
 
+	if (writeError) return 1;
+	if (QueueSystem::CancelCallback) return 1;
+
 	return 0;
 }
 
