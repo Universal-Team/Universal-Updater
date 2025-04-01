@@ -90,3 +90,4 @@ If you're testing in Citra, run `make citra` instead of just `make` to disable t
 - [lvandeve](https://github.com/lvandeve): For [LodePNG](https://github.com/lvandeve/lodepng)
 - [PabloMK7](https://github.com/PabloMK7): 3D Banner & Download Code Improvements
 - [lividhen](https://github.com/lividhen): 3D Banner
+- [Nayuki](https://github.com/nayuki): Original developer of the [QR Code generator library](https://github.com/nayuki/QR-Code-generator)
