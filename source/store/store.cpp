@@ -405,6 +405,22 @@ std::string Store::GetLicenseEntry(int index) const {
 }
 
 /*
+	Return the Wiki of an index.
+
+	int index: The index.
+*/
+std::string Store::GetWikiEntry(int index) const {
+	if (!this->valid) return "";
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("wiki") && this->storeJson["storeContent"][index]["info"]["wiki"].is_string()) {
+		return this->storeJson["storeContent"][index]["info"]["wiki"];
+	}
+
+	return "";
+}
+
+/*
 	Return a C2D_Image of an index.
 
 	int index: The index.
