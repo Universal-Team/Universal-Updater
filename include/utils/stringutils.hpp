@@ -38,6 +38,7 @@ namespace StringUtils {
 	std::string GetMarkString(int marks);
 	std::vector<std::string> GetMarks(int marks);
 	std::string format(const char *fmt_str, ...);
+	uint32_t ParseColorHexString(std::string_view str);
 };
 
 #endif

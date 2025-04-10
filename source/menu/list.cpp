@@ -48,8 +48,14 @@ void StoreUtils::DrawList() {
 		if (StoreUtils::entries.size() > 0) {
 			for (int i = 0; i < 3 && i < (int)StoreUtils::entries.size(); i++) {
 
+				uint32_t accentColor = 0;
+
 				if (i + StoreUtils::store->GetScreenIndx() == StoreUtils::store->GetEntry()) {
-					GFX::DrawBox(StoreBoxesList[i].x, StoreBoxesList[i].y, StoreBoxesList[i].w, StoreBoxesList[i].h, false);
+					if (config->useAccentColor() && (int)StoreUtils::entries.size() > i + StoreUtils::store->GetScreenIndx()) {
+						accentColor = StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAccentColor();
+					}
+
+					GFX::DrawBox(StoreBoxesList[i].x, StoreBoxesList[i].y, StoreBoxesList[i].w, StoreBoxesList[i].h, true, accentColor);
 				}
 
 				/* Ensure, entries is larger than the index. */
@@ -63,8 +69,8 @@ void StoreUtils::DrawList() {
 					}
 
 					if (StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, accentColor ? WHITE : UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, accentColor ? WHITE : UIThemes->TextColor(), StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}
