@@ -385,14 +385,17 @@ void QRCode::handler(std::string &result) {
 		quirc_end(this->qrData);
 
 		if (quirc_count(this->qrData) > 0) {
-			struct quirc_code code;
-			struct quirc_data scan_data;
-			quirc_extract(this->qrData, 0, &code);
+			// `quirc_decode` uses some large stack buffers, which is why
+			// `code` and `scan_data` here are allocated on the heap to leave
+			// just barely enough stack space for it to not overflow the stack.
+			std::unique_ptr<struct quirc_code> code = std::make_unique<struct quirc_code>();
+			std::unique_ptr<struct quirc_data> scan_data = std::make_unique<struct quirc_data>();
+			quirc_extract(this->qrData, 0, code.get());
 
-			if (!quirc_decode(&code, &scan_data)) {
+			if (!quirc_decode(code.get(), scan_data.get())) {
 				this->finish();
-				this->out.resize(scan_data.payload_len);
-				std::copy(scan_data.payload, scan_data.payload + scan_data.payload_len, this->out.begin());
+				this->out.resize(scan_data->payload_len);
+				std::copy(scan_data->payload, scan_data->payload + scan_data->payload_len, this->out.begin());
 
 				/* From scanned stuff. */
 				if (this->out.empty()) result = "";
