@@ -95,6 +95,7 @@
 	"LIST": "목록",
 	"LOADING_SCREENSHOT": "스크린샷을 불러오는 중...",
 	"LOADING_SPRITESHEET": "스프라이트시트 불러오는 중... (%i / %i)",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "미디어타입 NAND",
 	"MEDIATYPE_SD": "미디어타입 SD",
 	"MOVE_ERROR": "이동 오류!",

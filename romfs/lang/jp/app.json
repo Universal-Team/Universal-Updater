@@ -95,6 +95,7 @@
 	"LIST": "リスト",
 	"LOADING_SCREENSHOT": "スクリーンショットを読み込んでいます……",
 	"LOADING_SPRITESHEET": "スプライトシート%i/%iを読み込んでいます……",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "メディアタイプNAND",
 	"MEDIATYPE_SD": "メディアタイプSD",
 	"MOVE_ERROR": "移動エラー",

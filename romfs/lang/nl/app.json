@@ -95,6 +95,7 @@
 	"LIST": "Lijst",
 	"LOADING_SCREENSHOT": "Schermafbeelding Laden...",
 	"LOADING_SPRITESHEET": "Spritesheet %i van %i geladen...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "MediaType NAND",
 	"MEDIATYPE_SD": "MediaType SD",
 	"MOVE_ERROR": "Verplaats Fout!",

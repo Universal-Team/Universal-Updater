@@ -95,6 +95,7 @@
 	"LIST": "Lista",
 	"LOADING_SCREENSHOT": "Képernyőkép betöltése...",
 	"LOADING_SPRITESHEET": "A spritelap betöltése %i/%i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Médiatípus NAND",
 	"MEDIATYPE_SD": "Médiatípus SD",
 	"MOVE_ERROR": "Mozgatási hiba!",

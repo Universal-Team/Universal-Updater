@@ -95,6 +95,7 @@
 	"LIST": "Liste",
 	"LOADING_SCREENSHOT": "Laster inn skjermbilde...",
 	"LOADING_SPRITESHEET": "Laster Spritesheet %i av %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "MediaType NAND",
 	"MEDIATYPE_SD": "MediaType SD",
 	"MOVE_ERROR": "Flytte feil!",

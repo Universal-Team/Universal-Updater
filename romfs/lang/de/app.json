@@ -95,6 +95,7 @@
 	"LIST": "Liste",
 	"LOADING_SCREENSHOT": "Screenshot wird geladen...",
 	"LOADING_SPRITESHEET": "Spritesheet %i von %i wird geladen...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Medientyp NAND",
 	"MEDIATYPE_SD": "Medientyp SD",
 	"MOVE_ERROR": "Fehler beim Verschieben!",

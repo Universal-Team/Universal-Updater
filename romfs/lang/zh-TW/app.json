@@ -95,6 +95,7 @@
 	"LIST": "列表視圖",
 	"LOADING_SCREENSHOT": "正在載入螢幕擷取畫面...",
 	"LOADING_SPRITESHEET": "正在載入精靈表 %i 之 %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "媒介類型 NAND",
 	"MEDIATYPE_SD": "媒介類型 SD",
 	"MOVE_ERROR": "移動時發生錯誤！",

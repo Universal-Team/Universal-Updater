@@ -95,6 +95,7 @@
 	"LIST": "Liste",
 	"LOADING_SCREENSHOT": "Ekran Görüntüsü Yükleniyor...",
 	"LOADING_SPRITESHEET": "%i / %i Model Tablosu Yükleniyor...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "Medya Türü NAND",
 	"MEDIATYPE_SD": "Medya Türü SD",
 	"MOVE_ERROR": "Taşıma Hatası!",

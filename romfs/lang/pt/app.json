@@ -95,6 +95,7 @@
 	"LIST": "Lista",
 	"LOADING_SCREENSHOT": "A carregar captura de ecrã...",
 	"LOADING_SPRITESHEET": "A carregar ficha de sprites %i de %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "NAND MediaType",
 	"MEDIATYPE_SD": "SD MediaType",
 	"MOVE_ERROR": "Erro ao mover!",

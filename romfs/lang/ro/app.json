@@ -95,6 +95,7 @@
 	"LIST": "Listă",
 	"LOADING_SCREENSHOT": "Se încarcă capturile de ecran...",
 	"LOADING_SPRITESHEET": "Se încarcă Spritesheet-ul %i din %i...",
+	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "NAND MediaType",
 	"MEDIATYPE_SD": "SD MediaType",
 	"MOVE_ERROR": "Eroare de mutare!",
