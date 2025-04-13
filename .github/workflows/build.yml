@@ -13,6 +13,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ startsWith(github.ref, 'refs/pull') && github.ref || 'publish' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
