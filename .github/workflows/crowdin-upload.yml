@@ -7,6 +7,9 @@ on:
       - 'romfs/lang/en/**'
   workflow_dispatch:
 
+concurrency:
+  group: crowdin-upload
+
 jobs:
   build:
     runs-on: ubuntu-latest
