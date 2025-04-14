@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "Az UniStore régi és nem használható Universal-Updater ezen verziójával.\nKérje meg a készítőját, hogy frissítse.",
 	"UPDATE_AVAILABLE": "Frissítés elérhető!",
 	"UPDATE_DONE": "Frissítés kész! Kérjük, nyissa meg újra az Universal-Updater-t.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "A spritelap frissítése...",
 	"UPDATING_SPRITE_SHEET2": "A spritelap frissítése %i/%i...",
 	"UPDATING_UNISTORE": "UniStore frissítése...",

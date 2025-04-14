@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "Deze UniStore is verouderd en kan niet gebruikt worden\nmet deze versie van Universal-Updater.\nVraag de maker om het te updaten.",
 	"UPDATE_AVAILABLE": "Update Beschikbaar!",
 	"UPDATE_DONE": "Update klaar! Graag Universal-Updater opnieuw openen.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "Spritesheet bijwerken...",
 	"UPDATING_SPRITE_SHEET2": "Bijwerken Spritesheet %i van %i...",
 	"UPDATING_UNISTORE": "UniStore bijwerken...",

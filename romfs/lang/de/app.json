@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "Der UniStore ist veraltet und kann nicht mit dieser\nVersion von Universal-Updater verwendet werden.\nKontaktiere die Verantwortlichen für ein Update.",
 	"UPDATE_AVAILABLE": "Update verfügbar!",
 	"UPDATE_DONE": "Update abgeschlossen! Bitte starte Universal-Updater neu.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "Spritesheet wird aktualisiert...",
 	"UPDATING_SPRITE_SHEET2": "Spritesheet %i von %i wird aktualisiert...",
 	"UPDATING_UNISTORE": "UniStore wird aktualisiert...",

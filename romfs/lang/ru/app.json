@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "Этот UniStore устарел и не может быть использован\nс этой версией Universal-Updater.\nПожалуйста, попросите автора обновить его.",
 	"UPDATE_AVAILABLE": "Доступны обновление!",
 	"UPDATE_DONE": "Обновление завершено! Перезапустите Universal-Updater.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "Загрузка таблицы спрайтов...",
 	"UPDATING_SPRITE_SHEET2": "Загрузка таблицы спрайтов %i из %i...",
 	"UPDATING_UNISTORE": "Обновление UniStore...",

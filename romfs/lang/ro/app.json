@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "Acest UniStore este învechit şi nu poate fi folosit cu această versiune a Universal-Updater. \nVă rugăm întrebați creatorul să o actualizeze.",
 	"UPDATE_AVAILABLE": "Actualizare Disponibilă!",
 	"UPDATE_DONE": "Actualizare terminată! Vă rugăm să redeschideți Universal-Updater.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "Se actualizează Spritesheet...",
 	"UPDATING_SPRITE_SHEET2": "Se actualizează Spritesheet %i din %i...",
 	"UPDATING_UNISTORE": "Se actualizează UniStore...",

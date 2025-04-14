@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "This UniStore is grandpa... Which means it cannot be used\nwith this version of Universal-Updater.\nPlease ask the bruhtor to update it.",
 	"UPDATE_AVAILABLE": "Bruhpdate Available!",
 	"UPDATE_DONE": "Bruhpdate done! Please re-bruh Universal-Updater.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "Loading Bruhsheet...",
 	"UPDATING_SPRITE_SHEET2": "Bruhing Bruhsheet %i of %i...",
 	"UPDATING_UNISTORE": "Bruhpdating UniStore...",
