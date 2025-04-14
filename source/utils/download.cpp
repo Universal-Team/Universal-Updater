@@ -912,6 +912,7 @@ void UpdateAction() {
 			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
 			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
+			Gui::DrawString(5, 30, 0.6f, UIThemes->TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font, C2D_WordWrap);
 			C3D_FrameEnd(0);
 
 			hidScanInput();
@@ -927,7 +928,9 @@ void UpdateAction() {
 				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
 			}
 
-			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
+			if (down & KEY_B) return;
+
+			if ((down & KEY_A) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
 		}
 
 		Result dlRes;

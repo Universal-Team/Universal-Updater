@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "このUniStoreは古く、このバージョンの\nUniversal-Updaterでは使用できません。\n作成者に更新しますを依頼してください。",
 	"UPDATE_AVAILABLE": "更新があります！",
 	"UPDATE_DONE": "更新が完了しました！Universal-Updaterを再度開いてください。",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "スプライトシートを更新しています……",
 	"UPDATING_SPRITE_SHEET2": "スプライトシート%i/%iを更新しています……",
 	"UPDATING_UNISTORE": "UniStoreを更新しています……",

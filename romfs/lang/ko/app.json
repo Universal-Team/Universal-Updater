@@ -147,6 +147,7 @@
 	"UNISTORE_TOO_OLD": "이 UniStore는 오래되어 이 버전의\nUniversal-Updater에서는 사용할 수 없습니다.\n제작자에게 업데이트를 요청하세요.",
 	"UPDATE_AVAILABLE": "업데이트 사용 가능!",
 	"UPDATE_DONE": "업데이트를 완료했습니다! Universal-Updater를 다시 시작하세요.",
+	"UPDATE_OR_CANCEL": "Press \uE000, START or touch screen to update.\nPress \uE001 to skip.",
 	"UPDATING_SPRITE_SHEET": "스프라이트시트 업데이트 중...",
 	"UPDATING_SPRITE_SHEET2": "스프라이트시트 업데이트 중... (%i / %i)",
 	"UPDATING_UNISTORE": "UniStore 업데이트 중...",
