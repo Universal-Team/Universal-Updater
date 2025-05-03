@@ -52,17 +52,22 @@ void GFX::DrawBottom() {
 	float height: The Height of the button.
 	bool selected: If selected, or not.
 	uint32_t clr: (Optional) The color of the inside of the box.
+	uint32_t borderClr: (Optional) The color of the border if selected.
 */
-void GFX::DrawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr) {
-	Gui::Draw_Rect(xPos, yPos, width, height, UIThemes->BoxInside()); // Draw middle BG.
+void GFX::DrawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr, uint32_t borderClr) {
+	if (!clr) clr = UIThemes->BoxInside();
+
+	Gui::Draw_Rect(xPos, yPos, width, height, clr); // Draw middle BG.
 
 	if (selected) {
 		static constexpr int depth = 3;
 
-		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, UIThemes->BoxSelected()); // Top.
-		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, UIThemes->BoxSelected()); // Left.
-		Gui::Draw_Rect(xPos + width, yPos - depth, depth, height + depth * 2, UIThemes->BoxSelected()); // Right.
-		Gui::Draw_Rect(xPos - depth, yPos + height, width + depth * 2, depth, UIThemes->BoxSelected()); // Bottom.
+		if (!borderClr) borderClr = UIThemes->BoxSelected();
+
+		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, borderClr); // Top.
+		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, borderClr); // Left.
+		Gui::Draw_Rect(xPos + width, yPos - depth, depth, height + depth * 2, borderClr); // Right.
+		Gui::Draw_Rect(xPos - depth, yPos + height, width + depth * 2, depth, borderClr); // Bottom.
 	}
 }
 

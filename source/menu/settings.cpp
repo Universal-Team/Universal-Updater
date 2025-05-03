@@ -60,6 +60,12 @@ static const std::vector<Structs::ButtonPos> toggleAbles = {
 	{ 288, 180, 24, 24 }
 };
 
+static const std::vector<Structs::ButtonPos> toggleAblesGui = {
+	{ 288, 30, 24, 24 },
+	{ 288, 108, 24, 24 },
+	{ 288, 136, 24, 24 },
+};
+
 static const std::vector<Structs::ButtonPos> dirButtons = {
 	{ 41, 34, 280, 24 },
 	{ 41, 64, 280, 24 },
@@ -191,19 +197,23 @@ static void DrawGUISettings(int selection) {
 
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("GUI_SETTINGS"), 248, 0, font);
 
-	Gui::Draw_Rect(40, 44, 280, 24, (selection == 0 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-	Gui::DrawString(47, 48, 0.5f, UIThemes->TextColor(), Lang::get("UNISTORE_BG"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[0].x, toggleAbles[0].y, config->usebg());
-	Gui::DrawString(47, 75, 0.4f, UIThemes->TextColor(), Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 30, 280, 24, (selection == 0 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 34, 0.5f, UIThemes->TextColor(), Lang::get("UNISTORE_BG"), 210, 0, font);
+	GFX::DrawToggle(toggleAblesGui[0].x, toggleAblesGui[0].y, config->usebg());
+	Gui::DrawString(47, 61, 0.4f, UIThemes->TextColor(), Lang::get("UNISTORE_BG_DESC"), 265, 0, font, C2D_WordWrap);
 
-	Gui::Draw_Rect(40, 120, 280, 24, (selection == 1 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-	Gui::DrawString(47, 124, 0.5f, UIThemes->TextColor(), Lang::get("CUSTOM_FONT"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[1].x, toggleAbles[1].y, config->customfont());
-	Gui::DrawString(47, 151, 0.4f, UIThemes->TextColor(), Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::Draw_Rect(40, 108, 280, 24, (selection == 1 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 112, 0.5f, UIThemes->TextColor(), Lang::get("USE_ACCENT_COLOR"), 210, 0, font);
+	GFX::DrawToggle(toggleAblesGui[1].x, toggleAblesGui[1].y, config->useAccentColor());
+
+	Gui::Draw_Rect(40, 136, 280, 24, (selection == 2 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 140, 0.5f, UIThemes->TextColor(), Lang::get("CUSTOM_FONT"), 210, 0, font);
+	GFX::DrawToggle(toggleAblesGui[2].x, toggleAblesGui[2].y, config->customfont());
+	Gui::DrawString(47, 167, 0.4f, UIThemes->TextColor(), Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
 
 	if (!Themes.empty()) {
-		Gui::Draw_Rect(40, 196, 280, 24, (selection == 2 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-		Gui::DrawString(47, 200, 0.5f, UIThemes->TextColor(), Lang::get("ACTIVE_THEME") + ": " + config->theme(), 270, 0, font);
+		Gui::Draw_Rect(40, 212, 280, 24, (selection == 3 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+		Gui::DrawString(47, 216, 0.5f, UIThemes->TextColor(), Lang::get("ACTIVE_THEME") + ": " + config->theme(), 270, 0, font);
 	}
 }
 
@@ -505,7 +515,7 @@ static void GUISettingsLogic(int &page, int &selection) {
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < (Themes.empty() ? 1 : 2)) selection++;
+		if (selection < (Themes.empty() ? 2 : 3)) selection++;
 	}
 
 	if (hRepeat & KEY_UP) {
@@ -517,10 +527,13 @@ static void GUISettingsLogic(int &page, int &selection) {
 			page = 0;
 			selection = 3;
 
-		} else if (touching(touch, toggleAbles[0])) {
+		} else if (touching(touch, toggleAblesGui[0])) {
 			config->usebg(!config->usebg());
 
-		} else if (touching(touch, toggleAbles[1])) {
+		} else if (touching(touch, toggleAblesGui[1])) {
+			config->useAccentColor(!config->useAccentColor());
+
+		} else if (touching(touch, toggleAblesGui[2])) {
 			config->customfont(!config->customfont());
 
 			(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
@@ -537,12 +550,16 @@ static void GUISettingsLogic(int &page, int &selection) {
 				break;
 
 			case 1:
+				config->useAccentColor(!config->useAccentColor());
+				break;
+
+			case 2:
 				config->customfont(!config->customfont());
 
 				(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
 				break;
 
-			case 2:
+			case 3:
 				if (!Themes.empty()) Overlays::SelectTheme();
 				break;
 		}

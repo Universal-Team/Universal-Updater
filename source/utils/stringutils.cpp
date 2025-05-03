@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "stringutils.hpp"
+#include <charconv>
 #include <stdarg.h>
 
 /*
@@ -117,4 +118,23 @@ std::string StringUtils::format(const char *fmt_str, ...) {
 
 	std::unique_ptr<char, decltype(free) *> formatted(fp, free);
 	return std::string(formatted.get());
+}
+
+/*
+	Parse a color hex string (`#RRGGBB`) and return a C2D color.
+	Return 0 if parsing failed.
+*/
+uint32_t StringUtils::ParseColorHexString(std::string_view str) {
+	if (str.size() != 7) return 0;
+	if (str[0] != '#') return 0;
+
+	uint8_t colorVal[3];
+	for (int i = 0; i < 3; i++) {
+		const char *colorValStart = str.data() + 1 + i * 2;
+		auto result = std::from_chars(colorValStart, colorValStart + 2, colorVal[i], 16);
+		if (result.ec != std::errc()) return 0;
+		if (result.ptr != colorValStart + 2) return 0;
+	}
+
+	return C2D_Color32(colorVal[0], colorVal[1], colorVal[2], 255);
 }

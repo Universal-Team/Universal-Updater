@@ -60,8 +60,14 @@ void StoreUtils::DrawGrid() {
 		}
 
 		for (int i = 0, i2 = 0 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 15 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
+
+			uint32_t accentColor = 0;
+			if (config->useAccentColor() && (int)StoreUtils::entries.size() > i + StoreUtils::store->GetScreenIndx()) {
+				accentColor = StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAccentColor();
+			}
+
 			/* Boxes. */
-			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, true);
+			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, true, accentColor);
 
 			/* Ensure, entries is larger than the index. */
 			if ((int)StoreUtils::entries.size() > i2) {
