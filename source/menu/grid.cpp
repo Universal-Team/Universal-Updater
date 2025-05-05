@@ -29,6 +29,12 @@
 #include "structs.hpp"
 
 static const std::vector<Structs::ButtonPos> GridBoxes = {
+	{ 25, -15, 50, 50 },
+	{ 100, -15, 50, 50 },
+	{ 175, -15, 50, 50 },
+	{ 250, -15, 50, 50 },
+	{ 325, -15, 50, 50 },
+
 	{ 25, 45, 50, 50 },
 	{ 100, 45, 50, 50 },
 	{ 175, 45, 50, 50 },
@@ -45,8 +51,15 @@ static const std::vector<Structs::ButtonPos> GridBoxes = {
 	{ 100, 165, 50, 50 },
 	{ 175, 165, 50, 50 },
 	{ 250, 165, 50, 50 },
-	{ 325, 165, 50, 50 }
+	{ 325, 165, 50, 50 },
+
+	{ 25, 225, 50, 50 },
+	{ 100, 225, 50, 50 },
+	{ 175, 225, 50, 50 },
+	{ 250, 225, 50, 50 },
+	{ 325, 225, 50, 50 }
 };
+
 
 /* Draw the Top Grid. */
 void StoreUtils::DrawGrid() {
@@ -59,13 +72,13 @@ void StoreUtils::DrawGrid() {
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 		}
 
-		for (int i = 0, i2 = 0 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 15 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
+		for (int i = 0, i2 = -5 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 20 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
 			/* Boxes. */
-			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i].x, GridBoxes[i].y, 50, 50, true);
+			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i + 5].x, GridBoxes[i + 5].y, 50, 50, true);
 
 			/* Ensure, entries is larger than the index. */
 			if ((int)StoreUtils::entries.size() > i2) {
-				if (StoreUtils::entries[i2]) { // Ensure, the Entry is not nullptr.
+				if (i2 > -1 && StoreUtils::entries[i2]) { // Ensure, the Entry is not nullptr.
 					const C2D_Image tempImg = StoreUtils::entries[i2]->GetIcon();
 					const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 					const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
