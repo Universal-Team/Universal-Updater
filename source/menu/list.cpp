@@ -47,11 +47,18 @@ void StoreUtils::DrawList() {
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 		}
 
+		if (StoreUtils::store->GetAnimOffset() < 0) {
+			StoreUtils::store->SetAnimOffset(StoreUtils::store->GetAnimOffset() + 12);
+		}
+		if (StoreUtils::store->GetAnimOffset() > 0) {
+			StoreUtils::store->SetAnimOffset(StoreUtils::store->GetAnimOffset() - 12);
+		}
+
 		if (StoreUtils::entries.size() > 0) {
 			for (int i = 0; i < 5 && i < (int)StoreUtils::entries.size(); i++) {
 
 				if (i + StoreUtils::store->GetScreenIndx() == StoreUtils::store->GetEntry()) {
-					GFX::DrawBox(StoreBoxesList[i + 1].x, StoreBoxesList[i + 1].y, StoreBoxesList[i + 1].w, StoreBoxesList[i + 1].h, false);
+					GFX::DrawBox(StoreBoxesList[i + 1].x, StoreBoxesList[i + 1].y + StoreUtils::store->GetAnimOffset(), StoreBoxesList[i + 1].w, StoreBoxesList[i + 1].h, false);
 				}
 
 				/* Ensure, entries is larger than the index. */
@@ -61,12 +68,12 @@ void StoreUtils::DrawList() {
 						const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 						const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 
-						C2D_DrawImageAt(tempImg, StoreBoxesList[i].x + 1 + offsetW, StoreBoxesList[i].y + 1 + offsetH, 0.5);
+						C2D_DrawImageAt(tempImg, StoreBoxesList[i].x + 1 + offsetW, StoreBoxesList[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5);
 					}
 
-					if (StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24, 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
+					if (StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32 + StoreUtils::store->GetAnimOffset());
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}
@@ -115,7 +122,12 @@ void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 		}
 
 		/* Scroll Logic. */
-		if (StoreUtils::store->GetEntry() < StoreUtils::store->GetScreenIndx()) StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry());
-		else if (StoreUtils::store->GetEntry() > StoreUtils::store->GetScreenIndx() + 3 - 1) StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry() - 3 + 1);
+		if (StoreUtils::store->GetEntry() < StoreUtils::store->GetScreenIndx()) {
+			StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry());
+			StoreUtils::store->SetAnimOffset(-60);
+		} else if (StoreUtils::store->GetEntry() > StoreUtils::store->GetScreenIndx() + 3 - 1) {
+			StoreUtils::store->SetScreenIndx(StoreUtils::store->GetEntry() - 3 + 1);
+			StoreUtils::store->SetAnimOffset(60);
+		}
 	}
 }

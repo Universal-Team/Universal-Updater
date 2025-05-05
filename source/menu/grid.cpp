@@ -72,9 +72,16 @@ void StoreUtils::DrawGrid() {
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 		}
 
+		if (StoreUtils::store->GetAnimOffset() < 0) {
+			StoreUtils::store->SetAnimOffset(StoreUtils::store->GetAnimOffset() + 12);
+		}
+		if (StoreUtils::store->GetAnimOffset() > 0) {
+			StoreUtils::store->SetAnimOffset(StoreUtils::store->GetAnimOffset() - 12);
+		}
+
 		for (int i = 0, i2 = -5 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 20 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
 			/* Boxes. */
-			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i + 5].x, GridBoxes[i + 5].y, 50, 50, true);
+			if (i == StoreUtils::store->GetBox()) GFX::DrawBox(GridBoxes[i + 5].x, GridBoxes[i + 5].y + StoreUtils::store->GetAnimOffset(), 50, 50, true);
 
 			/* Ensure, entries is larger than the index. */
 			if ((int)StoreUtils::entries.size() > i2) {
@@ -83,10 +90,10 @@ void StoreUtils::DrawGrid() {
 					const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 					const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 
-					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH, 0.5);
+					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5);
 
 					/* Update Available mark. */
-					if (StoreUtils::entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32);
+					if (StoreUtils::entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32 + StoreUtils::store->GetAnimOffset());
 				}
 			}
 		}
@@ -113,13 +120,17 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 					StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 5);
 
 					if (StoreUtils::entries.size() > 15) StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5) - 2);
+					StoreUtils::store->SetAnimOffset(60);
 
 				} else {
 					if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 1) {
 						StoreUtils::store->SetEntry(StoreUtils::entries.size() - 1);
 						StoreUtils::store->SetBox(10 + (StoreUtils::store->GetEntry() % 5));
 
-						if (StoreUtils::entries.size() > 15) StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5) - 2);
+						if (StoreUtils::entries.size() > 15 && StoreUtils::store->GetScreenIndx() != (StoreUtils::store->GetEntry() / 5) - 2) {
+							StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5) - 2);
+							StoreUtils::store->SetAnimOffset(60);
+						}
 					}
 				}
 
@@ -142,6 +153,7 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 					StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 1);
 
 					StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5) - 2);
+					StoreUtils::store->SetAnimOffset(60);
 				}
 			}
 		}
@@ -157,6 +169,7 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 					StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() - 1);
 
 					StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5));
+					StoreUtils::store->SetAnimOffset(-60);
 				}
 			}
 		}
@@ -167,6 +180,7 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 					StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() - 5);
 
 					StoreUtils::store->SetScreenIndx((StoreUtils::store->GetEntry() / 5));
+					StoreUtils::store->SetAnimOffset(-60);
 				}
 
 			} else {
