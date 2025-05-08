@@ -110,6 +110,7 @@
 	"OP_INSTALLING": "Installing",
 	"OP_MOVING": "Moving",
 	"OP_WAITING": "Waiting",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Queue",
 	"QUEUE_POSITION": "Queue position",
 	"QUEUE_PROGRESS": "Step: %d / %d",

@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "files.hpp"
+#include "overlay.hpp"
 #include "storeUtils.hpp"
 #include "structs.hpp"
 
@@ -33,6 +34,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const Structs::ButtonPos btn = { 45, 215, 24, 24 };
 static const Structs::ButtonPos sshot = { 75, 215, 24, 24 };
 static const Structs::ButtonPos notes = { 105, 215, 24, 24 };
+static const Structs::ButtonPos wikiLink = { 135, 215, 48, 24 };
 extern bool checkWifiStatus();
 extern bool exiting, QueueRuns;
 
@@ -59,6 +61,10 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		if (!entry->GetScreenshots().empty()) GFX::DrawIcon(sprites_screenshot_idx, sshot.x, sshot.y, UIThemes->TextColor());
 		if (entry->GetReleaseNotes() != "") GFX::DrawIcon(sprites_notes_idx, notes.x, notes.y, UIThemes->TextColor());
+		if (entry->GetWiki() != "") {
+			GFX::DrawBox(wikiLink.x, wikiLink.y, wikiLink.w, wikiLink.h, false);
+			Gui::DrawString(wikiLink.x + wikiLink.w / 2, wikiLink.y + 2, 0.6, UIThemes->TextColor(), "Wiki", wikiLink.w, 0, font, C2D_AlignCenter);
+		}
 		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
 	}
 }
@@ -101,6 +107,10 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 				ProcessReleaseNotes(entry->GetReleaseNotes());
 				mode = 7;
 			}
+		}
+
+		if (touching(touch, wikiLink) && entry->GetWiki() != "") {
+			Overlays::ShowQrCodeUrl(entry->GetTitle() + " Wiki", entry->GetWiki());
 		}
 	}
 
