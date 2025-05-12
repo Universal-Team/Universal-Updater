@@ -102,6 +102,10 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 				mode = 7;
 			}
 		}
+
+		if (hDown & KEY_SELECT && entry->GetWiki() != "") {
+			aptLaunchSystemApplet(APPID_WEB, entry->GetWiki().c_str(), entry->GetWiki().size(), 0);
+		}
 	}
 
 	/* Quit UU. */
