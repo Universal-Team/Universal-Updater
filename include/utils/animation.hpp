@@ -44,7 +44,7 @@ namespace Animation {
 	void DrawProgressBar(u64 currentProgress, u64 totalProgress);
 	void displayProgressBar();
 
-	void DrawQueue(int x, int y);
+	void DrawQueue(int x, int y, int w, int h);
 	void QueueAnimHandle();
 
 	void QueueEntryDone();
