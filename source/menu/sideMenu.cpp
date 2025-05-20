@@ -56,7 +56,7 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 
 	GFX::DrawIcon(sprites_info_idx, sidePos[0].x, sidePos[0].y);
 	GFX::DrawIcon(sprites_download_idx, sidePos[1].x, sidePos[1].y);
-	Animation::DrawQueue(sidePos[2].x, sidePos[2].y);
+	Animation::DrawQueue(sidePos[2].x, sidePos[2].y, sidePos[2].w, sidePos[2].h);
 	GFX::DrawIcon(sprites_search_idx, sidePos[3].x, sidePos[3].y);
 	GFX::DrawIcon(sprites_sort_idx, sidePos[4].x, sidePos[4].y);
 	GFX::DrawIcon(sprites_settings_idx, sidePos[5].x, sidePos[5].y);

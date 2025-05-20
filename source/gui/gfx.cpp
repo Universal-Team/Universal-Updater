@@ -197,3 +197,13 @@ void GFX::DrawIcon(const int Idx, int X, int Y, uint32_t Color, float BlendPower
 
 	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, Idx), X, Y, 0.5f, &tint, ScaleX, ScaleY);
 }
+
+/*
+	Draws an icon rotated by a number in degrees and blended with a color.
+ */
+void GFX::DrawIconRotated(const int Idx, int X, int Y, float Angle, uint32_t Color, float BlendPower, float ScaleX, float ScaleY) {
+	C2D_ImageTint tint;
+	C2D_PlainImageTint(&tint, Color, BlendPower);
+
+	C2D_DrawImageAtRotated(C2D_SpriteSheetGetImage(sprites, Idx), X, Y, 0.5f, Angle * (M_PI / 180), &tint, ScaleX, ScaleY);
+}

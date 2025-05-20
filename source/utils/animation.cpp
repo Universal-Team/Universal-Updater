@@ -133,21 +133,20 @@ void Animation::displayProgressBar() {
 	}
 }
 
-static int frame = 0; // 0 - 7.
-static int advanceFrame = 0; // Only animate every 4 frames.
+static int rotation = 0;
 extern bool QueueRuns;
 extern std::deque<std::unique_ptr<Queue>> queueEntries;
 
-void Animation::DrawQueue(int x, int y) {
-	GFX::DrawIcon(sprites_queue0_idx + frame, x, y);
+void Animation::DrawQueue(int x, int y, int w, int h) {
+	GFX::DrawIconRotated(sprites_queue_idx, x + w/2, y + h/2, rotation);
 	Gui::DrawStringCentered(x + 20 - 160, y + 11, 0.6f, UIThemes->SideBarIconColor(), QueueSystem::Wait ? "!" : std::to_string(queueEntries.size()), 0, 0, font);
 }
 void Animation::QueueAnimHandle() {
 	if (QueueRuns) {
-		advanceFrame = (advanceFrame + 1) % 4;
-		if (advanceFrame == 0) frame = (frame + 1) % 8;
+		rotation = (rotation + 3) % 90;
 	}
 }
+
 
 #define DISPLAYBOX_UP 206
 #define DISPLAYBOX_DOWN 240

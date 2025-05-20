@@ -53,6 +53,7 @@ namespace GFX {
 	void HandleBattery();
 	void DrawWifi();
 	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1, float ScaleY = 1);
+	void DrawIconRotated(const int Idx, int X, int Y, float Angle = 0, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1, float ScaleY = 1);
 };
 
 #endif
