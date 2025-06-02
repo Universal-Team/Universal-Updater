@@ -106,11 +106,13 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 		}
 
 		if (touching(touch, wiki) && entry->GetWiki() != "") {
-			char buf[0x1000]; // Needs to be this size size it gets memcpy'd to
+			char *buf = new char[0x1000]; // Needs to be this size size it gets memcpy'd to
 			int length = entry->GetWiki().size();
 			memcpy(buf, entry->GetWiki().c_str(), length);
 			buf[length] = 0;
 			aptLaunchSystemApplet(APPID_WEB, buf, length, 0);
+
+			delete[] buf;
 		}
 	}
 
