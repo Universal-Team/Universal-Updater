@@ -104,7 +104,11 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 		}
 
 		if (hDown & KEY_SELECT && entry->GetWiki() != "") {
-			aptLaunchSystemApplet(APPID_WEB, entry->GetWiki().c_str(), entry->GetWiki().size(), 0);
+			char buf[0x1000]; // Needs to be this size size it gets memcpy'd to
+			int length = entry->GetWiki().size();
+			memcpy(buf, entry->GetWiki().c_str(), length);
+			buf[length] = 0;
+			aptLaunchSystemApplet(APPID_WEB, buf, length, 0);
 		}
 	}
 
