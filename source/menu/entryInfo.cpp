@@ -33,6 +33,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const Structs::ButtonPos btn = { 45, 215, 24, 24 };
 static const Structs::ButtonPos sshot = { 75, 215, 24, 24 };
 static const Structs::ButtonPos notes = { 105, 215, 24, 24 };
+static const Structs::ButtonPos wiki = { 135, 215, 24, 24 };
 extern bool checkWifiStatus();
 extern bool exiting, QueueRuns;
 
@@ -59,6 +60,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
 		if (!entry->GetScreenshots().empty()) GFX::DrawIcon(sprites_screenshot_idx, sshot.x, sshot.y, UIThemes->TextColor());
 		if (entry->GetReleaseNotes() != "") GFX::DrawIcon(sprites_notes_idx, notes.x, notes.y, UIThemes->TextColor());
+		if (entry->GetWiki() != "") GFX::DrawIcon(sprites_wiki_idx, wiki.x, wiki.y, UIThemes->TextColor());
 		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
 	}
 }
@@ -101,6 +103,16 @@ void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mod
 				ProcessReleaseNotes(entry->GetReleaseNotes());
 				mode = 7;
 			}
+		}
+
+		if (touching(touch, wiki) && entry->GetWiki() != "") {
+			char *buf = new char[0x1000]; // Needs to be this size size it gets memcpy'd to
+			int length = entry->GetWiki().size();
+			memcpy(buf, entry->GetWiki().c_str(), length);
+			buf[length] = 0;
+			aptLaunchSystemApplet(APPID_WEB, buf, length + 1, 0);
+
+			delete[] buf;
 		}
 	}
 
