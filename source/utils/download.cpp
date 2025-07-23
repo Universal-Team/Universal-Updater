@@ -72,6 +72,15 @@ static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
 CURL *CurlHandle = nullptr;
 
+const std::vector<Structs::ButtonPos> promptButtons = {
+	{24, 94, 124, 48},
+	{172, 94, 124, 48}
+};
+const std::vector<std::string> promptLabels = {
+	"SKIP", "UPDATE"
+};
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
+
 static int curlProgress(CURL *hnd,
 					curl_off_t dltotal, curl_off_t dlnow,
 					curl_off_t ultotal, curl_off_t ulnow)
@@ -890,7 +899,8 @@ void UpdateAction() {
 	UUUpdate res = IsUUUpdateAvailable();
 	if (res.Available) {
 		bool confirmed = false;
-		int scrollIndex = 0;
+		int scrollOffset = 0;
+		int scrollDelta = 0;
 
 		while(!confirmed) {
 			Gui::clearTextBufs();
@@ -900,37 +910,57 @@ void UpdateAction() {
 
 			Gui::ScreenDraw(Top);
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, UIThemes->TextColor(), res.Notes, 390, 0, font, C2D_WordWrap);
+			Gui::DrawString(5, 25 - scrollOffset, 0.5f, UIThemes->TextColor(), res.Notes, 390, 0, font, C2D_WordWrap);
 			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
 			Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), res.Version, 390, 0, font);
+			char updMsg[150];
+			snprintf(updMsg, sizeof(updMsg), Lang::get("UPDATE_AVAILABLE").c_str(), res.Version.c_str());
+			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), updMsg, 390, 0, font);
 
 			GFX::DrawBottom();
 			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("UPDATE_AVAILABLE"), 310, 0, font);
-			Gui::DrawString(5, 30, 0.6f, UIThemes->TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font, C2D_WordWrap);
+			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font);
+
+			for(uint i = 0; i < promptButtons.size(); i++) {
+				Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
+				Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+			}
+
 			C3D_FrameEnd(0);
 
 			hidScanInput();
 			touchPosition t;
 			touchRead(&t);
-			u32 repeat = hidKeysDownRepeat();
+			u32 held = hidKeysHeld();
 			u32 down = hidKeysDown();
 
 			/* Scroll Logic. */
-			if (repeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
+			scrollOffset += scrollDelta;
+			if (scrollDelta != 0) {
+				scrollDelta > 0 ? scrollDelta-- : scrollDelta++;
+			}
+			
+			// D-Pad input
+			if (held & KEY_DDOWN && scrollDelta < 10) scrollDelta += 2;
+			if (held & KEY_DUP && scrollDelta > -10) scrollDelta -= 2;
 
-			if (repeat & KEY_UP) {
-				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
+			//Circle Pad input
+			circlePosition circlePad;
+			hidCircleRead(std::addressof(circlePad));
+			if (scrollDelta < 10 && scrollDelta > -10) scrollDelta -= circlePad.dy / 60;
+
+			if (scrollOffset < 0) {
+				scrollOffset = 0;
+				scrollDelta = 0;
 			}
 
-			if (down & KEY_B) return;
+			if (down & KEY_B || (down & KEY_TOUCH && touching(t, promptButtons[0]))) return;
 
-			if ((down & KEY_A) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
+			if ((down & KEY_A) || (down & KEY_START) || (down & KEY_TOUCH && touching(t, promptButtons[1]))) confirmed = true;
 		}
 
 		Result dlRes;

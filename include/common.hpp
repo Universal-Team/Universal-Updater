@@ -41,7 +41,7 @@
 #define _UNISTORE_VERSION 4
 
 inline std::unique_ptr<Config> config;
-inline uint32_t hRepeat, hDown, hHeld;
+inline uint32_t hRepeat, hUp, hDown, hHeld;
 inline touchPosition touch;
 inline C2D_Font font;
 
