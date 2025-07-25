@@ -57,7 +57,7 @@ private:
 		 ascending = false, updateFilter = false, screenshotFetch = false, canDisplay = false, isAND = true;
 
 	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
-		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollIndex = 0, queueIndex = 0;
+		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, scrollOffset = 0, scrollDelta = 0, queueIndex = 0;
 
 	SortType sorttype = SortType::LAST_UPDATED;
 

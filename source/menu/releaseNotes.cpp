@@ -30,6 +30,9 @@
 #include "storeUtils.hpp"
 
 std::vector<std::string> wrappedNotes;
+touchPosition touches[2]; //Stores last two touch positions
+static const Structs::ButtonPos back = { 4, 0, 24, 24 };
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 size_t StoreUtils::FindSplitPoint(const std::string &str, const std::vector<std::string> splitters) {
 	for (const std::string &splitter : splitters) {
@@ -54,7 +57,7 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 
 		/* If too long to fit on screen, wrap at spaces, slashes, periods, etc. */
 		size_t spacePos;
-		while (width > 390.0f && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
+		while (width > 310.0f && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
 			splitPos = spacePos;
 			if (substr[splitPos] != ' ') splitPos++;
 
@@ -75,105 +78,89 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 	} while (splitPos != std::string::npos);
 }
 
-void StoreUtils::DrawReleaseNotes(const int &scrollIndex, const std::unique_ptr<StoreEntry> &entry) {
-	if (entry && StoreUtils::store) {
-		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+void StoreUtils::DrawReleaseNotes(const int &scrollOffset, const std::string &title) {
+	if (title != "" && StoreUtils::store) {
+		Gui::ScreenDraw(Bottom);
+		Gui::Draw_Rect(0, 26, 320, 214, UIThemes->BGColor());
 		
 		float fontHeight = Gui::GetStringHeight(0.5f, "", font);
-		for (size_t i = 0; (scrollIndex + i) < wrappedNotes.size() && i < (240.0f - 25.0f) / fontHeight; i++) {
-			Gui::DrawString(5, 25 + i * fontHeight, 0.5f, UIThemes->TextColor(), wrappedNotes[scrollIndex + i], 390, 0, font);
+		for (size_t i = 0; i < wrappedNotes.size(); i++) {
+			if (25 + i * fontHeight > scrollOffset && 25 + i * fontHeight < scrollOffset + 240.0f) 
+			Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 310, 0, font);
 		}
 
-		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), entry->GetTitle(), 390, 0, font);
+		Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), title, 310, 0, font);
+		
+		GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
 
-	} else {
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-	}
+		Gui::Draw_Rect(0, 0, 400, 240, DIM_COLOR); // Darken.
 
+	}
 	Animation::QueueEntryDone();
 }
 
 /*
 	As the name says: Release notes logic.
 
-	int &scrollIndex: The scroll index for the Release Notes text.
+	int &scrollOffset: The scroll offset for the Release Notes text.
+	int &scrollDelta: The scroll delta for the Release Notes text.
 	int &storeMode: The store mode to properly return back.
 */
-void StoreUtils::ReleaseNotesLogic(int &scrollIndex, int &storeMode) {
+void StoreUtils::ReleaseNotesLogic(int &scrollOffset, int &scrollDelta, int &storeMode) {
 	int linesPerScreen = ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font));
+	scrollOffset += scrollDelta;
+	if (scrollDelta != 0) {
+		scrollDelta > 0 ? scrollDelta-- : scrollDelta++;
+	}
 
-	if (hRepeat & KEY_DOWN) scrollIndex++;
-	if (hRepeat & KEY_UP) scrollIndex--;
-	if (hRepeat & KEY_RIGHT) scrollIndex += linesPerScreen;
-	if (hRepeat & KEY_LEFT) scrollIndex -= linesPerScreen;
+	if ((int)wrappedNotes.size() > linesPerScreen) {
+		//D-Pad
+		if (hHeld & KEY_DDOWN && scrollDelta < 10) scrollDelta += 2;
+		if (hHeld & KEY_DUP && scrollDelta > -10) scrollDelta -= 2;
+		if (hHeld & KEY_DRIGHT && scrollDelta < 20) scrollDelta += 5;
+		if (hHeld & KEY_DLEFT && scrollDelta > -20) scrollDelta -= 5;
+
+		//Circle Pad
+		circlePosition circlePad;
+		hidCircleRead(std::addressof(circlePad));
+		if (scrollDelta < 10 && scrollDelta > -10) scrollDelta -= circlePad.dy / 60;
+
+		//Touch
+		if (hDown & KEY_TOUCH && touch.py > 25) {
+			touches[1] = touch;
+			scrollDelta = 0;
+		}
+		if (hHeld & KEY_TOUCH) {
+			if (touch.py > 25) {
+				scrollOffset -= touch.py - touches[1].py;
+			}
+			touches[0] = touches[1];
+			touches[1] = touch;
+		}
+		if (hUp & KEY_TOUCH && touches[1].py > 25) {
+			scrollDelta = touches[0].py - touches[1].py;
+		}
+
+	}
 
 	/* Ensure it doesn't scroll off screen. */
-	if (scrollIndex < 0) scrollIndex = 0;
-	if (scrollIndex > (int)wrappedNotes.size() - linesPerScreen)
-		scrollIndex = std::max(0, (int)wrappedNotes.size() - linesPerScreen);
-
-	if (hDown & KEY_B) {
-		scrollIndex = 0;
-		storeMode = 0;
+	if (scrollOffset < 0) {
+		scrollOffset = 0;
+		scrollDelta = 0;
 	}
-}
+	int maxScroll = wrappedNotes.size() * Gui::GetStringHeight(0.5f, "", font) - (240.0f - 25.0f);
+	if (scrollOffset > maxScroll && ((int)wrappedNotes.size() > linesPerScreen)) {
+		scrollOffset = maxScroll;
+		scrollDelta = 0;
+	}
 
-
-/*
-	I place it temporarely here for now.
-
-	Display Release changelog for Universal-Updater.
-*/
-void DisplayChangelog() {
-	if (config->changelog()) {
-		config->changelog(false);
-
-		bool confirmed = false;
-		const std::string notes = GetChangelog();
-		if (notes == "") return;
-		int scrollIndex = 0;
-
-		while(!confirmed) {
-			Gui::clearTextBufs();
-			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
-
-			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-			Gui::DrawString(5, 25 - scrollIndex, 0.5f, UIThemes->TextColor(), notes, 390, 0, font, C2D_WordWrap);
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), C_V, 390, 0, font);
-
-			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			C3D_FrameEnd(0);
-
-			hidScanInput();
-			touchPosition t;
-			touchRead(&t);
-			u32 repeat = hidKeysDownRepeat();
-			u32 down = hidKeysDown();
-
-			/* Scroll Logic. */
-			if (repeat & KEY_DOWN) scrollIndex += Gui::GetStringHeight(0.5f, "", font);
-
-			if (repeat & KEY_UP) {
-				if (scrollIndex > 0) scrollIndex -= Gui::GetStringHeight(0.5f, "", font);
-			}
-
-			if ((down & KEY_A) || (down & KEY_B) || (down & KEY_START) || (down & KEY_TOUCH)) confirmed = true;
-		}
+	if (hDown & KEY_B || (hDown & KEY_TOUCH && touching(touch, back))) {
+		if (config->changelog()) config->changelog(false);
+		scrollOffset = 0;
+		scrollDelta = 0;
+		storeMode = 0;
 	}
 }

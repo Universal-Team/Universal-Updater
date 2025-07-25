@@ -186,6 +186,7 @@ Result Init::MainLoop() {
 	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
 		hHeld = hidKeysHeld();
+		hUp = hidKeysUp();
 		hDown = hidKeysDown();
 		hRepeat = hidKeysDownRepeat();
 		hidTouchRead(&touch);

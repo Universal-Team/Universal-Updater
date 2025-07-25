@@ -37,7 +37,6 @@ extern int fadeAlpha;
 
 extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
 extern void notConnectedMsg();
-extern void DisplayChangelog();
 
 /*
 	MainScreen Constructor.
@@ -101,7 +100,13 @@ MainScreen::MainScreen() {
 	StoreUtils::store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll();
 	StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
-	DisplayChangelog();
+
+	// Display Release changelog for Universal-Updater.
+	if (config->changelog()) {
+		if (GetChangelog() == "") return;
+		StoreUtils::ProcessReleaseNotes(GetChangelog());
+		storeMode = 7;
+	}
 };
 
 /*
@@ -111,13 +116,6 @@ void MainScreen::Draw(void) const {
 	if (this->storeMode == 6) {
 		/* Screenshot Menu. */
 		StoreUtils::DrawScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->sSize, this->screenshotName, this->zoom, this->canDisplay);
-		return;
-	}
-
-	if (this->storeMode == 7) {
-		/* Release Notes. */
-		StoreUtils::DrawReleaseNotes(this->scrollIndex, StoreUtils::entries[StoreUtils::store->GetEntry()]);
-		GFX::DrawBottom();
 		return;
 	}
 
@@ -170,6 +168,12 @@ void MainScreen::Draw(void) const {
 	}
 
 	StoreUtils::DrawSideMenu(this->storeMode);
+	if (this->storeMode == 7) {
+		/* Release Notes. */
+		std::string title = config->changelog() ? std::string("Universal-Updater ") + C_V : StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTitle();
+		StoreUtils::DrawReleaseNotes(this->scrollOffset, title);
+		return;
+	}
 	if (this->showMarks && StoreUtils::store && StoreUtils::store->GetValid()) StoreUtils::DisplayMarkBox(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetMarks());
 	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 }
@@ -217,7 +221,7 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	/* Release Notes. */
 	if (this->storeMode == 7) {
-		StoreUtils::ReleaseNotesLogic(this->scrollIndex, this->storeMode);
+		StoreUtils::ReleaseNotesLogic(this->scrollOffset, this->scrollDelta, this->storeMode);
 		return;
 	}
 
