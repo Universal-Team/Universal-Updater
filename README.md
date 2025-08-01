@@ -43,7 +43,7 @@ To build Universal-Updater from source, you will need to install devkitARM and s
 ```
 (The `sudo dkp-` may not be needed depending on your OS)
 
-You will also need [bannertool](https://github.com/Steveice10/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
+You will also need [bannertool](https://github.com/Epicpkmn11/bannertool/releases/latest) and [makerom](https://github.com/profi200/Project_CTR/releases/latest) in your PATH.
 
 ### Cloning the repository
 
