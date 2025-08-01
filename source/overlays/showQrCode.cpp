@@ -136,7 +136,7 @@ void Overlays::ShowQrCodeUrl(const std::string &title, const std::string &url) {
 
 	bool doOut = false;
 
-	while(!doOut) {
+	while(!doOut && aptMainLoop()) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, TRANSPARENT);
