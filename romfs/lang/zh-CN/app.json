@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "您的 Universal-Updater 版本过低，\n无法使用该 UniStore 。\n请更新到最新版本。",
 	"UNISTORE_TOO_OLD": "该 UniStore 已过期，\n无法与当前版本的 Universal-Updater 配合使用。\n请向商店创建者请求更新。",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "更新版本现已可用: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "更新完成 ！请重新打开 Universal-Updater。",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "正在更新贴图集……",

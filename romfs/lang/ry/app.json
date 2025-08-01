@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "Universal-Updaterぬバージョノーくぬ\nUniStore使用すんがー古しじやびーん。\n最新ぬバージョンんかい更新しくぃみそーれー。",
 	"UNISTORE_TOO_OLD": "くぬUniStoreー古く、くぬバージョンぬ\nUniversal-Updaterっしぇー使用なやびらん。\n作成者んかい更新たぬでぃくぃみそーれー。",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "更新ぬあいびーん: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "更新ぬしーうわやびたん！Universal-Updater再度ふぃらちくぃみそーれー。",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "スプライトシート更新そーいびーん……",

@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "Twoja wersja Universal-Updater jest\nzbyt stara aby używać tego UniStore.\nProszę zaktualizować do najnowszej wersji.",
 	"UNISTORE_TOO_OLD": "Ten UniStore jest nieaktualny i nie może być użyty\nw tej wersji Universal-Updater.\nPoproś twórcę o jego aktualizację.",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "Dostępna aktualizacja: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "Aktualizacja zakończona! Proszę ponownie otworzyć Universal-Updater.",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "Aktualizowanie tekstur...",

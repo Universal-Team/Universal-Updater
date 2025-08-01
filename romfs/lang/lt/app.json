@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "Jūsų Universal-Updater versija yra\nper sena naudoti šį „UniStore“.\nAtsinaujinkite į naujausią versiją.",
 	"UNISTORE_TOO_OLD": "Ši „UniStore“ yra pasenusi ir negali būti naudojama su šia Universal-Updater versija. Paprašykite kūrėjo, kad ją atnaujintų.",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "Yra Atnaujinimų: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "Atnaujinimai baigti, prašome iš naujo atidaryti Universal-Updater.",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "Atnaujinamas „SpriteSheet“...",

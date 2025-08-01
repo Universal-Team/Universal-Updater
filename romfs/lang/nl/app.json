@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "Uw versie van de Universal-Updater is\nte oud om deze UniStore te gebruiken.\nUpdate alsjeblieft naar de nieuwste versie.",
 	"UNISTORE_TOO_OLD": "Deze UniStore is verouderd en kan niet gebruikt worden\nmet deze versie van Universal-Updater.\nVraag de maker om het te updaten.",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "Update Beschikbaar: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "Update klaar! Graag Universal-Updater opnieuw openen.",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "Spritesheet bijwerken...",

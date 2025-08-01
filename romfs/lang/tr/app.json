@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "Universal-Updater sürümün bu UniStore'u\nkullanmak için çok eski.\nLütfen son sürüme güncelleyin.",
 	"UNISTORE_TOO_OLD": "UniStore eski ve Universal-Updater\nbu sürümüyle bunu kullanılamaz.\nKreatörden güncellemesini isteyin.",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "Güncelleme Mevcut: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "Güncelleme tamamdır! Universal-Updater'ı yeniden açın.",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "Model Tablosu Güncelleniyor...",

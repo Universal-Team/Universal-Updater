@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "사용 중인 Universal-Updater의 버전이\n너무 오래되어 이 UniStore를 사용할 수 없습니다.\n최신 버전으로 업데이트하세요.",
 	"UNISTORE_TOO_OLD": "이 UniStore는 오래되어 이 버전의\nUniversal-Updater에서는 사용할 수 없습니다.\n제작자에게 업데이트를 요청하세요.",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "업데이트 사용 가능: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "업데이트를 완료했습니다! Universal-Updater를 다시 시작하세요.",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "스프라이트시트 업데이트 중...",

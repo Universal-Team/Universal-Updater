@@ -147,7 +147,7 @@
 	"UNISTORE_TOO_NEW": "您的 Universal-Updater 版本過舊，\n無法使用該 UniStore。\n請升級至最新版本。",
 	"UNISTORE_TOO_OLD": "該 UniStore 已過期，\n無法與當前版本的 Universal-Updater 配合使用。\n請詢問創建者以進行升級。",
 	"UPDATE": "Update",
-	"UPDATE_AVAILABLE": "更新可用: %s",
+	"UPDATE_AVAILABLE": "Update available: %s",
 	"UPDATE_DONE": "更新完成！請重啓 Universal-Updater。",
 	"UPDATE_OR_CANCEL": "Press  to update,  to skip.",
 	"UPDATING_SPRITE_SHEET": "正在更新精靈表...",
