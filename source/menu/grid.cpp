@@ -81,8 +81,8 @@ void StoreUtils::DrawGrid() {
 
 		for (int i = 0, i2 = -5 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 20 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
 			uint32_t accentColor = 0;
-			if (config->useAccentColor() && (int)StoreUtils::entries.size() > i + StoreUtils::store->GetScreenIndx()) {
-				accentColor = StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAccentColor();
+			if (config->useAccentColor() && (int)StoreUtils::entries.size() > i2 + 5) {
+				accentColor = StoreUtils::entries[i2 + 5]->GetAccentColor();
 			}
 
 			/* Boxes. */
