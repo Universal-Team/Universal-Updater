@@ -142,7 +142,10 @@ void Overlays::ShowQrCodeUrl(const std::string &title, const std::string &url) {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		GFX::DrawTop();
+		// Not using GFX::DrawTop because the QR doesn't fit as
+		// nicely with the border.
+		Gui::ScreenDraw(Top);
+		Gui::Draw_Rect(0, 0, 400, 240, UIThemes->BGColor());
 
 		C2D_DrawRectSolid(drawX - drawBorder, drawY - drawBorder, 0.75f, drawSize + drawBorder * 2, drawSize + drawBorder * 2, WHITE);
 		C2D_DrawImageAt(qrImage, drawX, drawY, 1.f, &imageTint);
