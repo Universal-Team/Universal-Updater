@@ -43,6 +43,7 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->Version = store->GetVersionEntry(index);
 	this->Console = StringUtils::FetchStringsFromVector(store->GetConsoleEntry(index));
 	this->LastUpdated = store->GetLastUpdatedEntry(index);
+	this->Stars = store->GetStarsEntry(index);
 	this->License = store->GetLicenseEntry(index);
 	this->Wiki = store->GetWikiEntry(index);
 	this->MarkString = StringUtils::GetMarkString(meta->GetMarks(store->GetUniStoreTitle(), this->Title));

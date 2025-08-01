@@ -77,6 +77,7 @@ public:
 	C2D_Image icn;
 	int total, current;
 	std::string name = "", unistoreName = "", entryName = "", lastUpdated = "";
+	int Stars = 0;
 };
 
 #endif

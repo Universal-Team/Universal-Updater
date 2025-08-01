@@ -84,6 +84,23 @@ bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, co
 }
 
 /*
+	Compare Stars.
+
+	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
+*/
+bool StoreUtils::compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+	if (a && b) return a->GetStars() > b->GetStars();
+
+	return true;
+}
+bool StoreUtils::compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+	if (a && b) return a->GetStars() < b->GetStars();
+
+	return true;
+}
+
+/*
 	Sort the entries.
 
 	bool Ascending: If Ascending.
@@ -101,6 +118,10 @@ void StoreUtils::SortEntries(bool Ascending, SortType sorttype) {
 
 		case SortType::LAST_UPDATED:
 			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateDescending);
+			break;
+
+		case SortType::POPULARITY:
+			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareStarsAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareStarsDescending);
 			break;
 	}
 }

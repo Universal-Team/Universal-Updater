@@ -387,6 +387,22 @@ std::string Store::GetLastUpdatedEntry(int index) const {
 }
 
 /*
+	Return the star count of an index.
+
+	int index: The index.
+*/
+int Store::GetStarsEntry(int index) const {
+	if (!this->valid) return 0;
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return 0; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("stars") && this->storeJson["storeContent"][index]["info"]["stars"].is_number()) {
+		return this->storeJson["storeContent"][index]["info"]["stars"];
+	}
+
+	return 0;
+}
+
+/*
 	Return the License of an index.
 
 	int index: The index.

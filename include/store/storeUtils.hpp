@@ -35,7 +35,8 @@
 enum class SortType : uint8_t {
 	TITLE,
 	AUTHOR,
-	LAST_UPDATED
+	LAST_UPDATED,
+	POPULARITY
 };
 
 namespace StoreUtils {
@@ -105,6 +106,9 @@ namespace StoreUtils {
 
 	bool compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+
+	bool compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+	bool compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 
 	void SortEntries(bool Ascending, SortType sorttype);
 

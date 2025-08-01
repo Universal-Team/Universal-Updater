@@ -42,6 +42,7 @@ public:
 	std::string GetVersion() const { return this->Version; };
 	std::string GetConsole() const { return this->Console; };
 	std::string GetLastUpdated() const { return this->LastUpdated; };
+	int GetStars() const { return this->Stars; };
 	std::string GetLicense() const { return this->License; };
 	std::string GetWiki() const { return this->Wiki; };
 	int GetMarks() const { return this->Marks; };
@@ -69,6 +70,7 @@ public:
 
 private:
 	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, MarkString, ReleaseNotes, Wiki;
+	int Stars;
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
 	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames;
