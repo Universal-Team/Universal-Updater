@@ -36,6 +36,7 @@ namespace Overlays {
 	void ShowCredits();
 	std::string SelectDir(const std::string &oldDir, const std::string &msg);
 	void SelectTheme();
+	void ShowQrCodeUrl(const std::string &title, const std::string &url);
 };
 
 #endif

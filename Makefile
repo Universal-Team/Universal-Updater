@@ -93,10 +93,10 @@ TARGET		:=	Universal-Updater
 BUILD		:=	build
 UNIVCORE	:=	Universal-Core
 SOURCES		:=	$(UNIVCORE) source source/download source/gui source/lang source/menu source/overlays \
-							source/qr source/screens source/store source/utils
+							source/qr source/qrcodegen source/screens source/store source/utils
 DATA		:=	data
-INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/qr include/screens \
-							include/store include/utils
+INCLUDES	:=	$(UNIVCORE) include include/download include/gui include/lang include/overlays include/qr \
+							include/qrcodegen include/screens include/store include/utils
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
