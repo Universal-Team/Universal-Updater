@@ -78,7 +78,7 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 	} while (splitPos != std::string::npos);
 }
 
-void StoreUtils::DrawReleaseNotes(const int &scrollOffset, const std::unique_ptr<StoreEntry> &entry) {
+void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry) {
 	if (entry && StoreUtils::store) {
 		Gui::ScreenDraw(Bottom);
 		Gui::Draw_Rect(0, 26, 320, 214, UIThemes->BGColor());
@@ -106,33 +106,38 @@ void StoreUtils::DrawReleaseNotes(const int &scrollOffset, const std::unique_ptr
 /*
 	As the name says: Release notes logic.
 
-	int &scrollOffset: The scroll offset for the Release Notes text.
-	int &scrollDelta: The scroll delta for the Release Notes text.
+	float &scrollOffset: The scroll offset for the Release Notes text.
+	float &scrollDelta: The scroll delta for the Release Notes text.
 	int &storeMode: The store mode to properly return back.
 */
-void StoreUtils::ReleaseNotesLogic(int &scrollOffset, int &scrollDelta, int &storeMode) {
+void StoreUtils::ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode) {
 	int linesPerScreen = ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font));
 	scrollOffset += scrollDelta;
-	if (scrollDelta != 0) {
-		scrollDelta > 0 ? scrollDelta-- : scrollDelta++;
+	if (scrollDelta > 0) {
+		scrollDelta = std::max(scrollDelta - 1.0f, 0.0f);
+	} else if (scrollDelta < 0) {
+		scrollDelta = std::min(scrollDelta + 1.0f, 0.0f);
 	}
 
 	if ((int)wrappedNotes.size() > linesPerScreen) {
 		//D-Pad
-		if (hHeld & KEY_DDOWN && scrollDelta < 10) scrollDelta += 2;
-		if (hHeld & KEY_DUP && scrollDelta > -10) scrollDelta -= 2;
-		if (hHeld & KEY_DRIGHT && scrollDelta < 20) scrollDelta += 5;
-		if (hHeld & KEY_DLEFT && scrollDelta > -20) scrollDelta -= 5;
+		if (hHeld & KEY_DDOWN && scrollDelta < 10.0f) scrollDelta += 2.0f;
+		if (hHeld & KEY_DUP && scrollDelta > -10.0f) scrollDelta -= 2.0f;
+		if (hHeld & KEY_DRIGHT && scrollDelta < 20.0f) scrollDelta += 5.0f;
+		if (hHeld & KEY_DLEFT && scrollDelta > -20.0f) scrollDelta -= 5.0f;
 
 		//Circle Pad
 		circlePosition circlePad;
 		hidCircleRead(std::addressof(circlePad));
-		if (scrollDelta < 10 && scrollDelta > -10) scrollDelta -= circlePad.dy / 60;
+		float deltaCircle = -circlePad.dy / 60.0f;
+		if (deltaCircle >= 0.5f || deltaCircle <= -0.5f) {
+			if (scrollDelta < 10.0f && scrollDelta > -10.0f) scrollDelta += deltaCircle;
+		}
 
 		//Touch
 		if (hDown & KEY_TOUCH && touch.py > 25) {
 			touches[1] = touch;
-			scrollDelta = 0;
+			scrollDelta = 0.0f;
 		}
 		if (hHeld & KEY_TOUCH) {
 			if (touch.py > 25) {
@@ -148,20 +153,20 @@ void StoreUtils::ReleaseNotesLogic(int &scrollOffset, int &scrollDelta, int &sto
 	}
 
 	/* Ensure it doesn't scroll off screen. */
-	if (scrollOffset < 0) {
-		scrollOffset = 0;
-		scrollDelta = 0;
+	if (scrollOffset < 0.0f) {
+		scrollOffset = 0.0f;
+		scrollDelta = 0.0f;
 	}
 	int maxScroll = wrappedNotes.size() * Gui::GetStringHeight(0.5f, "", font) - (240.0f - 25.0f);
 	if (scrollOffset > maxScroll && ((int)wrappedNotes.size() > linesPerScreen)) {
 		scrollOffset = maxScroll;
-		scrollDelta = 0;
+		scrollDelta = 0.0f;
 	}
 
 	if (hDown & KEY_B || (hDown & KEY_TOUCH && touching(touch, back))) {
 		if (config->changelog()) config->changelog(false);
-		scrollOffset = 0;
-		scrollDelta = 0;
+		scrollOffset = 0.0f;
+		scrollDelta = 0.0f;
 		storeMode = 0;
 	}
 }

@@ -95,8 +95,8 @@ namespace StoreUtils {
 	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
 	void ProcessReleaseNotes(std::string ReleaseNotes);
 
-	void DrawReleaseNotes(const int &scrollOffset, const std::unique_ptr<StoreEntry> &entry);
-	void ReleaseNotesLogic(int &scrollOffset, int &scrollDelta, int &storeMode);
+	void DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry);
+	void ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode);
 
 	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
