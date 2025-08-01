@@ -170,8 +170,7 @@ void MainScreen::Draw(void) const {
 	StoreUtils::DrawSideMenu(this->storeMode);
 	if (this->storeMode == 7) {
 		/* Release Notes. */
-		std::string title = config->changelog() ? std::string("Universal-Updater ") + C_V : StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTitle();
-		StoreUtils::DrawReleaseNotes(this->scrollOffset, title);
+		StoreUtils::DrawReleaseNotes(this->scrollOffset, StoreUtils::entries[StoreUtils::store->GetEntry()]);
 		return;
 	}
 	if (this->showMarks && StoreUtils::store && StoreUtils::store->GetValid()) StoreUtils::DisplayMarkBox(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetMarks());
