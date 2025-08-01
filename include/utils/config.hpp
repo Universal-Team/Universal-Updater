@@ -127,7 +127,7 @@ private:
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateNightly = false,
 		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
-		v_useAccentColor = false;
+		v_useAccentColor = true;
 };
 
 #endif
