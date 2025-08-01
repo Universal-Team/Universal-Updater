@@ -56,9 +56,14 @@ void StoreUtils::DrawList() {
 
 		if (StoreUtils::entries.size() > 0) {
 			for (int i = 0; i < 5 && i < (int)StoreUtils::entries.size(); i++) {
+				uint32_t accentColor = 0;
 
 				if (i + StoreUtils::store->GetScreenIndx() == StoreUtils::store->GetEntry()) {
-					GFX::DrawBox(StoreBoxesList[i + 1].x, StoreBoxesList[i + 1].y + StoreUtils::store->GetAnimOffset(), StoreBoxesList[i + 1].w, StoreBoxesList[i + 1].h, false);
+					if (config->useAccentColor() && (int)StoreUtils::entries.size() > i + StoreUtils::store->GetScreenIndx()) {
+						accentColor = StoreUtils::entries[i + StoreUtils::store->GetScreenIndx()]->GetAccentColor();
+					}
+
+					GFX::DrawBox(StoreBoxesList[i + 1].x, StoreBoxesList[i + 1].y + StoreUtils::store->GetAnimOffset(), StoreBoxesList[i + 1].w, StoreBoxesList[i + 1].h, true, accentColor);
 				}
 
 				/* Ensure, entries is larger than the index. */
@@ -72,8 +77,8 @@ void StoreUtils::DrawList() {
 					}
 
 					if (StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32 + StoreUtils::store->GetAnimOffset());
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
-					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, accentColor ? WHITE : UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetTitle(), 300, 0, font);
+					Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, accentColor ? WHITE : UIThemes->TextColor(), StoreUtils::entries[i - 1 + StoreUtils::store->GetScreenIndx()]->GetAuthor(), 300, 0, font);
 				}
 			}
 		}

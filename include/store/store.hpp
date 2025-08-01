@@ -61,6 +61,7 @@ public:
 	std::vector<std::string> GetScreenshotList(int index) const;
 	std::vector<std::string> GetScreenshotNames(int index) const;
 	std::string GetReleaseNotes(int index) const;
+	uint32_t GetAccentColorEntry(int index) const;
 
 	std::vector<std::string> GetDownloadList(int index) const;
 

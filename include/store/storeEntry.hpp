@@ -52,6 +52,8 @@ public:
 	int GetSheetIndex() const { return this->SheetIndex; };
 	int GetEntryIndex() const { return this->EntryIndex; };
 
+	uint32_t GetAccentColor() const { return this->AccentColor; };
+
 	std::vector<std::string> GetCategoryFull() const { return this->FullCategory; };
 	std::vector<std::string> GetConsoleFull() const { return this->FullConsole; };
 	std::vector<std::string> GetSizes() const { return this->Sizes; };
@@ -73,6 +75,7 @@ private:
 	int Stars;
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
+	uint32_t AccentColor;
 	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames;
 	bool UpdateAvailable;
 };

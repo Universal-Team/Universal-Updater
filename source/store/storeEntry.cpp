@@ -52,6 +52,8 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->SheetIndex = 0;
 	this->EntryIndex = index;
 
+	this->AccentColor = store->GetAccentColorEntry(index);
+
 	this->FullCategory = store->GetCategoryIndex(index);
 	this->FullConsole = store->GetConsoleEntry(index);
 
