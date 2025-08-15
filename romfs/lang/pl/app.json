@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Instalowanie",
 	"OP_MOVING": "Przenoszenie",
 	"OP_WAITING": "Oczekuje",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Kolejka",
 	"QUEUE_POSITION": "Pozycja w kolejce",
 	"QUEUE_PROGRESS": "Krok %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Sortuj według",
 	"SORTING": "Sortowanie",
+	"STARS": "Stars",
 	"START_SELECT": "Naciśnij przycisk START, aby wybrać bieżący folder",
 	"STORE_INFO": "Informacje o sklepie",
 	"SYNTAX_ERROR": "Błąd składni!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Aktualizowanie tekstur...",
 	"UPDATING_SPRITE_SHEET2": "Aktualizowanie tekstury %i z %i...",
 	"UPDATING_UNISTORE": "Aktualizowanie UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Wersja"
 }

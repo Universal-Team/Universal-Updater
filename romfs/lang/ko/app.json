@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "설치 중",
 	"OP_MOVING": "이동 중",
 	"OP_WAITING": "기다리는 중",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "대기열",
 	"QUEUE_POSITION": "대기 순서",
 	"QUEUE_PROGRESS": "단계: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "정렬 기준",
 	"SORTING": "정렬",
+	"STARS": "Stars",
 	"START_SELECT": "현재 폴더를 선택하려면 START를 누르세요",
 	"STORE_INFO": "스토어 정보",
 	"SYNTAX_ERROR": "구문 오류!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "스프라이트시트 업데이트 중...",
 	"UPDATING_SPRITE_SHEET2": "스프라이트시트 업데이트 중... (%i / %i)",
 	"UPDATING_UNISTORE": "UniStore 업데이트 중...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "버전"
 }

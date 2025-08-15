@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "インストール中",
 	"OP_MOVING": "移動中",
 	"OP_WAITING": "待機中",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "キュー",
 	"QUEUE_POSITION": "まーる",
 	"QUEUE_PROGRESS": "ステップ: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "並べいけーい順",
 	"SORTING": "並べい替い",
+	"STARS": "Stars",
 	"START_SELECT": "STARTを押して、現在のフォルダを選択します",
 	"STORE_INFO": "ストア情報",
 	"SYNTAX_ERROR": "構文エラー！",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "スプライトシート更新そーいびーん……",
 	"UPDATING_SPRITE_SHEET2": "スプライトシート%i/%i更新そーいびーん……",
 	"UPDATING_UNISTORE": "UniStore更新そーいびーん……",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "バージョン"
 }

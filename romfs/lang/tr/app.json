@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Kuruluyor",
 	"OP_MOVING": "Taşınıyor",
 	"OP_WAITING": "Bekleniyor",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "İndirme Kuyruğu",
 	"QUEUE_POSITION": "Kuyruktaki Konumu",
 	"QUEUE_PROGRESS": "Adım: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Şuna Göre Sırala",
 	"SORTING": "Sıralama",
+	"STARS": "Stars",
 	"START_SELECT": "Geçerli klasörü seçmek için STARTA'a bas",
 	"STORE_INFO": "Mağaza Bilgisi",
 	"SYNTAX_ERROR": "Sözdizimi hatası!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Model Tablosu Güncelleniyor...",
 	"UPDATING_SPRITE_SHEET2": "%i / %i Model Tablosu Güncelleniyor...",
 	"UPDATING_UNISTORE": "UniStore Güncelleniyor...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Sürüm"
 }

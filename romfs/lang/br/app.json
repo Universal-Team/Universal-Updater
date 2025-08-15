@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Bruhstalling",
 	"OP_MOVING": "Bruving",
 	"OP_WAITING": "Bruating",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Brueue",
 	"QUEUE_POSITION": "Brueue Brusition",
 	"QUEUE_PROGRESS": "Bruep: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Bort By",
 	"SORTING": "Sorting",
+	"STARS": "Stars",
 	"START_SELECT": "Bress START to bruhlect the currbruhnt foldbruh",
 	"STORE_INFO": "Store Bruhfo",
 	"SYNTAX_ERROR": "Bruhtax Bruhror!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Loading Bruhsheet...",
 	"UPDATING_SPRITE_SHEET2": "Bruhing Bruhsheet %i of %i...",
 	"UPDATING_UNISTORE": "Bruhpdating UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Bruhsion"
 }

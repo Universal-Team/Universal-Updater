@@ -1,5 +1,5 @@
 {
-	"3DSX_IN_FOLDER": "Coloca los archivos 3DSX en una carpeta",
+	"3DSX_IN_FOLDER": "Colocar los archivos 3DSX en una carpeta",
 	"3DSX_IN_FOLDER_DESC": "Si se activa, los archivos 3DSX serán colocados en una carpeta del mismo nombre en lugar de en la carpeta definida.",
 	"ACTION_CANCELED": "¡%s cancelado!",
 	"ACTION_FAILED": "¡%s falló!",
@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Instalando",
 	"OP_MOVING": "Moviendo",
 	"OP_WAITING": "En espera",
+	"POPULARITY": "Popularidad",
+	"OPEN_URL_WEB_BROWSER": "Abrir URL en el navegador web (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "El navegador web no puede ser usado\nmientras la cola se está ejecutando.",
+	"QR_CODE_GEN_FAILED": "Error al generar el código QR.",
 	"QUEUE": "Cola",
 	"QUEUE_POSITION": "Posición en la Cola",
 	"QUEUE_PROGRESS": "Paso: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Omitir",
 	"SORT_BY": "Ordenar por",
 	"SORTING": "Ordenando",
+	"STARS": "Estrellas",
 	"START_SELECT": "Presione START para seleccionar la carpeta actual",
 	"STORE_INFO": "Información de la tienda",
 	"SYNTAX_ERROR": "¡Error de sintaxis!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Actualizando Spritesheet...",
 	"UPDATING_SPRITE_SHEET2": "Actualizando Spritesheet %i de %i...",
 	"UPDATING_UNISTORE": "Actualizando UniStore...",
+	"USE_ACCENT_COLOR": "Usar color de acento de entradas",
 	"VERSION": "Versión"
 }

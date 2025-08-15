@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Встановлення",
 	"OP_MOVING": "Переміщення",
 	"OP_WAITING": "Очікування",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Черга",
 	"QUEUE_POSITION": "Позиція в черзі",
 	"QUEUE_PROGRESS": "Крок: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Сортувати за",
 	"SORTING": "Сортування",
+	"STARS": "Stars",
 	"START_SELECT": "Натисніть START для вибору поточної теки",
 	"STORE_INFO": "Інформація",
 	"SYNTAX_ERROR": "Синтаксична помилка!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Оновлення таблиці спрайтів...",
 	"UPDATING_SPRITE_SHEET2": "Оновлення таблиці спрайтів %i із %i...",
 	"UPDATING_UNISTORE": "Оновлення UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Версія"
 }

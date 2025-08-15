@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Įdiegiama",
 	"OP_MOVING": "Perkeliama",
 	"OP_WAITING": "Laukiama",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Eilė",
 	"QUEUE_POSITION": "Pozicija eilėje",
 	"QUEUE_PROGRESS": "Žingsnis: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Rikiuoti pagal",
 	"SORTING": "Rikiavimas",
+	"STARS": "Stars",
 	"START_SELECT": "Spauskite START kad pasirinktumėte dabartinį katalogą",
 	"STORE_INFO": "Parduotuvės Info",
 	"SYNTAX_ERROR": "Sintaksės klaida!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Atnaujinamas „SpriteSheet“...",
 	"UPDATING_SPRITE_SHEET2": "Atnaujinamas „Spritesheet“ %i iš %i...",
 	"UPDATING_UNISTORE": "Atnaujinama „UniStore“",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Versija"
 }

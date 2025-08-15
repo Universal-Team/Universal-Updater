@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Установка",
 	"OP_MOVING": "Перемещение",
 	"OP_WAITING": "Ожидание",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Очередь",
 	"QUEUE_POSITION": "Позиция в очереди",
 	"QUEUE_PROGRESS": "Шаг: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Сортировка по",
 	"SORTING": "Сортировка",
+	"STARS": "Stars",
 	"START_SELECT": "Нажмите Start для выбора текущей папки",
 	"STORE_INFO": "Информация о магазине",
 	"SYNTAX_ERROR": "Синтаксическая ошибка!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Загрузка таблицы спрайтов...",
 	"UPDATING_SPRITE_SHEET2": "Загрузка таблицы спрайтов %i из %i...",
 	"UPDATING_UNISTORE": "Обновление UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Версия"
 }

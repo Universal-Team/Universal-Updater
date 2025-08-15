@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Telepítés",
 	"OP_MOVING": "Mozgatás",
 	"OP_WAITING": "Várakozás",
+	"POPULARITY": "Népszerűség",
+	"OPEN_URL_WEB_BROWSER": "Cím megnyitása böngészőben (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "A webböngésző nem használható a\ncímen, amíg a várólista fut.",
+	"QR_CODE_GEN_FAILED": "A QR-kód előállítása sikertelen.",
 	"QUEUE": "Várósor",
 	"QUEUE_POSITION": "Várósor pozíció",
 	"QUEUE_PROGRESS": "Lépés: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Kihagy",
 	"SORT_BY": "Rendezés eszerint",
 	"SORTING": "Rendezés",
+	"STARS": "Csillag",
 	"START_SELECT": "Nyomjon START-t az aktuális mappa kiválasztásához",
 	"STORE_INFO": "Store Információ",
 	"SYNTAX_ERROR": "Szintaktikai hiba!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "A spritelap frissítése...",
 	"UPDATING_SPRITE_SHEET2": "A spritelap frissítése %i/%i...",
 	"UPDATING_UNISTORE": "UniStore frissítése...",
+	"USE_ACCENT_COLOR": "A bejegyzések kiemelő színének használata",
 	"VERSION": "Verzió"
 }

@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Se instalează",
 	"OP_MOVING": "Se mută",
 	"OP_WAITING": "Se aşteaptă",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Coadă",
 	"QUEUE_POSITION": "Poziția în Coadă",
 	"QUEUE_PROGRESS": "Pas: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Sortați după",
 	"SORTING": "Sortare",
+	"STARS": "Stars",
 	"START_SELECT": "Apăsați START pentru a selecta dosarul curent",
 	"STORE_INFO": "Informații Magazin",
 	"SYNTAX_ERROR": "Eroare de sintaxă!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Se actualizează Spritesheet...",
 	"UPDATING_SPRITE_SHEET2": "Se actualizează Spritesheet %i din %i...",
 	"UPDATING_UNISTORE": "Se actualizează UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Versiune"
 }

@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "安裝中",
 	"OP_MOVING": "正在移動",
 	"OP_WAITING": "等待中",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "排程",
 	"QUEUE_POSITION": "排程位置",
 	"QUEUE_PROGRESS": "階段：%d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "排序依據",
 	"SORTING": "分類中",
+	"STARS": "Stars",
 	"START_SELECT": "按 START 選擇當前資料夾",
 	"STORE_INFO": "商店訊息",
 	"SYNTAX_ERROR": "語法錯誤！",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "正在更新精靈表...",
 	"UPDATING_SPRITE_SHEET2": "正在更新精靈表 %i 之 %i...",
 	"UPDATING_UNISTORE": "正在更新 UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "版本"
 }

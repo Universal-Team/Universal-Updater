@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Installationsvorgang",
 	"OP_MOVING": "Verschiebungsvorgang",
 	"OP_WAITING": "Warten",
+	"POPULARITY": "Beliebtheit",
+	"OPEN_URL_WEB_BROWSER": "URL im Browser öffnen (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "Der Browser kann nicht verwendet werden,\nwährend die Warteschlange abgearbeitet wird.",
+	"QR_CODE_GEN_FAILED": "QR-Code konnte nicht generiert werden.",
 	"QUEUE": "Warteschlange",
 	"QUEUE_POSITION": "Position in der Warteschlange",
 	"QUEUE_PROGRESS": "Schritt: %d/%d",
@@ -136,6 +140,7 @@
 	"SKIP": "Überspringen",
 	"SORT_BY": "Sortieren nach",
 	"SORTING": "Sortierung",
+	"STARS": "Sterne",
 	"START_SELECT": "Drücke START, um den aktuellen Ordner auszuwählen",
 	"STORE_INFO": "Shop-Info",
 	"SYNTAX_ERROR": "Syntaxfehler!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Spritesheet wird aktualisiert...",
 	"UPDATING_SPRITE_SHEET2": "Spritesheet %i von %i wird aktualisiert...",
 	"UPDATING_UNISTORE": "UniStore wird aktualisiert...",
+	"USE_ACCENT_COLOR": "Akzentfarbe der Einträge verwenden",
 	"VERSION": "Version"
 }

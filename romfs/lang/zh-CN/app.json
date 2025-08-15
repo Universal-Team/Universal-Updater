@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "正在安装",
 	"OP_MOVING": "正在移动",
 	"OP_WAITING": "等待中",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "队列",
 	"QUEUE_POSITION": "队列位置",
 	"QUEUE_PROGRESS": "步骤: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "排序方式",
 	"SORTING": "排序",
+	"STARS": "Stars",
 	"START_SELECT": "点击START按钮选择当前文件夹",
 	"STORE_INFO": "商店信息",
 	"SYNTAX_ERROR": "语法错误！",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "正在更新贴图集……",
 	"UPDATING_SPRITE_SHEET2": "正在更新贴图集 %i / %i……",
 	"UPDATING_UNISTORE": "正在更新 UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "版本"
 }

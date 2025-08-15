@@ -110,6 +110,10 @@
 	"OP_INSTALLING": "Installation",
 	"OP_MOVING": "Flytter",
 	"OP_WAITING": "Venter",
+	"POPULARITY": "Popularity",
+	"OPEN_URL_WEB_BROWSER": "Open URL in Web Browser (SELECT)",
+	"OPEN_URL_WEB_BROWSER_DISABLED": "The web browser cannot be used\nwhile the Queue is running.",
+	"QR_CODE_GEN_FAILED": "Failed to generate QR Code.",
 	"QUEUE": "Kø",
 	"QUEUE_POSITION": "Position i køen",
 	"QUEUE_PROGRESS": "Trin: %d / %d",
@@ -136,6 +140,7 @@
 	"SKIP": "Skip",
 	"SORT_BY": "Sortér Efter",
 	"SORTING": "Sprteromg",
+	"STARS": "Stars",
 	"START_SELECT": "Tryk på START for at vælge den aktuelle mappe",
 	"STORE_INFO": "Yderligere information",
 	"SYNTAX_ERROR": "Syntaks Fejl!",
@@ -153,5 +158,6 @@
 	"UPDATING_SPRITE_SHEET": "Opdaterer Spritesheet...",
 	"UPDATING_SPRITE_SHEET2": "Indlæser Spritesheet %i af %i...",
 	"UPDATING_UNISTORE": "Opdaterer UniStore...",
+	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Version"
 }
