@@ -46,5 +46,11 @@
 		"author": "Nawrek, Vance, and Cracko298",
 		"url": "https://github.com/Minecraft-3DS-Community/Minecraft-3ds-unistore/raw/main/minecraft-3ds-community.unistore",
 		"description": "An online database of mods, textures, skins, and worlds for Minecraft: New Nintendo 3DS Edition"
+	},
+	"ScratchBox": {
+		"title": "ScratchBox",
+		"author": "ScratchBox Users",
+		"url": "https://scratchbox.grady.link/api/scratchbox.unistore",
+		"description": "A project hosting/distribution platform for Scratch Everywhere!"
 	}
 }
