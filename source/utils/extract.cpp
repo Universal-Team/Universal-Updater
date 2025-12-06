@@ -28,8 +28,8 @@
 #include "files.hpp"
 #include "queueSystem.hpp"
 #include "scriptUtils.hpp"
-#include <archive.hpp>
-#include <archive_entry.hpp>
+#include <archive.h>
+#include <archive_entry.h>
 #include <regex>
 
 int filesExtracted = 0, extractFilesCount = 0;

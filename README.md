@@ -39,7 +39,7 @@ Universal-Updater is a homebrew application for the Nintendo 3DS with the intent
 
 To build Universal-Updater from source, you will need to install devkitARM and some libraries. Follow devkitPro's [Getting Started](https://devkitpro.org/wiki/Getting_Started) page to install pacman, then run the following command to install everything you need:
 ```
-(sudo dkp-)pacman -S 3ds-dev 3ds-curl 3ds-bzip2 3ds-liblzma
+(sudo dkp-)pacman -S 3ds-dev 3ds-curl 3ds-bzip2 3ds-libarchive 3ds-liblzma 3ds-libzstd
 ```
 (The `sudo dkp-` may not be needed depending on your OS)
 
