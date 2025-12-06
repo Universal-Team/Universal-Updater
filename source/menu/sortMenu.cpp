@@ -132,18 +132,30 @@ void StoreUtils::SortHandle(bool &asc, SortType &st) {
 		if (hDown & KEY_TOUCH) {
 			/* SortType Part. */
 			if (touching(touch, typeButtons[0])) {
+				if(st == SortType::LAST_UPDATED || st == SortType::POPULARITY)
+					asc = !asc;
+
 				st = SortType::TITLE;
 				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, typeButtons[1])) {
+				if(st == SortType::LAST_UPDATED || st == SortType::POPULARITY)
+					asc = !asc;
+
 				st = SortType::AUTHOR;
 				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, typeButtons[2])) {
+				if(st == SortType::TITLE || st == SortType::AUTHOR)
+					asc = !asc;
+
 				st = SortType::LAST_UPDATED;
 				StoreUtils::SortEntries(asc, st);
 
 			} else if (touching(touch, typeButtons[3])) {
+				if(st == SortType::TITLE || st == SortType::AUTHOR)
+					asc = !asc;
+
 				st = SortType::POPULARITY;
 				StoreUtils::SortEntries(asc, st);
 
