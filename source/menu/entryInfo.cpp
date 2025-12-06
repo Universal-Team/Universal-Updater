@@ -55,7 +55,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		Gui::DrawStringCentered(17, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
 		Gui::DrawString(53, 115, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 248, 0, font);
-		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("STARS") + ": " + std::to_string(entry->GetStars()), 248, 0, font);
+		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("STARS") + ": " + StringUtils::formatNumber(entry->GetStars()), 248, 0, font);
 		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
 		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
 		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);

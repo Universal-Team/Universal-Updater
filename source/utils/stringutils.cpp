@@ -80,6 +80,18 @@ std::string StringUtils::formatBytes(u64 bytes) {
 }
 
 /*
+	Format a number with separators per locale
+*/
+std::string StringUtils::formatNumber(u64 number) {
+	std::string out = std::to_string(number);
+	for (int i = out.size() - 3; i > 0; i -= 3) {
+		out.insert(i, Lang::get("THOUSAND_SEPARATOR"));
+	}
+
+	return out;
+}
+
+/*
 	Return a vector of all marks.
 */
 std::vector<std::string> StringUtils::GetMarks(int marks) {
