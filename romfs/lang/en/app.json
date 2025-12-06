@@ -42,6 +42,8 @@
 	"CURRENTLY_EXTRACTING": "Currently extracting:",
 	"CUSTOM_FONT": "Use Custom Font",
 	"CUSTOM_FONT_DESC": "If enabled, 'sdmc:/3ds/Universal-Updater/font.bcfnt' will be used instead of the system font, if found.",
+	"DAY_AGO": "%d day ago (%d/%d/%d)",
+	"DAYS_AGO": "%d days ago (%d/%d/%d)",
 	"DELETE_ERROR": "Delete Error!",
 	"DELETE_PROMPT": "Are you sure you want to delete this Directory?",
 	"DELETING": "Deleting...",
@@ -98,6 +100,8 @@
 	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "MediaType NAND",
 	"MEDIATYPE_SD": "MediaType SD",
+	"MONTH_AGO": "%d month ago (%d/%d/%d)",
+	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Move Error!",
 	"NO_DOWNLOADS_AVAILABLE": "No downloads available",
 	"NO_LICENSE": "No License",
@@ -146,6 +150,7 @@
 	"SYNTAX_ERROR": "Syntax Error!",
 	"THOUSAND_SEPARATOR": ",",
 	"TITLE": "Title",
+	"TODAY": "Today",
 	"TOP_STYLE": "Top Style",
 	"UNISTORE_BG": "Use UniStore BG",
 	"UNISTORE_BG_DESC": "When enabled, the UniStore's provided BG will be shown instead of the solid BG color for the top screen.",
@@ -160,5 +165,7 @@
 	"UPDATING_SPRITE_SHEET2": "Updating Spritesheet %i of %i...",
 	"UPDATING_UNISTORE": "Updating UniStore...",
 	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
-	"VERSION": "Version"
+	"VERSION": "Version",
+	"YEAR_AGO": "%d year ago (%d/%d/%d)",
+	"YEARS_AGO": "%d years ago (%d/%d/%d)"
 }

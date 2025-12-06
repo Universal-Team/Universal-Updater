@@ -58,7 +58,7 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("STARS") + ": " + StringUtils::formatNumber(entry->GetStars()), 248, 0, font);
 		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 248, 0, font);
 		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 248, 0, font);
-		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + entry->GetLastUpdated(), 248, 0, font);
+		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + StringUtils::RelativeDate(entry->GetLastUpdated()), 248, 0, font);
 		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 248, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);

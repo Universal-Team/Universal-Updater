@@ -27,7 +27,12 @@
 #include "common.hpp"
 #include "stringutils.hpp"
 #include <charconv>
+#include <time.h>
 #include <stdarg.h>
+
+#define SEC_PER_DAY 86400
+#define SEC_PER_MONTH 2592000
+#define SEC_PER_YEAR 31556952
 
 /*
 	To lowercase conversion.
@@ -149,4 +154,47 @@ uint32_t StringUtils::ParseColorHexString(std::string_view str) {
 	}
 
 	return C2D_Color32(colorVal[0], colorVal[1], colorVal[2], 255);
+}
+
+/*
+	Formats a date to a relative date (ie 1 month ago)
+	Expects the format "YYYY-MM-DD at HH:MM (UTC)"
+*/
+std::string StringUtils::RelativeDate(std::string dateString) {
+	// Parse the date to a unix timestamp
+	struct tm tmStruct{};
+	sscanf(dateString.c_str(), "%d-%d-%d at %d:%d (UTC)",
+		&tmStruct.tm_year,
+		&tmStruct.tm_mon,
+		&tmStruct.tm_mday,
+		&tmStruct.tm_hour,
+		&tmStruct.tm_min);
+
+	// Fix values
+	tmStruct.tm_year -= 1900;
+	tmStruct.tm_mon--;
+
+	time_t then = mktime(&tmStruct);
+	time_t now = time(nullptr);
+	time_t ago = now - then;
+
+	int agoSimplified = 0;
+	std::string agoString;
+
+	if (ago < SEC_PER_DAY) {
+		return Lang::get("TODAY");
+	} else if (ago < SEC_PER_MONTH) {
+		agoSimplified = ago / SEC_PER_DAY;
+		agoString = agoSimplified == 1 ? "DAY_AGO" : "DAYS_AGO";
+	} else if (ago < SEC_PER_YEAR) {
+		agoSimplified = ago / SEC_PER_MONTH;
+		agoString = agoSimplified == 1 ? "MONTH_AGO" : "MONTHS_AGO";
+	} else {
+		agoSimplified = ago / SEC_PER_YEAR;
+		agoString = agoSimplified == 1 ? "YEAR_AGO" : "YEARS_AGO";
+	}
+
+	char out[256];
+	snprintf(out, sizeof(out), Lang::get(agoString).c_str(), agoSimplified, 1900 + tmStruct.tm_year, 1 + tmStruct.tm_mon, tmStruct.tm_mday);
+	return out;
 }
