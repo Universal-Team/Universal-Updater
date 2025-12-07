@@ -90,7 +90,6 @@ static const Structs::ButtonPos Theme = { 40, 196, 280, 24 }; // Themes.
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS_BTN", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_IN_FOLDER", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
-extern std::vector<std::pair<std::string, std::string>> Themes;
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
 static const std::vector<std::string> languages = { "Bruh", "Čeština", "Dansk", "Deutsch", "English", "Español", "Français", "Italiano", /* "Lietuvių", */ "Magyar", "Nederlands", "Norsk", "Polski", "Português (Portugal)", "Português (Brasil)", "Română", "Türkçe", "Русский", "Украïнська", /* "עברית", */ "中文 (简体)", "中文 (繁體)", "日本語", "琉球諸語", "한국어" };
@@ -211,10 +210,8 @@ static void DrawGUISettings(int selection) {
 	GFX::DrawToggle(toggleAblesGui[2].x, toggleAblesGui[2].y, config->customfont());
 	Gui::DrawString(47, 167, 0.4f, UIThemes->TextColor(), Lang::get("CUSTOM_FONT_DESC"), 265, 0, font, C2D_WordWrap);
 
-	if (!Themes.empty()) {
-		Gui::Draw_Rect(40, 212, 280, 24, (selection == 3 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-		Gui::DrawString(47, 216, 0.5f, UIThemes->TextColor(), Lang::get("ACTIVE_THEME") + ": " + config->theme(), 270, 0, font);
-	}
+	Gui::Draw_Rect(40, 212, 280, 24, (selection == 3 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+	Gui::DrawString(47, 216, 0.5f, UIThemes->TextColor(), Lang::get("ACTIVE_THEME") + ": " + config->theme(), 270, 0, font);
 }
 
 
@@ -515,7 +512,7 @@ static void GUISettingsLogic(int &page, int &selection) {
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < (Themes.empty() ? 2 : 3)) selection++;
+		if (selection < 3) selection++;
 	}
 
 	if (hRepeat & KEY_UP) {
@@ -539,7 +536,7 @@ static void GUISettingsLogic(int &page, int &selection) {
 			(config->customfont() ? Init::LoadFont() : Init::UnloadFont());
 
 		} else if (touching(touch, Theme)) {
-			if (!Themes.empty()) Overlays::SelectTheme();
+			Overlays::SelectTheme();
 		}
 	}
 
@@ -560,7 +557,7 @@ static void GUISettingsLogic(int &page, int &selection) {
 				break;
 
 			case 3:
-				if (!Themes.empty()) Overlays::SelectTheme();
+				Overlays::SelectTheme();
 				break;
 		}
 	}

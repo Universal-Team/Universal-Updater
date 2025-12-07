@@ -33,9 +33,10 @@
 
 class Theme {
 public:
-	Theme(const std::string &ThemeJSON = "sdmc:/3ds/Universal-Updater/Themes.json");
-	nlohmann::json InitWithDefaultColors(const std::string &ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json");
+	Theme(void);
+	nlohmann::json InitWithDefaultColors(void);
 	void LoadTheme(const std::string &ThemeName);
+	void AddThemes(const nlohmann::json &NewThemes);
 	std::vector<std::pair<std::string, std::string>> ThemeNames();
 	uint32_t GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor);
 
@@ -59,6 +60,8 @@ public:
 	uint32_t DownListPrev() const { return this->vDownListPrev; };
 	uint32_t SideBarIconColor() const { return this->vSideBarIconColor; };
 private:
+	const char *ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json";
+
 	uint32_t vBarColor = 0, vBGColor = 0, vBarOutline = 0, vTextColor = 0, vEntryBar = 0, vEntryOutline = 0,
 			 vBoxInside = 0, vBoxSelected = 0, vBoxUnselected = 0, vProgressbarOut = 0, vProgressbarIn = 0,
 			 vSearchBar = 0, vSearchBarOutline = 0, vSideBarSelected = 0, vSideBarUnselected = 0,

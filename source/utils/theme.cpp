@@ -38,8 +38,8 @@
 #define RGBA8(r, g, b, a) ((((r) & 0xFF) << 0) | (((g) & 0xFF) << 8) | (((b) & 0xFF) << 16) | (((a) & 0xFF) << 24))
 
 
-Theme::Theme(const std::string &ThemeJSON) {
-	FILE *file = fopen(ThemeJSON.c_str(), "rt");
+Theme::Theme() {
+	FILE *file = fopen(ThemePath, "rt");
 	if (file) {
 		this->json = nlohmann::json::parse(file, nullptr, false);
 		fclose(file);
@@ -49,7 +49,7 @@ Theme::Theme(const std::string &ThemeJSON) {
 	this->Loaded = true;
 }
 
-nlohmann::json Theme::InitWithDefaultColors(const std::string &ThemePath) {
+nlohmann::json Theme::InitWithDefaultColors() {
 	nlohmann::json JS = {
 		{ "Default", {
 			{ "BarColor", "#324962" },
@@ -71,16 +71,31 @@ nlohmann::json Theme::InitWithDefaultColors(const std::string &ThemePath) {
 			{ "MarkUnselected", "#1C213A" },
 			{ "DownListPrev", "#1C213A" },
 			{ "SideBarIconColor", "#ADCCEF" },
-			{ "Description", "Universal-Updater's default Theme.\n\nBy: Universal-Team" }
+			{ "Description", "Universal-Updater's default Theme.\n\nBy: Universal-Team" },
+			{ "Version", 1 }
 		}}
 	};
 
-	FILE *out = fopen(ThemePath.c_str(), "w");
+	FILE *out = fopen(ThemePath, "wt");
 	const std::string dump = JS.dump(1, '\t');
 	fwrite(dump.c_str(), 1, JS.dump(1, '\t').size(), out);
 	fclose(out);
 
 	return JS;
+}
+
+void Theme::AddThemes(const nlohmann::json &NewThemes) {
+	for (const auto &[key, item] : NewThemes.items()) {
+		if (this->json.contains(key) && this->json[key].contains("Version") && this->json[key]["Version"] >= item["Version"])
+			continue;
+
+		this->json[key] = item;
+	}
+
+	FILE *out = fopen(ThemePath, "wt");
+	const std::string dump = this->json.dump(1, '\t');
+	fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), out);
+	fclose(out);
 }
 
 

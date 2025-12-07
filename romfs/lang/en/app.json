@@ -77,6 +77,7 @@
 	"FEATURE_SIDE_EFFECTS": "This Feature may have side effects while the Queue is running.\nAre you sure you want to continue?",
 	"FETCHING_METADATA": "Fetching old metadata...",
 	"FETCHING_RECOMMENDED_UNISTORES": "Fetching recommended UniStores...",
+	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "File: %d / %d",
 	"FILE_EXTRACTED": "file extracted.",
 	"FILE_SLASH": "Seems like a '/' is included, which is not supported.\nPlease change 'file' to filename only.",

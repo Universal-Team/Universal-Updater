@@ -997,6 +997,7 @@ static StoreList fetch(const std::string &entry, nlohmann::json &js) {
 
 	return store;
 }
+
 /*
 	Fetch store list for available UniStores.
 */
@@ -1005,6 +1006,7 @@ std::vector<StoreList> FetchStores() {
 	std::vector<StoreList> stores = { };
 
 	Result ret = 0;
+	CURLcode cres;
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf) return stores;
 
@@ -1018,32 +1020,16 @@ std::vector<StoreList> FetchStores() {
 	CURL *hnd = curl_easy_init();
 
 	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/UniStores.json");
-	if (ret != 0) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return stores;
-	}
+	if (ret != 0)
+		goto cleanup;
 
-	CURLcode cres = curl_easy_perform(hnd);
+	cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
-	char *newbuf = (char *)realloc(result_buf, result_written + 1);
-	result_buf = newbuf;
+	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
-	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return stores;
-	}
+	if (cres != CURLE_OK)
+		goto cleanup;
 
 	if (nlohmann::json::accept(result_buf)) {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
@@ -1053,6 +1039,7 @@ std::vector<StoreList> FetchStores() {
 		}
 	}
 
+cleanup: 
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -1061,6 +1048,53 @@ std::vector<StoreList> FetchStores() {
 	result_written = 0;
 
 	return stores;
+}
+
+
+/*
+	Fetch themes from the repo.
+*/
+nlohmann::json FetchThemes() {
+	Msg::DisplayMsg(Lang::get("FETCHING_THEMES"));
+	nlohmann::json Themes;
+
+	Result ret = 0;
+	CURLcode cres;
+	void *socubuf = memalign(0x1000, 0x100000);
+	if (!socubuf) return Themes;
+
+	ret = socInit((u32 *)socubuf, 0x100000);
+
+	if (R_FAILED(ret)) {
+		free(socubuf);
+		return Themes;
+	}
+
+	CURL *hnd = curl_easy_init();
+
+	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/Themes.json");
+	if (ret != 0)
+		goto cleanup;
+
+	cres = curl_easy_perform(hnd);
+	curl_easy_cleanup(hnd);
+	result_buf = (char *)realloc(result_buf, result_written + 1);
+	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
+	if (cres != CURLE_OK)
+		goto cleanup;
+
+	if (nlohmann::json::accept(result_buf))
+		Themes = nlohmann::json::parse(result_buf);
+
+cleanup:
+	socExit();
+	free(result_buf);
+	free(socubuf);
+	result_buf = nullptr;
+	result_sz = 0;
+	result_written = 0;
+
+	return Themes;
 }
 
 C2D_Image FetchScreenshot(const std::string &URL) {

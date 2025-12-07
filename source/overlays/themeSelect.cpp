@@ -26,6 +26,7 @@
 
 #include "animation.hpp"
 #include "common.hpp"
+#include "download.hpp"
 #include "overlay.hpp"
 #include "storeUtils.hpp"
 
@@ -40,10 +41,13 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 10, 186, 300, 22 }
 };
 
-extern std::vector<std::pair<std::string, std::string>> Themes;
-
 /* Select a Theme. */
 void Overlays::SelectTheme() {
+	nlohmann::json NewThemes = FetchThemes();
+	UIThemes->AddThemes(NewThemes);
+	auto Themes = UIThemes->ThemeNames();
+
+
 	bool Finish = false;
 	int selection = 0, sPos = 0;
 

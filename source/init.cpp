@@ -41,7 +41,6 @@ u32 old_time_limit;
 std::unique_ptr<Theme> UIThemes = nullptr;
 std::unique_ptr<Sound> Music = nullptr;
 bool dspfirmFound = false;
-std::vector<std::pair<std::string, std::string>> Themes = { };
 
 /*
 	Set, if 3DSX or CIA.
@@ -138,7 +137,6 @@ Result Init::Initialize() {
 	config = std::make_unique<Config>();
 	UIThemes = std::make_unique<Theme>();
 	UIThemes->LoadTheme(config->theme());
-	Themes = UIThemes->ThemeNames();
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {
