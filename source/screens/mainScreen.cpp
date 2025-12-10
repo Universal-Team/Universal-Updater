@@ -99,7 +99,7 @@ MainScreen::MainScreen() {
 
 	StoreUtils::store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
 	StoreUtils::ResetAll();
-	StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
+	StoreUtils::SortEntries();
 
 	// Display Release changelog for Universal-Updater.
 	if (config->changelog()) {
@@ -157,7 +157,7 @@ void MainScreen::Draw(void) const {
 
 			case 4:
 				/* Sorting. */
-				StoreUtils::DrawSorting(this->ascending, this->sorttype);
+				StoreUtils::DrawSorting();
 				break;
 
 			case 5:
@@ -283,11 +283,11 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 
 			case 3:
-				StoreUtils::SearchHandle(this->searchIncludes, this->searchResult, this->marks, this->updateFilter, this->ascending, this->sorttype, this->isAND);
+				StoreUtils::SearchHandle(this->searchIncludes, this->searchResult, this->marks, this->updateFilter, this->isAND);
 				break;
 
 			case 4:
-				StoreUtils::SortHandle(this->ascending, this->sorttype);
+				StoreUtils::SortHandle();
 				break;
 
 			case 5:

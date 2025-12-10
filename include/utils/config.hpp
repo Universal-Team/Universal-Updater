@@ -28,6 +28,7 @@
 #define _UNIVERSAL_UPDATER_CONFIG_HPP
 
 #include "json.hpp"
+#include "store/storeUtils.hpp"
 
 #include <3ds.h>
 #include <string>
@@ -50,6 +51,13 @@ public:
 	/* Using Top List. */
 	bool list() const { return this->v_list; };
 	void list(bool v) { this->v_list = v; if (!this->changesMade) this->changesMade = true; };
+
+	/* Sort Method. */
+	SortType sortBy() const { return this->v_sortBy; };
+	void sortBy(SortType v) { this->v_sortBy = v; if (!this->changesMade) this->changesMade = true; };
+
+	bool sortAscending() const { return this->v_sortAscending; };
+	void sortAscending(bool v) { this->v_sortAscending = v; if (!this->changesMade) this->changesMade = true; };
 
 	/* Auto update on boot. */
 	bool autoupdate() const { return this->v_autoUpdate; };
@@ -127,7 +135,9 @@ private:
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateNightly = false,
 		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
-		v_useAccentColor = true;
+		v_useAccentColor = true, v_sortAscending = false;
+
+	SortType v_sortBy = SortType::LAST_UPDATED;
 };
 
 #endif

@@ -106,22 +106,23 @@ bool StoreUtils::compareStarsAscending(const std::unique_ptr<StoreEntry> &a, con
 	bool Ascending: If Ascending.
 	SortType sorttype: The sort type.
 */
-void StoreUtils::SortEntries(bool Ascending, SortType sorttype) {
-	switch(sorttype) {
+void StoreUtils::SortEntries() {
+	bool Ascending = config->sortAscending();
+	switch(config->sortBy()) {
 		case SortType::TITLE:
-			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareTitleAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareTitleDescending);
+			std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), Ascending ? StoreUtils::compareTitleAscending : StoreUtils::compareTitleDescending);
 			break;
 
 		case SortType::AUTHOR:
-			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareAuthorAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareAuthorDescending);
+			std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), Ascending ? StoreUtils::compareAuthorAscending : StoreUtils::compareAuthorDescending);
 			break;
 
 		case SortType::LAST_UPDATED:
-			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareUpdateDescending);
+			std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), Ascending ? StoreUtils::compareUpdateAscending : StoreUtils::compareUpdateDescending);
 			break;
 
 		case SortType::POPULARITY:
-			Ascending ? std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareStarsAscending) : std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), StoreUtils::compareStarsDescending);
+			std::sort(StoreUtils::entries.begin(), StoreUtils::entries.end(), Ascending ? StoreUtils::compareStarsAscending : StoreUtils::compareStarsDescending);
 			break;
 	}
 }

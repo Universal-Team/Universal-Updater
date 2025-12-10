@@ -70,7 +70,7 @@ namespace StoreUtils {
 
 	/* Search + Favorite Menu. */
 	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter, bool isAND);
-	void SearchHandle(std::vector<bool> &searchIncludes, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype, bool &isAND);
+	void SearchHandle(std::vector<bool> &searchIncludes, std::string &searchResult, int &marks, bool &updateFilter, bool &isAND);
 
 	/* Mark Menu. */
 	void DisplayMarkBox(int marks);
@@ -88,8 +88,8 @@ namespace StoreUtils {
 	void SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, int &sPos);
 
 	/* Sorting. */
-	void DrawSorting(bool asc, SortType st);
-	void SortHandle(bool &asc, SortType &st);
+	void DrawSorting(void);
+	void SortHandle(void);
 
 	/* Release Notes. */
 	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
@@ -110,7 +110,7 @@ namespace StoreUtils {
 	bool compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 	bool compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
 
-	void SortEntries(bool Ascending, SortType sorttype);
+	void SortEntries(void);
 
 	void search(const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl, bool isAND);
 

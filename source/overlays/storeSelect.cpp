@@ -320,7 +320,7 @@ void Overlays::SelectStore() {
 							config->lastStore(info[selection].FileName);
 							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
 							StoreUtils::ResetAll();
-							StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
+							StoreUtils::SortEntries();
 							doOut = true;
 						}
 
@@ -342,7 +342,7 @@ void Overlays::SelectStore() {
 									config->lastStore(info[i + sPos].FileName);
 									StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
 									StoreUtils::ResetAll();
-									StoreUtils::SortEntries(false, SortType::LAST_UPDATED);
+									StoreUtils::SortEntries();
 									doOut = true;
 								}
 

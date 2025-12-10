@@ -141,7 +141,7 @@ void StoreUtils::DrawSearchMenu(const std::vector<bool> &searchIncludes, const s
 	bool &updateFilter: Reference to the update filter.
 	bool &isAND: Reference to isAND boolean for AND / OR mode.
 */
-void StoreUtils::SearchHandle(std::vector<bool> &searchIncludes, std::string &searchResult, int &marks, bool &updateFilter, bool ascending, SortType sorttype, bool &isAND) {
+void StoreUtils::SearchHandle(std::vector<bool> &searchIncludes, std::string &searchResult, int &marks, bool &updateFilter, bool &isAND) {
 	/* Checkboxes. */
 	if (hDown & KEY_TOUCH) {
 		bool didTouch = false;
@@ -216,7 +216,7 @@ void StoreUtils::SearchHandle(std::vector<bool> &searchIncludes, std::string &se
 				StoreUtils::store->SetEntry(0);
 				StoreUtils::store->SetBox(0);
 
-				StoreUtils::SortEntries(ascending, sorttype);
+				StoreUtils::SortEntries();
 			}
 		}
 	}
@@ -230,7 +230,7 @@ void StoreUtils::SearchHandle(std::vector<bool> &searchIncludes, std::string &se
 
 		if (StoreUtils::store && StoreUtils::store->GetValid()) {
 			StoreUtils::ResetAll();
-			StoreUtils::SortEntries(ascending, sorttype);
+			StoreUtils::SortEntries();
 		}
 	}
 

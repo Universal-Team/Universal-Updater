@@ -78,11 +78,8 @@ static const uint8_t GetType(SortType st) {
 
 /*
 	Draw the Sort Menu.
-
-	bool asc: The Ascending variable.
-	SortType st: The SortType variable.
 */
-void StoreUtils::DrawSorting(bool asc, SortType st) {
+void StoreUtils::DrawSorting() {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
 	Gui::DrawStringCentered(17, 2, 0.6, UIThemes->TextColor(), Lang::get("SORTING"), 273, 0, font);
@@ -90,7 +87,7 @@ void StoreUtils::DrawSorting(bool asc, SortType st) {
 	/* Sort By. */
 	Gui::DrawString(typeButtons[0].x + 1, typeButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("SORT_BY"), 90, 0, font);
 	for (uint i = 0; i < 4; i++) {
-		DrawCheck(typeButtons[i], i == GetType(st));
+		DrawCheck(typeButtons[i], i == GetType(config->sortBy()));
 	}
 
 	Gui::DrawString(typeButtons[0].x + 21, typeButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("TITLE"), 80, 0, font);
@@ -100,8 +97,8 @@ void StoreUtils::DrawSorting(bool asc, SortType st) {
 
 	/* Direction. */
 	Gui::DrawString(dirButtons[0].x + 1, dirButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("DIRECTION"), 80, 0, font);
-	DrawCheck(dirButtons[0], asc);
-	DrawCheck(dirButtons[1], !asc);
+	DrawCheck(dirButtons[0], config->sortAscending());
+	DrawCheck(dirButtons[1], !config->sortAscending());
 	Gui::DrawString(dirButtons[0].x + 21, dirButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("ASCENDING"), 80, 0, font);
 	Gui::DrawString(dirButtons[1].x + 21, dirButtons[1].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("DESCENDING"), 80, 0, font);
 
@@ -123,50 +120,50 @@ void StoreUtils::DrawSorting(bool asc, SortType st) {
 		- Last Updated Date (Ascending / Descending).
 
 	- Change the Top Style.
-
-	bool &asc: Reference to the Ascending variable.
-	SortType &st: Reference to the SortType.
 */
-void StoreUtils::SortHandle(bool &asc, SortType &st) {
+void StoreUtils::SortHandle(void) {
+	SortType st = config->sortBy();
+	bool asc = config->sortAscending();
+
 	if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) { // Ensure, this is valid and more than 0 StoreUtils::entries exist.
 		if (hDown & KEY_TOUCH) {
 			/* SortType Part. */
 			if (touching(touch, typeButtons[0])) {
 				if(st == SortType::LAST_UPDATED || st == SortType::POPULARITY)
-					asc = !asc;
+					config->sortAscending(!asc);
 
-				st = SortType::TITLE;
-				StoreUtils::SortEntries(asc, st);
+				config->sortBy(SortType::TITLE);
+				StoreUtils::SortEntries();
 
 			} else if (touching(touch, typeButtons[1])) {
 				if(st == SortType::LAST_UPDATED || st == SortType::POPULARITY)
-					asc = !asc;
+					config->sortAscending(!asc);
 
-				st = SortType::AUTHOR;
-				StoreUtils::SortEntries(asc, st);
+				config->sortBy(SortType::AUTHOR);
+				StoreUtils::SortEntries();
 
 			} else if (touching(touch, typeButtons[2])) {
 				if(st == SortType::TITLE || st == SortType::AUTHOR)
-					asc = !asc;
+					config->sortAscending(!asc);
 
-				st = SortType::LAST_UPDATED;
-				StoreUtils::SortEntries(asc, st);
+				config->sortBy(SortType::LAST_UPDATED);
+				StoreUtils::SortEntries();
 
 			} else if (touching(touch, typeButtons[3])) {
 				if(st == SortType::TITLE || st == SortType::AUTHOR)
-					asc = !asc;
+					config->sortAscending(!asc);
 
-				st = SortType::POPULARITY;
-				StoreUtils::SortEntries(asc, st);
+				config->sortBy(SortType::POPULARITY);
+				StoreUtils::SortEntries();
 
 			/* Ascending | Descending Part. */
 			} else if (touching(touch, dirButtons[0])) {
-				asc = true;
-				StoreUtils::SortEntries(asc, st);
+				config->sortAscending(true);
+				StoreUtils::SortEntries();
 
 			} else if (touching(touch, dirButtons[1])) {
-				asc = false;
-				StoreUtils::SortEntries(asc, st);
+				config->sortAscending(false);
+				StoreUtils::SortEntries();
 
 			} else if (touching(touch, viewButtons[0])) {
 				if (config->list()) return;

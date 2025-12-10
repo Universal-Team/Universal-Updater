@@ -126,6 +126,8 @@ Config::Config() {
 
 	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
 	if (this->json.contains("List")) this->list(this->getBool("List"));
+	if (this->json.contains("SortBy")) this->sortBy((SortType)this->getInt("SortBy"));
+	if (this->json.contains("SortAscending")) this->sortAscending(this->getBool("SortAscending"));
 	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
 	if (this->json.contains("_3DSX_Path")) this->_3dsxPath(this->getString("_3DSX_Path"));
 	if (this->json.contains("_3DSX_InFolder")) this->_3dsxInFolder(this->getBool("_3DSX_InFolder"));
@@ -167,6 +169,8 @@ void Config::save() {
 		this->setInt("Version", 1);
 		this->setString("LastStore", this->lastStore());
 		this->setBool("List", this->list());
+		this->setInt("SortBy", (int)this->sortBy());
+		this->setBool("SortAscending", this->sortAscending());
 		this->setBool("AutoUpdate", this->autoupdate());
 		this->setString("_3DSX_Path", this->_3dsxPath());
 		this->setBool("_3DSX_InFolder", this->_3dsxInFolder());
