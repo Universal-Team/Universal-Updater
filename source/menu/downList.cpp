@@ -218,14 +218,16 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-						const std::string &preinstallMessage = entry->GetPreinstallMessage();
-						std::string Msg = preinstallMessage.empty() ? Lang::get("EXECUTE_ENTRY") : (preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE"));
-						Msg += "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()];
-						if (types[i + StoreUtils::store->GetDownloadSIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
-						else if (types[i + StoreUtils::store->GetDownloadSIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
-						if (Msg::promptMsg(Msg)) {
-							StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
-						}
+							std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()];
+							if (types[i + StoreUtils::store->GetDownloadSIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
+							else if (types[i + StoreUtils::store->GetDownloadSIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
+							
+							const std::string &preinstallMessage = entry->GetPreinstallMessage();
+							std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
+
+							if (Msg::promptMsg(Msg) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
+								StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
+							}
 					}
 
 					break;
@@ -245,12 +247,14 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		}
 
 		if (smallDelay == 0 && hDown & KEY_A && !entries.empty()) {
-			const std::string &preinstallMessage = entry->GetPreinstallMessage();
-			std::string Msg = preinstallMessage.empty() ? Lang::get("EXECUTE_ENTRY") : (preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE"));
-			Msg += "\n\n" + entries[StoreUtils::store->GetDownloadSIndex()];
+			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadSIndex()];
 			if (types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
 			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
-			if (Msg::promptMsg(Msg)) {
+			
+			const std::string &preinstallMessage = entry->GetPreinstallMessage();
+			std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
+
+			if (Msg::promptMsg(Msg) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
