@@ -32,7 +32,6 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern bool QueueRuns;
-extern bool is3DSX;
 
 
 static const Structs::ButtonPos backButton{ 4, 0, 24, 24 };
@@ -166,16 +165,9 @@ void Overlays::ShowQrCodeUrl(const std::string &title, const std::string &url) {
 			if (y >= browserButton.y) break;
 		}
 
-		u8 consoleModel;
-		CFGU_GetSystemModel(&consoleModel);
-		
-		bool blockOld3DS = !is3DSX && (consoleModel == CFG_MODEL_3DS || consoleModel == CFG_MODEL_3DSXL || consoleModel == CFG_MODEL_2DS);
-
-		const bool browserAllowed = !QueueRuns && aptIsHomeAllowed() && !blockOld3DS;
-		if(!blockOld3DS) {
-			Gui::Draw_Rect(browserButton.x, browserButton.y, browserButton.w, browserButton.h, UIThemes->MarkSelected());
-			Gui::DrawStringCentered(0, browserButton.y + 4, 0.45f, UIThemes->TextColor(), Lang::get("OPEN_URL_WEB_BROWSER"), 255, 0, font);
-		}
+		const bool browserAllowed = !QueueRuns && aptIsHomeAllowed();
+		Gui::Draw_Rect(browserButton.x, browserButton.y, browserButton.w, browserButton.h, browserAllowed ? UIThemes->MarkSelected() : UIThemes->MarkUnselected());
+		Gui::DrawStringCentered(0, browserButton.y + 4, 0.45f, UIThemes->TextColor(), Lang::get("OPEN_URL_WEB_BROWSER"), 255, 0, font);
 
 		C3D_FrameEnd(0);
 
@@ -197,7 +189,7 @@ void Overlays::ShowQrCodeUrl(const std::string &title, const std::string &url) {
 				delete[] buf;
 
 				doOut = true;
-			} else if(!blockOld3DS) {
+			} else {
 				Msg::waitMsg(Lang::get("OPEN_URL_WEB_BROWSER_DISABLED"));
 			}
 		}
