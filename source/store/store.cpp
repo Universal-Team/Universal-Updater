@@ -438,6 +438,22 @@ std::string Store::GetWikiEntry(int index) const {
 }
 
 /*
+	Return the Preinstall Message of an index.
+
+	int index: The index.
+*/
+std::string Store::GetPreinstallMessage(int index) const {
+	if (!this->valid) return "";
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return ""; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("preinstall_message") && this->storeJson["storeContent"][index]["info"]["preinstall_message"].is_string()) {
+		return this->storeJson["storeContent"][index]["info"]["preinstall_message"];
+	}
+
+	return "";
+}
+
+/*
 	Return a C2D_Image of an index.
 
 	int index: The index.

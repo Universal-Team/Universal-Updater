@@ -46,6 +46,7 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->Stars = store->GetStarsEntry(index);
 	this->License = store->GetLicenseEntry(index);
 	this->Wiki = store->GetWikiEntry(index);
+	this->PreinstallMessage = store->GetPreinstallMessage(index);
 	this->MarkString = StringUtils::GetMarkString(meta->GetMarks(store->GetUniStoreTitle(), this->Title));
 
 	this->Icon = store->GetIconEntry(index);

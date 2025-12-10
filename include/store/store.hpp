@@ -55,6 +55,7 @@ public:
 	int GetStarsEntry(int index) const;
 	std::string GetLicenseEntry(int index) const;
 	std::string GetWikiEntry(int index) const;
+	std::string GetPreinstallMessage(int index) const;
 	C2D_Image GetIconEntry(int index) const;
 	std::string GetFileSizes(int index, const std::string &entry) const;
 	std::string GetFileTypes(int index, const std::string &entry) const;

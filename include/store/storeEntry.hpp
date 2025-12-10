@@ -45,6 +45,7 @@ public:
 	int GetStars() const { return this->Stars; };
 	std::string GetLicense() const { return this->License; };
 	std::string GetWiki() const { return this->Wiki; };
+	std::string GetPreinstallMessage() const { return this->PreinstallMessage; };
 	int GetMarks() const { return this->Marks; };
 
 	C2D_Image GetIcon() const { return this->Icon; };
@@ -71,7 +72,7 @@ public:
 	};
 
 private:
-	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, MarkString, ReleaseNotes, Wiki;
+	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, MarkString, ReleaseNotes, Wiki, PreinstallMessage;
 	int Stars;
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
