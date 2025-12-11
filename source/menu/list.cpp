@@ -54,6 +54,14 @@ void StoreUtils::DrawList() {
 			StoreUtils::store->SetAnimOffset(StoreUtils::store->GetAnimOffset() - 12);
 		}
 
+		// Scrollbar.
+		int rows = std::max((int)StoreUtils::entries.size() - 2, 1);
+		int barHeight = std::max(206 / rows, 3);
+		int pos = (206 - barHeight) * StoreUtils::store->GetScreenIndx() / (rows - 1);
+
+		Gui::Draw_Rect(393, 30, 3, 206, UIThemes->SideBarUnselected());
+		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UIThemes->SideBarSelected());
+
 		if (StoreUtils::entries.size() > 0) {
 			for (int i = 0; i < 5 && i < (int)StoreUtils::entries.size(); i++) {
 				uint32_t accentColor = 0;
