@@ -113,5 +113,28 @@
 		"SideBarSelected": "#48494a",
 		"SideBarUnselected": "#242629",
 		"TextColor": "#FFFFFF"
+	},
+		"Light": {
+		"Description": "A simple light theme.\n\nBy: Pk11",
+		"Version": 1,
+		"BGColor": "#FFFFFF",
+		"BarColor": "#C1CFDF",
+		"BarOutline": "#7F90A3",
+		"BoxInside": "#E3F0FE",
+		"BoxSelected": "#B2D5FA",
+		"BoxUnselected": "#000000",
+		"DownListPrev": "#C1CFDF",
+		"EntryBar": "#C1CFDF",
+		"EntryOutline": "#191E35",
+		"MarkSelected": "#7CA6D6",
+		"MarkUnselected": "#C1CFDF",
+		"ProgressbarIn": "#C1CFDF",
+		"ProgressbarOut": "#7F90A3",
+		"SearchBar": "#C1CFDF",
+		"SearchBarOutline": "#7F90A3",
+		"SideBarIconColor": "#0F3A68",
+		"SideBarSelected": "#7CA6D6",
+		"SideBarUnselected": "#C1CFDF",
+		"TextColor": "#000000"
 	}
 }
