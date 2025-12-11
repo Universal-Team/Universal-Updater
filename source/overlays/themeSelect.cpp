@@ -115,10 +115,12 @@ void Overlays::SelectTheme() {
 			}
 
 			if (hidKeysDown() & KEY_A) {
-				UIThemes->LoadTheme(Themes[selection].first);
 				config->theme(Themes[selection].first);
 				Finish = true;
 			}
+
+			// Load theme on every key press, as a preview
+			UIThemes->LoadTheme(Themes[selection].first);
 
 			if (hidKeysDown() & KEY_TOUCH) {
 				for (int i = 0; i < 7; i++) {
@@ -136,6 +138,11 @@ void Overlays::SelectTheme() {
 			else if (selection > sPos + 7 - 1) sPos = selection - 7 + 1;
 		}
 
-		if (hidKeysDown() & KEY_B) Finish = true;
+		if (hidKeysDown() & KEY_B) {
+			Finish = true;
+
+			// Reset to saved theme
+			UIThemes->LoadTheme(config->theme());
+		}
 	}
 }
