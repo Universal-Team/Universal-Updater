@@ -47,7 +47,7 @@ namespace ScriptUtils {
 
 	Result removeFile(const std::string &file, bool isARG = false);
 	void bootTitle(const std::string &TitleID, bool isNAND, bool isARG = false);
-	Result prompt(const std::string &message);
+	Result prompt(const std::string &message, const std::string &name);
 	Result copyFile(const std::string &source, const std::string &destination, const std::string &message, bool isARG = false);
 	Result renameFile(const std::string &oldName, const std::string &newName, bool isARG = false);
 	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message, bool isARG = false);

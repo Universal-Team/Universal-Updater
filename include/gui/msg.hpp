@@ -32,7 +32,7 @@
 namespace Msg {
 	void DisplayMsg(const std::string &Text);
 	void DisplayWarnMsg(const std::string &Text);
-	bool promptMsg(const std::string &promptMsg);
+	bool promptMsg(const std::string &promptMsg, const std::string &saveKey = "", bool saveOnlyYes = false);
 	void waitMsg(const std::string &msg);
 };
 

@@ -156,6 +156,12 @@ Config::Config() {
 
 	if (this->json.contains("Prompt")) this->prompt(this->getBool("Prompt"));
 
+	if(this->json.contains("SavedPrompts")) {
+		for(const auto &prompt : this->json["SavedPrompts"].items()) {
+			this->v_savedPrompts.emplace_back(prompt.key(), prompt.value());
+		}
+	}
+
 	this->changesMade = false; // No changes made yet.
 }
 
@@ -187,6 +193,11 @@ void Config::save() {
 		this->setBool("Display_Changelog", this->changelog());
 		this->setString("Active_Theme", this->theme());
 		this->setBool("Prompt", this->prompt());
+
+		this->json["SavedPrompts"] = nlohmann::json::object();
+		for(const auto &prompt : this->v_savedPrompts) {
+			this->json["SavedPrompts"][prompt.first] = prompt.second;
+		}
 
 		/* Write changes to file. */
 		const std::string dump = this->json.dump(1, '\t');
@@ -222,3 +233,25 @@ std::string Config::getString(const std::string &key) {
 void Config::setString(const std::string &key, const std::string &v) {
 	this->json[key] = v;
 };
+
+PromptValue Config::savedPrompt(const std::string &name) {
+	for(size_t i = 0; i < this->v_savedPrompts.size(); i++) {
+		if(this->v_savedPrompts[i].first == name)
+			return this->v_savedPrompts[i].second ? PromptValue::Yes : PromptValue::No;
+	}
+
+	return PromptValue::Unset;
+}
+
+void Config::savePrompt(const std::string &name, bool v) {
+	this->changesMade = true;
+
+	for(size_t i = 0; i < this->v_savedPrompts.size(); i++) {
+		if(this->v_savedPrompts[i].first == name) {
+			this->v_savedPrompts[i].second = v;
+			return;
+		}
+	}
+
+	this->v_savedPrompts.emplace_back(name, v);
+}

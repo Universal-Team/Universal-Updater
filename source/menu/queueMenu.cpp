@@ -281,7 +281,7 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 						break;
 
 					case PROMPT_REQUEST: // Skip prompt message.
-						QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg);
+						QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg, QueueSystem::RequestMsgName);
 
 						QueueSystem::Wait = false;
 						QueueSystem::Resume();
@@ -319,7 +319,7 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 					break;
 
 				case PROMPT_REQUEST: // Skip prompt message.
-					QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg);
+					QueueSystem::RequestAnswer = ScriptUtils::prompt(QueueSystem::RequestMsg, QueueSystem::RequestMsgName);
 
 					QueueSystem::Wait = false;
 					QueueSystem::Resume();

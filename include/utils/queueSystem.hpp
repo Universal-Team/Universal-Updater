@@ -57,7 +57,7 @@ enum RequestType {
 /* Of course also a namespace to that part, so we can do that in a Thread. */
 namespace QueueSystem {
 	extern int RequestNeeded, RequestAnswer;
-	extern std::string RequestMsg, EndMsg;
+	extern std::string RequestMsg, RequestMsgName, EndMsg;
 	extern int LastElement;
 	extern bool Wait, Popup, CancelCallback;
 

@@ -27,6 +27,9 @@
 #include "common.hpp"
 #include "msg.hpp"
 
+// Width of checkbox + padding
+#define CHECK_WIDTH 18
+
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 const std::vector<Structs::ButtonPos> promptButtons = {
@@ -81,31 +84,56 @@ void Msg::DisplayWarnMsg(const std::string &Text) {
 
 	const std::string &promptMsg: The Message, which should be displayed.
 */
-bool Msg::promptMsg(const std::string &promptMsg) {
-	Gui::clearTextBufs();
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, TRANSPARENT);
-	C2D_TargetClear(Bottom, TRANSPARENT);
-
-	GFX::DrawTop();
-	Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-	Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, UIThemes->TextColor(), promptMsg, 395, 0, font);
-
-	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("YES_OR_NO"), 390, 0, font);
-	GFX::DrawBottom();
-	for(uint i = 0; i < promptButtons.size(); i++) {
-		Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
-		Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bool saveOnlyYes) {
+	if(!saveKey.empty()) {
+		PromptValue value = config->savedPrompt(saveKey);
+		switch(value) {
+			case PromptValue::Yes:
+				return true;
+			case PromptValue::No:
+				return false;
+			case PromptValue::Unset:
+				break;
+		}
 	}
-	C3D_FrameEnd(0);
 
-	for (int i = 0; i < 3; i++) gspWaitForVBlank();
-	hidScanInput();
+	bool res;
+	bool save = false;
 
 	uint32_t Down = 0;
 	touchPosition Touch;
 	while(1) {
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
+
+		GFX::DrawTop();
+		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, UIThemes->TextColor(), promptMsg, 395, 0, font);
+
+		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), saveKey.empty() ? Lang::get("YES_OR_NO") : Lang::get("YES_NO_OR_SAVE"), 390, 0, font);
+		GFX::DrawBottom();
+		for(uint i = 0; i < promptButtons.size(); i++) {
+			Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
+			Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+		}
+
+		Structs::ButtonPos savePromptBtn = {0, 160, 0, 14};
+		if(!saveKey.empty()) {
+			savePromptBtn.w = CHECK_WIDTH + Gui::GetStringWidth(0.6f, Lang::get("SAVE_SELECTION"), font);
+			savePromptBtn.x = (320 / 2) - (savePromptBtn.w / 2);
+			
+			int stringHeight = Gui::GetStringHeight(0.6f, Lang::get("SAVE_SELECTION"), font);
+			int stringY = savePromptBtn.y - (stringHeight - savePromptBtn.h) / 2;
+			Gui::DrawString(savePromptBtn.x + CHECK_WIDTH, stringY, 0.6f, UIThemes->TextColor(), Lang::get("SAVE_SELECTION"), 0, 0, font);
+			GFX::DrawCheckbox(savePromptBtn.x, savePromptBtn.y, save);
+		}
+
+		C3D_FrameEnd(0);
+		for (int i = 0; i < 3; i++) gspWaitForVBlank();
+
 		do {
 			gspWaitForVBlank();
 			hidScanInput();
@@ -113,9 +141,22 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 			hidTouchRead(&Touch);
 		} while (!Down);
 
-		if ((Down & KEY_A) || (Down & KEY_TOUCH && touching(Touch, promptButtons[1]))) return true;
-		else if ((Down & KEY_B) || (Down & KEY_TOUCH && touching(Touch, promptButtons[0]))) return false;
-	};
+		if ((Down & KEY_A) || (Down & KEY_TOUCH && touching(Touch, promptButtons[1]))) {
+			res = true;
+			break;
+		} else if ((Down & KEY_B) || (Down & KEY_TOUCH && touching(Touch, promptButtons[0]))) {
+			res = false;
+			break;
+		} else if (!saveKey.empty() && ((Down & KEY_Y) || (Down & KEY_TOUCH && touching(Touch, savePromptBtn)))) {
+			save = !save;
+		}
+	}
+
+	if(save && (!saveOnlyYes || res)) {
+		config->savePrompt(saveKey, res);
+	}
+
+	return res;
 }
 
 /*

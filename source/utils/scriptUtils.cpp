@@ -81,9 +81,9 @@ void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, bool isARG)
 }
 
 /* Prompt message. */
-Result ScriptUtils::prompt(const std::string &message) {
+Result ScriptUtils::prompt(const std::string &message, const std::string &name) {
 	Result ret = NONE;
-	if (!Msg::promptMsg(message)) ret = SCRIPT_CANCELED;
+	if (!Msg::promptMsg(message, name)) ret = SCRIPT_CANCELED;
 
 	return ret;
 }
@@ -497,18 +497,25 @@ Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const 
 				else ret = SYNTAX_ERROR;
 
 			} else if (type == "promptMessage" || type == "promptMsg") {
-				std::string Message = "";
+				std::string Message = "", Name = "";
 				int skipCount = -1;
 
 				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
 					Message = Script[i]["message"];
 				}
 
+				if (Script[i].contains("name") && Script[i]["name"].is_string()) {
+					Name =
+						storeJson["storeContent"][selection]["info"]["title"].get_ref<const std::string &>()
+						+ "/"
+						+ Script[i]["name"].get_ref<const std::string &>();
+				}
+
 				if (Script[i].contains("count") && Script[i]["count"].is_number()) {
 					skipCount = Script[i]["count"];
 				}
 
-				ret = ScriptUtils::prompt(Message);
+				ret = ScriptUtils::prompt(Message, Name);
 
 				if (skipCount > -1 && ret == SCRIPT_CANCELED) {
 					ret = NONE;

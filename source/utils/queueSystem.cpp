@@ -34,7 +34,7 @@
 std::deque<std::unique_ptr<Queue>> queueEntries;
 int QueueSystem::RequestNeeded = -1, QueueSystem::RequestAnswer = -1;
 bool QueueSystem::Wait = false, QueueSystem::Popup = false, QueueSystem::CancelCallback = false;
-std::string QueueSystem::RequestMsg = "", QueueSystem::EndMsg = "";
+std::string QueueSystem::RequestMsg = "", QueueSystem::RequestMsgName = "", QueueSystem::EndMsg = "";
 int QueueSystem::LastElement = 0;
 
 bool QueueRuns = false;
@@ -267,7 +267,7 @@ void QueueSystem::QueueHandle() {
 
 			/* Request Type 2. */
 			} else if (type == "promptMessage" || type == "promptMsg") {
-				std::string Message = "";
+				std::string Message = "", Name = "";
 				int skipCount = -1;
 				queueEntries[0]->status = QueueStatus::Request;
 
@@ -275,11 +275,20 @@ void QueueSystem::QueueHandle() {
 					Message = queueEntries[0]->obj[i]["message"];
 				}
 
+				if (queueEntries[0]->obj[i].contains("name") && queueEntries[0]->obj[i]["name"].is_string()) {
+					Name = queueEntries[0]->entryName + "/" + queueEntries[0]->obj[i]["name"].get_ref<const std::string &>();
+				}
+
 				if (queueEntries[0]->obj[i].contains("count") && queueEntries[0]->obj[i]["count"].is_number()) {
 					skipCount = queueEntries[0]->obj[i]["count"];
 				}
 
-				if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
+				if (!Name.empty() && config->savedPrompt(Name) != PromptValue::Unset) {
+					if ((skipCount > -1) && (config->savedPrompt(Name) == PromptValue::No)) {
+						i += skipCount; // Skip.
+						queueEntries[0]->current += skipCount;
+					}
+				} else if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
 					if ((skipCount > -1) && (QueueSystem::RequestAnswer == SCRIPT_CANCELED)) {
 						i += skipCount; // Skip.
 						queueEntries[0]->current += skipCount;
@@ -289,10 +298,12 @@ void QueueSystem::QueueHandle() {
 					QueueSystem::RequestAnswer = NO_REQUEST;
 					QueueSystem::RequestNeeded = NO_REQUEST;
 					QueueSystem::RequestMsg = "";
+					QueueSystem::RequestMsgName = "";
 
 				} else {
 					QueueSystem::RequestNeeded = PROMPT_REQUEST; // Type 2.
 					QueueSystem::RequestMsg = Message;
+					QueueSystem::RequestMsgName = Name;
 					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
 					ret = PROMPT_RET;
 				}

@@ -170,5 +170,6 @@
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
 	"YES": "Yes",
+	"YES_NO_OR_SAVE": "Press \uE000 for yes, \uE001 for no, \uE003 to save.",
 	"YES_OR_NO": "Press \uE000 for yes, \uE001 for no."
 }

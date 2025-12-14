@@ -33,6 +33,12 @@
 #include <3ds.h>
 #include <string>
 
+enum class PromptValue {
+	Unset,
+	Yes,
+	No
+};
+
 class Config {
 public:
 	Config();
@@ -117,6 +123,9 @@ public:
 	/* If showing prompt if action failed / succeeded. */
 	bool prompt() const { return this->v_prompt; };
 	void prompt(bool v) { this->v_prompt = v; if (!this->changesMade) this->changesMade = true; };
+
+	PromptValue savedPrompt(const std::string &name);
+	void savePrompt(const std::string &name, bool v);
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -128,6 +137,8 @@ private:
 
 	nlohmann::json json;
 	bool changesMade = false;
+
+	std::vector<std::pair<std::string, bool>> v_savedPrompts;
 
 	std::string v_language = "en", v_lastStore = "universal-db.unistore",
 				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
