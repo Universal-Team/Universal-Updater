@@ -185,7 +185,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			if (is3DSX) { // Only allow if 3DSX.
 				if (StoreUtils::entries.size() <= 0) return; // Smaller than 0 -> No No.
 
-				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"))) {
+				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"), "Universal-Updater/shortcut", true)) {
 					if (CreateShortcut(entry->GetTitle(), StoreUtils::store->GetDownloadIndex(), StoreUtils::store->GetFileName(), entry->GetAuthor())) {
 						Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
 					}
@@ -225,7 +225,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 							const std::string &preinstallMessage = entry->GetPreinstallMessage();
 							std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
 
-							if (Msg::promptMsg(Msg) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
+							if (Msg::promptMsg(Msg, "Universal-Updater/confirm-install", true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
 								StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
 							}
 					}
@@ -254,7 +254,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			const std::string &preinstallMessage = entry->GetPreinstallMessage();
 			std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
 
-			if (Msg::promptMsg(Msg) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
+			if (Msg::promptMsg(Msg, "Universal-Updater/confirm-install", true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
