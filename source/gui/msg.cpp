@@ -34,7 +34,7 @@ const std::vector<Structs::ButtonPos> promptButtons = {
 	{172, 94, 124, 48}
 };
 const std::vector<std::string> promptLabels = {
-	"CANCEL", "CONFIRM"
+	"NO", "YES"
 };
 
 /*
@@ -92,7 +92,7 @@ bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
 	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, UIThemes->TextColor(), promptMsg, 395, 0, font);
 
-	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("CONFIRM_OR_CANCEL"), 390, 0, font);
+	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("YES_OR_NO"), 390, 0, font);
 	GFX::DrawBottom();
 	for(uint i = 0; i < promptButtons.size(); i++) {
 		Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());

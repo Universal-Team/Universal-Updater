@@ -19,7 +19,6 @@
 	"AUTO_UPDATE_UU_DESC": "When enabled, Universal-Updater will check for updates every time it's opened.",
 	"AVAILABLE_DOWNLOADS": "Available Downloads",
 	"BOOT_TITLE": "Would you like to boot this title?",
-	"CANCEL": "Cancel",
 	"CATEGORY": "Category",
 	"CHANGE_3DSX_PATH": "Change 3DSX path",
 	"CHANGE_ARCHIVE_PATH": "Change archive path",
@@ -28,9 +27,7 @@
 	"CHANGE_SHORTCUT_PATH": "Change shortcut path",
 	"CHECK_UNISTORE_UPDATES": "Checking for UniStore updates...",
 	"CHECK_UU_UPDATES": "Checking for Universal-Updater updates...",
-	"CONFIRM_OR_CANCEL": "Press \uE000 to confirm, \uE001 to cancel.",
 	"CONNECT_WIFI": "Please Connect to WiFi.",
-	"CONFIRM": "Confirm",
 	"CONSOLE": "Console",
 	"CONTRIBUTOR_TRANSLATORS": "- All Translators & Contributors",
 	"COPYING": "Copying... %s / %s (%.2f%%)",
@@ -105,6 +102,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Move Error!",
+	"NO": "No",
 	"NO_DOWNLOADS_AVAILABLE": "No downloads available",
 	"NO_LICENSE": "No License",
 	"NO_SCREENSHOTS_AVAILABLE": "No Screenshots available",
@@ -125,6 +123,7 @@
 	"QUEUE_PROGRESS": "Step: %d / %d",
 	"RECOMMENDED_UNISTORES": "Recommended UniStores",
 	"REVISION": "Revision",
+	"SAVE_SELECTION": "Save your selection?",
 	"SCREENSHOT": "Screenshot %d / %d",
 	"SCREENSHOT_COULD_NOT_LOAD": "Screenshot could not be loaded.",
 	"SCREENSHOT_INSTRUCTIONS": "Press  to change and  to zoom",
@@ -169,5 +168,7 @@
 	"USE_ACCENT_COLOR": "Use Accent Color of Entries",
 	"VERSION": "Version",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
-	"YEARS_AGO": "%d years ago (%d/%d/%d)"
+	"YEARS_AGO": "%d years ago (%d/%d/%d)",
+	"YES": "Yes",
+	"YES_OR_NO": "Press \uE000 for yes, \uE001 for no."
 }
