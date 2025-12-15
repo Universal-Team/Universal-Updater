@@ -148,7 +148,7 @@ private:
 		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
 		v_useAccentColor = true, v_sortAscending = false;
 
-	SortType v_sortBy = SortType::LAST_UPDATED;
+	SortType v_sortBy = SortType::POPULARITY;
 };
 
 #endif
