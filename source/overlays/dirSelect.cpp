@@ -45,21 +45,19 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 /* Select a Directory. */
 std::string Overlays::SelectDir(const std::string &oldDir, const std::string &msg) {
 	std::string currentPath = oldDir;
+	if(currentPath.back() == '/')
+		currentPath.pop_back();
 	bool dirChanged = false;
 	int selection = 0, sPos = 0;
 
 	std::vector<DirEntry> dirContents;
 
 	/* Make sure. */
-	if (access((oldDir + std::string("/")).c_str(), F_OK) == 0) {
-		chdir((oldDir + std::string("/")).c_str());
-
-	} else {
+	if (access(currentPath.c_str(), F_OK) != 0 || currentPath == "sdmc:") {
 		currentPath = "sdmc:/";
-		chdir("sdmc:/");
 	}
 
-	getDirectoryContents(dirContents, {"/"});
+	getDirectoryContents(currentPath.c_str(), dirContents, {"/"});
 
 	while(1) {
 		Gui::clearTextBufs();
@@ -104,7 +102,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 			selection = 0;
 			sPos = 0;
-			getDirectoryContents(dirContents, {"/"});
+			getDirectoryContents(currentPath.c_str(), dirContents, {"/"});
 		}
 
 
@@ -137,10 +135,9 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 			if (hidKeysDown() & KEY_A) {
 				if (dirContents[selection].isDirectory) {
-					chdir(dirContents[selection].name.c_str());
-					char path[PATH_MAX];
-					getcwd(path, PATH_MAX);
-					currentPath = path;
+					if(currentPath.back() != '/')
+						currentPath += '/';
+					currentPath += dirContents[selection].name;
 					dirChanged = true;
 				}
 			}
@@ -150,11 +147,9 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)dirContents.size()) {
 							if (dirContents[i + sPos].isDirectory) {
-								chdir(dirContents[i + sPos].name.c_str());
-
-								char path[PATH_MAX];
-								getcwd(path, PATH_MAX);
-								currentPath = path;
+								if(currentPath.back() != '/')
+									currentPath += '/';
+								currentPath += dirContents[i + sPos].name;
 
 								dirChanged = true;
 								break;
@@ -174,14 +169,12 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 		}
 
 		if (hidKeysDown() & KEY_B) {
-			char path[PATH_MAX];
-			getcwd(path, PATH_MAX);
-
-			if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) return "";
+			if (currentPath == "sdmc:/" || currentPath == "/") return "";
 			else {
-				chdir("..");
-				getcwd(path, PATH_MAX);
-				currentPath = path;
+				int slashPos = currentPath.rfind("/");
+				currentPath = currentPath.substr(0, slashPos);
+				if(currentPath == "sdmc:")
+					currentPath = "sdmc:/";
 				dirChanged = true;
 			}
 		}

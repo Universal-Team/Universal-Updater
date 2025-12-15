@@ -54,8 +54,8 @@ struct UniStoreInfo {
 };
 
 bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList);
-void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
-void getDirectoryContents(std::vector<DirEntry> &dirContents);
+void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
+void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents);
 
 std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path);
 
