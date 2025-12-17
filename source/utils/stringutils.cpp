@@ -163,12 +163,18 @@ uint32_t StringUtils::ParseColorHexString(std::string_view str) {
 std::string StringUtils::RelativeDate(std::string dateString) {
 	// Parse the date to a unix timestamp
 	struct tm tmStruct{};
-	sscanf(dateString.c_str(), "%d-%d-%d at %d:%d (UTC)",
+	int argsParsed = sscanf(dateString.c_str(), "%d-%d-%d at %d:%d",
 		&tmStruct.tm_year,
 		&tmStruct.tm_mon,
 		&tmStruct.tm_mday,
 		&tmStruct.tm_hour,
 		&tmStruct.tm_min);
+
+	// If we failed to parse everything, then just return
+	// the unformatted tring.
+	if(argsParsed < 5) {
+		return dateString;
+	}
 
 	// Fix values
 	tmStruct.tm_year -= 1900;
