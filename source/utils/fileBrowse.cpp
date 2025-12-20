@@ -30,6 +30,7 @@
 #include "structs.hpp"
 #include <3ds.h>
 #include <cstring>
+#include <filesystem>
 #include <functional>
 #include <unistd.h>
 
@@ -55,38 +56,21 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
 
-void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList) {
-	struct stat st;
+std::vector<DirEntry> getDirectoryContents(const std::string &dir, const std::vector<std::string> &extensionList) {
+	std::vector<DirEntry> dirContents;
 
-	dirContents.clear();
-
-	chdir(dir);
-	DIR *pdir = opendir(dir);
-
-	if (pdir != nullptr) {
-		while(true) {
-			DirEntry dirEntry;
-
-			struct dirent *pent = readdir(pdir);
-			if (pent == NULL) break;
-
-			stat(pent->d_name, &st);
-			dirEntry.name = pent->d_name;
-			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
-
-			if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-				dirContents.push_back(dirEntry);
-			}
+	for (const auto &entry : std::filesystem::directory_iterator(dir)) {
+		if (entry.is_directory() || nameEndsWith(entry.path().filename(), extensionList)) {
+			dirContents.emplace_back(entry.path().filename(), entry.path(), entry.is_directory());
 		}
-
-		closedir(pdir);
 	}
 
 	sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+	return dirContents;
 }
 
-void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents) {
-	getDirectoryContents(dir, dirContents, {});
+std::vector<DirEntry> getDirectoryContents(const std::string &dir) {
+	return getDirectoryContents(dir, {});
 }
 
 /*
@@ -154,11 +138,10 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 */
 std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	std::vector<UniStoreInfo> info;
-	std::vector<DirEntry> dirContents;
 
 	if (access(path.c_str(), F_OK) != 0) return {}; // Folder does not exist.
 
-	getDirectoryContents(path.c_str(), dirContents, { "unistore" });
+	std::vector<DirEntry> dirContents = getDirectoryContents(path, { "unistore" });
 
 	for(uint i = 0; i < dirContents.size(); i++) {
 		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
@@ -181,8 +164,7 @@ u32 copyBuf[copyBufSize];
 	const char *sourcePath: Pointer to the source path.
 */
 void dirCopy(const DirEntry &entry, const char *destinationPath, const char *sourcePath) {
-	std::vector<DirEntry> dirContents;
-	getDirectoryContents((sourcePath + ("/" + entry.name)).c_str(), dirContents);
+	std::vector<DirEntry> dirContents = getDirectoryContents((sourcePath + ("/" + entry.name)));
 
 	if (((int)dirContents.size()) == 1)
 		mkdir((destinationPath + ("/" + entry.name)).c_str(), 0777);
@@ -206,8 +188,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		closedir(isDir);
 
 		/* Source path is a directory. */
-		std::vector<DirEntry> dirContents;
-		getDirectoryContents(sourcePath, dirContents);
+		std::vector<DirEntry> dirContents = getDirectoryContents(sourcePath);
 		mkdir(destinationPath, 0777);
 
 		for(int i = 1; i < ((int)dirContents.size()); i++) {

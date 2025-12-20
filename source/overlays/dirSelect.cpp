@@ -50,14 +50,13 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 	bool dirChanged = false;
 	int selection = 0, sPos = 0;
 
-	std::vector<DirEntry> dirContents;
-
 	/* Make sure. */
 	if (access(currentPath.c_str(), F_OK) != 0 || currentPath == "sdmc:") {
 		currentPath = "sdmc:/";
 	}
 
-	getDirectoryContents(currentPath.c_str(), dirContents, {"/"});
+	std::vector<DirEntry> dirContents = getDirectoryContents(currentPath, {"/"});
+
 
 	while(1) {
 		Gui::clearTextBufs();
@@ -102,7 +101,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 			selection = 0;
 			sPos = 0;
-			getDirectoryContents(currentPath.c_str(), dirContents, {"/"});
+			dirContents = getDirectoryContents(currentPath, {"/"});
 		}
 
 
@@ -173,7 +172,7 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 			else {
 				int slashPos = currentPath.rfind("/");
 				currentPath = currentPath.substr(0, slashPos);
-				if(currentPath == "sdmc:")
+				if(currentPath == "sdmc:" || currentPath == "")
 					currentPath = "sdmc:/";
 				dirChanged = true;
 			}

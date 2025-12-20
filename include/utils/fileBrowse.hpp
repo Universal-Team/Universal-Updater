@@ -33,6 +33,9 @@
 #include <vector>
 
 struct DirEntry {
+	DirEntry(const std::string &_name, const std::string &_path, bool _isDirectory)
+		: name(_name), path(_path), isDirectory(_isDirectory) {}
+
 	std::string name;
 	std::string path;
 	bool isDirectory;
@@ -54,8 +57,8 @@ struct UniStoreInfo {
 };
 
 bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList);
-void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
-void getDirectoryContents(const char *dir, std::vector<DirEntry> &dirContents);
+std::vector<DirEntry> getDirectoryContents(const std::string &dir, const std::vector<std::string> &extensionList);
+std::vector<DirEntry> getDirectoryContents(const std::string &dir);
 
 std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path);
 
