@@ -49,55 +49,42 @@ MainScreen::MainScreen() {
 	StoreUtils::meta = std::make_unique<Meta>();
 
 	/* Check if lastStore is accessible. */
-	if (config->lastStore() != "universal-db.unistore" && config->lastStore() != "") {
-		if (access((_STORE_PATH + config->lastStore()).c_str(), F_OK) != 0) {
+	bool forceUpdate = false;
+
+	if (config->lastStore() != "")
+		config->lastStore("universal-db.unistore");
+
+	if (access((_STORE_PATH + config->lastStore()).c_str(), F_OK) != 0) {
+		config->lastStore("universal-db.unistore");
+
+	} else {
+		/* check version and file here. */
+		const UniStoreInfo info = GetInfo((_STORE_PATH + config->lastStore()), config->lastStore());
+
+		if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
 			config->lastStore("universal-db.unistore");
+		}
 
-		} else {
-			/* check version and file here. */
-			const UniStoreInfo info = GetInfo((_STORE_PATH + config->lastStore()), config->lastStore());
-
-			if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
-				config->lastStore("universal-db.unistore");
-			}
-
-			if (info.File != "") { // Ensure to check for this.
-				if ((info.File.find("/") != std::string::npos)) {
-					config->lastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
-				}
+		if (info.File != "") { // Ensure to check for this.
+			if ((info.File.find("/") != std::string::npos)) {
+				config->lastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
 			}
 		}
 	}
 
-	/* If Universal DB --> Get! */
-	if (config->lastStore() == "universal-db.unistore" || config->lastStore() == "") {
-		if (access("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", F_OK) != 0) {
-			if (checkWifiStatus()) {
-				std::string tmp = ""; // Just a temp.
-				DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
-				DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
-
-			} else {
-				notConnectedMsg();
-			}
+	std::string storePath = _STORE_PATH + config->lastStore();
+	if (access(storePath.c_str(), F_OK) != 0) {
+		if (checkWifiStatus()) {
+			std::string tmp = ""; // Just a temp.
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
+			forceUpdate = true;
 
 		} else {
-			const UniStoreInfo info = GetInfo("sdmc:/3ds/Universal-Updater/stores/universal-db.unistore", "universal-db.unistore");
-
-			if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
-				if (checkWifiStatus()) {
-					std::string tmp = ""; // Just a temp.
-					DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
-					DownloadSpriteSheet("https://db.universal-team.net/unistore/universal-db.t3x", "universal-db.t3x");
-
-				} else {
-					notConnectedMsg();
-				}
-			}
+			notConnectedMsg();
 		}
 	}
 
-	StoreUtils::store = std::make_unique<Store>(_STORE_PATH + config->lastStore(), config->lastStore());
+	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), false, forceUpdate);
 	StoreUtils::ResetAll();
 	StoreUtils::SortEntries();
 

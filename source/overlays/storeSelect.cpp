@@ -103,115 +103,24 @@ static void DeleteStore(const std::string &file) {
 	Download a store.. including the SpriteSheets, if found.
 */
 static bool DownloadStore() {
-	bool doSheet = false;
-	std::string file = "";
-
 	const std::string URL = QR_Scanner::StoreHandle();
-	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, true);
-
-	if (doSheet) {
-		nlohmann::json storeJson;
-		FILE *temp = fopen(file.c_str(), "rt");
-		if (temp) {
-			storeJson = nlohmann::json::parse(temp, nullptr, false);
-			fclose(temp);
-		}
-		if (storeJson.is_discarded())
-			storeJson = { };
-
-		if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
-			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
-				const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-				const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
-
-				if (locs.size() == sht.size()) {
-					for (int i = 0; i < (int)sht.size(); i++) {
-						if (!(sht[i].find("/") != std::string::npos)) {
-							char msg[150];
-							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-							Msg::DisplayMsg(msg);
-							DownloadSpriteSheet(locs[i], sht[i]);
-
-						} else {
-							Msg::waitMsg(Lang::get("SHEET_SLASH"));
-						}
-					}
-				}
-			}
-
-		} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
-			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
-				const std::string fl = storeJson["storeInfo"]["sheetURL"];
-				const std::string fl2 = storeJson["storeInfo"]["sheet"];
-
-				if (!(fl2.find("/") != std::string::npos)) {
-					Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
-					DownloadSpriteSheet(fl, fl2);
-
-				} else {
-					Msg::waitMsg(Lang::get("SHEET_SLASH"));
-				}
-			}
-		}
-	}
+	if (URL == "") return false;
+	
+	std::string file = "";
+	DownloadUniStore(URL, -1, file, true);
+	Store(_STORE_PATH + file, file, false, true);
 
 	hidScanInput(); // Re-Scan.
-	return doSheet;
+	return true;
 }
 
 static bool UpdateStore(const std::string &URL) {
-	bool doSheet = false;
+	if (URL != "") return false;
+
 	std::string file = "";
-
-	if (URL != "") doSheet = DownloadUniStore(URL, -1, file, false);
-
-	if (doSheet) {
-		nlohmann::json storeJson;
-		FILE *temp = fopen(file.c_str(), "rt");
-		if (temp) {
-			storeJson = nlohmann::json::parse(temp, nullptr, false);
-			fclose(temp);
-		}
-		if (storeJson.is_discarded())
-			storeJson = { };
-
-		if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_array()) {
-			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
-				const std::vector<std::string> locs = storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-				const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
-
-				if (locs.size() == sht.size()) {
-					for (int i = 0; i < (int)sht.size(); i++) {
-						if (!(sht[i].find("/") != std::string::npos)) {
-							char msg[150];
-							snprintf(msg, sizeof(msg), Lang::get("DOWNLOADING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-							Msg::DisplayMsg(msg);
-							DownloadSpriteSheet(locs[i], sht[i]);
-
-						} else {
-							Msg::waitMsg(Lang::get("SHEET_SLASH"));
-						}
-					}
-				}
-			}
-
-		} else if (storeJson["storeInfo"].contains("sheetURL") && storeJson["storeInfo"]["sheetURL"].is_string()) {
-			if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
-				const std::string fl = storeJson["storeInfo"]["sheetURL"];
-				const std::string fl2 = storeJson["storeInfo"]["sheet"];
-
-				if (!(fl2.find("/") != std::string::npos)) {
-					Msg::DisplayMsg(Lang::get("DOWNLOADING_SPRITE_SHEET"));
-					DownloadSpriteSheet(fl, fl2);
-
-				} else {
-					Msg::waitMsg(Lang::get("SHEET_SLASH"));
-				}
-			}
-		}
-	}
-
-	return doSheet;
+	DownloadUniStore(URL, -1, file, false);
+	Store(_STORE_PATH + file, file, false, true);
+	return true;
 }
 
 /*

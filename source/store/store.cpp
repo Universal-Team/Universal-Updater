@@ -43,7 +43,7 @@ static bool firstStart = true;
 	const std::string &file2: The UniStore file.. without full path.
 	bool ARGMode: If Argument mode.
 */
-Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
+Store::Store(const std::string &file, const std::string &file2, bool ARGMode, bool forceUpdate) {
 	if (file.length() > 4) {
 		if(*(u32*)(file.c_str() + file.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
 			this->valid = false;
@@ -54,7 +54,7 @@ Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
 	this->fileName = file2;
 
 	if (!ARGMode) {
-		this->update(file);
+		this->update(file, forceUpdate);
 		this->SetC2DBGImage();
 
 	} else {
@@ -67,15 +67,15 @@ Store::Store(const std::string &file, const std::string &file2, bool ARGMode) {
 
 	const std::string &file: Const Reference to the fileName.
 */
-void Store::update(const std::string &file) {
-	bool doSheet = false;
+void Store::update(const std::string &file, bool force) {
+	bool doSheet = true;
 	this->LoadFromFile(file);
 
 	int rev = -1;
 
 	/* Only do this, if valid. */
 	if (this->valid) {
-		if (this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
+		if (!force && this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
 			rev = this->storeJson["storeInfo"]["revision"];
 		}
 

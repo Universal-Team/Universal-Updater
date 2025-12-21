@@ -33,12 +33,12 @@
 
 class Store {
 public:
-	Store(const std::string &file, const std::string &file2, bool ARGMode = false);
+	Store(const std::string &file, const std::string &file2, bool ARGMode = false, bool forceUpdate = false);
 	~Store();
 	void LoadFromFile(const std::string &file);
 	void loadSheets();
 	void unloadSheets();
-	void update(const std::string &file);
+	void update(const std::string &file, bool force);
 
 	/* Get Information of the UniStore itself. */
 	std::string GetUniStoreTitle() const;
