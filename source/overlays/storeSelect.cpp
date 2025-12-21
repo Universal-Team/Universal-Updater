@@ -141,15 +141,7 @@ void Overlays::SelectStore() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
-			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
-
-		} else {
-			GFX::DrawTop();
-		}
+		GFX::DrawTop();
 
 		if (info.size() > 0) {
 			if (info[selection].StoreSize != -1) {
