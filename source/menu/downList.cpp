@@ -214,20 +214,16 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			else StoreUtils::store->SetDownloadIndex(0);
 		}
 
+		bool selected = false;
 		if (smallDelay == 0 && hDown & KEY_TOUCH) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-							std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[i + StoreUtils::store->GetDownloadSIndex()];
-							if (types[i + StoreUtils::store->GetDownloadSIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
-							else if (types[i + StoreUtils::store->GetDownloadSIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
-							
-							const std::string &preinstallMessage = entry->GetPreinstallMessage();
-							std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
-
-							if (Msg::promptMsg(Msg, "Universal-Updater/confirm-install", true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
-								StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[i + StoreUtils::store->GetDownloadSIndex()], entry->GetTitle(), entry->GetLastUpdated());
-							}
+						if(StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) {
+							selected = true;
+						} else {
+							StoreUtils::store->SetDownloadIndex(i + StoreUtils::store->GetDownloadSIndex());
+						}
 					}
 
 					break;
@@ -246,7 +242,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			}
 		}
 
-		if (smallDelay == 0 && hDown & KEY_A && !entries.empty()) {
+		if (smallDelay == 0 && (hDown & KEY_A || selected) && !entries.empty()) {
 			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadSIndex()];
 			if (types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
 			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
