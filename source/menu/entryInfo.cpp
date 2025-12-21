@@ -50,7 +50,11 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 		Gui::Draw_Rect(40, 0, 280, 36, accentColor ? accentColor : UIThemes->EntryBar());
 		Gui::Draw_Rect(40, 36, 280, 1, UIThemes->EntryOutline());
 
-		Gui::DrawStringCentered(17, 0, 0.6, accentColor ? WHITE : UIThemes->TextColor(), entry->GetTitle(), 273, 0, font);
+		std::string title = entry->GetTitle();
+		if(entry->GetMarks())
+			title = entry->GetMarkString() + " " + title;
+
+		Gui::DrawStringCentered(17, 0, 0.6, accentColor ? WHITE : UIThemes->TextColor(), title, 273, 0, font);
 		Gui::DrawStringCentered(17, 20, 0.4, accentColor ? WHITE : UIThemes->TextColor(), entry->GetAuthor(), 273, 0, font);
 		Gui::DrawStringCentered(17, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 

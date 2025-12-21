@@ -89,8 +89,12 @@ void StoreUtils::DrawList() {
 
 						C2D_DrawImageAt(tempImg, StoreBoxesList[i].x + 1 + offsetW, StoreBoxesList[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5, entry.HasIcon() ? nullptr : &tint);
 
+						std::string title = entry.GetTitle();
+						if(entry.GetMarks())
+							title = entry.GetMarkString() + " " + title;
+
 						if (entry.GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32 + StoreUtils::store->GetAnimOffset());
-						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, accentColor ? WHITE : UIThemes->TextColor(), entry.GetTitle(), 300, 0, font);
+						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, accentColor ? WHITE : UIThemes->TextColor(), title, 300, 0, font);
 						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, accentColor ? WHITE : UIThemes->TextColor(), entry.GetAuthor(), 300, 0, font);
 					}
 				}

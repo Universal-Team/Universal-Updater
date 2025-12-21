@@ -35,18 +35,19 @@ class StoreEntry {
 public:
 	StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, int index);
 
-	std::string GetTitle() const { return this->Title; };
-	std::string GetAuthor() const { return this->Author; };
-	std::string GetDescription() const { return this->Description; };
-	std::string GetCategory() const { return this->Category; };
-	std::string GetVersion() const { return this->Version; };
-	std::string GetConsole() const { return this->Console; };
-	std::string GetLastUpdated() const { return this->LastUpdated; };
+	const std::string &GetTitle() const { return this->Title; };
+	const std::string &GetAuthor() const { return this->Author; };
+	const std::string &GetDescription() const { return this->Description; };
+	const std::string &GetCategory() const { return this->Category; };
+	const std::string &GetVersion() const { return this->Version; };
+	const std::string &GetConsole() const { return this->Console; };
+	const std::string &GetLastUpdated() const { return this->LastUpdated; };
 	int GetStars() const { return this->Stars; };
-	std::string GetLicense() const { return this->License; };
-	std::string GetWiki() const { return this->Wiki; };
-	std::string GetPreinstallMessage() const { return this->PreinstallMessage; };
+	const std::string &GetLicense() const { return this->License; };
+	const std::string &GetWiki() const { return this->Wiki; };
+	const std::string &GetPreinstallMessage() const { return this->PreinstallMessage; };
 	int GetMarks() const { return this->Marks; };
+	const std::string &GetMarkString() const { return this->MarkString; }
 
 	bool HasIcon() const { return this->vHasIcon; }
 	C2D_Image GetIcon() const { return this->Icon; };
@@ -56,13 +57,13 @@ public:
 
 	uint32_t GetAccentColor() const { return this->AccentColor; };
 
-	std::vector<std::string> GetCategoryFull() const { return this->FullCategory; };
-	std::vector<std::string> GetConsoleFull() const { return this->FullConsole; };
-	std::vector<std::string> GetSizes() const { return this->Sizes; };
-	std::vector<std::string> GetTypes() const { return this->Types; };
-	std::vector<std::string> GetScreenshots() const { return this->Screenshots; };
-	std::vector<std::string> GetScreenshotNames() const { return this->ScreenshotNames; };
-	std::string GetReleaseNotes() const { return this->ReleaseNotes; };
+	const std::vector<std::string> &GetCategoryFull() const { return this->FullCategory; };
+	const std::vector<std::string> &GetConsoleFull() const { return this->FullConsole; };
+	const std::vector<std::string> &GetSizes() const { return this->Sizes; };
+	const std::vector<std::string> &GetTypes() const { return this->Types; };
+	const std::vector<std::string> &GetScreenshots() const { return this->Screenshots; };
+	const std::vector<std::string> &GetScreenshotNames() const { return this->ScreenshotNames; };
+	const std::string &GetReleaseNotes() const { return this->ReleaseNotes; };
 
 	bool GetUpdateAvl() const { return this->UpdateAvailable; };
 	void SetUpdateAvl(bool v) { this->UpdateAvailable = v; };
