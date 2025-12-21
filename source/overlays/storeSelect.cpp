@@ -133,8 +133,6 @@ void Overlays::SelectStore() {
 	bool doOut = false, selectionUpdated = false;
 	int selection = 0, sPos = 0;
 
-	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
-
 	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH);
 
 	while(!doOut) {

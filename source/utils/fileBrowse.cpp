@@ -139,6 +139,8 @@ UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
 std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	std::vector<UniStoreInfo> info;
 
+	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
+
 	if (access(path.c_str(), F_OK) != 0) return {}; // Folder does not exist.
 
 	std::vector<DirEntry> dirContents = getDirectoryContents(path, { "unistore" });
