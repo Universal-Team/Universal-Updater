@@ -130,7 +130,7 @@ static bool UpdateStore(const std::string &file) {
 	- Switch the UniStore.
 */
 void Overlays::SelectStore() {
-	bool doOut = false, selectionUpdated = false;
+	bool doOut = false, skipUpdate = false;
 	int selection = 0, sPos = 0;
 
 	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH);
@@ -197,25 +197,25 @@ void Overlays::SelectStore() {
 			if (hRepeat & KEY_DOWN) {
 				if (selection < (int)info.size() - 1) selection++;
 				else selection = 0;
-				selectionUpdated = false;
+				skipUpdate = false;
 			}
 
 			if (hRepeat & KEY_UP) {
 				if (selection > 0) selection--;
 				else selection = info.size() - 1;
-				selectionUpdated = false;
+				skipUpdate = false;
 			}
 
 			if (hRepeat & KEY_RIGHT) {
 				if (selection + 6 < (int)info.size() - 1) selection += 6;
 				else selection = info.size() - 1;
-				selectionUpdated = false;
+				skipUpdate = false;
 			}
 
 			if (hRepeat & KEY_LEFT) {
 				if (selection - 6 > 0) selection -= 6;
 				else selection = 0;
-				selectionUpdated = false;
+				skipUpdate = false;
 			}
 
 			if (hidKeysDown() & (KEY_A | KEY_TOUCH)) {
@@ -235,7 +235,9 @@ void Overlays::SelectStore() {
 						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
 							config->lastStore(info[selection].FileName);
-							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName, selectionUpdated ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
+							if(!config->autoupdate())
+								skipUpdate = true;
+							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
 							StoreUtils::ResetAll();
 							StoreUtils::SortEntries();
 							doOut = true;
@@ -262,7 +264,7 @@ void Overlays::SelectStore() {
 					if (info[selection].URL != "") {
 						if (UpdateStore(info[selection].FileName)) {
 							info = GetUniStoreInfo(_STORE_PATH);
-							selectionUpdated = true;
+							skipUpdate = true;
 						}
 					}
 
