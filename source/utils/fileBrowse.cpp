@@ -150,6 +150,10 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 		}
 	}
 
+	sort(info.begin(), info.end(), [](const UniStoreInfo &lhs, const UniStoreInfo &rhs) {
+		return strcasecmp(lhs.Title.c_str(), rhs.Title.c_str()) < 0;
+	});
+
 	return info;
 }
 

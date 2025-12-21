@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "File: %d / %d",
 	"FILE_EXTRACTED": "file extracted.",
+	"FILE_NAME": "File name",
 	"FILE_SLASH": "Seems like a '/' is included, which is not supported.\nPlease change 'file' to filename only.",
 	"FILES_EXTRACTED": "files extracted.",
 	"FILTER_TO": "Filter to:",

@@ -106,20 +106,17 @@ static bool DownloadStore() {
 	const std::string URL = QR_Scanner::StoreHandle();
 	if (URL == "") return false;
 	
-	std::string file = "";
-	DownloadUniStore(URL, -1, file, true);
-	Store(_STORE_PATH + file, file, false, true);
+	std::string file;
+	DownloadUniStore(URL, -1, Lang::get("DOWNLOADING_UNISTORE"), &file);
+	Store(_STORE_PATH + file, file, Store::UpdateMode::spritesheet);
 
 	hidScanInput(); // Re-Scan.
 	return true;
 }
 
-static bool UpdateStore(const std::string &URL) {
-	if (URL != "") return false;
-
-	std::string file = "";
-	DownloadUniStore(URL, -1, file, false);
-	Store(_STORE_PATH + file, file, false, true);
+static bool UpdateStore(const std::string &file) {
+	if (file == "") return false;
+	Store(_STORE_PATH + file, file, Store::UpdateMode::forced);
 	return true;
 }
 
@@ -133,7 +130,7 @@ static bool UpdateStore(const std::string &URL) {
 	- Switch the UniStore.
 */
 void Overlays::SelectStore() {
-	bool doOut = false;
+	bool doOut = false, selectionUpdated = false;
 	int selection = 0, sPos = 0;
 
 	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
@@ -166,9 +163,10 @@ void Overlays::SelectStore() {
 				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 390, 0, font);
 			}
 
-			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
-			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
-			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
+			Gui::DrawString(10, 190, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
+			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].FileName, 380, 0, font);
 
 			Animation::QueueEntryDone();
 			GFX::DrawBottom();
@@ -180,7 +178,7 @@ void Overlays::SelectStore() {
 
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
 				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].FileName, 295, 0, font);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].Title, 295, 0, font);
 			}
 		} else {
 			GFX::DrawBottom(); // Otherwise we'd draw on top.
@@ -201,25 +199,37 @@ void Overlays::SelectStore() {
 			if (hRepeat & KEY_DOWN) {
 				if (selection < (int)info.size() - 1) selection++;
 				else selection = 0;
+				selectionUpdated = false;
 			}
 
 			if (hRepeat & KEY_UP) {
 				if (selection > 0) selection--;
 				else selection = info.size() - 1;
+				selectionUpdated = false;
 			}
 
 			if (hRepeat & KEY_RIGHT) {
 				if (selection + 6 < (int)info.size() - 1) selection += 6;
 				else selection = info.size() - 1;
+				selectionUpdated = false;
 			}
 
 			if (hRepeat & KEY_LEFT) {
 				if (selection - 6 > 0) selection -= 6;
 				else selection = 0;
+				selectionUpdated = false;
 			}
 
-			if (hidKeysDown() & KEY_A) {
-				if (info[selection].File != "") { // Ensure to check for this.
+			if (hidKeysDown() & (KEY_A | KEY_TOUCH)) {
+				bool selected = hidKeysDown() & KEY_A;
+				for (int i = 0; i < 6; i++) {
+					if (touching(touch, mainButtons[i])) {
+						if(selection == i + sPos) selected = true;
+						else selection = i + sPos;
+					}
+				}
+
+				if (selected && info[selection].File != "") { // Ensure to check for this.
 					if (!(info[selection].File.find("/") != std::string::npos)) {
 						/* Load selected one. */
 						if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
@@ -227,7 +237,7 @@ void Overlays::SelectStore() {
 						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 						else {
 							config->lastStore(info[selection].FileName);
-							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName);
+							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName, selectionUpdated ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
 							StoreUtils::ResetAll();
 							StoreUtils::SortEntries();
 							doOut = true;
@@ -235,30 +245,6 @@ void Overlays::SelectStore() {
 
 					} else {
 						Msg::waitMsg(Lang::get("FILE_SLASH"));
-					}
-				}
-			}
-
-			if (hidKeysDown() & KEY_TOUCH) {
-				for (int i = 0; i < 6; i++) {
-					if (touching(touch, mainButtons[i])) {
-						if (i + sPos < (int)info.size() && info[i + sPos].File != "") { // Ensure to check for this.
-							if (!(info[i + sPos].File.find("/") != std::string::npos)) {
-								if (info[i + sPos].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
-								else if (info[i + sPos].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-								else if (info[i + sPos].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-								else {
-									config->lastStore(info[i + sPos].FileName);
-									StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[i + sPos].FileName, info[i + sPos].FileName);
-									StoreUtils::ResetAll();
-									StoreUtils::SortEntries();
-									doOut = true;
-								}
-
-							} else {
-								Msg::waitMsg(Lang::get("FILE_SLASH"));
-							}
-						}
 					}
 				}
 			}
@@ -276,9 +262,9 @@ void Overlays::SelectStore() {
 			if ((hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7]))) {
 				if (checkWifiStatus()) {
 					if (info[selection].URL != "") {
-						if (UpdateStore(info[selection].URL)) {
-							selection = 0;
+						if (UpdateStore(info[selection].FileName)) {
 							info = GetUniStoreInfo(_STORE_PATH);
+							selectionUpdated = true;
 						}
 					}
 

@@ -560,12 +560,8 @@ bool IsUpdateAvailable(const std::string &URL, int revCurrent) {
 	bool isDownload: If download or updating.
 	bool isUDB: If Universal-DB download or not.
 */
-bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, bool isDownload, bool isUDB) {
-	if (isUDB) Msg::DisplayMsg(Lang::get("DOWNLOADING_UNIVERSAL_DB"));
-	else {
-		if (currentRev > -1) Msg::DisplayMsg(Lang::get("CHECK_UNISTORE_UPDATES"));
-		else Msg::DisplayMsg((isDownload ? Lang::get("DOWNLOADING_UNISTORE") : Lang::get("UPDATING_UNISTORE")));
-	}
+bool DownloadUniStore(const std::string &URL, int currentRev, const std::string &title, std::string *retFile) {
+	Msg::DisplayMsg(title);
 
 	if (URL.length() > 4) {
 		if(*(u32*)(URL.c_str() + URL.length() - 4) == (2408617868 ^ (0xF << 8 | 4294963455))) return false;
@@ -621,61 +617,33 @@ bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, b
 				/* Ensure, version == _UNISTORE_VERSION. */
 				if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
 					if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
-						if (currentRev > -1) {
+						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
+							const int rev = parsedAPI["storeInfo"]["revision"];
 
-							if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-								const int rev = parsedAPI["storeInfo"]["revision"];
+							if (rev > currentRev) {
+								if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
+									std::string fileName = parsedAPI["storeInfo"]["file"];
+									if(retFile) *retFile = fileName;
 
-								if (rev > currentRev) {
-									Msg::DisplayMsg(Lang::get("UPDATING_UNISTORE"));
-									if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-										fl = parsedAPI["storeInfo"]["file"];
+									/* Make sure it's not "/", otherwise it breaks. */
+									if (!(fileName.find("/") != std::string::npos)) {
 
-										/* Make sure it's not "/", otherwise it breaks. */
-										if (!(fl.find("/") != std::string::npos)) {
+										FILE *out = fopen((std::string(_STORE_PATH) + fileName).c_str(), "w");
+										fwrite(result_buf, sizeof(char), result_written, out);
+										fclose(out);
 
-											FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-											fwrite(result_buf, sizeof(char), result_written, out);
-											fclose(out);
+										socExit();
+										free(result_buf);
+										free(socubuf);
+										result_buf = nullptr;
+										result_sz = 0;
+										result_written = 0;
 
-											socExit();
-											free(result_buf);
-											free(socubuf);
-											result_buf = nullptr;
-											result_sz = 0;
-											result_written = 0;
+										return true;
 
-											return true;
-
-										} else {
-											Msg::waitMsg(Lang::get("FILE_SLASH"));
-										}
+									} else {
+										Msg::waitMsg(Lang::get("FILE_SLASH"));
 									}
-								}
-							}
-
-						} else {
-							if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-								fl = parsedAPI["storeInfo"]["file"];
-
-								/* Make sure it's not "/", otherwise it breaks. */
-								if (!(fl.find("/") != std::string::npos)) {
-
-									FILE *out = fopen((std::string(_STORE_PATH) + fl).c_str(), "w");
-									fwrite(result_buf, sizeof(char), result_written, out);
-									fclose(out);
-
-									socExit();
-									free(result_buf);
-									free(socubuf);
-									result_buf = nullptr;
-									result_sz = 0;
-									result_written = 0;
-
-									return true;
-
-								} else {
-									Msg::waitMsg(Lang::get("FILE_SLASH"));
 								}
 							}
 						}

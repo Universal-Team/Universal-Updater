@@ -49,9 +49,8 @@ MainScreen::MainScreen() {
 	StoreUtils::meta = std::make_unique<Meta>();
 
 	/* Check if lastStore is accessible. */
-	bool forceUpdate = false;
 
-	if (config->lastStore() != "")
+	if (config->lastStore() == "")
 		config->lastStore("universal-db.unistore");
 
 	if (access((_STORE_PATH + config->lastStore()).c_str(), F_OK) != 0) {
@@ -72,19 +71,19 @@ MainScreen::MainScreen() {
 		}
 	}
 
+	Store::UpdateMode updateMode = Store::UpdateMode::automatic;
 	std::string storePath = _STORE_PATH + config->lastStore();
 	if (access(storePath.c_str(), F_OK) != 0) {
 		if (checkWifiStatus()) {
-			std::string tmp = ""; // Just a temp.
-			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, tmp, true, true);
-			forceUpdate = true;
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, Lang::get("DOWNLOADING_UNIVERSAL_DB"));
+			updateMode = Store::UpdateMode::spritesheet;
 
 		} else {
 			notConnectedMsg();
 		}
 	}
 
-	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), false, forceUpdate);
+	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), updateMode);
 	StoreUtils::ResetAll();
 	StoreUtils::SortEntries();
 

@@ -52,7 +52,7 @@ ArgumentParser::ArgumentParser(const std::string &file, const std::string &entry
 void ArgumentParser::Load() {
 	if (access((std::string(_STORE_PATH) + this->file).c_str(), F_OK) != 0) return;
 
-	this->store = std::make_unique<Store>(_STORE_PATH + this->file, this->file, true);
+	this->store = std::make_unique<Store>(_STORE_PATH + this->file, this->file, Store::UpdateMode::skip);
 	if (!this->store->GetValid()) return;
 
 	for (int i = 0; i < this->store->GetStoreSize(); i++) {

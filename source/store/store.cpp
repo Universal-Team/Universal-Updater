@@ -40,10 +40,10 @@ static bool firstStart = true;
 	Initialize a Store.
 
 	const std::string &file: The UniStore file.
-	const std::string &file2: The UniStore file.. without full path.
-	bool ARGMode: If Argument mode.
+	const std::string &fileName: The UniStore file.. without full path.
+	UpdateMode updateMode: How to update
 */
-Store::Store(const std::string &file, const std::string &file2, bool ARGMode, bool forceUpdate) {
+Store::Store(const std::string &file, const std::string &fileName, UpdateMode updateMode) {
 	if (file.length() > 4) {
 		if(*(u32*)(file.c_str() + file.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
 			this->valid = false;
@@ -51,15 +51,10 @@ Store::Store(const std::string &file, const std::string &file2, bool ARGMode, bo
 		}
 	}
 
-	this->fileName = file2;
+	this->fileName = fileName;
 
-	if (!ARGMode) {
-		this->update(file, forceUpdate);
-		this->SetC2DBGImage();
-
-	} else {
-		this->LoadFromFile(file);
-	}
+	this->update(file, updateMode);
+	this->SetC2DBGImage();
 };
 
 /*
@@ -67,15 +62,15 @@ Store::Store(const std::string &file, const std::string &file2, bool ARGMode, bo
 
 	const std::string &file: Const Reference to the fileName.
 */
-void Store::update(const std::string &file, bool force) {
-	bool doSheet = true;
+void Store::update(const std::string &file, UpdateMode updateMode) {
 	this->LoadFromFile(file);
-
+	
+	bool doSheet = true;
 	int rev = -1;
 
 	/* Only do this, if valid. */
-	if (this->valid) {
-		if (!force && this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
+	if (this->valid && updateMode != UpdateMode::skip) {
+		if (updateMode != UpdateMode::forced && this->storeJson["storeInfo"].contains("revision") && this->storeJson["storeInfo"]["revision"].is_number()) {
 			rev = this->storeJson["storeInfo"]["revision"];
 		}
 
@@ -91,69 +86,73 @@ void Store::update(const std::string &file, bool force) {
 
 		if (this->storeJson.contains("storeInfo")) {
 			/* Checking... */
-			if (checkWifiStatus()) { // Only do, if WiFi available.
+			if (!checkWifiStatus()) // Only do, if WiFi available.
+				return;
+
+			if(updateMode != UpdateMode::spritesheet) {
 				if (this->storeJson["storeInfo"].contains("url") && this->storeJson["storeInfo"]["url"].is_string()) {
 					if (this->storeJson["storeInfo"].contains("file") && this->storeJson["storeInfo"]["file"].is_string()) {
-
+	
 						const std::string fl = this->storeJson["storeInfo"]["file"];
 						if (!(fl.find("/") != std::string::npos)) {
 							const std::string URL = this->storeJson["storeInfo"]["url"];
-
+	
 							if (URL != "") {
-								std::string tmp = "";
-								doSheet = DownloadUniStore(URL, rev, tmp);
+								doSheet = DownloadUniStore(URL, rev, Lang::get("UPDATING_UNISTORE"));
 							}
-
+	
 						} else {
 							Msg::waitMsg(Lang::get("FILE_SLASH"));
 						}
 					}
 				}
+			}
 
-				if (doSheet) {
-					/* SpriteSheet Array. */
-					if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_array()) {
-						if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_array()) {
-							const std::vector<std::string> locs = this->storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
-							const std::vector<std::string> sht = this->storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
+			if (doSheet) {
+				/* SpriteSheet Array. */
+				if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_array()) {
+					if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_array()) {
+						const std::vector<std::string> locs = this->storeJson["storeInfo"]["sheetURL"].get<std::vector<std::string>>();
+						const std::vector<std::string> sht = this->storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
 
-							if (locs.size() == sht.size()) {
-								for (int i = 0; i < (int)sht.size(); i++) {
-									if (!(sht[i].find("/") != std::string::npos)) {
-										char msg[150];
-										snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
-										Msg::DisplayMsg(msg);
-										DownloadSpriteSheet(locs[i], sht[i]);
+						if (locs.size() == sht.size()) {
+							for (int i = 0; i < (int)sht.size(); i++) {
+								if (!(sht[i].find("/") != std::string::npos)) {
+									char msg[150];
+									snprintf(msg, sizeof(msg), Lang::get("UPDATING_SPRITE_SHEET2").c_str(), i + 1, sht.size());
+									Msg::DisplayMsg(msg);
+									DownloadSpriteSheet(locs[i], sht[i]);
 
-									} else {
-										Msg::waitMsg(Lang::get("SHEET_SLASH"));
-										i++;
-									}
+								} else {
+									Msg::waitMsg(Lang::get("SHEET_SLASH"));
+									i++;
 								}
 							}
 						}
+					}
 
-						/* Single SpriteSheet (No array). */
-					} else if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_string()) {
-						if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_string()) {
-							const std::string fl = this->storeJson["storeInfo"]["sheetURL"];
-							const std::string fl2 = this->storeJson["storeInfo"]["sheet"];
+					/* Single SpriteSheet (No array). */
+				} else if (this->storeJson["storeInfo"].contains("sheetURL") && this->storeJson["storeInfo"]["sheetURL"].is_string()) {
+					if (this->storeJson["storeInfo"].contains("sheet") && this->storeJson["storeInfo"]["sheet"].is_string()) {
+						const std::string fl = this->storeJson["storeInfo"]["sheetURL"];
+						const std::string fl2 = this->storeJson["storeInfo"]["sheet"];
 
-							if (!(fl2.find("/") != std::string::npos)) {
-								Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
-								DownloadSpriteSheet(fl, fl2);
+						if (!(fl2.find("/") != std::string::npos)) {
+							Msg::DisplayMsg(Lang::get("UPDATING_SPRITE_SHEET"));
+							DownloadSpriteSheet(fl, fl2);
 
-							} else {
-								Msg::waitMsg(Lang::get("SHEET_SLASH"));
-							}
+						} else {
+							Msg::waitMsg(Lang::get("SHEET_SLASH"));
 						}
 					}
 				}
 			}
-
-			this->LoadFromFile(file);
-			this->loadSheets();
 		}
+	}
+
+	if(this->valid && this->storeJson.contains("storeInfo")) {
+		this->LoadFromFile(file);
+		this->loadSheets();
 	}
 }
 

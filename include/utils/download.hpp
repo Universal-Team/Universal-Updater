@@ -78,7 +78,7 @@ void notImplemented(void);
 void doneMsg(void);
 
 bool IsUpdateAvailable(const std::string &URL, int revCurrent);
-bool DownloadUniStore(const std::string &URL, int currentRev, std::string &fl, bool isDownload = false, bool isUDB = false);
+bool DownloadUniStore(const std::string &URL, int currentRev, const std::string &title, std::string *retFile = nullptr);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
 UUUpdate IsUUUpdateAvailable();
 void UpdateAction();

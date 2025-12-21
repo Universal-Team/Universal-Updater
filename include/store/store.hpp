@@ -33,12 +33,19 @@
 
 class Store {
 public:
-	Store(const std::string &file, const std::string &file2, bool ARGMode = false, bool forceUpdate = false);
+	enum class UpdateMode {
+		automatic,
+		forced,
+		skip,
+		spritesheet
+	};
+
+	Store(const std::string &file, const std::string &fileName, UpdateMode updateMode);
 	~Store();
 	void LoadFromFile(const std::string &file);
 	void loadSheets();
 	void unloadSheets();
-	void update(const std::string &file, bool force);
+	void update(const std::string &file, UpdateMode updateMode);
 
 	/* Get Information of the UniStore itself. */
 	std::string GetUniStoreTitle() const;
