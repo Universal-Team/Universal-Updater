@@ -473,12 +473,12 @@ C2D_Image Store::GetIconEntry(int index) const {
 		sheetIndex = this->storeJson["storeContent"][index]["info"]["sheet_index"];
 	}
 
-	if (iconIndex == -1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (iconIndex == -1 || sheetIndex == -1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 
 	if (sheetIndex > (int)this->sheets.size()) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 	if (!this->sheets[sheetIndex]) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 
-	if (iconIndex > (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])-1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (iconIndex >= (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
 
 	C2D_Image temp = C2D_SpriteSheetGetImage(this->sheets[sheetIndex], iconIndex);
 	if (temp.subtex->width < 49 && temp.subtex->height < 49) return temp; // up to 48x48 is valid.
@@ -507,7 +507,7 @@ void Store::SetC2DBGImage() {
 	if (sheetIndex > (int)this->sheets.size()) return;
 	if (!this->sheets[sheetIndex]) return;
 
-	if (index > (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])-1) return;
+	if (index >= (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])) return;
 
 	C2D_Image temp = C2D_SpriteSheetGetImage(this->sheets[sheetIndex], index);
 
