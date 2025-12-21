@@ -98,7 +98,7 @@ void Store::update(const std::string &file, UpdateMode updateMode) {
 							const std::string URL = this->storeJson["storeInfo"]["url"];
 	
 							if (URL != "") {
-								doSheet = DownloadUniStore(URL, rev, Lang::get("UPDATING_UNISTORE"));
+								doSheet = DownloadUniStore(URL, rev, Lang::get(updateMode == UpdateMode::forced ? "UPDATING_UNISTORE" : "CHECK_UNISTORE_UPDATES"));
 							}
 	
 						} else {
