@@ -452,17 +452,18 @@ std::string Store::GetPreinstallMessage(int index) const {
 	return "";
 }
 
-/*
-	Return a C2D_Image of an index.
 
-	int index: The index.
+/*
+	returns whether this entry has a valid icon.
+
+	int index: The inex.
 */
-C2D_Image Store::GetIconEntry(int index) const {
-	if (!this->valid) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
-	if (this->sheets.empty()) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+bool Store::GetIconValid(int index) const {
+	if (!this->valid) return false;
+	if (this->sheets.empty()) return false;
 	int iconIndex = -1, sheetIndex = 0;
 
-	if (index > (int)this->storeJson["storeContent"].size() - 1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return false;
 
 	if (this->storeJson["storeContent"][index]["info"].contains("icon_index") && this->storeJson["storeContent"][index]["info"]["icon_index"].is_number()) {
 		iconIndex = this->storeJson["storeContent"][index]["info"]["icon_index"];
@@ -472,17 +473,34 @@ C2D_Image Store::GetIconEntry(int index) const {
 		sheetIndex = this->storeJson["storeContent"][index]["info"]["sheet_index"];
 	}
 
-	if (iconIndex == -1 || sheetIndex == -1) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (iconIndex == -1 || sheetIndex == -1) return false;
 
-	if (sheetIndex > (int)this->sheets.size()) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
-	if (!this->sheets[sheetIndex]) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (sheetIndex > (int)this->sheets.size()) return false;
+	if (!this->sheets[sheetIndex]) return false;
 
-	if (iconIndex >= (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	if (iconIndex >= (int)C2D_SpriteSheetCount(this->sheets[sheetIndex])) return false;
 
 	C2D_Image temp = C2D_SpriteSheetGetImage(this->sheets[sheetIndex], iconIndex);
-	if (temp.subtex->width < 49 && temp.subtex->height < 49) return temp; // up to 48x48 is valid.
+	if (temp.subtex->width <= 48 && temp.subtex->height <= 48) return true; // up to 48x48 is valid.
 
-	return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+	return false;
+}
+
+/*
+	Return a C2D_Image of an index.
+
+	int index: The index.
+*/
+C2D_Image Store::GetIconEntry(int index) const {
+	if(!GetIconValid(index)) return C2D_SpriteSheetGetImage(sprites, sprites_noIcon_idx);
+
+	int iconIndex = this->storeJson["storeContent"][index]["info"]["icon_index"];
+	int sheetIndex = 0;
+	if (this->storeJson["storeContent"][index]["info"].contains("sheet_index") && this->storeJson["storeContent"][index]["info"]["sheet_index"].is_number()) {
+		sheetIndex = this->storeJson["storeContent"][index]["info"]["sheet_index"];
+	}
+
+	return C2D_SpriteSheetGetImage(this->sheets[sheetIndex], iconIndex);
 }
 
 /*

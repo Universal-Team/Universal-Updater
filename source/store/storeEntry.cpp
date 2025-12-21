@@ -50,6 +50,7 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->MarkString = StringUtils::GetMarkString(meta->GetMarks(store->GetUniStoreTitle(), this->Title));
 
 	this->Icon = store->GetIconEntry(index);
+	this->vHasIcon = store->GetIconValid(index);
 	this->SheetIndex = 0;
 	this->EntryIndex = index;
 

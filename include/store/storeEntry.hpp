@@ -48,6 +48,7 @@ public:
 	std::string GetPreinstallMessage() const { return this->PreinstallMessage; };
 	int GetMarks() const { return this->Marks; };
 
+	bool HasIcon() const { return this->vHasIcon; }
 	C2D_Image GetIcon() const { return this->Icon; };
 
 	int GetSheetIndex() const { return this->SheetIndex; };
@@ -78,7 +79,7 @@ private:
 	int SheetIndex, EntryIndex, Marks;
 	uint32_t AccentColor;
 	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames;
-	bool UpdateAvailable;
+	bool UpdateAvailable, vHasIcon;
 };
 
 #endif

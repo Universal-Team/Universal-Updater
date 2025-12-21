@@ -65,6 +65,10 @@ static const std::vector<Structs::ButtonPos> GridBoxes = {
 void StoreUtils::DrawGrid() {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 
+		// Set up tint for missing icons.
+		C2D_ImageTint tint;
+		C2D_PlainImageTint(&tint, UIThemes->SideBarIconColor(), 1.0f);
+
 		if (config->usebg() && StoreUtils::store->customBG()) {
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
@@ -103,7 +107,7 @@ void StoreUtils::DrawGrid() {
 					const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 					const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 
-					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5);
+					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5, StoreUtils::entries[i2]->HasIcon() ? nullptr : &tint);
 
 					/* Update Available mark. */
 					if (StoreUtils::entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32 + StoreUtils::store->GetAnimOffset());
