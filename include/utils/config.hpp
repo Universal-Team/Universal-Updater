@@ -145,7 +145,7 @@ private:
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads", v_theme = "Default";
 
 	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateNightly = false,
-		v_showBg = false, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
+		v_showBg = true, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
 		v_useAccentColor = true, v_sortAscending = false;
 
 	SortType v_sortBy = SortType::POPULARITY;
