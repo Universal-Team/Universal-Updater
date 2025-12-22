@@ -57,7 +57,8 @@ void Overlays::SelectTheme() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
+		bool customBg = config->usebg() && StoreUtils::store && StoreUtils::store->customBG();
+		if (customBg) {
 			Gui::ScreenDraw(Top);
 			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
@@ -71,7 +72,7 @@ void Overlays::SelectTheme() {
 
 		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 40, 0.5f, UIThemes->TextColor(), Themes[selection].second, 380, 140, font);
+		Gui::DrawStringCentered(0, 40, 0.5f, customBg ? WHITE : UIThemes->TextColor(), Themes[selection].second, 380, 140, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
