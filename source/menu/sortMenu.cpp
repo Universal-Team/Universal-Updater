@@ -103,7 +103,7 @@ void StoreUtils::DrawSorting() {
 	Gui::DrawString(dirButtons[1].x + 21, dirButtons[1].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("DESCENDING"), 80, 0, font);
 
 	/* Top Style. */
-	Gui::DrawString(viewButtons[0].x + 1, viewButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("TOP_STYLE"), 90, 0, font);
+	Gui::DrawString(viewButtons[0].x + 1, viewButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("TOP_STYLE"), 200, 0, font);
 	DrawCheck(viewButtons[0], config->list());
 	DrawCheck(viewButtons[1], !config->list());
 	Gui::DrawString(viewButtons[0].x + 21, viewButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("LIST"), 90, 0, font);
