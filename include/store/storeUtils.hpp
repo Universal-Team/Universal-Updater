@@ -93,7 +93,7 @@ namespace StoreUtils {
 
 	/* Release Notes. */
 	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
-	void ProcessReleaseNotes(std::string ReleaseNotes);
+	const std::vector<std::string> &ProcessReleaseNotes(std::string ReleaseNotes, float wrapWidth);
 
 	void DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry);
 	void ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode);

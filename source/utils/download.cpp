@@ -870,6 +870,12 @@ void UpdateAction() {
 		int scrollOffset = 0;
 		int scrollDelta = 0;
 
+		float fontHeight = Gui::GetStringHeight(0.5f, "", font);
+		int linesPerScreen = ((240.0f - 50.0f) / Gui::GetStringHeight(0.5f, "", font));
+		const std::vector<std::string> &wrappedNotes = StoreUtils::ProcessReleaseNotes(res.Notes, 390.0f);
+		bool canScroll = (int)wrappedNotes.size() > linesPerScreen;
+
+
 		while(!confirmed) {
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -878,7 +884,10 @@ void UpdateAction() {
 
 			Gui::ScreenDraw(Top);
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-			Gui::DrawString(5, 25 - scrollOffset, 0.5f, UIThemes->TextColor(), res.Notes, 390, 0, font, C2D_WordWrap);
+			for (size_t i = 0; i < wrappedNotes.size(); i++) {
+				if (25 + i * fontHeight > scrollOffset && 25 + i * fontHeight < scrollOffset + 240.0f) 
+				Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 390, 0, font);
+			}
 			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
 			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
@@ -906,25 +915,35 @@ void UpdateAction() {
 			u32 held = hidKeysHeld();
 			u32 down = hidKeysDown();
 
-			/* Scroll Logic. */
-			scrollOffset += scrollDelta;
-			if (scrollDelta != 0) {
-				scrollDelta > 0 ? scrollDelta-- : scrollDelta++;
+			if(canScroll) {
+				/* Scroll Logic. */
+				scrollOffset += scrollDelta;
+				if (scrollDelta != 0) {
+					scrollDelta > 0 ? scrollDelta-- : scrollDelta++;
+				}
+
+				// D-Pad input
+				if (held & KEY_DDOWN && scrollDelta < 10) scrollDelta += 2;
+				if (held & KEY_DUP && scrollDelta > -10) scrollDelta -= 2;
+	
+				//Circle Pad input
+				circlePosition circlePad;
+				hidCircleRead(std::addressof(circlePad));
+				if (scrollDelta < 10 && scrollDelta > -10) scrollDelta -= circlePad.dy / 60;
+
+				if (scrollOffset < 0) {
+					scrollOffset = 0;
+					scrollDelta = 0;
+				}
+	
+				int maxScroll = wrappedNotes.size() * Gui::GetStringHeight(0.5f, "", font) - (240.0f - 50.0f);
+				if (scrollOffset > maxScroll) {
+					scrollOffset = maxScroll;
+					scrollDelta = 0.0f;
+				}
 			}
 			
-			// D-Pad input
-			if (held & KEY_DDOWN && scrollDelta < 10) scrollDelta += 2;
-			if (held & KEY_DUP && scrollDelta > -10) scrollDelta -= 2;
 
-			//Circle Pad input
-			circlePosition circlePad;
-			hidCircleRead(std::addressof(circlePad));
-			if (scrollDelta < 10 && scrollDelta > -10) scrollDelta -= circlePad.dy / 60;
-
-			if (scrollOffset < 0) {
-				scrollOffset = 0;
-				scrollDelta = 0;
-			}
 
 			if (down & KEY_B || (down & KEY_TOUCH && touching(t, promptButtons[0]))) return;
 

@@ -89,8 +89,9 @@ MainScreen::MainScreen() {
 
 	// Display Release changelog for Universal-Updater.
 	if (config->changelog()) {
-		if (GetChangelog() == "") return;
-		StoreUtils::ProcessReleaseNotes(GetChangelog());
+		std::string changelog = GetChangelog();
+		if (changelog == "") return;
+		StoreUtils::ProcessReleaseNotes(changelog, 310.0f);
 		storeMode = 7;
 	}
 };

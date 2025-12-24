@@ -44,7 +44,7 @@ size_t StoreUtils::FindSplitPoint(const std::string &str, const std::vector<std:
 }
 
 /* Process release notes into lines */
-void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
+const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string releaseNotes, float wrapWidth) {
 	wrappedNotes.clear();
 
 	size_t splitPos = 0;
@@ -57,7 +57,7 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 
 		/* If too long to fit on screen, wrap at spaces, slashes, periods, etc. */
 		size_t spacePos;
-		while (width > 310.0f && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
+		while (width > wrapWidth && (spacePos = FindSplitPoint(substr.substr(0, splitPos - 1), {" ", "/", ".", "-", "_", "。", "、", "，"})) != std::string::npos) {
 			splitPos = spacePos;
 			if (substr[splitPos] != ' ') splitPos++;
 
@@ -76,6 +76,8 @@ void StoreUtils::ProcessReleaseNotes(std::string releaseNotes) {
 			releaseNotes = releaseNotes.substr(splitPos);
 		}
 	} while (splitPos != std::string::npos);
+
+	return wrappedNotes;
 }
 
 void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry) {
