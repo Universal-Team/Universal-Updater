@@ -99,6 +99,8 @@ void Store::update(const std::string &file, UpdateMode updateMode) {
 	
 							if (URL != "") {
 								doSheet = DownloadUniStore(URL, rev, Lang::get(updateMode == UpdateMode::forced ? "UPDATING_UNISTORE" : "CHECK_UNISTORE_UPDATES"));
+								if(doSheet) this->LoadFromFile(file); // Reload JSON
+								if(!this->valid) return;
 							}
 	
 						} else {
@@ -241,12 +243,15 @@ void Store::LoadFromFile(const std::string &file) {
 			else if (this->storeJson["storeInfo"]["version"] > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 			else if (this->storeJson["storeInfo"]["version"] == 3 || this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION) {
 				this->valid = true;
+				return;
 			}
 		}
 
 	} else {
 		Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
 	}
+
+	this->valid = false;
 }
 
 /*
