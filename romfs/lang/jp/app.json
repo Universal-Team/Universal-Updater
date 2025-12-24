@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "テーマを取得しています……",
 	"FILES": "ファイル: %d / %d",
 	"FILE_EXTRACTED": "解凍されたファイル。",
+	"FILE_NAME": "ファイル名",
 	"FILE_SLASH": "「/」が含まれていますが、サポートされていません。\n「file」をファイル名のみに変更してください。",
 	"FILES_EXTRACTED": "解凍されたファイル。",
 	"FILTER_TO": "フィルター:",

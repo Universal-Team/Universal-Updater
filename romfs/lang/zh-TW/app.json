@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "檔案：%d / %d",
 	"FILE_EXTRACTED": "檔案已提取。",
+	"FILE_NAME": "File name",
 	"FILE_SLASH": "似乎包含了不受支持的 “/”。\n請將“檔案”一欄改爲只包含檔案名。",
 	"FILES_EXTRACTED": "檔案已提取。",
 	"FILTER_TO": "歸類至：",

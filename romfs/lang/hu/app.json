@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Témák letöltése...",
 	"FILES": "Fájl: %d / %d",
 	"FILE_EXTRACTED": "fájl kicsomagolva.",
+	"FILE_NAME": "Fájlnév",
 	"FILE_SLASH": "Úgy tűnik tartalmaz egy '/' jelet, ami nem támogatott.\nKérjük változtassa meg a 'file' értéket csak fájlnévre.",
 	"FILES_EXTRACTED": "fájl kicsomagolva.",
 	"FILTER_TO": "Szűrő:",
@@ -102,7 +103,7 @@
 	"MONTH_AGO": "%d hónapja (%d/%d/%d)",
 	"MONTHS_AGO": "%d hónapja (%d/%d/%d)",
 	"MOVE_ERROR": "Mozgatási hiba!",
-	"NO": "No",
+	"NO": "Nem",
 	"NO_DOWNLOADS_AVAILABLE": "Nincsenek elérhető letöltések",
 	"NO_LICENSE": "Nincs licenc",
 	"NO_SCREENSHOTS_AVAILABLE": "Képernyőképek nem elérhetők",
@@ -123,7 +124,7 @@
 	"QUEUE_PROGRESS": "Lépés: %d / %d",
 	"RECOMMENDED_UNISTORES": "Ajánlott UniStore-ok",
 	"REVISION": "Revízió",
-	"SAVE_SELECTION": "Save your selection?",
+	"SAVE_SELECTION": "Mentsük a választásod?",
 	"SCREENSHOT": "Képernyőkép %d / %d",
 	"SCREENSHOT_COULD_NOT_LOAD": "A képernyőkép nem tölthető be.",
 	"SCREENSHOT_INSTRUCTIONS": "Nyomj -t a változtatáshoz és -t a nagyításhoz",
@@ -169,7 +170,7 @@
 	"VERSION": "Verzió",
 	"YEAR_AGO": "%d éve (%d/%d/%d)",
 	"YEARS_AGO": "%d éve (%d/%d/%d)",
-	"YES": "Yes",
-	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
-	"YES_OR_NO": "Press  for yes,  for no."
+	"YES": "Igen",
+	"YES_NO_OR_SAVE": "Nyomj  gombot ha igen,  gombot ha nem,  gombot a mentéshez.",
+	"YES_OR_NO": "Nyomj  gombot ha igen,  gombot ha nem."
 }

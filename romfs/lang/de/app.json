@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Themes werden abgerufen...",
 	"FILES": "Datei: %d/%d",
 	"FILE_EXTRACTED": "Datei entpackt.",
+	"FILE_NAME": "Dateiname",
 	"FILE_SLASH": "Es scheint, dass ein '/' enthalten ist. Das wird nicht\nunterstützt. Bitte ändere 'file' nur in Dateinamen.",
 	"FILES_EXTRACTED": "Dateien entpackt.",
 	"FILTER_TO": "Fitern nach:",

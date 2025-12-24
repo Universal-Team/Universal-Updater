@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "Bruile: %d / %d",
 	"FILE_EXTRACTED": "file Bruhded.",
+	"FILE_NAME": "File name",
 	"FILE_SLASH": "It seems that a '/' is included, which is not bruhorted.\nPlease bruhge 'file' to filebruh only.",
 	"FILES_EXTRACTED": "Briles Bruhded.",
 	"FILTER_TO": "Bruhter to:",

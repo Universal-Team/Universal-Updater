@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "ファイル: %d / %d",
 	"FILE_EXTRACTED": "解凍さったるファイル。",
+	"FILE_NAME": "File name",
 	"FILE_SLASH": "「/」ぬくくまりとーいびーしが、サポートさりやびらん。\n「file」ファイル名ぬみんかい変更しくぃみそーれー。",
 	"FILES_EXTRACTED": "解凍さったるファイル。",
 	"FILTER_TO": "フィルター:",

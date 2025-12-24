@@ -78,6 +78,7 @@
 	"FETCHING_THEMES": "Fetching themes...",
 	"FILES": "파일: %d / %d",
 	"FILE_EXTRACTED": "파일 압축 해제됨.",
+	"FILE_NAME": "File name",
 	"FILE_SLASH": "지원되지 않는 '/'가 포함된 것 같습니다.\n'file'을 파일 이름으로만 변경하세요.",
 	"FILES_EXTRACTED": "파일 압축 해제됨.",
 	"FILTER_TO": "필터:",
