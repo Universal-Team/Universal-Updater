@@ -244,13 +244,15 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 
 		if (smallDelay == 0 && (hDown & KEY_A || selected) && !entries.empty()) {
 			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()];
+			std::string PromptSaveKey = "";
 			if (types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
 			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
+			else PromptSaveKey = "Universal-Updater/confirm-install";
 			
 			const std::string &preinstallMessage = entry->GetPreinstallMessage();
 			std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
 
-			if (Msg::promptMsg(Msg, "Universal-Updater/confirm-install", true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
+			if (Msg::promptMsg(Msg, PromptSaveKey, true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
 				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
 			}
 		}
