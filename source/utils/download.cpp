@@ -333,8 +333,9 @@ static Result setupContext(CURL *hnd, const char *url) {
 	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
 	curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, handle_data);
-	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 1L);
+	curl_easy_setopt(hnd, CURLOPT_CAINFO, "romfs:/cacert.pem");
+	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
 
 	return 0;
