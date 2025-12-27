@@ -44,8 +44,9 @@ const std::vector<std::string> promptLabels = {
 	Displays just a message until the next draw frame.
 
 	const std::string &Text: The Message, which should be displayed.
+	const std::string &Text: The String to display on the bottom bar.
 */
-void Msg::DisplayMsg(const std::string &Text) {
+void Msg::DisplayMsg(const std::string &Text, const std::string &BottomText) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
@@ -53,6 +54,13 @@ void Msg::DisplayMsg(const std::string &Text) {
 
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UIThemes->TextColor(), Text, 395, 0, font);
+
+	if(!BottomText.empty()) {
+		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), BottomText, 390, 0, font);
+	}
+
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }

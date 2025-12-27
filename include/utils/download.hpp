@@ -37,6 +37,7 @@ enum DownloadError {
 	DL_ERROR_ALLOC,
 	DL_ERROR_STATUSCODE,
 	DL_ERROR_GIT,
+	DL_ERROR_SSL_VERIFICATION,
 	DL_CANCEL, // No clue if that's needed tho.
 };
 
@@ -48,7 +49,7 @@ struct StoreList {
 };
 
 struct UUUpdate {
-	bool Available = false;
+	DownloadError Status = DL_ERROR_NONE;
 	std::string Notes = "";
 	std::string Version = "";
 };

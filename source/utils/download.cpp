@@ -41,6 +41,7 @@
 #include <malloc.h>
 #include <regex>
 #include <string>
+#include <time.h>
 #include <unistd.h>
 #include <vector>
 
@@ -397,7 +398,6 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -515,7 +515,6 @@ bool IsUpdateAvailable(const std::string &URL, int revCurrent) {
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -601,7 +600,6 @@ bool DownloadUniStore(const std::string &URL, int currentRev, const std::string 
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -715,7 +713,6 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -761,19 +758,19 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 	Checks for U-U updates.
 */
 UUUpdate IsUUUpdateAvailable() {
-	if (!checkWifiStatus()) return { false, "", "" };
+	if (!checkWifiStatus()) return { DL_CANCEL, "", "" };
 
 	Msg::DisplayMsg(Lang::get("CHECK_UU_UPDATES"));
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf) return { false, "", "" };
+	if (!socubuf) return { DL_CANCEL, "", "" };
 
 	ret = socInit((u32 *)socubuf, 0x100000);
 
 	if (R_FAILED(ret)) {
 		free(socubuf);
-		return { false, "", "" };
+		return { DL_CANCEL, "", "" };
 	}
 
 	CURL *hnd = curl_easy_init();
@@ -790,7 +787,7 @@ UUUpdate IsUUUpdateAvailable() {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return { false, "", "" };
+		return { DL_CANCEL, "", "" };
 	}
 
 	CURLcode cres = curl_easy_perform(hnd);
@@ -800,14 +797,13 @@ UUUpdate IsUUUpdateAvailable() {
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return { false, "", "" };
+		return { cres == CURLE_PEER_FAILED_VERIFICATION ? DL_ERROR_SSL_VERIFICATION : DL_CANCEL, "", "" };
 	}
 
 	if (nlohmann::json::accept(result_buf)) {
@@ -822,12 +818,12 @@ UUUpdate IsUUUpdateAvailable() {
 				result_sz = 0;
 				result_written = 0;
 
-				UUUpdate update = { false, "", "" };
+				UUUpdate update = { DL_CANCEL, "", "" };
 				update.Version = parsedAPI[0]["sha"].get_ref<const std::string &>().substr(0, 7);
 				if (parsedAPI[0].contains("commit") && parsedAPI[0]["commit"].is_object() && parsedAPI[0]["commit"].contains("message") && parsedAPI[0]["commit"]["message"].is_string())
 					update.Notes = parsedAPI[0]["commit"]["message"];
 				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
-				update.Available = strcasecmp(update.Version.c_str(), GIT_SHA) != 0;
+				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) update.Status = DL_ERROR_NONE;
 				return update;
 			}
 		} else {
@@ -839,11 +835,11 @@ UUUpdate IsUUUpdateAvailable() {
 				result_sz = 0;
 				result_written = 0;
 
-				UUUpdate update = { false, "", "" };
+				UUUpdate update = { DL_CANCEL, "", "" };
 				update.Version = parsedAPI["tag_name"];
 				if (parsedAPI["body"].is_string()) update.Notes = parsedAPI["body"];
 				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
-				update.Available = strcasecmp(update.Version.c_str(), C_V) > 0;
+				if (strcasecmp(update.Version.c_str(), C_V) > 0) update.Status = DL_ERROR_NONE;
 				return update;
 			}
 		}
@@ -856,7 +852,7 @@ UUUpdate IsUUUpdateAvailable() {
 	result_sz = 0;
 	result_written = 0;
 
-	return { false, "", "" };
+	return { DL_CANCEL, "", "" };
 }
 
 extern bool is3DSX, exiting;
@@ -866,8 +862,31 @@ extern std::string _3dsxPath;
 	Execute U-U update action.
 */
 void UpdateAction() {
-	UUUpdate res = IsUUUpdateAvailable();
-	if (res.Available) {
+	UUUpdate res;
+	do {
+		res = IsUUUpdateAvailable();
+
+		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
+			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("AB_TO_EXIT"));
+	
+			time_t currentTime = time(NULL);
+			uint32_t Down = 0;
+			while (true) {
+				gspWaitForVBlank();
+				hidScanInput();
+				Down = hidKeysDown();
+	
+				if (Down & (KEY_A | KEY_B)) {
+					exiting = true;
+					break;
+				} else if (abs(time(NULL) - currentTime) > 3600) {
+					break;
+				}
+			}
+		}
+	} while(res.Status == DL_ERROR_SSL_VERIFICATION && !exiting);
+
+	if (res.Status == DL_ERROR_NONE) {
 		bool confirmed = false;
 		int scrollOffset = 0;
 		int scrollDelta = 0;
@@ -1028,7 +1047,7 @@ std::vector<StoreList> FetchStores() {
 		}
 	}
 
-cleanup: 
+cleanup:
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -1122,7 +1141,6 @@ C2D_Image FetchScreenshot(const std::string &URL) {
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -1187,7 +1205,6 @@ std::string GetChangelog() {
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
-		printf("Error in:\ncurl\n");
 		socExit();
 		free(result_buf);
 		free(socubuf);

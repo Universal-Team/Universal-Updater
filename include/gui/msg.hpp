@@ -30,7 +30,7 @@
 #include <string>
 
 namespace Msg {
-	void DisplayMsg(const std::string &Text);
+	void DisplayMsg(const std::string &Text, const std::string &BottomText = "");
 	void DisplayWarnMsg(const std::string &Text);
 	bool promptMsg(const std::string &promptMsg, const std::string &saveKey = "", bool saveOnlyYes = false);
 	void waitMsg(const std::string &msg);
