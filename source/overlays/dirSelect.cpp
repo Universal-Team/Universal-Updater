@@ -132,29 +132,28 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 				else selection = 0;
 			}
 
-			if (hidKeysDown() & KEY_A) {
+			bool selected = false;
+			if (hidKeysDown() & KEY_TOUCH) {
+				for (int i = 0; i < 7 && sPos + i < (int)dirContents.size(); i++) {
+					if (touching(touch, mainButtons[i])) {
+						if (sPos + i == selection) {
+							selected = true;
+						} else {
+							selection = sPos + i;
+
+							if (i == 0 && sPos > 0) sPos--;
+							else if(i == 6 && sPos + 7 < (int)dirContents.size()) sPos++;
+						}
+					}
+				}
+			}
+
+			if (hidKeysDown() & KEY_A || selected) {
 				if (dirContents[selection].isDirectory) {
 					if(currentPath.back() != '/')
 						currentPath += '/';
 					currentPath += dirContents[selection].name;
 					dirChanged = true;
-				}
-			}
-
-			if (hidKeysDown() & KEY_TOUCH) {
-				for (int i = 0; i < 7; i++) {
-					if (touching(touch, mainButtons[i])) {
-						if (i + sPos < (int)dirContents.size()) {
-							if (dirContents[i + sPos].isDirectory) {
-								if(currentPath.back() != '/')
-									currentPath += '/';
-								currentPath += dirContents[i + sPos].name;
-
-								dirChanged = true;
-								break;
-							}
-						}
-					}
 				}
 			}
 

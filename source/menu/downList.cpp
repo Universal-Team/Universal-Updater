@@ -222,7 +222,13 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 						if(StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) {
 							selected = true;
 						} else {
-							StoreUtils::store->SetDownloadIndex(i + StoreUtils::store->GetDownloadSIndex());
+							int scrollIndex = StoreUtils::store->GetDownloadSIndex();
+							StoreUtils::store->SetDownloadIndex(scrollIndex + i);
+
+							if (i == 0 && scrollIndex > 0)
+								StoreUtils::store->SetDownloadSIndex(scrollIndex - 1);
+							else if (i == (DOWNLOAD_ENTRIES - 1) && scrollIndex + DOWNLOAD_ENTRIES < (int)entries.size())
+								StoreUtils::store->SetDownloadSIndex(scrollIndex + 1);
 						}
 					}
 

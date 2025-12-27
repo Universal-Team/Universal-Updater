@@ -256,43 +256,26 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 		else selection = 0;
 	}
 
+	bool selected = false;
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, mainButtons[0])) {
-			selection = 0;
-			page = 4;
-
-		} else if (touching(touch, mainButtons[1])) {
-			if (QueueRuns) {
-				if (Msg::promptMsg(Lang::get("FEATURE_SIDE_EFFECTS"))) Overlays::SelectStore();
-
-			} else {
-				Overlays::SelectStore();
+		for (int i = 0; i < 7; i++) {
+			if (touching(touch, mainButtons[i])) {
+				if (i == selection) selected = true;
+				else selection = i;
 			}
-
-		} else if (touching(touch, mainButtons[2])) {
-			selection = 0;
-			page = 2;
-
-		} else if (touching(touch, mainButtons[3])) {
-			selection = 0;
-			page = 3;
-
-		} else if (touching(touch, mainButtons[4])) {
-			selection = 0;
-			page = 1;
-
- 		} else if (touching(touch, mainButtons[5])) {
-			Overlays::ShowCredits();
-
-		} else if (touching(touch, mainButtons[6])) {
-			if (!QueueRuns) exiting = true;
 		}
 	}
 
-	if (hDown & KEY_A) {
+	if (hDown & KEY_A || selected) {
 		switch(selection) {
 			case 0:
 				selection = 0;
+				for (size_t i = 0; i < languages.size(); i++) {
+					if (langsTemp[i] == config->language()) {
+						selection = i;
+						break;
+					}
+				}
 				page = 4;
 				break;
 
@@ -601,7 +584,41 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		page = 0;
 	}
 
-	if (hDown & KEY_A) {
+	/* Download Font. */
+	if (hDown & KEY_Y) {
+		ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+		config->customfont(true);
+		Init::UnloadFont();
+		Init::LoadFont();
+	}
+
+	bool selected = false;
+	if (hDown & KEY_TOUCH) {
+		for (int i = 0; i < 6 && sPos + i < (int)languages.size(); i++) {
+			if (touching(touch, mainButtons[i])) {
+				if (sPos + i == selection) {
+					selected = true;
+				} else {
+					selection = sPos + i;
+
+					if (i == 0 && sPos > 0)
+						sPos--;
+					else if (i == 5 && sPos + 6 < (int)languages.size())
+						sPos++;
+				}
+			}
+		}
+
+		if (touching(touch, langButtons[6])) {
+			/* Download Font. */
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+			config->customfont(true);
+			Init::UnloadFont();
+			Init::LoadFont();
+		}
+	}
+
+	if (hDown & KEY_A || selected) {
 		const std::string l = langsTemp[selection];
 
 		/* Check if language needs a custom font. */
@@ -630,53 +647,6 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		selection = 0;
 		sPos = 0;
 		page = 0;
-	}
-
-	if (hDown & KEY_TOUCH) {
-		for (int i = 0; i < 6; i++) {
-			if (touching(touch, mainButtons[i])) {
-				if (i + sPos < (int)languages.size()) {
-					const std::string l = langsTemp[i + sPos];
-
-					/* Check if language needs a custom font. */
-					if (l == "uk") {
-						if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
-							ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
-							Init::UnloadFont();
-						}
-
-						config->customfont(true);
-						Init::LoadFont();
-					} else if(!config->customfont()) {
-						CFG_Region region = CFG_REGION_USA;
-						if(l == "zh-CN") {
-							region = CFG_REGION_CHN;
-						} else if(l == "zh-TW") {
-							region = CFG_REGION_TWN;
-						} else if(l == "ko") {
-							region = CFG_REGION_KOR;
-						}
-						Gui::loadSystemFont(region);
-					}
-
-					config->language(l);
-					Lang::load(config->language());
-					selection = 0;
-					sPos = 0;
-					page = 0;
-				}
-
-				break;
-			}
-		}
-
-		if (touching(touch, langButtons[6])) {
-			/* Download Font. */
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
-			config->customfont(true);
-			Init::UnloadFont();
-			Init::LoadFont();
-		}
 	}
 
 	if (selection < sPos) sPos = selection;

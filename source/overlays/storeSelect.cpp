@@ -214,8 +214,16 @@ void Overlays::SelectStore() {
 				bool selected = hidKeysDown() & KEY_A;
 				for (int i = 0; i < 6; i++) {
 					if (touching(touch, mainButtons[i])) {
-						if(selection == i + sPos) selected = true;
-						else selection = i + sPos;
+						if (selection == i + sPos) {
+							selected = true;
+						} else {
+							selection = i + sPos;
+
+							if (i == 0 && sPos > 0)
+								sPos--;
+							else if (i == 5 && sPos + 6 < (int)info.size())
+								sPos++;
+						}
 					}
 				}
 

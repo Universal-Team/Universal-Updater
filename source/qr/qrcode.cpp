@@ -330,24 +330,29 @@ void QRCode::handler(std::string &result) {
 				else this->selectedStore = (int)this->stores.size() - 1;
 			}
 
-			if (keyDown & KEY_A) {
+			bool selected = false;
+			if (keyDown & KEY_TOUCH) {
+				for (int i = 0; i < 6 && this->sPos + i < (int)this->stores.size(); i++) {
+					if (touching(t, mainButtons[i])) {
+						if (this->selectedStore == i + this->sPos) {
+							selected = true;
+						} else {
+							this->selectedStore = i + this->sPos;
+
+							if (i == 0 && this->sPos > 0)
+								this->sPos--;
+							else if (i == 5 && this->sPos + 6 < (int)this->stores.size())
+								this->sPos++;
+						}
+					}
+				}
+			}
+
+			if (keyDown & KEY_A || selected) {
 				result = this->stores[this->selectedStore].URL;
 				this->finished = true;
 				this->finish();
 				return;
-			}
-
-			if (keyDown & KEY_TOUCH) {
-				for (int i = 0; i < 6; i++) {
-					if (touching(t, mainButtons[i])) {
-						if (i + this->sPos < (int)this->stores.size()) {
-							result = this->stores[i + this->sPos].URL;
-							this->finished = true;
-							this->finish();
-							return;
-						}
-					}
-				}
 			}
 		}
 
