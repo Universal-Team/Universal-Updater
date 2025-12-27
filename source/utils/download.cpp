@@ -217,8 +217,9 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	curl_easy_setopt(CurlHandle, CURLOPT_XFERINFOFUNCTION, curlProgress);
 	curl_easy_setopt(CurlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(CurlHandle, CURLOPT_WRITEFUNCTION, file_handle_data);
-	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 1L);
+	curl_easy_setopt(CurlHandle, CURLOPT_CAINFO, "romfs:/cacert.pem");
+	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(CurlHandle, CURLOPT_STDERR, stdout);
 
 	curlResult = curl_easy_perform(CurlHandle);
