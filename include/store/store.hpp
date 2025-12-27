@@ -101,6 +101,10 @@ public:
 	C2D_Image GetStoreImg() const { return this->storeBG; };
 	bool customBG() const { return this->hasCustomBG; };
 
+	/* For getting a list of all categories and consoles used in the store. */
+	const std::vector<std::string> &GetCategories() const { return this->categories; }
+	const std::vector<std::string> &GetConsoles() const { return this->consoles; }
+
 	/* Return filename of the UniStore. */
 	std::string GetFileName() const { return this->fileName; };
 private:
@@ -111,6 +115,7 @@ private:
 	bool valid = false, hasSheet = false, hasCustomBG = false;
 	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0, animOffset = 0;
 	std::string fileName = "";
+	std::vector<std::string> categories, consoles;
 };
 
 #endif

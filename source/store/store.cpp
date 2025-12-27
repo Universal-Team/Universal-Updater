@@ -243,6 +243,30 @@ void Store::LoadFromFile(const std::string &file) {
 			else if (this->storeJson["storeInfo"]["version"] > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 			else if (this->storeJson["storeInfo"]["version"] == 3 || this->storeJson["storeInfo"]["version"] == _UNISTORE_VERSION) {
 				this->valid = true;
+
+				/* Load categories and consoles. */
+				for(size_t i = 0; i < this->storeJson["storeContent"].size(); i++) {
+					std::vector<std::string> categories = GetCategoryIndex(i);
+					for (const auto &category : categories) {
+						if (!category.empty() && std::find(this->categories.begin(), this->categories.end(), category) == this->categories.end()) {
+							this->categories.push_back(category);
+						}
+					}
+					sort(this->categories.begin(), this->categories.end(), [](const std::string &lhs, const std::string &rhs) {
+						return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+					});
+
+					std::vector<std::string> consoles = GetConsoleEntry(i);
+					for (const auto &console : consoles) {
+						if (!console.empty() && std::find(this->consoles.begin(), this->consoles.end(), console) == this->consoles.end()) {
+							this->consoles.push_back(console);
+						}
+					}
+					sort(this->consoles.begin(), this->consoles.end(), [](const std::string &lhs, const std::string &rhs) {
+						return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+					});
+				}
+
 				return;
 			}
 		}
@@ -327,9 +351,7 @@ std::vector<std::string> Store::GetCategoryIndex(int index) const {
 			return this->storeJson["storeContent"][index]["info"]["category"].get<std::vector<std::string>>();
 
 		} else if (this->storeJson["storeContent"][index]["info"]["category"].is_string()) {
-			std::vector<std::string> temp;
-			temp.push_back( this->storeJson["storeContent"][index]["info"]["category"] );
-			return temp;
+			return { this->storeJson["storeContent"][index]["info"]["category"] };
 		}
 	}
 

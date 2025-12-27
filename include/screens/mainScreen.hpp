@@ -54,15 +54,14 @@ private:
 	std::vector<std::string> dwnldList, dwnldSizes, dwnldTypes;
 
 	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
-		 updateFilter = false, screenshotFetch = false, canDisplay = false, isAND = true;
+		 screenshotFetch = false, canDisplay = false;
 
-	int storeMode = 0, marks = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
+	int storeMode = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
 		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, queueIndex = 0;
 	float scrollOffset = 0.0f, scrollDelta = 0.0f;
 
-	/* Title, Author, Category, Console. */
-	std::vector<bool> searchIncludes = { true, false, false, false }, installs = { };
-	std::string searchResult = "", screenshotName = "";
+	std::vector<bool> installs = { };
+	std::string screenshotName = "";
 
 	C2D_Image Screenshot = { nullptr, nullptr };
 };

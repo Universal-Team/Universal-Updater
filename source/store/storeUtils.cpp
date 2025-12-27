@@ -135,7 +135,7 @@ void StoreUtils::SortEntries() {
 */
 static bool findInVector(const std::vector<std::string> &items, const std::string &query) {
 	for(const std::string &item : items) {
-		if (StringUtils::lower_case(item).find(query) != std::string::npos) return true;
+		if (item == query) return true;
 	}
 
 	return false;
@@ -144,23 +144,29 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 /*
 	Search for stuff of the store.
 
-	const std::string &query: Const Reference to the query.
-	bool title: if titles should be included.
-	bool author: if authors should be included.
-	bool category: if categories should be included.
-	bool console: if consoles should be included.
+	const std::string &titleQuery: The title to search for, "" to ignore.
+	const std::string &descQuery: The description to search for, "" to ignore.
+	const std::string &authorQuery: The author to search for, "" to ignore.
+	const std::string &category: The category to search for, "" to ignore.
+	const std::string &console: The console to search for, "" to ignore.
 	int selectedMarks: The selected mark flags.
 	bool updateAvl: if available updates should be an included flag.
 	bool isAND: if using AND or OR mode.
 */
-void StoreUtils::search(const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl, bool isAND) {
+void StoreUtils::search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool isAND) {
+	titleQuery = StringUtils::lower_case(titleQuery);
+	descQuery = StringUtils::lower_case(descQuery);
+	authorQuery = StringUtils::lower_case(authorQuery);
+	bool allEmpty = titleQuery.empty() && descQuery.empty() && authorQuery.empty();
+
 	if (isAND) {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
-			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
-			|| (!title && !author && !category && !console))
+			if (!((allEmpty
+			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
+			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
+			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
+			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
 			&& ((selectedMarks == 0 && !updateAvl) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks) && (!updateAvl || (*it)->GetUpdateAvl()))))) {
 				it = StoreUtils::entries.erase(it);
 				--it;
@@ -169,11 +175,12 @@ void StoreUtils::search(const std::string &query, bool title, bool author, bool 
 
 	} else {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			if (!(((title && StringUtils::lower_case((*it)->GetTitle()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (author && StringUtils::lower_case((*it)->GetAuthor()).find(StringUtils::lower_case(query)) != std::string::npos)
-			|| (category && findInVector((*it)->GetCategoryFull(), StringUtils::lower_case(query)))
-			|| (console && findInVector((*it)->GetConsoleFull(), StringUtils::lower_case(query)))
-			|| (!title && !author && !category && !console))
+			if (!((allEmpty
+			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
+			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
+			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
+			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
 			&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
 				it = StoreUtils::entries.erase(it);
 				--it;

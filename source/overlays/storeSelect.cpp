@@ -238,8 +238,7 @@ void Overlays::SelectStore() {
 							if(!config->autoupdate())
 								skipUpdate = true;
 							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
-							StoreUtils::ResetAll();
-							StoreUtils::SortEntries();
+							StoreUtils::ResetSearch();
 							doOut = true;
 						}
 

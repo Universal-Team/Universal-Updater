@@ -69,8 +69,9 @@ namespace StoreUtils {
 	void QueueMenuHandle(int &queueIndex, int &storeMode);
 
 	/* Search + Favorite Menu. */
-	void DrawSearchMenu(const std::vector<bool> &searchIncludes, const std::string &searchResult, int marks, bool updateFilter, bool isAND);
-	void SearchHandle(std::vector<bool> &searchIncludes, std::string &searchResult, int &marks, bool &updateFilter, bool &isAND);
+	void ResetSearch();
+	void DrawSearchMenu();
+	void SearchHandle();
 
 	/* Mark Menu. */
 	void DisplayMarkBox(int marks);
@@ -112,7 +113,7 @@ namespace StoreUtils {
 
 	void SortEntries(void);
 
-	void search(const std::string &query, bool title, bool author, bool category, bool console, int selectedMarks, bool updateAvl, bool isAND);
+	void search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool isAND);
 
 	void ResetAll();
 
