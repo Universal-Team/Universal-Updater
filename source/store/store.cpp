@@ -245,6 +245,8 @@ void Store::LoadFromFile(const std::string &file) {
 				this->valid = true;
 
 				/* Load categories and consoles. */
+				this->categories.clear();
+				this->consoles.clear();
 				for(size_t i = 0; i < this->storeJson["storeContent"].size(); i++) {
 					std::vector<std::string> categories = GetCategoryIndex(i);
 					for (const auto &category : categories) {
@@ -255,7 +257,7 @@ void Store::LoadFromFile(const std::string &file) {
 					sort(this->categories.begin(), this->categories.end(), [](const std::string &lhs, const std::string &rhs) {
 						return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
 					});
-
+					
 					std::vector<std::string> consoles = GetConsoleEntry(i);
 					for (const auto &console : consoles) {
 						if (!console.empty() && std::find(this->consoles.begin(), this->consoles.end(), console) == this->consoles.end()) {
