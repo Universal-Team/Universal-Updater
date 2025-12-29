@@ -75,7 +75,7 @@ jobs:
   # Only run this for non-PR jobs.
   publish_build:
     runs-on: ubuntu-latest
-    name: Publish build to Universal-Team/extras
+    name: Publish build
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
@@ -87,19 +87,33 @@ jobs:
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
     steps:
-      - name: Install tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install qrencode -y
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: build
           path: build
-      - name: Upload to ${{ github.repository }} release
+        # This one always runs
+      - name: Delete the 'git' release
+        run: |
+          # Get the release ID for tag 'git'
+          AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+          CONTENT_TYPE="Content-Type: application/json"
+          API_URL="https://api.github.com/repos/${{ github.repository }}/releases/tags/git"
+
+          RESPONSE=$(curl -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL")
+          STATUS=$(echo $RESPONSE | jq -r .status)
+          if [ "$STATUS" != "404" ]; then
+            # If it exists, delete it
+            ID=$(echo $RESPONSE | jq -r .id)
+            API_URL="https://api.github.com/repos/${{ github.repository }}/releases/$ID"
+            curl -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
+          fi
+
+        # This one only runs for releases
+      - name: Upload to ${{ github.ref_name }} release
         if: ${{ startsWith(github.ref, 'refs/tags') }}
         run: |
-          ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
+          ID=$(jq -r '.release.id' $GITHUB_EVENT_PATH)
 
           for file in ${{ github.workspace }}/build/*; do
             AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
@@ -109,40 +123,23 @@ jobs:
 
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
-      - name: Commit and push to Universal-Team/extras
-        id: commit
+        
+        # This one only runs if it's not a release run
+      - name: Upload to 'git' release
+        if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
-          echo ::set-output name=current_date::$CURRENT_DATE
-
-          git config --global user.email "flamekat54@aol.com"
-          git config --global user.name "TWLBot"
-          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
-          mkdir -p extras/builds/Universal-Updater/
-          cd extras/builds/Universal-Updater/
-          qrencode -o Universal-Updater.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.cia
-          qrencode -o Universal-Updater-release.png https://github.com/Universal-Team/Universal-Updater/releases/download/$COMMIT_TAG/Universal-Updater.cia
-          cp ${{ github.workspace }}/build/* .
-          git stage .
-          git commit -m "Universal-Updater | $COMMIT_HASH"
-          git tag v$CURRENT_DATE
-          git push origin master v$CURRENT_DATE
-      - name: Release to Universal-Team/extras
-        run: |
-          AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+          AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
-          API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"Universal-Updater | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\n\n$COMMIT_MESSAGE\", \"prerelease\": true}"
+          API_URL="https://api.github.com/repos/${{ github.repository }}/releases"
+          RELEASE_INFO="{\"tag_name\": \"git\", \"name\": \"Continuous Build - $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\n\n$COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
-
-          ID=$(echo $RESPONSE | jq --raw-output '.id')
+          ID=$(echo $RESPONSE | jq -r '.id')
 
           for file in ${{ github.workspace }}/build/*; do
-            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
             CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
             CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/Universal-Team/extras/releases/$ID/assets?name=$(basename $file)"
+            UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
 
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
@@ -163,7 +160,6 @@ jobs:
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
-          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.png
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
   send_failure_webhook:
     runs-on: ubuntu-latest
