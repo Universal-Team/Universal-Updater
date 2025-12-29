@@ -44,9 +44,7 @@ BANNERTOOL 	?= bannertool
 
 endif
 
-CURRENT_VERSION := $(shell git describe --abbrev=0 --tags)
-
-GIT_TAG := $(shell git describe --abbrev=0 --tags)
+GIT_TAG := $(shell git describe --abbrev=0 --tags --exclude git)
 GIT_SHA := $(shell git rev-parse --short=7 HEAD)
 
 # If on a tagged commit, use just the tag
@@ -70,20 +68,20 @@ endif
 #---------------------------------------------------------------------------------
 # Version number
 #---------------------------------------------------------------------------------
-ifneq ($(shell echo $(shell git describe --tags) | head -c 2 | tail -c 1),)
-VERSION_MAJOR := $(shell echo $(shell git describe --tags) | head -c 2 | tail -c 1)
+ifneq ($(shell echo $(GIT_TAG) | head -c 2 | tail -c 1),)
+VERSION_MAJOR := $(shell echo $(GIT_TAG) | head -c 2 | tail -c 1)
 else
 VERSION_MAJOR := 0
 endif
 
-ifneq ($(shell echo $(shell git describe --tags) | head -c 4 | tail -c 1),)
-VERSION_MINOR := $(shell echo $(shell git describe --tags) | head -c 4 | tail -c 1)
+ifneq ($(shell echo $(GIT_TAG) | head -c 4 | tail -c 1),)
+VERSION_MINOR := $(shell echo $(GIT_TAG) | head -c 4 | tail -c 1)
 else
 VERSION_MINOR := 0
 endif
 
-ifneq ($(shell echo $(shell git describe --tags) | head -c 6 | tail -c 1),)
-VERSION_MICRO := $(shell echo $(shell git describe --tags) | head -c 6 | tail -c 1)
+ifneq ($(shell echo $(GIT_TAG) | head -c 6 | tail -c 1),)
+VERSION_MICRO := $(shell echo $(GIT_TAG) | head -c 6 | tail -c 1)
 else
 VERSION_MICRO := 0
 endif
@@ -113,7 +111,7 @@ RSF_FILE	:=	app/build-cia.rsf
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
-			-DC_V=\"$(CURRENT_VERSION)\" \
+			-DC_V=\"$(GIT_TAG)\" \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
