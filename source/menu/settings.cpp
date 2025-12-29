@@ -586,7 +586,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 
 	/* Download Font. */
 	if (hDown & KEY_Y) {
-		ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+		ScriptUtils::downloadFile("https://github.com/Universal-Team/Universal-Updater/raw/master/resources/fonts/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 		config->customfont(true);
 		Init::UnloadFont();
 		Init::LoadFont();
@@ -611,7 +611,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 
 		if (touching(touch, langButtons[6])) {
 			/* Download Font. */
-			ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+			ScriptUtils::downloadFile("https://github.com/Universal-Team/Universal-Updater/raw/master/resources/fonts/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 			config->customfont(true);
 			Init::UnloadFont();
 			Init::LoadFont();
@@ -624,7 +624,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 		/* Check if language needs a custom font. */
 		if (l == "uk") {
 			if (access("sdmc:/3ds/Universal-Updater/font.bcfnt", F_OK) != 0) {
-				ScriptUtils::downloadFile("https://github.com/Universal-Team/extras/raw/master/files/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
+				ScriptUtils::downloadFile("https://github.com/Universal-Team/Universal-Updater/raw/master/resources/fonts/universal-updater.bcfnt", "sdmc:/3ds/Universal-Updater/font.bcfnt", Lang::get("DOWNLOADING_COMPATIBLE_FONT"), true);
 				Init::UnloadFont();
 			}
 

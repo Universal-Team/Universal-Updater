@@ -776,7 +776,7 @@ UUUpdate IsUUUpdateAvailable() {
 	CURL *hnd = curl_easy_init();
 
 	const char *url;
-	if (config->updatenightly()) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/commits";
+	if (config->updatenightly()) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/tags/git";
 	else url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest";
 
 	ret = setupContext(hnd, url);
@@ -810,7 +810,7 @@ UUUpdate IsUUUpdateAvailable() {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
 		if (config->updatenightly()) {
-			if (parsedAPI.is_array() && parsedAPI.size() > 0 && parsedAPI[0].contains("sha") && parsedAPI[0]["sha"].is_string()) {
+			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
 				socExit();
 				free(result_buf);
 				free(socubuf);
@@ -819,9 +819,10 @@ UUUpdate IsUUUpdateAvailable() {
 				result_written = 0;
 
 				UUUpdate update = { DL_CANCEL, "", "" };
-				update.Version = parsedAPI[0]["sha"].get_ref<const std::string &>().substr(0, 7);
-				if (parsedAPI[0].contains("commit") && parsedAPI[0]["commit"].is_object() && parsedAPI[0]["commit"].contains("message") && parsedAPI[0]["commit"]["message"].is_string())
-					update.Notes = parsedAPI[0]["commit"]["message"];
+				const std::string &name = parsedAPI["name"].get_ref<const std::string &>();
+				update.Version = name.substr(name.size() - 7);
+				if (parsedAPI.contains("body") && parsedAPI["body"].is_string())
+					update.Notes = parsedAPI["body"];
 				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
 				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) update.Status = DL_ERROR_NONE;
 				return update;
@@ -972,16 +973,20 @@ void UpdateAction() {
 		}
 
 		Result dlRes;
+		// Download 3DSX to a temp file cause we can't overwrite RomFS or cURL dies
 		if (config->updatenightly())
-			dlRes = ScriptUtils::downloadFile("https://raw.githubusercontent.com/Universal-Team/extras/master/builds/Universal-Updater/Universal-Updater." + std::string(is3DSX ? "3dsx" : "cia"),
-					(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"), Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
+			dlRes = ScriptUtils::downloadFile("https://github.com/Universal-Team/Universal-Updater/releases/download/git/Universal-Updater." + std::string(is3DSX ? "3dsx" : "cia"),
+					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
 		else
 			dlRes = ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
-					(is3DSX ? _3dsxPath : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
-
+					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
+				
 		if (dlRes == ScriptState::NONE) {
 			if (is3DSX) {
 				Msg::waitMsg(Lang::get("UPDATE_DONE"));
+				romfsExit();
+				deleteFile(_3dsxPath.c_str());
+				rename((_3dsxPath + ".temp").c_str(), _3dsxPath.c_str());
 				exiting = true;
 				return;
 			}
