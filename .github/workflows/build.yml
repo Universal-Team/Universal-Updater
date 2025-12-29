@@ -84,8 +84,6 @@ jobs:
       AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
       COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-    outputs:
-      current_date: ${{ steps.commit.outputs.current_date }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -150,7 +148,7 @@ jobs:
     name: Send success webhook
     if: ${{ !startsWith(github.ref, 'refs/pull') && success() }}
     env:
-      CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
       AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
       COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
       COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
