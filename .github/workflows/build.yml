@@ -105,6 +105,9 @@ jobs:
             ID=$(echo $RESPONSE | jq -r .id)
             API_URL="https://api.github.com/repos/${{ github.repository }}/releases/$ID"
             curl -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
+
+            API_URL="https://api.github.com/repos/${{ github.repository }}/git/refs/tags/git"
+            curl -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
           fi
 
         # This one only runs for releases
