@@ -44,7 +44,7 @@ bool StoreUtils::compareTitleDescending(const std::unique_ptr<StoreEntry> &a, co
 	return true;
 }
 bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetTitle()).c_str(), StringUtils::lower_case(a->GetTitle()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) < 0;
 
 	return true;
 }
@@ -56,14 +56,22 @@ bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, con
 	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str()) > 0;
+	if (!a || !b) return true;
 
-	return true;
+	// Sort apps by the save author by title.
+	int cmp = strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str());
+	if (cmp == 0) return compareTitleDescending(a, b);
+
+	return cmp > 0;
 }
 bool StoreUtils::compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetAuthor()).c_str(), StringUtils::lower_case(a->GetAuthor()).c_str()) > 0;
+	if (!a || !b) return true;
 
-	return true;
+	// Sort apps by the save author by title.
+	int cmp = strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str());
+	if (cmp == 0) return compareTitleAscending(a, b);
+
+	return cmp < 0;
 }
 
 /*
@@ -90,14 +98,28 @@ bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, co
 	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	if (a && b) return a->GetStars() > b->GetStars();
+	if (!a || !b) return true;
 
-	return true;
+	// Sort by title within the same star count.
+	// This is intentionally backwards because
+	// descending star count is high to low and
+	// ascending title is A-Z.
+	if (a->GetStars() == b->GetStars())
+		return compareTitleAscending(a, b);
+
+	return a->GetStars() > b->GetStars();
 }
 bool StoreUtils::compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
-	if (a && b) return a->GetStars() < b->GetStars();
+	if (!a || !b) return true;
 
-	return true;
+	// Sort by title within the same star count.
+	// This is intentionally backwards because
+	// ascending star count is low to high and
+	// descending title is Z-A.
+	if (a->GetStars() == b->GetStars())
+		return compareTitleDescending(a, b);
+
+	return a->GetStars() < b->GetStars();
 }
 
 /*
