@@ -179,9 +179,9 @@ static void DrawAutoUpdate(int selection) {
 	Gui::DrawString(47, 141, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
 
 	Gui::Draw_Rect(40, 180, 280, 24, (selection == 2 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-	Gui::DrawString(47, 184, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_NIGHTLY"), 210, 0, font);
+	Gui::DrawString(47, 184, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_GIT"), 210, 0, font);
 	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->updatenightly());
-	Gui::DrawString(47, 211, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_NIGHTLY_DESC"), 265, 0, font, C2D_WordWrap);
+	Gui::DrawString(47, 211, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_GIT_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
 /*
