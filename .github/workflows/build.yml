@@ -98,16 +98,19 @@ jobs:
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/${{ github.repository }}/releases/tags/git"
 
+          echo Checking for old release...
           RESPONSE=$(curl -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL")
           STATUS=$(echo $RESPONSE | jq -r .status)
           if [ "$STATUS" != "404" ]; then
             # If it exists, delete it
             ID=$(echo $RESPONSE | jq -r .id)
             API_URL="https://api.github.com/repos/${{ github.repository }}/releases/$ID"
-            curl -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
+            echo Deleting old release...
+            curl --fail-with-body -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
 
+            echo Deleting old tag...
             API_URL="https://api.github.com/repos/${{ github.repository }}/git/refs/tags/git"
-            curl -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
+            curl --fail-with-body -XDELETE -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL"
           fi
 
         # This one only runs for releases
@@ -122,19 +125,36 @@ jobs:
             CONTENT_TYPE="Content-Type: application/7z-x-compressed"
             UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+            echo Uploading to release...
+            curl --fail-with-body -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
         
         # This one only runs if it's not a release run
       - name: Upload to 'git' release
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
+          # Format the release body
+          RELEASE_BODY="$AUTHOR_NAME - $COMMIT_SUBJECT"
+          if [ -n "$COMMIT_MESSAGE" ]; then
+            RELEASE_BODY="$RELEASE_BODY\n\n$COMMIT_MESSAGE"
+          fi
+          # Escape it with jq (so quotes and such don't break it)
+          RELEASE_BODY=$(echo $RELEASE_BODY | jq -R)
+          # However jq is going to escape our newlines, so fix that
+          RELEASE_BODY=${RELEASE_BODY//\\n/\n}
+
           AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/${{ github.repository }}/releases"
-          RELEASE_INFO="{\"tag_name\": \"git\", \"name\": \"Continuous Build - $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\n\n$COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"git\", \"name\": \"Continuous Build - $COMMIT_HASH\", \"body\": $RELEASE_BODY, \"prerelease\": true}"
 
+          echo Creating release with info:
+          echo $RELEASE_INFO | jq .
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
+          echo $RESPONSE | jq .
+
+          echo Checking rate limits...
+          curl https://api.github.com/rate_limit | jq .
           ID=$(echo $RESPONSE | jq -r '.id')
 
           for file in ${{ github.workspace }}/build/*; do
@@ -142,7 +162,8 @@ jobs:
             CONTENT_TYPE="Content-Type: application/7z-x-compressed"
             UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+            echo Uploading $(basename $file) to release...
+            curl --fail-with-body -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
   send_success_webhook:
