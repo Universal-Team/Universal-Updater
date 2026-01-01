@@ -136,7 +136,7 @@ Config::Config() {
 	if (this->json.contains("Firm_Path")) this->firmPath(this->getString("Firm_Path"));
 	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
 	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
-	if (this->json.contains("UpdateNightly")) this->updatenightly(this->getBool("UpdateNightly"));
+	if (this->json.contains("UpdateNightly")) this->updategit(this->getBool("UpdateNightly"));
 	if (this->json.contains("UseUniStoreBG")) this->usebg(this->getBool("UseUniStoreBG"));
 	if (this->json.contains("UseAccentColor")) this->useAccentColor(this->getBool("UseAccentColor"));
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
@@ -185,7 +185,7 @@ void Config::save() {
 		this->setString("Firm_Path", this->firmPath());
 		this->setBool("MetaData", this->metadata());
 		this->setBool("UpdateCheck", this->updatecheck());
-		this->setBool("UpdateNightly", this->updatenightly());
+		this->setBool("UpdateNightly", this->updategit());
 		this->setBool("UseUniStoreBG", this->usebg());
 		this->setBool("UseAccentColor", this->useAccentColor());
 		this->setBool("CustomFont", this->customfont());

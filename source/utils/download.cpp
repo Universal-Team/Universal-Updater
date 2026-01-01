@@ -757,7 +757,7 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 /*
 	Checks for U-U updates.
 */
-UUUpdate IsUUUpdateAvailable() {
+UUUpdate IsUUUpdateAvailable(bool git) {
 	if (!checkWifiStatus()) return { DL_CANCEL, "", "" };
 
 	Msg::DisplayMsg(Lang::get("CHECK_UU_UPDATES"));
@@ -776,7 +776,7 @@ UUUpdate IsUUUpdateAvailable() {
 	CURL *hnd = curl_easy_init();
 
 	const char *url;
-	if (config->updatenightly()) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/tags/git";
+	if (git) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/tags/git";
 	else url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest";
 
 	ret = setupContext(hnd, url);
@@ -809,7 +809,7 @@ UUUpdate IsUUUpdateAvailable() {
 	if (nlohmann::json::accept(result_buf)) {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-		if (config->updatenightly()) {
+		if (git) {
 			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
 				socExit();
 				free(result_buf);
@@ -863,11 +863,15 @@ extern std::string _3dsxPath;
 	Execute U-U update action.
 */
 void UpdateAction() {
+	bool useGit = config->updategit();
 	UUUpdate res;
+	bool retry;
 	do {
-		res = IsUUUpdateAvailable();
+		retry = false;
+		res = IsUUUpdateAvailable(useGit);
 
 		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
+			retry = true;
 			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("AB_TO_EXIT"));
 	
 			time_t currentTime = time(NULL);
@@ -884,8 +888,13 @@ void UpdateAction() {
 					break;
 				}
 			}
+		} else if(useGit && res.Status != DL_ERROR_NONE) {
+			// git releases will not exist after a full release,
+			// so try again to see if there's a new release available.
+			retry = true;
+			useGit = false;
 		}
-	} while(res.Status == DL_ERROR_SSL_VERIFICATION && !exiting);
+	} while(retry);
 
 	if (res.Status == DL_ERROR_NONE) {
 		bool confirmed = false;
@@ -974,7 +983,7 @@ void UpdateAction() {
 
 		Result dlRes;
 		// Download 3DSX to a temp file cause we can't overwrite RomFS or cURL dies
-		if (config->updatenightly())
+		if (useGit)
 			dlRes = ScriptUtils::downloadFile("https://github.com/Universal-Team/Universal-Updater/releases/download/git/Universal-Updater." + std::string(is3DSX ? "3dsx" : "cia"),
 					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
 		else

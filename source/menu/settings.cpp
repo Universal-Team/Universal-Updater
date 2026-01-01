@@ -180,7 +180,7 @@ static void DrawAutoUpdate(int selection) {
 
 	Gui::Draw_Rect(40, 180, 280, 24, (selection == 2 ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
 	Gui::DrawString(47, 184, 0.5f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_GIT"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->updatenightly());
+	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->updategit());
 	Gui::DrawString(47, 211, 0.4f, UIThemes->TextColor(), Lang::get("AUTO_UPDATE_GIT_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
@@ -457,7 +457,7 @@ static void AutoUpdateLogic(int &page, int &selection) {
 			config->updatecheck(!config->updatecheck());
 
 		} else if (touching(touch, toggleAbles[2])) {
-			config->updatenightly(!config->updatenightly());
+			config->updategit(!config->updategit());
 		}
 	}
 
@@ -472,7 +472,7 @@ static void AutoUpdateLogic(int &page, int &selection) {
 				break;
 
 			case 2:
-				config->updatenightly(!config->updatenightly());
+				config->updategit(!config->updategit());
 				break;
 		}
 	}

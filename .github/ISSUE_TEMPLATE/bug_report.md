@@ -55,7 +55,7 @@ System version and region:
 Release: 
 
 <!-- ex. 18c5b12, if you're using release then leave blank. -->
-Nightly: 
+git: 
 
 <!-- Please check the box [x] of the one(s) you've tested with. -->
 Installed as:
