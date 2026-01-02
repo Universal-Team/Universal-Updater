@@ -99,6 +99,7 @@
 	"LIST": "List",
 	"LOADING_SCREENSHOT": "Loading Screenshot...",
 	"LOADING_SPRITESHEET": "Loading Spritesheet %i of %i...",
+	"LOADING_UNISTORE": "Loading UniStore...",
 	"LOADING_UNISTORE_LIST": "Loading UniStore list...",
 	"MEDIATYPE_NAND": "MediaType NAND",
 	"MEDIATYPE_SD": "MediaType SD",

@@ -48,8 +48,9 @@ extern void notConnectedMsg();
 MainScreen::MainScreen() {
 	StoreUtils::meta = std::make_unique<Meta>();
 
-	/* Check if lastStore is accessible. */
+	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE"));
 
+	/* Check if lastStore is accessible. */
 	if (config->lastStore() == "")
 		config->lastStore("universal-db.unistore");
 
