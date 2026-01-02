@@ -251,7 +251,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 		if (smallDelay == 0 && (hDown & KEY_A || selected) && !entries.empty()) {
 			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()];
 			std::string PromptSaveKey = "";
-			if (types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_NIGHTLY");
+			if (types[StoreUtils::store->GetDownloadIndex()] == "git" || types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_GIT");
 			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
 			else PromptSaveKey = "Universal-Updater/confirm-install";
 			

@@ -70,7 +70,7 @@
 	"ENTRIES": "Entries",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_NIGHTLY": "Note: \"Nightly\" versions are intended for testing\nupcoming features and may be unstable.\n\nIf you simply want to install,\nplease cancel and install the normal version.",
+	"NOTE_GIT": "Note: \"Git\" versions are intended for testing\nupcoming features and may be unstable.\n\nIf you simply want to install,\nplease cancel and install the normal version.",
 	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may\nwant to install the normal version if one exists.",
 	"EXIT_APP": "Exit Universal-Updater",
 	"EXTRACTING": "Extracting... %s / %s (%.2f%%)",
