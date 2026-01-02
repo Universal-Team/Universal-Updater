@@ -151,7 +151,6 @@ Result Init::Initialize() {
 	APT_GetAppCpuTimeLimit(&old_time_limit);
 	APT_SetAppCpuTimeLimit(30); // Needed for QR Scanner to work.
 	getCurrentUsage();
-	aptSetSleepAllowed(false);
 	hidSetRepeatParameters(20, 8);
 
 	Lang::load(config->language());
@@ -227,7 +226,7 @@ Result Init::Exit() {
 	acExit();
 	amExit();
 
-    if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit); // Restore old limit.
+	if (old_time_limit != UINT32_MAX) APT_SetAppCpuTimeLimit(old_time_limit); // Restore old limit.
 	aptSetSleepAllowed(true);
 
 	romfsExit();

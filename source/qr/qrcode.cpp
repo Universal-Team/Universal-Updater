@@ -52,6 +52,7 @@
 
 #include "common.hpp"
 #include "download.hpp"
+#include "exclusiveMode.hpp"
 #include "keyboard.hpp"
 #include "qrcode.hpp"
 #include <cstring>
@@ -423,10 +424,10 @@ std::string QR_Scanner::StoreHandle() {
 	std::string result = "";
 
 	std::unique_ptr<QRCode> qrData = std::make_unique<QRCode>();
-	aptSetHomeAllowed(false); // Block the Home key.
+	ExclusiveMode::Enter();
 	threadCreate((ThreadFunc)&drawHelper, qrData.get(), 0x10000, 0x1A, 1, true);
-    while (!qrData->done()) qrData->handler(result); // Handle.
-    aptSetHomeAllowed(true); // Re-Allow it.
+	while (!qrData->done()) qrData->handler(result); // Handle.
+	ExclusiveMode::Exit();
 
 	return result;
 }

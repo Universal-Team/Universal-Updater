@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "exclusiveMode.hpp"
 #include "files.hpp"
 #include "gui.hpp"
 #include "queueSystem.hpp"
@@ -63,7 +64,7 @@ void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std
 
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 		queueThread = threadCreate((ThreadFunc)QueueSystem::QueueHandle, NULL, 64 * 1024, prio - 1, -2, false);
-		aptSetHomeAllowed(false);
+		ExclusiveMode::Enter();
 	}
 }
 
@@ -85,7 +86,7 @@ void QueueSystem::ClearQueue() {
 	Use this, to go back to the queue after the Request.
 */
 void QueueSystem::Resume() {
-	aptSetHomeAllowed(false);
+	ExclusiveMode::Enter();
 	QueueSystem::Wait = false;
 	QueueRuns = true;
 
@@ -407,5 +408,5 @@ void QueueSystem::QueueHandle() {
 		}
 	}
 
-	aptSetHomeAllowed(true);
+	ExclusiveMode::Exit();
 }
