@@ -148,15 +148,11 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/${{ github.repository }}/releases"
-          RELEASE_INFO="{\"tag_name\": \"git\", \"name\": \"Continuous Build - $COMMIT_HASH\", \"body\": $RELEASE_BODY, \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"git\", \"name\": \"Continuous Build - $COMMIT_HASH\", \"body\": $RELEASE_BODY, \"prerelease\": true, \"draft\": true}"
 
           echo Creating release with info:
           echo $RELEASE_INFO | jq .
-          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
-          echo $RESPONSE | jq .
-
-          echo Checking rate limits...
-          curl https://api.github.com/rate_limit | jq .
+          RESPONSE=$(curl --fail-with-body -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
           ID=$(echo $RESPONSE | jq -r '.id')
 
           for file in ${{ github.workspace }}/build/*; do
@@ -167,6 +163,9 @@ jobs:
             echo Uploading $(basename $file) to release...
             curl --fail-with-body -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
+
+          # Mark non-draft
+          curl -H "$AUTH_HEADER" -d '{"draft": false}' "$API_URL/$ID"
 
   send_success_webhook:
     runs-on: ubuntu-latest
