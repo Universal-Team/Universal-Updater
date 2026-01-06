@@ -108,7 +108,17 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 	bool res;
 	bool save = false;
 
-	uint32_t Down = 0;
+	float scrollOffset = 0.0f, scrollDelta = 0.0f, verticalOffset = 0.0f;
+
+	float fontHeight = Gui::GetStringHeight(0.6f, "", font);
+	int linesPerScreen = ((240.0f - 52.0f) / fontHeight);
+	const std::vector<std::string> &wrappedMsg = StoreUtils::ProcessReleaseNotes(promptMsg, 390.0f, 0.6f);
+	float maxScroll = wrappedMsg.size() * Gui::GetStringHeight(0.6f, "", font) - (240.0f - 52.0f);
+	bool canScroll = (int)wrappedMsg.size() > linesPerScreen;
+	if (!canScroll)
+		verticalOffset = (linesPerScreen - wrappedMsg.size()) * fontHeight / 2.0f;
+
+	uint32_t Down = 0, Held = 0;
 	touchPosition Touch;
 	while(1) {
 		Gui::clearTextBufs();
@@ -116,10 +126,16 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
-		GFX::DrawTop();
+		Gui::ScreenDraw(Top);
+		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+		for (size_t i = 0; i < wrappedMsg.size(); i++) {
+			if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f)
+				Gui::DrawStringCentered(5, 26.0f + verticalOffset + i * fontHeight - scrollOffset, 0.6f, UIThemes->TextColor(), wrappedMsg[i], 390, 0, font);
+		}
+		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, promptMsg)) / 2, 0.6f, UIThemes->TextColor(), promptMsg, 395, 0, font);
 
 		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), saveKey.empty() ? Lang::get("YES_OR_NO") : Lang::get("YES_NO_OR_SAVE"), 390, 0, font);
 		GFX::DrawBottom();
@@ -140,14 +156,43 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 		}
 
 		C3D_FrameEnd(0);
-		for (int i = 0; i < 3; i++) gspWaitForVBlank();
 
-		do {
-			gspWaitForVBlank();
-			hidScanInput();
-			Down = hidKeysDown();
-			hidTouchRead(&Touch);
-		} while (!Down);
+		gspWaitForVBlank();
+		hidScanInput();
+		Down = hidKeysDown();
+		Held = hidKeysHeld();
+		hidTouchRead(&Touch);
+
+		if(canScroll) {
+			/* Scroll Logic. */
+			scrollOffset += scrollDelta;
+			if (scrollDelta < 1.0f && scrollDelta > -1.0f) {
+				scrollDelta = 0.0f;
+			} else if (scrollDelta != 0.0f) {
+				scrollDelta > 0.0f ? scrollDelta-- : scrollDelta++;
+			}
+
+			// D-Pad input
+			if (Held & KEY_DDOWN) scrollDelta += 2.0f;
+			if (Held & KEY_DUP) scrollDelta -= 2.0f;
+
+			// Circle Pad input
+			circlePosition circlePad;
+			hidCircleRead(&circlePad);
+			float deltaCircle = -circlePad.dy / 80.0f;
+			if (deltaCircle >= 0.5f || deltaCircle <= -0.5f) {
+				scrollDelta += deltaCircle;
+			}
+
+			scrollDelta = std::clamp(scrollDelta, -10.0f, 10.0f);
+			if (scrollOffset < 0.0f) {
+				scrollOffset = 0.0f;
+				scrollDelta = 0.0f;
+			} else if (scrollOffset > maxScroll) {
+				scrollOffset = maxScroll;
+				scrollDelta = 0.0f;
+			}
+		}
 
 		if ((Down & KEY_A) || (Down & KEY_TOUCH && touching(Touch, promptButtons[1]))) {
 			res = true;

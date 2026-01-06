@@ -44,7 +44,7 @@ size_t StoreUtils::FindSplitPoint(const std::string &str, const std::vector<std:
 }
 
 /* Process release notes into lines */
-const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string releaseNotes, float wrapWidth) {
+const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string releaseNotes, float wrapWidth, float fontSize) {
 	wrappedNotes.clear();
 
 	size_t splitPos = 0;
@@ -53,7 +53,7 @@ const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string rele
 		std::string substr = releaseNotes.substr(0, splitPos);
 
 		Gui::clearTextBufs();
-		float width = Gui::GetStringWidth(0.5f, substr, font);
+		float width = Gui::GetStringWidth(fontSize, substr, font);
 
 		/* If too long to fit on screen, wrap at spaces, slashes, periods, etc. */
 		size_t spacePos;
@@ -66,7 +66,7 @@ const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string rele
 
 			substr = substr.substr(0, splitPos);
 			Gui::clearTextBufs();
-			width = Gui::GetStringWidth(0.5f, substr, font);
+			width = Gui::GetStringWidth(fontSize, substr, font);
 		}
 
 		wrappedNotes.push_back(substr);
@@ -130,7 +130,7 @@ void StoreUtils::ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int 
 
 		//Circle Pad
 		circlePosition circlePad;
-		hidCircleRead(std::addressof(circlePad));
+		hidCircleRead(&circlePad);
 		float deltaCircle = -circlePad.dy / 60.0f;
 		if (deltaCircle >= 0.5f || deltaCircle <= -0.5f) {
 			if (scrollDelta < 10.0f && scrollDelta > -10.0f) scrollDelta += deltaCircle;

@@ -92,7 +92,7 @@ MainScreen::MainScreen() {
 	if (config->changelog()) {
 		std::string changelog = GetChangelog();
 		if (changelog == "") return;
-		StoreUtils::ProcessReleaseNotes(changelog, 310.0f);
+		StoreUtils::ProcessReleaseNotes(changelog, 310.0f, 0.5f);
 		storeMode = 7;
 	}
 };
