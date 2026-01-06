@@ -37,6 +37,7 @@ enum DownloadError {
 	DL_ERROR_ALLOC,
 	DL_ERROR_STATUSCODE,
 	DL_ERROR_GIT,
+	DL_ERROR_TIMEOUT,
 	DL_ERROR_SSL_VERIFICATION,
 	DL_CANCEL, // No clue if that's needed tho.
 };

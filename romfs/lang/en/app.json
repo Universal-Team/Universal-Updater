@@ -51,6 +51,7 @@
 	"DIRECTION": "Direction",
 	"DIRECTORY_SETTINGS": "Directory Settings",
 	"DIRECTORY_SETTINGS_BTN": "Directory settings...",
+	"DNS_ERROR": "Connection Timed Out.\n\nThis usually happens with an incompatible\nDNS server.\n\nPlease go to System Settings and\ndisable your custom DNS.",
 	"DONE": "Done!",
 	"DOWNLOAD_ERROR": "Download Error!",
 	"DOWNLOAD_FAILED": "Download Failed!",

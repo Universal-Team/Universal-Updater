@@ -215,6 +215,7 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	curl_easy_setopt(CurlHandle, CURLOPT_FAILONERROR, 1L);
 	curl_easy_setopt(CurlHandle, CURLOPT_ACCEPT_ENCODING, "gzip");
 	curl_easy_setopt(CurlHandle, CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(CurlHandle, CURLOPT_CONNECTTIMEOUT, 20L);
 	curl_easy_setopt(CurlHandle, CURLOPT_XFERINFOFUNCTION, curlProgress);
 	curl_easy_setopt(CurlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(CurlHandle, CURLOPT_WRITEFUNCTION, file_handle_data);
@@ -332,6 +333,7 @@ static Result setupContext(CURL *hnd, const char *url) {
 	curl_easy_setopt(hnd, CURLOPT_USERAGENT, USER_AGENT);
 	curl_easy_setopt(hnd, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(hnd, CURLOPT_CONNECTTIMEOUT, 20L);
 	curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, handle_data);
 	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 1L);
@@ -803,7 +805,10 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return { cres == CURLE_PEER_FAILED_VERIFICATION ? DL_ERROR_SSL_VERIFICATION : DL_CANCEL, "", "" };
+		DownloadError error = DL_CANCEL;
+		if (cres == CURLE_OPERATION_TIMEDOUT) error = DL_ERROR_TIMEOUT;
+		else if (cres == CURLE_PEER_FAILED_VERIFICATION) error = DL_ERROR_SSL_VERIFICATION;
+		return { error, "", "" };
 	}
 
 	if (nlohmann::json::accept(result_buf)) {
@@ -871,7 +876,6 @@ void UpdateAction() {
 		res = IsUUUpdateAvailable(useGit);
 
 		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
-			retry = true;
 			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("AB_TO_EXIT"));
 	
 			time_t currentTime = time(NULL);
@@ -883,19 +887,33 @@ void UpdateAction() {
 	
 				if (Down & (KEY_A | KEY_B)) {
 					exiting = true;
-					retry = false;
 					break;
 				} else if (abs(time(NULL) - currentTime) > 3600) {
+					retry = true;
 					break;
 				}
 			}
-		} else if(useGit && res.Status != DL_ERROR_NONE) {
+		} else if (res.Status == DL_ERROR_TIMEOUT) {
+			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("AB_TO_EXIT"));
+	
+			uint32_t Down = 0;
+			while (true) {
+				gspWaitForVBlank();
+				hidScanInput();
+				Down = hidKeysDown();
+	
+				if (Down & (KEY_A | KEY_B)) {
+					exiting = true;
+					break;
+				}
+			}
+		} else if (useGit && res.Status != DL_ERROR_NONE) {
 			// git releases will not exist after a full release,
 			// so try again to see if there's a new release available.
 			retry = true;
 			useGit = false;
 		}
-	} while(retry);
+	} while (retry);
 
 	if (res.Status == DL_ERROR_NONE) {
 		bool confirmed = false;
