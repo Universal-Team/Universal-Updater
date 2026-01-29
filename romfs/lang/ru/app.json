@@ -71,8 +71,8 @@
 	"ENTRIES": "Записи",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "Примечание: «Git» версии предназначены для тестирования предстоящий функции и могут быть нестабильными.\n\nЕсли вы просто хотеть устанавливать, пожалуйста отменять и установите обычную версию.",
+	"NOTE_PRERELEASE": "Примечание: Это предварительный показ сборку, которая может быть нестабильной.\n\nЕсли вы просто хотеть устанавливать, вы май хотеть установить обычную версию если она существует.",
 	"EXIT_APP": "Выйти из Universal-Updater",
 	"EXTRACTING": "Извлечение... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Извлечь ошибку!",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Ошибка перемещения!",
-	"NO": "No",
+	"NO": "Нет",
 	"NO_DOWNLOADS_AVAILABLE": "Отсутствуют файлы для загрузки",
 	"NO_LICENSE": "Нет лицензии",
 	"NO_SCREENSHOTS_AVAILABLE": "Нет доступных скриншотов",
@@ -175,7 +175,7 @@
 	"VERSION": "Версия",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "Да",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }

@@ -71,8 +71,8 @@
 	"ENTRIES": "Записи",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "Примітка: «Git» версії призначені для тестування майбутніх функцій і можуть бути нестабільними.\n\nЯкщо ви просто хочете встановити програму, будь ласка, скасуйте і встановіть звичайну версію.",
+	"NOTE_PRERELEASE": "Примітка. Це попередня збірка, тому вона може бути нестабільною.\n\nЯкщо ви хочете просто встановити програму, то встановіть звичайну версію, якщо така існує.",
 	"EXIT_APP": "Вийти з Universal-Updater",
 	"EXTRACTING": "Розпаковування... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Помилка розпаковування!",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Помилка переміщення!",
-	"NO": "No",
+	"NO": "Ні",
 	"NO_DOWNLOADS_AVAILABLE": "Немає доступних завантажень",
 	"NO_LICENSE": "Немає ліцензії",
 	"NO_SCREENSHOTS_AVAILABLE": "Немає доступних скріншотів",
@@ -175,7 +175,7 @@
 	"VERSION": "Версія",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "Так",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }

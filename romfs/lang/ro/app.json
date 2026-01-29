@@ -71,8 +71,8 @@
 	"ENTRIES": "Intrări",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "Notă: Versiunile \"git\" sunt menite pentru testarea caracteristicilor viitoare şi pot fi instabile.\n\nDacă doriți doar să instalați, vă rugăm anulați şi instalați versiunea normală.",
+	"NOTE_PRERELEASE": "Notă: Aceasta este o versiune de prelansare şi poate fi instabilă.\n\nDacă doriți doar să instalați, ați dori să instalați versiunea normală dacă aceasta există.",
 	"EXIT_APP": "Ieşiți din Universal-Updater",
 	"EXTRACTING": "Se extrage... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Eroare de extragere!",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Eroare de mutare!",
-	"NO": "No",
+	"NO": "Nu",
 	"NO_DOWNLOADS_AVAILABLE": "Nici o descărcare valabilă",
 	"NO_LICENSE": "Nicio licență",
 	"NO_SCREENSHOTS_AVAILABLE": "Nicio captură de ecran disponibilă",
@@ -175,7 +175,7 @@
 	"VERSION": "Versiune",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "Da",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }

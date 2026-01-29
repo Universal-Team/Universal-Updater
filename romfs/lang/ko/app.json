@@ -71,8 +71,8 @@
 	"ENTRIES": "항목",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "주의: \"Git\" 버전은 향후 출시될 기능을 테스트하기 위한 것으로 불안정할 수 있습니다.\n\n단순히 설치만 하려면 취소하고 일반 버전을 설치하세요.",
+	"NOTE_PRERELEASE": "주의: 이는 시험판 빌드이며 불안정할 수 있습니다.\n\n단순히 설치만 하려면 일반 버전이 있는 경우 일반 버전을 설치하는 것이 좋습니다.",
 	"EXIT_APP": "Universal-Updater 종료",
 	"EXTRACTING": "압축 해제 중... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "압축 해제 오류!",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "이동 오류!",
-	"NO": "No",
+	"NO": "아니오",
 	"NO_DOWNLOADS_AVAILABLE": "사용 가능한 다운로드 없음",
 	"NO_LICENSE": "라이선스 없음",
 	"NO_SCREENSHOTS_AVAILABLE": "사용 가능한 스크린샷 없음",
@@ -175,7 +175,7 @@
 	"VERSION": "버전",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "예",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }

@@ -71,8 +71,8 @@
 	"ENTRIES": "Oppføringer",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "Merk: \"Git\" versjoner er ment for testing kommende funksjoner og kan være ustabile.\n\nHvis du bare vil installere, vennligst avbryt og installer den normale versjonen.",
+	"NOTE_PRERELEASE": "Merk: Dette er en forhåndsutgivelse versjon og kan være ustabil.\n\nHvis du bare ønsker å installere, kan du ønske å installere den normale versjonen hvis en eksisterer.",
 	"EXIT_APP": "Avslutt Universal-Updater",
 	"EXTRACTING": "Pakker ut... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "Utpakkingsfeil!",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "Feil under flytting!",
-	"NO": "No",
+	"NO": "Nei",
 	"NO_DOWNLOADS_AVAILABLE": "Ingen nedlastinger tilgjengelig",
 	"NO_LICENSE": "Ingen lisens",
 	"NO_SCREENSHOTS_AVAILABLE": "Ingen skjermbilder tilgjengelig",
@@ -175,7 +175,7 @@
 	"VERSION": "Versjon",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "Ja",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }

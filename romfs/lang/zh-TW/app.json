@@ -71,8 +71,8 @@
 	"ENTRIES": "條目",
 	"EXECUTE_ENTRY": "Are you sure you want to to install this file?",
 	"EXECUTE_ENTRY_WITH_MESSAGE": "Do you still want to to install this file?",
-	"NOTE_GIT": "Note: \"Git\" versions are intended for testing upcoming features and may be unstable.\n\nIf you simply want to install, please cancel and install the normal version.",
-	"NOTE_PRERELEASE": "Note: This is a prerelease build and may be unstable.\n\nIf you simply want to install, you may want to install the normal version if one exists.",
+	"NOTE_GIT": "注意：“Git”版本用於進行測試\n計劃更新中的功能，可能會存在穩定性問題。\n\n若只是需要進行安裝，\n請取消並選擇安裝正常版本。",
+	"NOTE_PRERELEASE": "注意：此版本可能不穩定，因爲它是早期版本。\n\n如果你只想安裝，如果有標準版，你可能更願意安裝。",
 	"EXIT_APP": "退出 Universal-Updater",
 	"EXTRACTING": "提取中... %s / %s (%.2f%%)",
 	"EXTRACT_ERROR": "提取出錯！",
@@ -107,7 +107,7 @@
 	"MONTH_AGO": "%d month ago (%d/%d/%d)",
 	"MONTHS_AGO": "%d months ago (%d/%d/%d)",
 	"MOVE_ERROR": "移動時發生錯誤！",
-	"NO": "No",
+	"NO": "否",
 	"NO_DOWNLOADS_AVAILABLE": "無下載可用",
 	"NO_LICENSE": "無授權",
 	"NO_SCREENSHOTS_AVAILABLE": "無可用螢幕截圖",
@@ -175,7 +175,7 @@
 	"VERSION": "版本",
 	"YEAR_AGO": "%d year ago (%d/%d/%d)",
 	"YEARS_AGO": "%d years ago (%d/%d/%d)",
-	"YES": "Yes",
+	"YES": "是",
 	"YES_NO_OR_SAVE": "Press  for yes,  for no,  to save.",
 	"YES_OR_NO": "Press  for yes,  for no."
 }
