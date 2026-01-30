@@ -46,5 +46,11 @@
 		"author": "ScratchBox Users",
 		"url": "https://scratchbox.grady.link/api/scratchbox.unistore",
 		"description": "A project hosting/distribution platform for Scratch Everywhere!"
+	},
+	"Paper Mario Sticker Store": {
+		"title": "Paper Mario Sticker Store",
+		"author": "HunterXuman",
+		"url": "https://github.com/Hunter-Xuman/Paper-Mario-3DS-Unistore/raw/main/PM4/Paper-Mario-3DS.unistore",
+		"description": "An online repository of community made mods for Paper Mario Sticker Star"
 	}
 }
