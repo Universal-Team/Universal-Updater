@@ -85,6 +85,16 @@ MainScreen::MainScreen() {
 	}
 
 	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), updateMode);
+	if (!StoreUtils::store->GetValid()) {
+		if (checkWifiStatus()) {
+			config->lastStore("universal-db.unistore");
+			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, Lang::get("DOWNLOADING_UNIVERSAL_DB"));
+			StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), Store::UpdateMode::spritesheet);
+
+		} else {
+			notConnectedMsg();
+		}
+	}
 	StoreUtils::ResetAll();
 	StoreUtils::SortEntries();
 
