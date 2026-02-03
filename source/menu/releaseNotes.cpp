@@ -81,27 +81,25 @@ const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string rele
 }
 
 void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry) {
-	if (entry && StoreUtils::store) {
-		Gui::ScreenDraw(Bottom);
-		Gui::Draw_Rect(0, 26, 320, 214, UIThemes->BGColor());
-		
-		float fontHeight = Gui::GetStringHeight(0.5f, "", font);
-		for (size_t i = 0; i < wrappedNotes.size(); i++) {
-			if (25 + i * fontHeight > scrollOffset && 25 + i * fontHeight < scrollOffset + 240.0f) 
-			Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 310, 0, font);
-		}
-		uint32_t accentColor = config->useAccentColor() && !config->changelog() ? entry->GetAccentColor() : 0;
-
-		Gui::Draw_Rect(0, 0, 320, 25, accentColor ? accentColor : UIThemes->EntryBar());
-		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UIThemes->TextColor(), config->changelog() ? std::string("Universal-Updater ") + C_V : entry->GetTitle(), 310, 0, font);
-		
-		GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
-
-		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 0, 400, 240, DIM_COLOR); // Darken.
-
+	Gui::ScreenDraw(Bottom);
+	Gui::Draw_Rect(0, 26, 320, 214, UIThemes->BGColor());
+	
+	float fontHeight = Gui::GetStringHeight(0.5f, "", font);
+	for (size_t i = 0; i < wrappedNotes.size(); i++) {
+		if (25 + i * fontHeight > scrollOffset && 25 + i * fontHeight < scrollOffset + 240.0f) 
+		Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 310, 0, font);
 	}
+	uint32_t accentColor = (config->useAccentColor() && entry) ? entry->GetAccentColor() : 0;
+
+	Gui::Draw_Rect(0, 0, 320, 25, accentColor ? accentColor : UIThemes->EntryBar());
+	Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
+	Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UIThemes->TextColor(), config->changelog() ? std::string("Universal-Updater ") + C_V : entry->GetTitle(), 310, 0, font);
+	
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
+
+	Gui::ScreenDraw(Top);
+	Gui::Draw_Rect(0, 0, 400, 240, DIM_COLOR); // Darken.
+
 	Animation::QueueEntryDone();
 }
 

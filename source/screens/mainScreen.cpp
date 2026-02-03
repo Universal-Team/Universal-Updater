@@ -158,7 +158,11 @@ void MainScreen::Draw(void) const {
 	StoreUtils::DrawSideMenu(this->storeMode);
 	if (this->storeMode == 7) {
 		/* Release Notes. */
-		StoreUtils::DrawReleaseNotes(this->scrollOffset, StoreUtils::entries[StoreUtils::store->GetEntry()]);
+		if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() && !config->changelog()) {
+			StoreUtils::DrawReleaseNotes(this->scrollOffset, StoreUtils::entries[StoreUtils::store->GetEntry()]);
+		} else {
+			StoreUtils::DrawReleaseNotes(this->scrollOffset, nullptr);
+		}
 		return;
 	}
 	if (this->showMarks && StoreUtils::store && StoreUtils::store->GetValid()) StoreUtils::DisplayMarkBox(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetMarks());
