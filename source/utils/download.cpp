@@ -55,6 +55,7 @@ static size_t result_written = 0;
 #define TIMETYPE curl_off_t
 #define TIMEOPT CURLINFO_TOTAL_TIME_T
 #define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL	3000000
+#define CACERT_PATH "sdmc:/config/ssl/cacert.pem"
 
 curl_off_t downloadTotal = 1; // Dont initialize with 0 to avoid division by zero later.
 curl_off_t downloadNow = 0;
@@ -72,6 +73,7 @@ static bool killThread = false;
 static bool writeError = false;
 #define FILE_ALLOC_SIZE 0x60000
 CURL *CurlHandle = nullptr;
+bool sslVerify = true;
 
 const std::vector<Structs::ButtonPos> promptButtons = {
 	{24, 94, 124, 48},
@@ -219,8 +221,8 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	curl_easy_setopt(CurlHandle, CURLOPT_XFERINFOFUNCTION, curlProgress);
 	curl_easy_setopt(CurlHandle, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(CurlHandle, CURLOPT_WRITEFUNCTION, file_handle_data);
-	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 1L);
-	curl_easy_setopt(CurlHandle, CURLOPT_CAINFO, "romfs:/cacert.pem");
+	curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, sslVerify);
+	if (sslVerify) curl_easy_setopt(CurlHandle, CURLOPT_CAINFO, CACERT_PATH);
 	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(CurlHandle, CURLOPT_STDERR, stdout);
 
@@ -336,8 +338,8 @@ static Result setupContext(CURL *hnd, const char *url) {
 	curl_easy_setopt(hnd, CURLOPT_CONNECTTIMEOUT, 20L);
 	curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, handle_data);
-	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 1L);
-	curl_easy_setopt(hnd, CURLOPT_CAINFO, "romfs:/cacert.pem");
+	curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, sslVerify);
+	if (sslVerify) curl_easy_setopt(hnd, CURLOPT_CAINFO, CACERT_PATH);
 	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
 
@@ -808,6 +810,7 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 		DownloadError error = DL_CANCEL;
 		if (cres == CURLE_OPERATION_TIMEDOUT) error = DL_ERROR_TIMEOUT;
 		else if (cres == CURLE_PEER_FAILED_VERIFICATION) error = DL_ERROR_SSL_VERIFICATION;
+		else if (cres == CURLE_SSL_CACERT_BADFILE) error = DL_ERROR_CACERT_BADFILE;
 		return { error, "", "" };
 	}
 
@@ -864,10 +867,30 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 extern bool is3DSX, exiting;
 extern std::string _3dsxPath;
 
+static bool UpdateCACert(std::string message) {
+	sslVerify = false;
+	if (message != "" && !Msg::promptMsg(message)) return false;
+
+	while (true) {
+		Result dlRes = ScriptUtils::downloadFile("https://curl.se/ca/cacert.pem", CACERT_PATH, Lang::get("DOWNLOADING_CACERT"), true);
+		if (dlRes == ScriptState::NONE) {
+			sslVerify = true;
+			return true;
+		} else {
+			if (!Msg::promptMsg(Lang::get("DOWNLOAD_FAILED_TRY_AGAIN"))) return false;
+		}
+	}
+}
+
 /*
 	Execute U-U update action.
 */
 void UpdateAction() {
+	// Check for CACERT file
+	if (access(CACERT_PATH, F_OK) != 0) {
+		UpdateCACert(Lang::get("MISSING_CACERT"));
+	}
+
 	bool useGit = config->updategit();
 	UUUpdate res;
 	bool retry;
@@ -876,7 +899,7 @@ void UpdateAction() {
 		res = IsUUUpdateAvailable(useGit);
 
 		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
-			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("AB_TO_EXIT"));
+			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"));
 	
 			time_t currentTime = time(NULL);
 			uint32_t Down = 0;
@@ -885,7 +908,15 @@ void UpdateAction() {
 				hidScanInput();
 				Down = hidKeysDown();
 	
-				if (Down & (KEY_A | KEY_B)) {
+				if (Down & KEY_A) {
+					UpdateCACert("");
+					retry = true;
+					break;
+				} else if (Down & KEY_Y) {
+					sslVerify = false;
+					retry = true;
+					break;
+				} else if (Down & (KEY_B)) {
 					exiting = true;
 					break;
 				} else if (abs(time(NULL) - currentTime) > 3600) {
@@ -893,6 +924,9 @@ void UpdateAction() {
 					break;
 				}
 			}
+		} else if (res.Status == DL_ERROR_CACERT_BADFILE) {
+			UpdateCACert(Lang::get("INVALID_CACERT"));
+			retry = true;
 		} else if (res.Status == DL_ERROR_TIMEOUT) {
 			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("AB_TO_EXIT"));
 	
