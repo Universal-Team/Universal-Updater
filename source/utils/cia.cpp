@@ -67,7 +67,7 @@ Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 
 	for (u32 i = 0; i < read_titles; i++) {
 		if (titleIDs[i] == titleid) {
-			ret = AM_DeleteAppTitle(media, titleid);
+			ret = AM_DeleteTitle(media, titleid);
 			break;
 		}
 	}
@@ -75,7 +75,7 @@ Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 	free(titleIDs);
 
 	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_DeleteAppTitle\n");
+		printf("Error in:\nAM_DeleteTitle\n");
 		return ret;
 	}
 
