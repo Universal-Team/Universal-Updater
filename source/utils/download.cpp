@@ -225,6 +225,7 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	if (sslVerify) curl_easy_setopt(CurlHandle, CURLOPT_CAINFO, CACERT_PATH);
 	curl_easy_setopt(CurlHandle, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(CurlHandle, CURLOPT_STDERR, stdout);
+	curl_easy_setopt(CurlHandle, CURLOPT_PROXY, config->proxyUrl().c_str());
 
 	curlResult = curl_easy_perform(CurlHandle);
 	curl_easy_cleanup(CurlHandle);
@@ -342,6 +343,7 @@ static Result setupContext(CURL *hnd, const char *url) {
 	if (sslVerify) curl_easy_setopt(hnd, CURLOPT_CAINFO, CACERT_PATH);
 	curl_easy_setopt(hnd, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(hnd, CURLOPT_STDERR, stdout);
+	curl_easy_setopt(hnd, CURLOPT_PROXY, config->proxyUrl().c_str());
 
 	return 0;
 }
