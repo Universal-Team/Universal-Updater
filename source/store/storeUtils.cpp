@@ -181,56 +181,40 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 	titleQuery = StringUtils::lower_case(titleQuery);
 	descQuery = StringUtils::lower_case(descQuery);
 	authorQuery = StringUtils::lower_case(authorQuery);
-	bool allEmpty = titleQuery.empty() && descQuery.empty() && authorQuery.empty();
+	bool skipTextQuery = titleQuery.empty() && descQuery.empty() && authorQuery.empty();
 
-	if (isAND) {
-		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			if (!(
-				(
-					allEmpty
-					|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
-					|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
-					|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
-				)
-				&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
-				&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-				&& (
-					(selectedMarks == 0 && !updateAvl && !installed)
-					|| (isNOT ^ (
-						(((*it)->GetMarks() & selectedMarks) == selectedMarks)
-						&& (!updateAvl || (*it)->GetUpdateAvl())
-						&& (!installed || (*it)->GetInstalled())
-					))
-				)
-			)) {
-				it = StoreUtils::entries.erase(it);
-				--it;
+	for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
+		bool textOK = (
+			skipTextQuery
+			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
+			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
+		);
+
+		bool categoryOK = category.empty() || findInVector((*it)->GetCategoryFull(), category);
+		bool consoleOK = console.empty() || findInVector((*it)->GetConsoleFull(), console);
+
+		bool filtersOK = selectedMarks == 0 && !updateAvl && !installed; // true if no filters selected
+		if (!filtersOK) { // otherwise check the filters
+			if(isAND) {
+				filtersOK = isNOT ^ (
+					(((*it)->GetMarks() & selectedMarks) == selectedMarks)
+					&& (!updateAvl || (*it)->GetUpdateAvl())
+					&& (!installed || (*it)->GetInstalled())
+				);
+			} else {
+				filtersOK = isNOT ^ (
+					(((*it)->GetMarks() & selectedMarks))
+					|| (updateAvl && (*it)->GetUpdateAvl())
+					|| (installed && (*it)->GetInstalled())
+				);
 			}
 		}
 
-	} else {
-		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			if (!(
-				(
-					allEmpty
-					|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
-					|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
-					|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
-				)
-				&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
-				&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-				&& (
-					(selectedMarks == 0 && !updateAvl && !installed)
-					|| (isNOT ^ (
-						(((*it)->GetMarks() & selectedMarks))
-						|| (updateAvl && (*it)->GetUpdateAvl())
-						|| (installed && (*it)->GetInstalled())
-					))
-				)
-			)) {
-				it = StoreUtils::entries.erase(it);
-				--it;
-			}
+		// If anything didn't pass, filter out
+		if (!(textOK && categoryOK && consoleOK && filtersOK)) {
+			it = StoreUtils::entries.erase(it);
+			--it;
 		}
 	}
 }
