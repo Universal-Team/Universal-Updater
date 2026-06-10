@@ -68,8 +68,8 @@ static const std::vector<Structs::ButtonPos> installedPos = {
 	const std::string &author: The author of the app.
 */
 static bool CreateShortcut(const std::string &entryName, int index, const std::string &unistoreName, const std::string &author) {
-	std::string sName = Input::setkbdString(30, Lang::get("ENTER_SHORTCUT_FILENAME"), {});
-	if (sName == "") return false; // Just cancel.
+	std::string sName;
+	if (!Input::getTextKeyboard(sName, 30, Lang::get("ENTER_SHORTCUT_FILENAME"))) return false; // Just cancel.
 	std::ofstream out(config->shortcut() + "/" + sName + ".xml", std::ios::binary);
 
 	out << "<shortcut>" << std::endl;
@@ -82,13 +82,13 @@ static bool CreateShortcut(const std::string &entryName, int index, const std::s
 	out << "	<arg>\"" << unistoreName << "\" \"" << entryName << "\" \"" << std::to_string(index) << "\"" << "</arg>" << std::endl;
 
 	/* Title. */
-	const std::string title = Input::setkbdString(30, Lang::get("ENTER_TITLE_SHORTCUT"), {});
-	if (title != "") out << "	<name>" << title << "</name>" << std::endl;
+	std::string title;
+	if (Input::getTextKeyboard(title, 30, Lang::get("ENTER_TITLE_SHORTCUT"))) out << "	<name>" << title << "</name>" << std::endl;
 	else out << "	<name>" << entryName << "</name>" << std::endl;
 
 	/* Description. */
-	const std::string desc = Input::setkbdString(50, Lang::get("ENTER_DESC_SHORTCUT"), {});
-	if (desc != "") out << "	<description>" << desc << "</description>" << std::endl;
+	std::string desc;
+	if (Input::getTextKeyboard(desc, 50, Lang::get("ENTER_DESC_SHORTCUT"))) out << "	<description>" << desc << "</description>" << std::endl;
 	else out << "	<description>" << entryName << "</description>" << std::endl;
 
 	/* Author and end. */
@@ -254,7 +254,7 @@ void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const 
 			if (types[StoreUtils::store->GetDownloadIndex()] == "git" || types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_GIT");
 			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
 			else PromptSaveKey = "Universal-Updater/confirm-install";
-			
+
 			const std::string &preinstallMessage = entry->GetPreinstallMessage();
 			std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
 

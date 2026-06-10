@@ -33,18 +33,21 @@ static std::vector<SwkbdDictWord> words;
 /*
 	Return a string of the keyboard.
 
+	std::string Output: Reference to the string to write the resut to
 	uint maxLength: The max length.
-	const std::string &Text: Const Reference to the Text.
+	const std::string &Hint: Const Reference to the hint text.
+	const std::string &Text: Const Reference to the prefill text.
 	const std::vector<std::unique_ptr<StoreEntry>> &entries: Const Reference of all entries for the words to suggest.
+
+	Returns: True if "OK" was selected, False if "Cancel".
 */
-std::string Input::setkbdString(uint maxLength, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
+bool Input::getTextKeyboard(std::string &Output, uint maxLength, const std::string &Hint, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
 	C3D_FrameEnd(0); // Needed, so the system will not freeze.
 
 	SwkbdState state;
 	swkbdInit(&state, SWKBD_TYPE_NORMAL, 2, maxLength);
-	char temp[maxLength + 1] = { 0 };
-	swkbdSetHintText(&state, Text.c_str());
-	swkbdSetValidation(&state, SWKBD_NOTBLANK_NOTEMPTY, SWKBD_FILTER_PROFANITY, 0);
+	swkbdSetHintText(&state, Hint.c_str());
+	swkbdSetInitialText(&state, Text.c_str());
 
 	if (entries.size()) {
 		words.clear();
@@ -62,26 +65,10 @@ std::string Input::setkbdString(uint maxLength, const std::string &Text, const s
 		}
 	}
 
+	char temp[maxLength + 1] = { 0 };
 	SwkbdButton ret = swkbdInputText(&state, temp, sizeof(temp));
 	temp[maxLength] = '\0';
+	if (ret == SWKBD_BUTTON_CONFIRM) Output = temp;
 
-	return (ret == SWKBD_BUTTON_CONFIRM ? temp : "");
-}
-
-bool Input::getTextInput(std::string initial, std::string &out, int kbdType, int lengthLimit){
-	SwkbdState kbd;
-
-	swkbdInit (&kbd, (SwkbdType)kbdType, 2, lengthLimit);
-	swkbdSetButton (&kbd, SWKBD_BUTTON_LEFT, "Cancel", false);
-	swkbdSetButton (&kbd, SWKBD_BUTTON_RIGHT, "OK", true);
-	swkbdSetInitialText (&kbd,initial.c_str());
-
-	char buffer[lengthLimit + 1]   = {0};
-	auto const button = swkbdInputText (&kbd, buffer, lengthLimit + 1);
-	buffer[lengthLimit] = '\0';
-	if (button == SWKBD_BUTTON_RIGHT){
-		out=buffer;
-		return true;
-	}
-	return false;
+	return ret == SWKBD_BUTTON_CONFIRM;
 }

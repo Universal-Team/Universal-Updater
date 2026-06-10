@@ -199,8 +199,9 @@ void StoreUtils::SearchHandle() {
 
 		/* Search bar. */
 		if (touching(touch, searchBar) && StoreUtils::store) {
-			searchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"), {});
-			didTouch = true;
+			if (Input::getTextKeyboard(searchResult, 20, Lang::get("ENTER_SEARCH"), searchResult, StoreUtils::entries)) {
+				didTouch = true;
+			}
 		}
 
 		if (touching(touch, detailedSearch)) {
@@ -210,8 +211,9 @@ void StoreUtils::SearchHandle() {
 
 		if(detailedMode) {
 			if (touching(touch, authorSearchBar) && StoreUtils::store) {
-				authorSearchResult = Input::setkbdString(20, Lang::get("ENTER_SEARCH"), {});
-				didTouch = true;
+				if (Input::getTextKeyboard(authorSearchResult, 20, Lang::get("ENTER_SEARCH"), authorSearchResult)) {
+					didTouch = true;
+				}
 			}
 
 			if (touching(touch, categoryBtn) && store) {

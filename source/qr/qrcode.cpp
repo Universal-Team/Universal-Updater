@@ -301,9 +301,8 @@ void QRCode::handler(std::string &result) {
 	/* Keyboard. */
 	if (keyDown & KEY_TOUCH && touching(t, mainButtons[7])) {
 		if (this->displayList) {
-			const std::string temp = Input::setkbdString(150, Lang::get("ENTER_URL"), { });
-
-			if (temp != "") {
+			std::string temp;
+			if (Input::getTextKeyboard(temp, 150, Lang::get("ENTER_URL"))) {
 				result = temp;
 				this->finished = true;
 				this->finish();

@@ -688,9 +688,9 @@ static void ProxySettingsLogic(int &page, int &selection) {
 	}
 
 	if ((hDown & KEY_A)||((hDown & KEY_TOUCH)&&touching(touch, proxyInputBar))) {
-		std::string out;
-		if (Input::getTextInput(config->proxyUrl(), out, 1, 2083)){
-			config->proxyUrl(out);
+		std::string temp;
+		if (Input::getTextKeyboard(temp, 2083, Lang::get("PROXY_HINT_TEXT"), config->proxyUrl())) {
+			config->proxyUrl(temp);
 		}
 	}
 }
@@ -759,7 +759,7 @@ void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, in
 		case 4:
 			LanguageLogic(page, selection, sPos);
 			break;
-			
+
 		case 5:
 			ProxySettingsLogic(page, selection);
 			break;
