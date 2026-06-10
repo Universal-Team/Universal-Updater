@@ -32,6 +32,18 @@
 
 namespace Input {
 	std::string setkbdString(uint maxLength, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries);
+
+	/**
+	 * Get text input from the user using the on-screen keyboard.
+	 * @param initial The initial text to display in the keyboard input field.
+	 * @param out A reference to a string where the user's input will be stored.
+	 * @param kbdType The type of keyboard to display.
+	 * @param lengthLimit The maximum length of the input string.
+	 * @return True if the user confirmed their input, false if they canceled.
+	 * 
+	 * kbdType: 0=Default, 1=Qwerty, 2=Numpad, 3=Western
+	 */
+	bool getTextInput(std::string initial, std::string &out, int kbdType, int lengthLimit);
 };
 
 #endif

@@ -126,6 +126,9 @@ public:
 
 	PromptValue savedPrompt(const std::string &name);
 	void savePrompt(const std::string &name, bool v);
+
+	std::string proxyUrl() const { return this->v_proxyUrl; };
+	void proxyUrl(const std::string &v) { this->v_proxyUrl = v; if (!this->changesMade) this->changesMade = true; }
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -140,13 +143,28 @@ private:
 
 	std::vector<std::pair<std::string, bool>> v_savedPrompts;
 
-	std::string v_language = "en", v_lastStore = "universal-db.unistore",
-				v_3dsxPath = "sdmc:/3ds", v_ndsPath = "sdmc:", v_archivePath = "sdmc:",
-				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts", v_firmPath = "sdmc:/luma/payloads", v_theme = "Default";
+	std::string v_language = "en",
+				v_lastStore = "universal-db.unistore",
+				v_3dsxPath = "sdmc:/3ds",
+				v_ndsPath = "sdmc:",
+				v_archivePath = "sdmc:",
+				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts",
+				v_firmPath = "sdmc:/luma/payloads",
+				v_theme = "Default",
+				v_proxyUrl = "";
 
-	bool v_list = false, v_autoUpdate = true, v_metadata = true, v_updateCheck = true, v_updateGit = false,
-		v_showBg = true, v_customFont = false, v_changelog = true, v_prompt = true, v_3dsxInFolder = false,
-		v_useAccentColor = true, v_sortAscending = false;
+	bool v_list = false,
+		v_autoUpdate = true,
+		v_metadata = true,
+		v_updateCheck = true,
+		v_updateGit = false,
+		v_showBg = true,
+		v_customFont = false,
+		v_changelog = true,
+		v_prompt = true,
+		v_3dsxInFolder = false,
+		v_useAccentColor = true,
+		v_sortAscending = false;
 
 	SortType v_sortBy = SortType::POPULARITY;
 };

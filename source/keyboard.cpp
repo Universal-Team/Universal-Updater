@@ -67,3 +67,21 @@ std::string Input::setkbdString(uint maxLength, const std::string &Text, const s
 
 	return (ret == SWKBD_BUTTON_CONFIRM ? temp : "");
 }
+
+bool Input::getTextInput(std::string initial, std::string &out, int kbdType, int lengthLimit){
+	SwkbdState kbd;
+
+	swkbdInit (&kbd, (SwkbdType)kbdType, 2, lengthLimit);
+	swkbdSetButton (&kbd, SWKBD_BUTTON_LEFT, "Cancel", false);
+	swkbdSetButton (&kbd, SWKBD_BUTTON_RIGHT, "OK", true);
+	swkbdSetInitialText (&kbd,initial.c_str());
+
+	char buffer[lengthLimit + 1]   = {0};
+	auto const button = swkbdInputText (&kbd, buffer, lengthLimit + 1);
+	buffer[lengthLimit] = '\0';
+	if (button == SWKBD_BUTTON_RIGHT){
+		out=buffer;
+		return true;
+	}
+	return false;
+}

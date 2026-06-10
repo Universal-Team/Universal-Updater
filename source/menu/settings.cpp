@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "init.hpp"
+#include "keyboard.hpp"
 #include "overlay.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
@@ -35,12 +36,13 @@ extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 45, 32, 271, 22 },
-	{ 45, 62, 271, 22 },
-	{ 45, 92, 271, 22 },
-	{ 45, 122, 271, 22 },
-	{ 45, 152, 271, 22 },
+	{ 45, 57, 271, 22 },
+	{ 45, 82, 271, 22 },
+	{ 45, 107, 271, 22 },
+	{ 45, 132, 271, 22 },
+	{ 45, 157, 271, 22 },
 	{ 45, 182, 271, 22 },
-	{ 45, 212, 271, 22 }
+	{ 45, 207, 271, 22 }
 };
 
 static const std::vector<Structs::ButtonPos> langButtons = {
@@ -86,9 +88,10 @@ static const std::vector<Structs::ButtonPos> dirIcons = {
 
 static const Structs::ButtonPos back = { 45, 0, 24, 24 }; // Back arrow for directory.
 static const Structs::ButtonPos Theme = { 40, 196, 280, 24 }; // Themes.
+Structs::ButtonPos proxyInputBar = { 51, 95, 262, 30 };
 
 
-static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "CREDITS_BTN", "EXIT_APP" };
+static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "PROXY_SETTINGS_BTN", "CREDITS_BTN", "EXIT_APP" };
 static const std::vector<std::string> dirStrings = { "CHANGE_3DSX_PATH", "3DSX_IN_FOLDER", "CHANGE_NDS_PATH", "CHANGE_ARCHIVE_PATH", "CHANGE_SHORTCUT_PATH", "CHANGE_FIRM_PATH" };
 
 /* Note: Украïнська is spelled using a latin i with dieresis to work in the system font */
@@ -106,7 +109,7 @@ static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("SETTINGS"), 280, 0, font);
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
 		Gui::DrawStringCentered(20, mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), Lang::get(mainStrings[i]), 255, 0, font);
 	}
@@ -214,6 +217,19 @@ static void DrawGUISettings(int selection) {
 	Gui::DrawString(47, 216, 0.5f, UIThemes->TextColor(), Lang::get("ACTIVE_THEME") + ": " + config->theme(), 270, 0, font);
 }
 
+static void DrawProxySettings(int selection) {
+	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
+
+	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("PROXY_SETTINGS"), 248, 0, font);
+
+	Gui::DrawString(51, 30, 0.4f, UIThemes->TextColor(), Lang::get("PROXY_URL_DESC"), 265, 0, font);
+	Gui::Draw_Rect(proxyInputBar.x - 1, proxyInputBar.y - 1, proxyInputBar.w + 2, proxyInputBar.h + 2, UIThemes->SearchBarOutline());
+	Gui::Draw_Rect(proxyInputBar.x, proxyInputBar.y, proxyInputBar.w, proxyInputBar.h, UIThemes->SearchBar());
+	Gui::DrawString(proxyInputBar.x + 6, proxyInputBar.y + 6, 0.6, UIThemes->TextColor(), config->proxyUrl(), proxyInputBar.w - 12, proxyInputBar.h - 12, font);
+}
+
 
 /*
 	Settings Main Handle.
@@ -237,7 +253,7 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 	}
 
 	if (hRepeat & KEY_DOWN) {
-		if (selection < 6) selection++;
+		if (selection < 7) selection++;
 		else selection = 0;
 	}
 
@@ -258,7 +274,7 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 
 	bool selected = false;
 	if (hDown & KEY_TOUCH) {
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 8; i++) {
 			if (touching(touch, mainButtons[i])) {
 				if (i == selection) selected = true;
 				else selection = i;
@@ -304,10 +320,15 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 				break;
 
 			case 5:
-				Overlays::ShowCredits();
+				selection = 0;
+				page = 5;
 				break;
 
 			case 6:
+				Overlays::ShowCredits();
+				break;
+
+			case 7:
 				if (!QueueRuns) exiting = true;
 				break;
 		}
@@ -653,6 +674,27 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	else if (selection > sPos + 6 - 1) sPos = selection - 6 + 1;
 }
 
+static void ProxySettingsLogic(int &page, int &selection) {
+	if (hDown & KEY_B) {
+		page = 0;
+		selection = 5;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, back)) {
+			page = 0;
+			selection = 5;
+		}
+	}
+
+	if ((hDown & KEY_A)||((hDown & KEY_TOUCH)&&touching(touch, proxyInputBar))) {
+		std::string out;
+		if (Input::getTextInput(config->proxyUrl(), out, 1, 2083)){
+			config->proxyUrl(out);
+		}
+	}
+}
+
 /*
 	Draw the Settings.
 
@@ -679,6 +721,10 @@ void StoreUtils::DrawSettings(int page, int selection, int sPos) {
 
 		case 4:
 			DrawLanguageSettings(selection, sPos);
+			break;
+
+		case 5:
+			DrawProxySettings(selection);
 			break;
 	}
 }
@@ -712,6 +758,10 @@ void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, in
 
 		case 4:
 			LanguageLogic(page, selection, sPos);
+			break;
+			
+		case 5:
+			ProxySettingsLogic(page, selection);
 			break;
 	}
 }

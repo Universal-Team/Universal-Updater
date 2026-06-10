@@ -142,6 +142,7 @@ Config::Config() {
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
+	if (this->json.contains("ProxyURL")) this->proxyUrl(this->getString("ProxyURL"));
 
 	/* Exceptions for it. It was an INT before. */
 	if (this->json.contains("Active_Theme")) {
@@ -193,6 +194,7 @@ void Config::save() {
 		this->setBool("Display_Changelog", this->changelog());
 		this->setString("Active_Theme", this->theme());
 		this->setBool("Prompt", this->prompt());
+		this->setString("ProxyURL", this->proxyUrl());
 
 		this->json["SavedPrompts"] = nlohmann::json::object();
 		for(const auto &prompt : this->v_savedPrompts) {
