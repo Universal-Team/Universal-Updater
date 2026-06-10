@@ -64,7 +64,7 @@ Store::Store(const std::string &file, const std::string &fileName, UpdateMode up
 */
 void Store::update(const std::string &file, UpdateMode updateMode) {
 	this->LoadFromFile(file);
-	
+
 	bool doSheet = true;
 	int rev = -1;
 
@@ -92,17 +92,17 @@ void Store::update(const std::string &file, UpdateMode updateMode) {
 			if(updateMode != UpdateMode::spritesheet) {
 				if (this->storeJson["storeInfo"].contains("url") && this->storeJson["storeInfo"]["url"].is_string()) {
 					if (this->storeJson["storeInfo"].contains("file") && this->storeJson["storeInfo"]["file"].is_string()) {
-	
+
 						const std::string fl = this->storeJson["storeInfo"]["file"];
 						if (!(fl.find("/") != std::string::npos)) {
 							const std::string URL = this->storeJson["storeInfo"]["url"];
-	
+
 							if (URL != "") {
 								doSheet = DownloadUniStore(URL, rev, Lang::get(updateMode == UpdateMode::forced ? "UPDATING_UNISTORE" : "CHECK_UNISTORE_UPDATES"));
 								if(doSheet) this->LoadFromFile(file); // Reload JSON
 								if(!this->valid) return;
 							}
-	
+
 						} else {
 							Msg::waitMsg(Lang::get("FILE_SLASH"));
 						}
@@ -257,7 +257,7 @@ void Store::LoadFromFile(const std::string &file) {
 					sort(this->categories.begin(), this->categories.end(), [](const std::string &lhs, const std::string &rhs) {
 						return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
 					});
-					
+
 					std::vector<std::string> consoles = GetConsoleEntry(i);
 					for (const auto &console : consoles) {
 						if (!console.empty() && std::find(this->consoles.begin(), this->consoles.end(), console) == this->consoles.end()) {
@@ -481,6 +481,41 @@ std::string Store::GetPreinstallMessage(int index) const {
 	return "";
 }
 
+/*
+	Return the installed files of an index.
+
+	int index: The index.
+*/
+std::vector<std::string> Store::GetInstalledFiles(int index) const {
+	if (!this->valid) return { };
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return { }; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("installed_files")) {
+		if (this->storeJson["storeContent"][index]["info"]["installed_files"].is_array()) {
+			return this->storeJson["storeContent"][index]["info"]["installed_files"].get<std::vector<std::string>>();
+		}
+	}
+
+	return { };
+}
+
+/*
+	Return the title IDs of an index.
+
+	int index: The index.
+*/
+std::vector<int> Store::GetTitleIds(int index) const {
+	if (!this->valid) return { };
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return { }; // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("title_ids")) {
+		if (this->storeJson["storeContent"][index]["info"]["title_ids"].is_array()) {
+			return this->storeJson["storeContent"][index]["info"]["title_ids"].get<std::vector<int>>();
+		}
+	}
+
+	return { };
+}
 
 /*
 	returns whether this entry has a valid icon.

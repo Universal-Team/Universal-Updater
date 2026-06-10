@@ -395,7 +395,7 @@ void QueueSystem::QueueHandle() {
 				if (StoreUtils::meta) {
 					StoreUtils::meta->SetUpdated(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->lastUpdated);
 					StoreUtils::meta->SetInstalled(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->name);
-					StoreUtils::RefreshUpdateAVL();
+					StoreUtils::RefreshInstalledApps();
 				}
 			}
 

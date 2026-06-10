@@ -113,11 +113,11 @@ namespace StoreUtils {
 
 	void SortEntries(void);
 
-	void search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool isAND);
+	void search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool installed, bool isAND, bool isNOT);
 
 	void ResetAll();
 
-	void RefreshUpdateAVL();
+	void RefreshInstalledApps();
 
 	void AddToQueue(int index, const std::string &entry, const std::string &entryName, const std::string &lUpdated);
 	void AddAllToQueue();

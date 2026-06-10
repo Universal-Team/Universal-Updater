@@ -25,6 +25,8 @@
 */
 
 #include "storeEntry.hpp"
+#include "common.hpp"
+#include <regex>
 
 /*
 	Fetch informations on constructor.
@@ -47,6 +49,8 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->License = store->GetLicenseEntry(index);
 	this->Wiki = store->GetWikiEntry(index);
 	this->PreinstallMessage = store->GetPreinstallMessage(index);
+	this->InstalledFiles = store->GetInstalledFiles(index);
+	this->TitleIds = store->GetTitleIds(index);
 	this->MarkString = StringUtils::GetMarkString(meta->GetMarks(store->GetUniStoreTitle(), this->Title));
 
 	this->Icon = store->GetIconEntry(index);
@@ -62,6 +66,8 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->UpdateAvailable = meta->UpdateAvailable(store->GetUniStoreTitle(), this->Title, store->GetLastUpdatedEntry(index));
 	this->Marks = meta->GetMarks(store->GetUniStoreTitle(), this->Title);
 
+	this->Installed = CheckInstalled();
+
 	const std::vector<std::string> entries = store->GetDownloadList(index);
 
 	if (!entries.empty()) {
@@ -74,4 +80,30 @@ StoreEntry::StoreEntry(const std::unique_ptr<Store> &store, const std::unique_pt
 	this->Screenshots = store->GetScreenshotList(index);
 	this->ScreenshotNames = store->GetScreenshotNames(index);
 	this->ReleaseNotes = store->GetReleaseNotes(index);
+}
+
+bool StoreEntry::CheckInstalled() const {
+	char temp[16];
+	for (int uniqueId : this->TitleIds) {
+		Result res = AM_GetTitleProductCode(MEDIATYPE_SD, 0x0004000000000000 | (uniqueId << 8), temp);
+		if (R_SUCCEEDED(res)) {
+			return true;
+		}
+	}
+
+	for (std::string path : this->InstalledFiles) {
+		if (config) {
+			path = std::regex_replace(path, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
+			path = std::regex_replace(path, std::regex("%3DSX%/(.*)\\.(.*)"), config->_3dsxPath() + (config->_3dsxInFolder() ? "/$1/$1.$2" : "/$1.$2"));
+			path = std::regex_replace(path, std::regex("%3DSX%"), config->_3dsxPath());
+			path = std::regex_replace(path, std::regex("%NDS%"), config->ndsPath());
+			path = std::regex_replace(path, std::regex("%FIRM%"), config->firmPath());
+		}
+
+		if (access(path.c_str(), F_OK) == 0) {
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -35,7 +35,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 bool detailedMode = false;
 
 int marks = 0;
-bool updateFilter = false, isAND = true;
+bool updateFilter = false, installedFilter = false, isAND = true, isNOT = false;
 std::string searchResult = "", authorSearchResult = "";
 bool searchIncludes[] = { /* Title */ true, /* Description*/ true };
 int category = -1, console = -1;
@@ -59,13 +59,17 @@ std::vector<favoriteMarks> markKeys {
 };
 const std::string markLabels[] { "★", "♥", "♦", "♣", "♠" };
 std::vector<Structs::ButtonPos> filters = {
-	{ 82, 159, 30, 30 },
-	{ 117, 159, 30, 30 },
-	{ 152, 159, 30, 30 },
-	{ 187, 159, 30, 30 },
-	{ 222, 159, 30, 30 },
-	{ 257, 159, 30, 30 }
+	{ 64, 159, 30, 30 },
+	{ 99, 159, 30, 30 },
+	{ 134, 159, 30, 30 },
+	{ 169, 159, 30, 30 },
+	{ 204, 159, 30, 30 },
+	{ 239, 159, 30, 30 },
+	{ 274, 159, 30, 30 }
 };
+
+const std::string notLabel = "NOT";
+const Structs::ButtonPos notBtn = { 187, 139, 30, 13 };
 
 const std::string andOrLabels[] = { "AND", "OR" };
 std::vector<Structs::ButtonPos> andOr = {
@@ -81,7 +85,9 @@ Structs::ButtonPos consoleBtn = { 187, 200, 126, 30 };
 void StoreUtils::ResetSearch() {
 	marks = 0;
 	updateFilter = false;
+	installedFilter = false;
 	isAND = true;
+	isNOT = false;
 	searchResult = "";
 	authorSearchResult = "";
 	searchIncludes[0] = true;
@@ -139,19 +145,24 @@ void StoreUtils::DrawSearchMenu() {
 	} else {
 		/* Filters. */
 		Gui::DrawString(84, filters[0].y - 20, 0.5f, UIThemes->TextColor(), Lang::get("FILTER_TO"), 265, 0, font);
-	
+
 		for (size_t i = 0; i < markKeys.size(); i++) {
 			Gui::Draw_Rect(filters[i].x, filters[i].y, filters[i].w, filters[i].h, ((marks & markKeys[i]) ?
 				UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 			Gui::DrawString(filters[i].x + 9, filters[i].y + 7, 0.5f, UIThemes->TextColor(), markLabels[i], 0, 0, font);
 		}
-		Gui::Draw_Rect(filters[5].x, filters[5].y, filters[5].w, filters[5].h, (updateFilter ?
-			UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
+		Gui::Draw_Rect(filters[5].x, filters[5].y, filters[5].w, filters[5].h, (updateFilter ? UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
 		GFX::DrawIcon(sprites_update_filter_idx, filters[5].x + 8, filters[5].y + 8, UIThemes->TextColor());
-	
+		Gui::Draw_Rect(filters[6].x, filters[6].y, filters[6].w, filters[6].h, (installedFilter ? UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
+		GFX::DrawIcon(sprites_installed_filter_idx, filters[6].x + 8, filters[6].y + 8, UIThemes->TextColor());
+
 		Gui::Draw_Rect(sendToQueue.x, sendToQueue.y, sendToQueue.w, sendToQueue.h, UIThemes->MarkUnselected());
 		Gui::DrawStringCentered(23, sendToQueue.y + 6, 0.45f, UIThemes->TextColor(), Lang::get("SELECTION_QUEUE"), 200, 0, font);
-	
+
+		/* NOT. */
+		Gui::Draw_Rect(notBtn.x, notBtn.y, notBtn.w, notBtn.h, (isNOT ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
+		Gui::DrawString(notBtn.x + 4, notBtn.y, 0.4f, UIThemes->TextColor(), notLabel, 0, 0, font);
+
 		/* AND / OR. */
 		for(size_t i = 0; i < andOr.size(); i++) {
 			Gui::Draw_Rect(andOr[i].x, andOr[i].y, andOr[i].w, andOr[i].h, ((isAND ^ i) ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
@@ -227,12 +238,21 @@ void StoreUtils::SearchHandle() {
 				updateFilter = !updateFilter;
 				didTouch = true;
 			}
-	
+			if (touching(touch, filters[6])) {
+				installedFilter = !installedFilter;
+				didTouch = true;
+			}
+
 			if (touching(touch, sendToQueue)) {
 				StoreUtils::AddAllToQueue();
 				didTouch = true;
 			}
-	
+
+			if (touching(touch, notBtn)) {
+				isNOT = !isNOT;
+				didTouch = true;
+			}
+
 			for(size_t i = 0; i < nameDescription.size(); i++) {
 				if (touching(touch, andOr[i])) {
 					isAND = !i;
@@ -248,7 +268,7 @@ void StoreUtils::SearchHandle() {
 				const std::string &descQuery = searchIncludes[1] ? searchResult : "";
 				const std::string &categoryStr = category == -1 ? "" : store->GetCategories()[category];
 				const std::string &consoleStr = console == -1 ? "" : store->GetConsoles()[console];
-				StoreUtils::search(titleQuery, descQuery, authorSearchResult, categoryStr, consoleStr, marks, updateFilter, isAND);
+				StoreUtils::search(titleQuery, descQuery, authorSearchResult, categoryStr, consoleStr, marks, updateFilter, installedFilter, isAND, isNOT);
 				StoreUtils::store->SetScreenIndx(0);
 				StoreUtils::store->SetEntry(0);
 				StoreUtils::store->SetBox(0);

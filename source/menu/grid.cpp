@@ -110,7 +110,11 @@ void StoreUtils::DrawGrid() {
 					C2D_DrawImageAt(tempImg, GridBoxes[i].x + 1 + offsetW, GridBoxes[i].y + 1 + offsetH + StoreUtils::store->GetAnimOffset(), 0.5, StoreUtils::entries[i2]->HasIcon() ? nullptr : &tint);
 
 					/* Update Available mark. */
-					if (StoreUtils::entries[i2]->GetUpdateAvl()) GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32 + StoreUtils::store->GetAnimOffset());
+					if (StoreUtils::entries[i2]->GetUpdateAvl()) {
+						GFX::DrawSprite(sprites_update_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32 + StoreUtils::store->GetAnimOffset());
+					} else if (StoreUtils::entries[i2]->GetInstalled()) {
+						GFX::DrawSprite(sprites_installed_app_idx, GridBoxes[i].x + 32, GridBoxes[i].y + 32 + StoreUtils::store->GetAnimOffset());
+					}
 				}
 			}
 		}

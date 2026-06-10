@@ -46,6 +46,8 @@ public:
 	const std::string &GetLicense() const { return this->License; };
 	const std::string &GetWiki() const { return this->Wiki; };
 	const std::string &GetPreinstallMessage() const { return this->PreinstallMessage; };
+	const std::vector<std::string> &GetInstalledFiles(int index) const { return this->InstalledFiles; };
+	const std::vector<int> &GetTitleIds(int index) const { return this->TitleIds; };
 	int GetMarks() const { return this->Marks; };
 	const std::string &GetMarkString() const { return this->MarkString; }
 
@@ -68,6 +70,10 @@ public:
 	bool GetUpdateAvl() const { return this->UpdateAvailable; };
 	void SetUpdateAvl(bool v) { this->UpdateAvailable = v; };
 
+	bool CheckInstalled() const;
+	bool GetInstalled() const { return this->Installed; }
+	void SetInstalled(bool v) { this->Installed = v; }
+
 	void SetMark(int marks) {
 		this->Marks = marks;
 		this->MarkString = StringUtils::GetMarkString(this->Marks);
@@ -79,8 +85,9 @@ private:
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
 	uint32_t AccentColor;
-	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames;
-	bool UpdateAvailable, vHasIcon;
+	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames, InstalledFiles;
+	std::vector<int> TitleIds;
+	bool UpdateAvailable, vHasIcon, Installed;
 };
 
 #endif

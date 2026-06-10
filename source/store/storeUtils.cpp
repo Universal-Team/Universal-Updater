@@ -173,9 +173,11 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 	const std::string &console: The console to search for, "" to ignore.
 	int selectedMarks: The selected mark flags.
 	bool updateAvl: if available updates should be an included flag.
+	bool installed: if the app being installed should be an included flag.
 	bool isAND: if using AND or OR mode.
+	bool isNOT: if the selection should be inverted.
 */
-void StoreUtils::search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool isAND) {
+void StoreUtils::search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool installed, bool isAND, bool isNOT) {
 	titleQuery = StringUtils::lower_case(titleQuery);
 	descQuery = StringUtils::lower_case(descQuery);
 	authorQuery = StringUtils::lower_case(authorQuery);
@@ -183,13 +185,19 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 
 	if (isAND) {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
+			bool keep = true;
 			if (!((allEmpty
 			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
 			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
 			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
 			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
 			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-			&& ((selectedMarks == 0 && !updateAvl) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks) && (!updateAvl || (*it)->GetUpdateAvl()))))) {
+			&& ((selectedMarks == 0 && !updateAvl && !installed) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks)
+			&& (!updateAvl || (*it)->GetUpdateAvl()) && (!installed || (*it)->GetInstalled()))))) {
+				keep = false;
+			}
+
+			if (!keep ^ isNOT) {
 				it = StoreUtils::entries.erase(it);
 				--it;
 			}
@@ -197,13 +205,19 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 
 	} else {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
+			bool keep = true;
 			if (!((allEmpty
 			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
 			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
 			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
 			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
 			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-			&& ((selectedMarks == 0 && !updateAvl) || (*it)->GetMarks() & selectedMarks || (updateAvl && (*it)->GetUpdateAvl())))) {
+			&& ((selectedMarks == 0 && !updateAvl && !installed) || (*it)->GetMarks() & selectedMarks
+			|| (updateAvl && (*it)->GetUpdateAvl()) || (!installed && (*it)->GetInstalled())))) {
+				keep = false;
+			}
+
+			if (!keep ^ isNOT) {
 				it = StoreUtils::entries.erase(it);
 				--it;
 			}
@@ -228,11 +242,12 @@ void StoreUtils::ResetAll() {
 	}
 }
 
-/* Refresh the available update displays from all Entries. */
-void StoreUtils::RefreshUpdateAVL() {
+/* Re-check all Entries for available updates and installed status. */
+void StoreUtils::RefreshInstalledApps() {
 	for (int i = 0; i < (int)StoreUtils::entries.size(); i++) {
 		if (StoreUtils::entries[i]) {
 			StoreUtils::entries[i]->SetUpdateAvl(StoreUtils::meta->UpdateAvailable(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[i]->GetTitle(), StoreUtils::entries[i]->GetLastUpdated()));
+			StoreUtils::entries[i]->SetInstalled(StoreUtils::entries[i]->CheckInstalled());
 		}
 	}
 }
