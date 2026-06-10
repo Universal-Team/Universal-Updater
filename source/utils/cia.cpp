@@ -29,8 +29,8 @@
 
 Result Title::Launch(u64 titleId, FS_MediaType mediaType) {
 	Result ret = 0;
-	u8 param[0x300];
-	u8 hmac[0x20];
+	u8 param[0x300] = {};
+	u8 hmac[0x20] = {};
 
 	if (R_FAILED(ret = APT_PrepareToDoApplicationJump(0, titleId, mediaType))) {
 		return ret;
