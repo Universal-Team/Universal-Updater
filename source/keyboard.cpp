@@ -37,11 +37,11 @@ static std::vector<SwkbdDictWord> words;
 	uint maxLength: The max length.
 	const std::string &Hint: Const Reference to the hint text.
 	const std::string &Text: Const Reference to the prefill text.
-	const std::vector<std::unique_ptr<StoreEntry>> &entries: Const Reference of all entries for the words to suggest.
+	const std::vector<std::shared_ptr<StoreEntry>> &entries: Const Reference of all entries for the words to suggest.
 
 	Returns: True if "OK" was selected, False if "Cancel".
 */
-bool Input::getTextKeyboard(std::string &Output, uint maxLength, const std::string &Hint, const std::string &Text, const std::vector<std::unique_ptr<StoreEntry>> &entries) {
+bool Input::getTextKeyboard(std::string &Output, uint maxLength, const std::string &Hint, const std::string &Text, const std::vector<std::shared_ptr<StoreEntry>> &entries) {
 	C3D_FrameEnd(0); // Needed, so the system will not freeze.
 
 	SwkbdState state;

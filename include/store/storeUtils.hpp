@@ -42,7 +42,7 @@ enum class SortType : uint8_t {
 namespace StoreUtils {
 	extern std::unique_ptr<Meta> meta;
 	extern std::unique_ptr<Store> store;
-	extern std::vector<std::unique_ptr<StoreEntry>> entries;
+	extern std::vector<std::shared_ptr<StoreEntry>> allEntries, entries;
 
 	/* Grid. */
 	void DrawGrid();
@@ -53,16 +53,16 @@ namespace StoreUtils {
 	void ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
 
 	/* Entry Info. */
-	void DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry);
-	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::unique_ptr<StoreEntry> &entry);
+	void DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry);
+	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry);
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
 	void SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu);
 
 	/* Download entries. */
-	void DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs);
-	void DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types);
+	void DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs);
+	void DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types);
 
 	/* Queue System. */
 	void DrawQueueMenu(const int queueIndex);
@@ -75,7 +75,7 @@ namespace StoreUtils {
 
 	/* Mark Menu. */
 	void DisplayMarkBox(int marks);
-	void MarkHandle(std::unique_ptr<StoreEntry> &entry, bool &showMark);
+	void MarkHandle(std::shared_ptr<StoreEntry> &entry, bool &showMark);
 
 	/* Credits. */
 	void DrawCredits();
@@ -96,26 +96,27 @@ namespace StoreUtils {
 	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
 	const std::vector<std::string> &ProcessReleaseNotes(std::string ReleaseNotes, float wrapWidth, float fontSize);
 
-	void DrawReleaseNotes(const float &scrollOffset, const std::unique_ptr<StoreEntry> &entry);
+	void DrawReleaseNotes(const float &scrollOffset, const std::shared_ptr<StoreEntry> &entry);
 	void ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode);
 
-	bool compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
-	bool compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+	bool compareTitleDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
+	bool compareTitleAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
 
-	bool compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
-	bool compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+	bool compareAuthorDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
+	bool compareAuthorAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
 
-	bool compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
-	bool compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+	bool compareUpdateDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
+	bool compareUpdateAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
 
-	bool compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
-	bool compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b);
+	bool compareStarsDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
+	bool compareStarsAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
 
 	void SortEntries(void);
 
 	void search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool installed, bool isAND, bool isNOT);
 
-	void ResetAll();
+	void ResetEntries();
+	void LoadEntries();
 
 	void RefreshInstalledApps();
 

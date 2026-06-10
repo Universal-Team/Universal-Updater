@@ -96,7 +96,7 @@ void StoreUtils::ResetSearch() {
 	console = -1;
 
 	if (StoreUtils::store && StoreUtils::store->GetValid()) {
-		StoreUtils::ResetAll();
+		StoreUtils::ResetEntries();
 		StoreUtils::SortEntries();
 	}
 }
@@ -199,7 +199,7 @@ void StoreUtils::SearchHandle() {
 
 		/* Search bar. */
 		if (touching(touch, searchBar) && StoreUtils::store) {
-			if (Input::getTextKeyboard(searchResult, 20, Lang::get("ENTER_SEARCH"), searchResult, StoreUtils::entries)) {
+			if (Input::getTextKeyboard(searchResult, 20, Lang::get("ENTER_SEARCH"), searchResult, StoreUtils::allEntries)) {
 				didTouch = true;
 			}
 		}
@@ -265,7 +265,7 @@ void StoreUtils::SearchHandle() {
 
 		if (didTouch) {
 			if (StoreUtils::store && StoreUtils::store->GetValid()) { // Only search, when valid.
-				StoreUtils::ResetAll();
+				StoreUtils::ResetEntries();
 				const std::string &titleQuery = searchIncludes[0] ? searchResult : "";
 				const std::string &descQuery = searchIncludes[1] ? searchResult : "";
 				const std::string &categoryStr = category == -1 ? "" : store->GetCategories()[category];

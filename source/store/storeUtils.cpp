@@ -30,20 +30,20 @@
 
 std::unique_ptr<Meta> StoreUtils::meta = nullptr;
 std::unique_ptr<Store> StoreUtils::store = nullptr;
-std::vector<std::unique_ptr<StoreEntry>> StoreUtils::entries;
+std::vector<std::shared_ptr<StoreEntry>> StoreUtils::allEntries, StoreUtils::entries;
 
 /*
 	Compare Title.
 
-	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
-	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
+	const std::shared_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
-bool StoreUtils::compareTitleDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareTitleDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) > 0;
 
 	return true;
 }
-bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareTitleAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) < 0;
 
 	return true;
@@ -52,10 +52,10 @@ bool StoreUtils::compareTitleAscending(const std::unique_ptr<StoreEntry> &a, con
 /*
 	Compare Author.
 
-	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
-	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
+	const std::shared_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
-bool StoreUtils::compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareAuthorDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (!a || !b) return true;
 
 	// Sort apps by the save author by title.
@@ -64,7 +64,7 @@ bool StoreUtils::compareAuthorDescending(const std::unique_ptr<StoreEntry> &a, c
 
 	return cmp > 0;
 }
-bool StoreUtils::compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareAuthorAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (!a || !b) return true;
 
 	// Sort apps by the save author by title.
@@ -77,15 +77,15 @@ bool StoreUtils::compareAuthorAscending(const std::unique_ptr<StoreEntry> &a, co
 /*
 	Compare Last Updated.
 
-	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
-	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
+	const std::shared_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
-bool StoreUtils::compareUpdateDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareUpdateDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetLastUpdated()).c_str(), StringUtils::lower_case(b->GetLastUpdated()).c_str()) > 0;
 
 	return true;
 }
-bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareUpdateAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetLastUpdated()).c_str(), StringUtils::lower_case(a->GetLastUpdated()).c_str()) > 0;
 
 	return true;
@@ -94,10 +94,10 @@ bool StoreUtils::compareUpdateAscending(const std::unique_ptr<StoreEntry> &a, co
 /*
 	Compare Stars.
 
-	const std::unique_ptr<StoreEntry> &a: Const Reference to Entry A.
-	const std::unique_ptr<StoreEntry> &b: Const Reference to Entry B.
+	const std::shared_ptr<StoreEntry> &a: Const Reference to Entry A.
+	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
-bool StoreUtils::compareStarsDescending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareStarsDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (!a || !b) return true;
 
 	// Sort by title within the same star count.
@@ -109,7 +109,7 @@ bool StoreUtils::compareStarsDescending(const std::unique_ptr<StoreEntry> &a, co
 
 	return a->GetStars() > b->GetStars();
 }
-bool StoreUtils::compareStarsAscending(const std::unique_ptr<StoreEntry> &a, const std::unique_ptr<StoreEntry> &b) {
+bool StoreUtils::compareStarsAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
 	if (!a || !b) return true;
 
 	// Sort by title within the same star count.
@@ -226,13 +226,13 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 }
 
 /* Reset everything of the store and clear + fetch the entries again. */
-void StoreUtils::ResetAll() {
+void StoreUtils::ResetEntries() {
 	if (StoreUtils::store) {
 		StoreUtils::entries.clear();
 
 		if (StoreUtils::store->GetValid()) {
-			for (int i = 0; i < StoreUtils::store->GetStoreSize(); i++) {
-				StoreUtils::entries.push_back( std::make_unique<StoreEntry>(StoreUtils::store, StoreUtils::meta, i) );
+			for (uint i = 0; i < StoreUtils::allEntries.size(); i++) {
+				StoreUtils::entries.push_back(StoreUtils::allEntries[i]);
 			}
 
 			StoreUtils::store->SetBox(0);
@@ -242,12 +242,26 @@ void StoreUtils::ResetAll() {
 	}
 }
 
+/* Reset everything of the store clear + reload the entries FROM JSON. */
+void StoreUtils::LoadEntries() {
+	if (StoreUtils::store) {
+		StoreUtils::allEntries.clear();
+		if (StoreUtils::store->GetValid()) {
+			for (int i = 0; i < StoreUtils::store->GetStoreSize(); i++) {
+				StoreUtils::allEntries.push_back(std::make_shared<StoreEntry>(StoreUtils::store, StoreUtils::meta, i));
+			}
+		}
+	}
+
+	ResetEntries();
+}
+
 /* Re-check all Entries for available updates and installed status. */
 void StoreUtils::RefreshInstalledApps() {
-	for (int i = 0; i < (int)StoreUtils::entries.size(); i++) {
-		if (StoreUtils::entries[i]) {
-			StoreUtils::entries[i]->SetUpdateAvl(StoreUtils::meta->UpdateAvailable(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[i]->GetTitle(), StoreUtils::entries[i]->GetLastUpdated()));
-			StoreUtils::entries[i]->SetInstalled(StoreUtils::entries[i]->CheckInstalled());
+	for (uint i = 0; i < StoreUtils::allEntries.size(); i++) {
+		if (StoreUtils::allEntries[i]) {
+			StoreUtils::allEntries[i]->SetUpdateAvl(StoreUtils::meta->UpdateAvailable(StoreUtils::store->GetUniStoreTitle(), StoreUtils::allEntries[i]->GetTitle(), StoreUtils::allEntries[i]->GetLastUpdated()));
+			StoreUtils::allEntries[i]->SetInstalled(StoreUtils::allEntries[i]->CheckInstalled());
 		}
 	}
 }

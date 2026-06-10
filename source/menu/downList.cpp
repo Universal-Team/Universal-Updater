@@ -104,10 +104,10 @@ static bool CreateShortcut(const std::string &entryName, int index, const std::s
 
 	const std::vector<std::string> &entries: Const Reference to the download list as a vector of strings.
 	bool fetch: if fetching or not.
-	const std::unique_ptr<StoreEntry> &entry: Const Reference to the StoreEntry.
+	const std::shared_ptr<StoreEntry> &entry: Const Reference to the StoreEntry.
 	const std::vector<std::string> &sizes: Const Reference to the download sizes as a vector of strings.
 */
-void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs) {
+void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs) {
 	uint32_t accentColor = 0;
 
 	/* For the Top Screen. */
@@ -168,14 +168,14 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	- Execute an Entry of the download list.
 	- Return back to EntryInfo through `B`.
 
-	const std::unique_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
+	const std::shared_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
 	const std::vector<std::string> &entries: Const Reference to the download list, since we do not modify anything in it.
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
 	const int &lastMode: Const Reference to the last mode.
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 	std::vector<bool> &installs: Reference to the installed states.
 */
-void StoreUtils::DownloadHandle(const std::unique_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
+void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
 		if (smallDelay > 0) {
 			smallDelay--;

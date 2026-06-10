@@ -95,7 +95,7 @@ MainScreen::MainScreen() {
 			notConnectedMsg();
 		}
 	}
-	StoreUtils::ResetAll();
+	StoreUtils::LoadEntries();
 	StoreUtils::SortEntries();
 
 	// Display Release changelog for Universal-Updater.

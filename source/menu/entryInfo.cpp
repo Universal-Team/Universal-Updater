@@ -41,9 +41,9 @@ extern bool exiting, QueueRuns;
 /*
 	Draw the Entry Info part.
 
-	const std::unique_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry.
+	const std::shared_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry.
 */
-void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
+void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
 		uint32_t accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
 
@@ -84,9 +84,9 @@ void StoreUtils::DrawEntryInfo(const std::unique_ptr<StoreEntry> &entry) {
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 	bool &sFetch: Reference to the screenshot fetch.
 	int &mode: Reference to the store mode.
-	const std::unique_ptr<StoreEntry> &entry: The store Entry.
+	const std::shared_ptr<StoreEntry> &entry: The store Entry.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::unique_ptr<StoreEntry> &entry) {
+void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
 	if (entry) {
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 

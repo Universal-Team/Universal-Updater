@@ -31,7 +31,7 @@
 #include <string>
 
 namespace Input {
-	bool getTextKeyboard(std::string &out, uint maxLength, const std::string &Hint, const std::string &Text = "", const std::vector<std::unique_ptr<StoreEntry>> &entries = {});
+	bool getTextKeyboard(std::string &out, uint maxLength, const std::string &Hint, const std::string &Text = "", const std::vector<std::shared_ptr<StoreEntry>> &entries = {});
 };
 
 #endif

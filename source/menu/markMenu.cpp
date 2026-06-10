@@ -79,10 +79,10 @@ void StoreUtils::DisplayMarkBox(int marks) {
 	- Mark the selected app.
 	- Return to EntryInfo with `B`.
 
-	std::unique_ptr<StoreEntry> &entry: Reference to the current StoreEntry.
+	std::shared_ptr<StoreEntry> &entry: Reference to the current StoreEntry.
 	bool &showMark: Reference to showMark, so we know, if we should stay here or not.
 */
-void StoreUtils::MarkHandle(std::unique_ptr<StoreEntry> &entry, bool &showMark) {
+void StoreUtils::MarkHandle(std::shared_ptr<StoreEntry> &entry, bool &showMark) {
 	hidScanInput();
 	touchPosition t;
 	hidTouchRead(&t);
