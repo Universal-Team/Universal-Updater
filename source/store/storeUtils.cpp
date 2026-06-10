@@ -185,19 +185,24 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 
 	if (isAND) {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			bool keep = true;
-			if (!((allEmpty
-			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
-			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
-			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
-			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
-			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-			&& ((selectedMarks == 0 && !updateAvl && !installed) || ((((*it)->GetMarks() & selectedMarks) == selectedMarks)
-			&& (!updateAvl || (*it)->GetUpdateAvl()) && (!installed || (*it)->GetInstalled()))))) {
-				keep = false;
-			}
-
-			if (!keep ^ isNOT) {
+			if (!(
+				(
+					allEmpty
+					|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+					|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
+					|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
+				)
+				&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
+				&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
+				&& (
+					(selectedMarks == 0 && !updateAvl && !installed)
+					|| (isNOT ^ (
+						(((*it)->GetMarks() & selectedMarks) == selectedMarks)
+						&& (!updateAvl || (*it)->GetUpdateAvl())
+						&& (!installed || (*it)->GetInstalled())
+					))
+				)
+			)) {
 				it = StoreUtils::entries.erase(it);
 				--it;
 			}
@@ -205,19 +210,24 @@ void StoreUtils::search(std::string titleQuery, std::string descQuery, std::stri
 
 	} else {
 		for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
-			bool keep = true;
-			if (!((allEmpty
-			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
-			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
-			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos))
-			&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
-			&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
-			&& ((selectedMarks == 0 && !updateAvl && !installed) || (*it)->GetMarks() & selectedMarks
-			|| (updateAvl && (*it)->GetUpdateAvl()) || (!installed && (*it)->GetInstalled())))) {
-				keep = false;
-			}
-
-			if (!keep ^ isNOT) {
+			if (!(
+				(
+					allEmpty
+					|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+					|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
+					|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
+				)
+				&& (category.empty() || findInVector((*it)->GetCategoryFull(), category))
+				&& (console.empty() || findInVector((*it)->GetConsoleFull(), console))
+				&& (
+					(selectedMarks == 0 && !updateAvl && !installed)
+					|| (isNOT ^ (
+						(((*it)->GetMarks() & selectedMarks))
+						|| (updateAvl && (*it)->GetUpdateAvl())
+						|| (installed && (*it)->GetInstalled())
+					))
+				)
+			)) {
 				it = StoreUtils::entries.erase(it);
 				--it;
 			}
