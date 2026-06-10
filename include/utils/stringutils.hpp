@@ -32,7 +32,7 @@
 #include <vector>
 
 namespace StringUtils {
-	std::string lower_case(const std::string &str);
+	std::string toLowerCase(const std::string &str);
 	std::string FetchStringsFromVector(const std::vector<std::string> &fetch);
 	std::string formatBytes(u64 bytes);
 	std::string formatNumber(u64 bytes);

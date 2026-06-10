@@ -39,12 +39,12 @@ std::vector<std::shared_ptr<StoreEntry>> StoreUtils::allEntries, StoreUtils::ent
 	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareTitleDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::toLowerCase(a->GetTitle()).c_str(), StringUtils::toLowerCase(b->GetTitle()).c_str()) > 0;
 
 	return true;
 }
 bool StoreUtils::compareTitleAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetTitle()).c_str(), StringUtils::lower_case(b->GetTitle()).c_str()) < 0;
+	if (a && b) return strcasecmp(StringUtils::toLowerCase(a->GetTitle()).c_str(), StringUtils::toLowerCase(b->GetTitle()).c_str()) < 0;
 
 	return true;
 }
@@ -59,7 +59,7 @@ bool StoreUtils::compareAuthorDescending(const std::shared_ptr<StoreEntry> &a, c
 	if (!a || !b) return true;
 
 	// Sort apps by the save author by title.
-	int cmp = strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str());
+	int cmp = strcasecmp(StringUtils::toLowerCase(a->GetAuthor()).c_str(), StringUtils::toLowerCase(b->GetAuthor()).c_str());
 	if (cmp == 0) return compareTitleDescending(a, b);
 
 	return cmp > 0;
@@ -68,7 +68,7 @@ bool StoreUtils::compareAuthorAscending(const std::shared_ptr<StoreEntry> &a, co
 	if (!a || !b) return true;
 
 	// Sort apps by the save author by title.
-	int cmp = strcasecmp(StringUtils::lower_case(a->GetAuthor()).c_str(), StringUtils::lower_case(b->GetAuthor()).c_str());
+	int cmp = strcasecmp(StringUtils::toLowerCase(a->GetAuthor()).c_str(), StringUtils::toLowerCase(b->GetAuthor()).c_str());
 	if (cmp == 0) return compareTitleAscending(a, b);
 
 	return cmp < 0;
@@ -81,12 +81,12 @@ bool StoreUtils::compareAuthorAscending(const std::shared_ptr<StoreEntry> &a, co
 	const std::shared_ptr<StoreEntry> &b: Const Reference to Entry B.
 */
 bool StoreUtils::compareUpdateDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(a->GetLastUpdated()).c_str(), StringUtils::lower_case(b->GetLastUpdated()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::toLowerCase(a->GetLastUpdated()).c_str(), StringUtils::toLowerCase(b->GetLastUpdated()).c_str()) > 0;
 
 	return true;
 }
 bool StoreUtils::compareUpdateAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b) {
-	if (a && b) return strcasecmp(StringUtils::lower_case(b->GetLastUpdated()).c_str(), StringUtils::lower_case(a->GetLastUpdated()).c_str()) > 0;
+	if (a && b) return strcasecmp(StringUtils::toLowerCase(b->GetLastUpdated()).c_str(), StringUtils::toLowerCase(a->GetLastUpdated()).c_str()) > 0;
 
 	return true;
 }
@@ -178,17 +178,17 @@ static bool findInVector(const std::vector<std::string> &items, const std::strin
 	bool isNOT: if the selection should be inverted.
 */
 void StoreUtils::search(std::string titleQuery, std::string descQuery, std::string authorQuery, std::string category, std::string console, int selectedMarks, bool updateAvl, bool installed, bool isAND, bool isNOT) {
-	titleQuery = StringUtils::lower_case(titleQuery);
-	descQuery = StringUtils::lower_case(descQuery);
-	authorQuery = StringUtils::lower_case(authorQuery);
+	titleQuery = StringUtils::toLowerCase(titleQuery);
+	descQuery = StringUtils::toLowerCase(descQuery);
+	authorQuery = StringUtils::toLowerCase(authorQuery);
 	bool skipTextQuery = titleQuery.empty() && descQuery.empty() && authorQuery.empty();
 
 	for (auto it = StoreUtils::entries.begin(); it != StoreUtils::entries.end(); ++it) {
 		bool textOK = (
 			skipTextQuery
-			|| (!titleQuery.empty() && StringUtils::lower_case((*it)->GetTitle()).find(titleQuery) != std::string::npos)
-			|| (!descQuery.empty() && StringUtils::lower_case((*it)->GetDescription()).find(descQuery) != std::string::npos)
-			|| (!authorQuery.empty() && StringUtils::lower_case((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
+			|| (!titleQuery.empty() && StringUtils::toLowerCase((*it)->GetTitle()).find(titleQuery) != std::string::npos)
+			|| (!descQuery.empty() && StringUtils::toLowerCase((*it)->GetDescription()).find(descQuery) != std::string::npos)
+			|| (!authorQuery.empty() && StringUtils::toLowerCase((*it)->GetAuthor()).find(authorQuery) != std::string::npos)
 		);
 
 		bool categoryOK = category.empty() || findInVector((*it)->GetCategoryFull(), category);

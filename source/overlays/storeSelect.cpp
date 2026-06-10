@@ -75,7 +75,7 @@ static void DeleteStore(const std::string &file) {
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
 			if (sht[i] != "") {
-				if (!(StringUtils::lower_case(sht[i]).find(StringUtils::lower_case("/")) != std::string::npos)) {
+				if (!(StringUtils::toLowerCase(sht[i]).find(StringUtils::toLowerCase("/")) != std::string::npos)) {
 					if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
 						deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
 					}
@@ -88,7 +88,7 @@ static void DeleteStore(const std::string &file) {
 		const std::string fl = storeJson["storeInfo"]["sheet"];
 
 		if (fl != "") {
-			if (!(StringUtils::lower_case(fl).find(StringUtils::lower_case("/")) != std::string::npos)) {
+			if (!(StringUtils::toLowerCase(fl).find(StringUtils::toLowerCase("/")) != std::string::npos)) {
 				if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
 					deleteFile((std::string(_STORE_PATH) + fl).c_str());
 				}
@@ -105,7 +105,7 @@ static void DeleteStore(const std::string &file) {
 static bool DownloadStore() {
 	const std::string URL = QR_Scanner::StoreHandle();
 	if (URL == "") return false;
-	
+
 	std::string file;
 	DownloadUniStore(URL, -1, Lang::get("DOWNLOADING_UNISTORE"), &file);
 	Store(_STORE_PATH + file, file, Store::UpdateMode::spritesheet);
