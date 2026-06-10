@@ -68,7 +68,7 @@ void StoreUtils::DrawList() {
 		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UIThemes->SideBarSelected());
 
 		if (StoreUtils::entries.size() > 0) {
-			for (int i = 0; i < 5 && i < (int)StoreUtils::entries.size(); i++) {
+			for (int i = 0; i < 5; i++) {
 				uint32_t accentColor = 0;
 				int index = StoreUtils::store->GetScreenIndx() + i - 1;
 
