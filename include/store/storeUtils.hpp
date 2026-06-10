@@ -118,7 +118,7 @@ namespace StoreUtils {
 	void ResetEntries();
 	void LoadEntries();
 
-	void RefreshInstalledApps();
+	void RefreshInstalledApps(const std::string &nameFilter);
 
 	void AddToQueue(int index, const std::string &entry, const std::string &entryName, const std::string &lUpdated);
 	void AddAllToQueue();

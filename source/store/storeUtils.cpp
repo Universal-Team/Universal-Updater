@@ -267,9 +267,9 @@ void StoreUtils::LoadEntries() {
 }
 
 /* Re-check all Entries for available updates and installed status. */
-void StoreUtils::RefreshInstalledApps() {
+void StoreUtils::RefreshInstalledApps(const std::string &nameFilter) {
 	for (uint i = 0; i < StoreUtils::allEntries.size(); i++) {
-		if (StoreUtils::allEntries[i]) {
+		if (StoreUtils::allEntries[i] && (nameFilter == "" || StoreUtils::allEntries[i]->GetTitle() == nameFilter)) {
 			StoreUtils::allEntries[i]->SetUpdateAvl(StoreUtils::meta->UpdateAvailable(StoreUtils::store->GetUniStoreTitle(), StoreUtils::allEntries[i]->GetTitle(), StoreUtils::allEntries[i]->GetLastUpdated()));
 			StoreUtils::allEntries[i]->SetInstalled(StoreUtils::allEntries[i]->CheckInstalled());
 		}
