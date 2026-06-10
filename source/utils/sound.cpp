@@ -66,7 +66,6 @@ Sound::Sound(const std::string &path, const int channel, const bool toloop) {
 	FILE *file = fopen(path.c_str(), "rb");
 
 	if (!file) {
-		printf("Could not open the WAV file: %s.\n", path.c_str());
 		this->good = false;
 		return;
 	}
@@ -75,7 +74,6 @@ Sound::Sound(const std::string &path, const int channel, const bool toloop) {
 	size_t read = fread(&wavHeader, 1, sizeof(wavHeader), file);
 	if (read != sizeof(wavHeader)) {
 		/* Short read. */
-		printf("WAV file header is too short: %s.\n", path.c_str());
 		fclose(file);
 		this->good = false;
 		return;
@@ -85,7 +83,6 @@ Sound::Sound(const std::string &path, const int channel, const bool toloop) {
 	static const char RIFF_magic[4] = { 'R','I','F','F' };
 	if (memcmp(wavHeader.magic, RIFF_magic, sizeof(wavHeader.magic)) != 0) {
 		/* Incorrect magic number. */
-		printf("Wrong file format.\n");
 		fclose(file);
 		this->good = false;
 		return;
@@ -95,7 +92,6 @@ Sound::Sound(const std::string &path, const int channel, const bool toloop) {
 	   (wavHeader.channels != 1 && wavHeader.channels != 2) ||
 	   (wavHeader.bits_per_sample != 8 && wavHeader.bits_per_sample != 16)) {
 		/* Unsupported WAV file. */
-		printf("Corrupted wav file.\n");
 		fclose(file);
 		this->good = false;
 		return;

@@ -33,12 +33,10 @@ Result Title::Launch(u64 titleId, FS_MediaType mediaType) {
 	u8 hmac[0x20];
 
 	if (R_FAILED(ret = APT_PrepareToDoApplicationJump(0, titleId, mediaType))) {
-		printf("Error In:\nAPT_PrepareToDoApplicationJump");
 		return ret;
 	}
 
 	if (R_FAILED(ret = APT_DoApplicationJump(param, sizeof(param), hmac))) {
-		printf("Error In:\nAPT_DoApplicationJump");
 		return ret;
 	}
 
@@ -51,7 +49,6 @@ Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 
 	ret = AM_GetTitleCount(media, &titles_amount);
 	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_GetTitleCount\n");
 		return ret;
 	}
 
@@ -61,7 +58,6 @@ Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 	ret = AM_GetTitleList(&read_titles, media, titles_amount, titleIDs);
 	if (R_FAILED(ret)) {
 		free(titleIDs);
-		printf("Error in:\nAM_GetTitleList\n");
 		return ret;
 	}
 
@@ -75,7 +71,6 @@ Result Title::DeletePrevious(u64 titleid, FS_MediaType media) {
 	free(titleIDs);
 
 	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_DeleteTitle\n");
 		return ret;
 	}
 
@@ -103,13 +98,11 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 
 	ret = openFile(&fileHandle, ciaPath, false);
 	if (R_FAILED(ret)) {
-		printf("Error in:\nopenFile\n");
 		return ret;
 	}
 
 	ret = AM_GetCiaFileInfo(media, &info, fileHandle);
 	if (R_FAILED(ret)) {
-		printf("Error in:\nAM_GetCiaFileInfo\n");
 		return ret;
 	}
 
@@ -122,7 +115,6 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 
 	ret = FSFILE_GetSize(fileHandle, &size);
 	if (R_FAILED(ret)) {
-		printf("Error in:\nFSFILE_GetSize\n");
 		FSFILE_Close(fileHandle);
 		return ret;
 	}
@@ -130,7 +122,6 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 	if (getAvailableSpace() >= size) {
 		ret = AM_StartCiaInstall(media, &ciaHandle);
 		if (R_FAILED(ret)) {
-			printf("Error in:\nAM_StartCiaInstall\n");
 			FSFILE_Close(fileHandle);
 			return ret;
 		}
@@ -153,7 +144,6 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 
 		ret = AM_FinishCiaInstall(ciaHandle);
 		if (R_FAILED(ret)) {
-			printf("Error in:\nAM_FinishCiaInstall\n");
 			FSFILE_Close(fileHandle);
 			return ret;
 		}
@@ -161,7 +151,6 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 
 	ret = FSFILE_Close(fileHandle);
 	if (R_FAILED(ret)) {
-		printf("Error in:\nFSFILE_Close\n");
 		return ret;
 	}
 

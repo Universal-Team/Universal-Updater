@@ -178,8 +178,6 @@ Result downloadToFile(const std::string &url, const std::string &path) {
 	Result retcode = 0;
 	int res;
 
-	printf("Downloading from:\n%s\nto:\n%s\n", url.c_str(), path.c_str());
-
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf) {
 		retcode = -1;
@@ -377,12 +375,7 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 
 	std::string repoOwner = result[1].str(), repoName = result[2].str();
 
-	std::stringstream apiurlStream;
-	apiurlStream << "https://api.github.com/repos/" << repoOwner << "/" << repoName << (includePrereleases ? "/releases" : "/releases/latest");
-	std::string apiurl = apiurlStream.str();
-
-	printf("Downloading latest release from repo:\n%s\nby:\n%s\n", repoName.c_str(), repoOwner.c_str());
-	printf("Crafted API url:\n%s\n", apiurl.c_str());
+	std::string apiurl = "https://api.github.com/repos/" + repoOwner + "/" + repoName + (includePrereleases ? "/releases" : "/releases/latest");
 
 	hnd = curl_easy_init();
 
@@ -413,7 +406,6 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 		return -1;
 	}
 
-	printf("Looking for asset with matching name:\n%s\n", asset.c_str());
 	std::string assetUrl;
 
 	if (nlohmann::json::accept(result_buf)) {
@@ -902,14 +894,14 @@ void UpdateAction() {
 
 		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
 			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"));
-	
+
 			time_t currentTime = time(NULL);
 			uint32_t Down = 0;
 			while (true) {
 				gspWaitForVBlank();
 				hidScanInput();
 				Down = hidKeysDown();
-	
+
 				if (Down & KEY_A) {
 					UpdateCACert("");
 					retry = true;
@@ -931,13 +923,13 @@ void UpdateAction() {
 			retry = true;
 		} else if (res.Status == DL_ERROR_TIMEOUT) {
 			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("AB_TO_EXIT"));
-	
+
 			uint32_t Down = 0;
 			while (true) {
 				gspWaitForVBlank();
 				hidScanInput();
 				Down = hidKeysDown();
-	
+
 				if (Down & (KEY_A | KEY_B)) {
 					exiting = true;
 					break;
@@ -970,7 +962,7 @@ void UpdateAction() {
 			Gui::ScreenDraw(Top);
 			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
 			for (size_t i = 0; i < wrappedNotes.size(); i++) {
-				if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f) 
+				if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f)
 					Gui::DrawString(5, 26.0f + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 390, 0, font);
 			}
 			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
@@ -1044,7 +1036,7 @@ void UpdateAction() {
 		else
 			dlRes = ScriptUtils::downloadRelease("Universal-Team/Universal-Updater", (is3DSX ? "Universal-Updater.3dsx" : "Universal-Updater.cia"),
 					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
-				
+
 		if (dlRes == ScriptState::NONE) {
 			if (is3DSX) {
 				Msg::waitMsg(Lang::get("UPDATE_DONE"));
