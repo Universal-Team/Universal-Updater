@@ -86,6 +86,8 @@ void QueueSystem::ClearQueue() {
 	Use this, to go back to the queue after the Request.
 */
 void QueueSystem::Resume() {
+	if (queueEntries.empty()) return;
+
 	ExclusiveMode::Enter();
 	QueueSystem::Wait = false;
 	QueueRuns = true;
