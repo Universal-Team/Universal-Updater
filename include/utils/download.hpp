@@ -28,18 +28,19 @@
 #define _UNIVERSAL_UPDATER_DOWNLOAD_HPP
 
 #include "common.hpp"
+#include <curl/curl.h>
 
 #define APP_TITLE "Universal-Updater"
 
+#define DL_OK(error) ((error) == DL_OK_RElEASE || (error) == DL_OK_GIT)
 enum DownloadError {
-	DL_ERROR_NONE = 0,
+	DL_OK_RElEASE,
+	DL_OK_GIT,
 	DL_ERROR_WRITEFILE,
 	DL_ERROR_ALLOC,
 	DL_ERROR_STATUSCODE,
 	DL_ERROR_GIT,
-	DL_ERROR_TIMEOUT,
-	DL_ERROR_SSL_VERIFICATION,
-	DL_ERROR_CACERT_BADFILE,
+	DL_ERROR_CURL,
 	DL_CANCEL, // No clue if that's needed tho.
 };
 
@@ -51,9 +52,12 @@ struct StoreList {
 };
 
 struct UUUpdate {
-	DownloadError Status = DL_ERROR_NONE;
-	std::string Notes = "";
+	UUUpdate(DownloadError err) : Status(err) {}
+	UUUpdate(DownloadError err, const std::string &v, const std::string &n) : Status(err), Version(v), Notes(n) {}
+
+	DownloadError Status = DL_CANCEL;
 	std::string Version = "";
+	std::string Notes = "";
 };
 
 Result downloadToFile(const std::string &url, const std::string &path);
@@ -83,7 +87,7 @@ void doneMsg(void);
 bool IsUpdateAvailable(const std::string &URL, int revCurrent);
 bool DownloadUniStore(const std::string &URL, int currentRev, const std::string &title, std::string *retFile = nullptr);
 bool DownloadSpriteSheet(const std::string &URL, const std::string &file);
-UUUpdate IsUUUpdateAvailable(bool git);
+UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn);
 void UpdateAction();
 std::vector<StoreList> FetchStores();
 nlohmann::json FetchThemes();

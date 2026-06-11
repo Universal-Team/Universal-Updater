@@ -36,7 +36,6 @@
 #include "version.hpp"
 
 #include <3ds.h>
-#include <curl/curl.h>
 #include <dirent.h>
 #include <malloc.h>
 #include <regex>
@@ -755,27 +754,22 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 /*
 	Checks for U-U updates.
 */
-UUUpdate IsUUUpdateAvailable(bool git) {
-	if (!checkWifiStatus()) return { DL_CANCEL, "", "" };
-
+UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 	Msg::DisplayMsg(Lang::get("CHECK_UU_UPDATES"));
 	Result ret = 0;
 
 	void *socubuf = memalign(0x1000, 0x100000);
-	if (!socubuf) return { DL_CANCEL, "", "" };
+	if (!socubuf) return UUUpdate(DL_CANCEL);
 
 	ret = socInit((u32 *)socubuf, 0x100000);
 
 	if (R_FAILED(ret)) {
 		free(socubuf);
-		return { DL_CANCEL, "", "" };
+		return UUUpdate(DL_CANCEL);
 	}
 
 	CURL *hnd = curl_easy_init();
-
-	const char *url;
-	if (git) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/tags/git";
-	else url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest";
+	const char *url = "https://db.universal-team.net/unistore/version.json";
 
 	ret = setupContext(hnd, url);
 	if (ret != 0) {
@@ -785,7 +779,7 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		return { DL_CANCEL, "", "" };
+		return UUUpdate(DL_CANCEL);
 	}
 
 	CURLcode cres = curl_easy_perform(hnd);
@@ -801,51 +795,42 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 		result_buf = nullptr;
 		result_sz = 0;
 		result_written = 0;
-		DownloadError error = DL_CANCEL;
-		if (cres == CURLE_OPERATION_TIMEDOUT) error = DL_ERROR_TIMEOUT;
-		else if (cres == CURLE_PEER_FAILED_VERIFICATION) error = DL_ERROR_SSL_VERIFICATION;
-		else if (cres == CURLE_SSL_CACERT_BADFILE) error = DL_ERROR_CACERT_BADFILE;
-		return { error, "", "" };
+
+		if (curlReturn) *curlReturn = cres;
+		return UUUpdate(DL_ERROR_CURL);
 	}
 
 	if (nlohmann::json::accept(result_buf)) {
 		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
 
-		if (git) {
-			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
-				socExit();
-				free(result_buf);
-				free(socubuf);
-				result_buf = nullptr;
-				result_sz = 0;
-				result_written = 0;
+		socExit();
+		free(result_buf);
+		free(socubuf);
+		result_buf = nullptr;
+		result_sz = 0;
+		result_written = 0;
 
-				UUUpdate update = { DL_CANCEL, "", "" };
-				const std::string &name = parsedAPI["name"].get_ref<const std::string &>();
-				update.Version = name.substr(name.size() - 7);
-				if (parsedAPI.contains("body") && parsedAPI["body"].is_string())
-					update.Notes = parsedAPI["body"];
-				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
-				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) update.Status = DL_ERROR_NONE;
-				return update;
-			}
-		} else {
-			if (parsedAPI.contains("tag_name") && parsedAPI["tag_name"].is_string()) {
-				socExit();
-				free(result_buf);
-				free(socubuf);
-				result_buf = nullptr;
-				result_sz = 0;
-				result_written = 0;
+		UUUpdate update = {DL_CANCEL};
 
-				UUUpdate update = { DL_CANCEL, "", "" };
-				update.Version = parsedAPI["tag_name"];
-				if (parsedAPI["body"].is_string()) update.Notes = parsedAPI["body"];
-				update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
-				if (strcasecmp(update.Version.c_str(), C_V) > 0) update.Status = DL_ERROR_NONE;
-				return update;
+		// Only check git if wanted
+		if (git && parsedAPI.contains("git") && parsedAPI["git"].is_object()) {
+			const std::string &version = parsedAPI["git"]["version"];
+			const std::string &notes = parsedAPI["git"]["notes"];
+			if (version != GIT_SHA) {
+				update = {DL_OK_GIT, version, notes};
 			}
 		}
+
+		// Always check release, if there has been a new release we want to update to that first
+		if (parsedAPI.contains("release") && parsedAPI["release"].is_object()) {
+			const std::string &version = parsedAPI["release"]["version"];
+			const std::string &notes = parsedAPI["release"]["notes"];
+			if (strcasecmp(version.c_str(), C_V) > 0) {
+					update = {DL_OK_RElEASE, version, notes};
+			}
+		}
+
+		return update;
 	}
 
 	socExit();
@@ -855,7 +840,7 @@ UUUpdate IsUUUpdateAvailable(bool git) {
 	result_sz = 0;
 	result_written = 0;
 
-	return { DL_CANCEL, "", "" };
+	return UUUpdate(DL_CANCEL);
 }
 
 extern bool is3DSX, exiting;
@@ -865,7 +850,7 @@ static bool UpdateCACert(std::string message) {
 	sslVerify = false;
 	if (message != "" && !Msg::promptMsg(message)) return false;
 
-	while (true) {
+	while (aptMainLoop()) {
 		Result dlRes = ScriptUtils::downloadFile("https://curl.se/ca/cacert.pem", CACERT_PATH, Lang::get("DOWNLOADING_CACERT"), true);
 		if (dlRes == ScriptState::NONE) {
 			sslVerify = true;
@@ -874,6 +859,8 @@ static bool UpdateCACert(std::string message) {
 			if (!Msg::promptMsg(Lang::get("DOWNLOAD_FAILED_TRY_AGAIN"))) return false;
 		}
 	}
+
+	return false;
 }
 
 /*
@@ -885,65 +872,89 @@ void UpdateAction() {
 		UpdateCACert(Lang::get("MISSING_CACERT"));
 	}
 
+	// Ensure we're connected to Wi-Fi
+	if (!checkWifiStatus()) {
+		Msg::DisplayMsg(Lang::get("CONNECTING_WIFI"), Lang::get("A_IGNORE_B_EXIT"));
+
+		uint32_t Down = 0;
+		while (!checkWifiStatus() && aptMainLoop()) {
+			gspWaitForVBlank();
+			hidScanInput();
+			Down = hidKeysDown();
+
+			if (Down & KEY_A) {
+				break;
+			} else if (Down & KEY_B) {
+				exiting = true;
+				return;
+			}
+		}
+	}
+
 	bool useGit = config->updategit();
-	UUUpdate res;
+	UUUpdate res = {DL_CANCEL};
 	bool retry;
 	do {
 		retry = false;
-		res = IsUUUpdateAvailable(useGit);
+		CURLcode cres;
+		res = IsUUUpdateAvailable(useGit, &cres);
 
-		if (res.Status == DL_ERROR_SSL_VERIFICATION) {
-			Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"));
+		if (res.Status == DL_ERROR_CURL) {
+			if (cres == CURLE_PEER_FAILED_VERIFICATION) {
+				Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"));
 
-			time_t currentTime = time(NULL);
-			uint32_t Down = 0;
-			while (true) {
-				gspWaitForVBlank();
-				hidScanInput();
-				Down = hidKeysDown();
+				time_t currentTime = time(NULL);
+				uint32_t Down = 0;
+				while (aptMainLoop()) {
+					gspWaitForVBlank();
+					hidScanInput();
+					Down = hidKeysDown();
 
-				if (Down & KEY_A) {
-					UpdateCACert("");
-					retry = true;
-					break;
-				} else if (Down & KEY_Y) {
-					sslVerify = false;
-					retry = true;
-					break;
-				} else if (Down & (KEY_B)) {
-					exiting = true;
-					break;
-				} else if (abs(time(NULL) - currentTime) > 3600) {
-					retry = true;
-					break;
+					if (Down & KEY_A) {
+						UpdateCACert("");
+						retry = true;
+						break;
+					} else if (Down & KEY_Y) {
+						sslVerify = false;
+						retry = true;
+						break;
+					} else if (Down & (KEY_B)) {
+						exiting = true;
+						break;
+					} else if (abs(time(NULL) - currentTime) > 3600) {
+						retry = true;
+						break;
+					}
+				}
+			} else if (cres == CURLE_SSL_CACERT_BADFILE) {
+				UpdateCACert(Lang::get("INVALID_CACERT"));
+				retry = true;
+			} else {
+				char buffer[1024];
+				const std::string &msg = (cres == CURLE_OPERATION_TIMEDOUT) ? Lang::get("DNS_ERROR") : Lang::get("CURL_UNKNWON_ERROR");
+				snprintf(buffer, 1024, msg.c_str(), cres, config->proxyUrl() == "" ? "" : "P");
+				Msg::DisplayMsg(buffer, Lang::get("A_IGNORE_B_EXIT"));
+
+				uint32_t Down = 0;
+				while (aptMainLoop()) {
+					gspWaitForVBlank();
+					hidScanInput();
+					Down = hidKeysDown();
+
+					if (Down & (KEY_A | KEY_B)) {
+						if (Down & KEY_B) exiting = true;
+						break;
+					}
 				}
 			}
-		} else if (res.Status == DL_ERROR_CACERT_BADFILE) {
-			UpdateCACert(Lang::get("INVALID_CACERT"));
-			retry = true;
-		} else if (res.Status == DL_ERROR_TIMEOUT) {
-			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("A_IGNORE_B_EXIT"));
-
-			uint32_t Down = 0;
-			while (true) {
-				gspWaitForVBlank();
-				hidScanInput();
-				Down = hidKeysDown();
-
-				if (Down & (KEY_A | KEY_B)) {
-					if (Down & KEY_B) exiting = true;
-					break;
-				}
-			}
-		} else if (useGit && res.Status != DL_ERROR_NONE) {
-			// git releases will not exist after a full release,
-			// so try again to see if there's a new release available.
-			retry = true;
+		} else if (useGit && res.Status != DL_OK_GIT) {
 			useGit = false;
 		}
 	} while (retry);
 
-	if (res.Status == DL_ERROR_NONE) {
+	// This is where we actually check if we're going to do the update or not
+	// because everything above this point is Wi-Fi sanity checking.
+	if (DL_OK(res.Status) && config->updatecheck()) {
 		bool confirmed = false;
 		float scrollOffset = 0.0f, scrollDelta = 0.0f;
 
