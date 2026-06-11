@@ -151,7 +151,7 @@ private:
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts",
 				v_firmPath = "sdmc:/luma/payloads",
 				v_theme = "Default",
-				v_proxyUrl = "";
+				v_proxyUrl = "<TEMP>";
 
 	bool v_list = false,
 		v_autoUpdate = true,

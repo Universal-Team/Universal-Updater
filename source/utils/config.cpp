@@ -144,6 +144,30 @@ Config::Config() {
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
 	if (this->json.contains("ProxyURL")) this->proxyUrl(this->getString("ProxyURL"));
 
+	// If <TEMP> that means proxy has never been saved to JSON, try system proxy
+	if (this->proxyUrl() == "<TEMP>") {
+		bool enabled = false;
+		ACU_GetProxyEnable(&enabled);
+
+		if (enabled) {
+			u16 port;
+			char host[0x100], userName[0x20], password[0x20];
+			ACU_GetProxyPort(&port);
+			ACU_GetProxyHost(host);
+			ACU_GetProxyUserName(userName);
+			ACU_GetProxyPassword(password);
+
+			std::string userPass = "";
+			if (strcmp(userName, "") != 0) {
+				userPass = std::string(userName) + ":" + password + "@";
+			}
+
+			this->proxyUrl(std::string("http://") + userPass + host + ":" + std::to_string(port));
+		} else {
+			this->proxyUrl("");
+		}
+	}
+
 	/* Exceptions for it. It was an INT before. */
 	if (this->json.contains("Active_Theme")) {
 		if (this->json["Active_Theme"].is_number()) {
