@@ -922,7 +922,7 @@ void UpdateAction() {
 			UpdateCACert(Lang::get("INVALID_CACERT"));
 			retry = true;
 		} else if (res.Status == DL_ERROR_TIMEOUT) {
-			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("AB_TO_EXIT"));
+			Msg::DisplayMsg(Lang::get("DNS_ERROR"), Lang::get("A_IGNORE_B_EXIT"));
 
 			uint32_t Down = 0;
 			while (true) {
@@ -931,7 +931,7 @@ void UpdateAction() {
 				Down = hidKeysDown();
 
 				if (Down & (KEY_A | KEY_B)) {
-					exiting = true;
+					if (Down & KEY_B) exiting = true;
 					break;
 				}
 			}
