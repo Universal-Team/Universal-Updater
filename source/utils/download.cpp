@@ -705,8 +705,7 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 
 	CURLcode cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
-	char *newbuf = (char *)realloc(result_buf, result_written + 1);
-	result_buf = newbuf;
+	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
 	if (cres != CURLE_OK) {
@@ -719,25 +718,20 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 		return false;
 	}
 
+	bool success = false;
 	if (getAvailableSpace() >= result_written) {
 		C2D_SpriteSheet sheet = C2D_SpriteSheetLoadFromMem(result_buf, result_written);
-
 		if (sheet) {
 			if (C2D_SpriteSheetCount(sheet) > 0) {
 				FILE *out = fopen((std::string(_STORE_PATH) + file).c_str(), "w");
-				fwrite(result_buf, sizeof(char), result_written, out);
-				fclose(out);
-
-				socExit();
-				free(result_buf);
-				free(socubuf);
-				result_buf = nullptr;
-				result_sz = 0;
-				result_written = 0;
-
-				C2D_SpriteSheetFree(sheet);
-				return true;
+				if (out) {
+					fwrite(result_buf, sizeof(char), result_written, out);
+					fclose(out);
+					success = true;
+				}
 			}
+
+			C2D_SpriteSheetFree(sheet);
 		}
 	}
 
@@ -748,7 +742,7 @@ bool DownloadSpriteSheet(const std::string &URL, const std::string &file) {
 	result_sz = 0;
 	result_written = 0;
 
-	return false;
+	return success;
 }
 
 /*
