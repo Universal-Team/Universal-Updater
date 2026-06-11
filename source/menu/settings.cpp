@@ -375,68 +375,86 @@ static void SettingsHandleDir(int &page, int &selection) {
 		else selection = 0;
 	}
 
+	bool selected = false;
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, back)) {
 			page = 0;
 			selection = 4;
 
-		} else if (touching(touch, dirButtons[0])) {
-			const std::string path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
-			if (path != "") config->_3dsxPath(path);
-
-		} else if (touching(touch, dirButtons[1])) {
-			config->_3dsxInFolder(!config->_3dsxInFolder());
-
-		} else if (touching(touch, dirButtons[2])) {
-			const std::string path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
-			if (path != "") config->ndsPath(path);
-
-		} else if (touching(touch, dirButtons[3])) {
-			const std::string path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
-			if (path != "") config->archPath(path);
-
-		} else if (touching(touch, dirButtons[4])) {
-			const std::string path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
-			if (path != "") config->shortcut(path);
-
-		} else if (touching(touch, dirButtons[5])) {
-			const std::string path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
-			if (path != "") config->firmPath(path);
+		} else {
+			for (int i = 0; i < (int)dirButtons.size(); i++) {
+				if (touching(touch, dirButtons[i])) {
+					if (selection == i) selected = true;
+					else selection = i;
+					break;
+				}
+			}
 		}
 	}
 
-	if (hDown & KEY_A) {
+	static Thread helperThread = nullptr;
+	if (((hDown & KEY_A) || selected) && helperThread == nullptr) {
 		std::string path = "";
+		bool changed = false;
 
 		switch(selection) {
 			case 0:
 				path = Overlays::SelectDir(config->_3dsxPath(), Lang::get("SELECT_DIR"));
-				if (path != "") config->_3dsxPath(path);
+				if (path != "" && path != config->_3dsxPath()) {
+					config->_3dsxPath(path);
+					changed = true;
+				}
 				break;
 
 			case 1:
 				config->_3dsxInFolder(!config->_3dsxInFolder());
+				changed = true;
 				break;
 
 			case 2:
 				path = Overlays::SelectDir(config->ndsPath(), Lang::get("SELECT_DIR"));
-				if (path != "") config->ndsPath(path);
+				if (path != "" && path != config->ndsPath()) {
+					config->ndsPath(path);
+					changed = true;
+				}
 				break;
 
 			case 3:
 				path = Overlays::SelectDir(config->archPath(), Lang::get("SELECT_DIR"));
-				if (path != "") config->archPath(path);
+				if (path != "" && path != config->archPath()) {
+					config->archPath(path);
+					changed = true;
+				}
 				break;
 
 			case 4:
 				path = Overlays::SelectDir(config->shortcut(), Lang::get("SELECT_DIR"));
-				if (path != "") config->shortcut(path);
+				if (path != "" && path != config->shortcut()) {
+					config->shortcut(path);
+					changed = true;
+				}
 				break;
 
 			case 5:
 				path = Overlays::SelectDir(config->firmPath(), Lang::get("SELECT_DIR"));
-				if (path != "") config->firmPath(path);
+				if (path != "" && path != config->firmPath()) {
+					config->firmPath(path);
+					changed = true;
+				}
 				break;
+		}
+
+		// Re-check for installed apps in a second thread
+		if (changed) {
+			ThreadFunc helper = [] (void *) {
+				StoreUtils::RefreshInstalledApps("");
+				StoreUtils::DoSearch();
+				helperThread = nullptr;
+			};
+
+			s32 prio = 0;
+			svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+			helperThread = threadCreate(helper, NULL, 64 * 1024, prio - 1, -2, true);
 		}
 	}
 }

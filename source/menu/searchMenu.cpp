@@ -101,6 +101,22 @@ void StoreUtils::ResetSearch() {
 	}
 }
 
+void StoreUtils::DoSearch() {
+	if (StoreUtils::store && StoreUtils::store->GetValid()) { // Only search, when valid.
+		StoreUtils::ResetEntries();
+		const std::string &titleQuery = searchIncludes[0] ? searchResult : "";
+		const std::string &descQuery = searchIncludes[1] ? searchResult : "";
+		const std::string &categoryStr = category == -1 ? "" : store->GetCategories()[category];
+		const std::string &consoleStr = console == -1 ? "" : store->GetConsoles()[console];
+		StoreUtils::search(titleQuery, descQuery, authorSearchResult, categoryStr, consoleStr, marks, updateFilter, installedFilter, isAND, isNOT);
+		StoreUtils::store->SetScreenIndx(0);
+		StoreUtils::store->SetEntry(0);
+		StoreUtils::store->SetBox(0);
+
+		StoreUtils::SortEntries();
+	}
+}
+
 /*
 	Draw the Search + Filter Menu.
 
@@ -264,19 +280,7 @@ void StoreUtils::SearchHandle() {
 		}
 
 		if (didTouch) {
-			if (StoreUtils::store && StoreUtils::store->GetValid()) { // Only search, when valid.
-				StoreUtils::ResetEntries();
-				const std::string &titleQuery = searchIncludes[0] ? searchResult : "";
-				const std::string &descQuery = searchIncludes[1] ? searchResult : "";
-				const std::string &categoryStr = category == -1 ? "" : store->GetCategories()[category];
-				const std::string &consoleStr = console == -1 ? "" : store->GetConsoles()[console];
-				StoreUtils::search(titleQuery, descQuery, authorSearchResult, categoryStr, consoleStr, marks, updateFilter, installedFilter, isAND, isNOT);
-				StoreUtils::store->SetScreenIndx(0);
-				StoreUtils::store->SetEntry(0);
-				StoreUtils::store->SetBox(0);
-
-				StoreUtils::SortEntries();
-			}
+			DoSearch();
 		}
 	}
 

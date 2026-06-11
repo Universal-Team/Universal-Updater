@@ -70,6 +70,7 @@ namespace StoreUtils {
 
 	/* Search + Favorite Menu. */
 	void ResetSearch();
+	void DoSearch();
 	void DrawSearchMenu();
 	void SearchHandle();
 
