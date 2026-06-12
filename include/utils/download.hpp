@@ -32,10 +32,8 @@
 
 #define APP_TITLE "Universal-Updater"
 
-#define DL_OK(error) ((error) == DL_OK_RElEASE || (error) == DL_OK_GIT)
 enum DownloadError {
-	DL_OK_RElEASE,
-	DL_OK_GIT,
+	DL_OK,
 	DL_ERROR_WRITEFILE,
 	DL_ERROR_ALLOC,
 	DL_ERROR_STATUSCODE,

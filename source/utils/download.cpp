@@ -763,7 +763,10 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 	}
 
 	CURL *hnd = curl_easy_init();
-	const char *url = "https://db.universal-team.net/unistore/version.json";
+
+	const char *url;
+	if (git) url = "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/tags/git";
+	else url = "https://db.universal-team.net/unistore/version.json";
 
 	ret = setupContext(hnd, url);
 	if (ret != 0) {
@@ -806,21 +809,27 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 
 		UUUpdate update = {DL_CANCEL};
 
-		// Only check git if wanted
-		if (git && parsedAPI.contains("git") && parsedAPI["git"].is_object()) {
-			const std::string &version = parsedAPI["git"]["version"];
-			const std::string &notes = parsedAPI["git"]["notes"];
-			if (version != GIT_SHA) {
-				update = {DL_OK_GIT, version, notes};
-			}
-		}
+		if (git) {
+			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
+				const std::string name = parsedAPI["name"].get_ref<const std::string &>();
+				update.Version = name.substr(name.size() - 7);
 
-		// Always check release, if there has been a new release we want to update to that first
-		if (parsedAPI.contains("release") && parsedAPI["release"].is_object()) {
-			const std::string &version = parsedAPI["release"]["version"];
-			const std::string &notes = parsedAPI["release"]["notes"];
-			if (strcasecmp(version.c_str(), C_V) > 0) {
-					update = {DL_OK_RElEASE, version, notes};
+				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) {
+					if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
+						update.Notes = parsedAPI["body"];
+						update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
+					}
+
+					update.Status = DL_OK;
+				}
+			}
+		} else {
+			if (parsedAPI.contains("release") && parsedAPI["release"].is_object()) {
+				const std::string &version = parsedAPI["release"]["version"];
+				const std::string &notes = parsedAPI["release"]["notes"];
+				if (strcasecmp(version.c_str(), C_V) > 0) {
+					update = {DL_OK, version, notes};
+				}
 			}
 		}
 
@@ -941,14 +950,17 @@ void UpdateAction() {
 					}
 				}
 			}
-		} else if (useGit && res.Status != DL_OK_GIT) {
+		} else if (useGit && res.Status != DL_OK) {
+			// git releases will not exist after a full release,
+			// so try again to see if there's a new release available.
 			useGit = false;
+			retry = true;
 		}
 	} while (retry);
 
 	// This is where we actually check if we're going to do the update or not
 	// because everything above this point is Wi-Fi sanity checking.
-	if (DL_OK(res.Status) && config->updatecheck()) {
+	if (res.Status == DL_OK && config->updatecheck()) {
 		bool confirmed = false;
 		float scrollOffset = 0.0f, scrollDelta = 0.0f;
 
