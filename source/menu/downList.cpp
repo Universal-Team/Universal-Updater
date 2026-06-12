@@ -240,6 +240,7 @@ void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const 
 						if (installs[i + StoreUtils::store->GetDownloadSIndex()]) {
 							StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
 							installs[i + StoreUtils::store->GetDownloadSIndex()] = false;
+							StoreUtils::RefreshInstalledApps(entry->GetTitle());
 						}
 					}
 
@@ -267,6 +268,7 @@ void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const 
 			if (installs[StoreUtils::store->GetDownloadIndex()]) {
 				StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[StoreUtils::store->GetDownloadIndex()]);
 				installs[StoreUtils::store->GetDownloadIndex()] = false;
+				StoreUtils::RefreshInstalledApps(entry->GetTitle());
 			}
 		}
 
