@@ -73,6 +73,7 @@ void Meta::ImportMetadata() {
 	if (oldJson.is_discarded())
 		oldJson = { };
 
+	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
 	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
 
 	for (int i = 0; i < (int)info.size(); i++) {

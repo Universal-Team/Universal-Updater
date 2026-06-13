@@ -133,9 +133,30 @@ void Overlays::SelectStore() {
 	bool doOut = false, skipUpdate = false;
 	int selection = 0, sPos = 0;
 
-	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH);
+	static std::vector<UniStoreInfo> info;
+	static Thread helperThread = nullptr;
+	ThreadFunc helper = [] (void *) {
+		info.clear();
+		info = GetUniStoreInfo(_STORE_PATH);
+		helperThread = nullptr;
+	};
 
+	// Ensure no old thread is running
+	if (helperThread) {
+		Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
+		threadJoin(helperThread, U64_MAX);
+	}
+
+	bool updateList = true;
 	while(!doOut) {
+		if (updateList) {
+			updateList = false;
+
+			s32 prio = 0;
+			svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
+			helperThread = threadCreate(helper, NULL, 64 * 1024, prio - 1, -2, true);
+		}
+
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, TRANSPARENT);
@@ -157,21 +178,23 @@ void Overlays::SelectStore() {
 			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
 			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
 			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].FileName, 380, 0, font);
+		}
 
-			Animation::QueueEntryDone();
-			GFX::DrawBottom();
+		Animation::QueueEntryDone();
+		GFX::DrawBottom();
 
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UIThemes->TextColor());
-			Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
+		Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
+		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
+		GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UIThemes->TextColor());
+		Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
 
+		if (info.size() > 0) {
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
 				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
 				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].Title, 295, 0, font);
 			}
-		} else {
-			GFX::DrawBottom(); // Otherwise we'd draw on top.
+		} else if (helperThread) {
+			Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Lang::get("LOADING_UNISTORE_LIST"))) / 2, 0.6f, UIThemes->TextColor(), Lang::get("LOADING_UNISTORE_LIST"), 315, 0, font);
 		}
 
 		GFX::DrawIcon(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());
@@ -254,7 +277,7 @@ void Overlays::SelectStore() {
 				if (info[selection].FileName != "") {
 					DeleteStore(info[selection].FileName);
 					selection = 0;
-					info = GetUniStoreInfo(_STORE_PATH);
+					updateList = true;
 				}
 			}
 
@@ -263,7 +286,7 @@ void Overlays::SelectStore() {
 				if (checkWifiStatus()) {
 					if (info[selection].URL != "") {
 						if (UpdateStore(info[selection].FileName)) {
-							info = GetUniStoreInfo(_STORE_PATH);
+							updateList = true;
 							skipUpdate = true;
 						}
 					}
@@ -282,7 +305,7 @@ void Overlays::SelectStore() {
 			if (checkWifiStatus()) {
 				if (DownloadStore()) {
 					selection = 0;
-					info = GetUniStoreInfo(_STORE_PATH);
+					updateList = true;
 				}
 
 			} else {
