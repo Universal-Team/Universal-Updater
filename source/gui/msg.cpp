@@ -46,14 +46,20 @@ const std::vector<std::string> promptLabels = {
 	const std::string &Text: The Message, which should be displayed.
 	const std::string &Text: The String to display on the bottom bar.
 */
-void Msg::DisplayMsg(const std::string &Text, const std::string &BottomText) {
+void Msg::DisplayMsg(const std::string &Text, const std::string &BottomText, bool spinner) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UIThemes->TextColor(), Text, 395, 0, font);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UIThemes->TextColor(), Text, spinner ? 352 : 395, 0, font);
+
+	if (spinner) {
+		static int rotation = 0;
+		GFX::DrawIconRotated(sprites_queue_idx, 384, 12, rotation, UIThemes->TextColor(), 1.0f, 0.5f, 0.5f);
+		rotation = (rotation + 3) % 90;
+	}
 
 	if(!BottomText.empty()) {
 		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
@@ -148,7 +154,7 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 		if(!saveKey.empty()) {
 			savePromptBtn.w = CHECK_WIDTH + Gui::GetStringWidth(0.6f, Lang::get("SAVE_SELECTION"), font);
 			savePromptBtn.x = (320 / 2) - (savePromptBtn.w / 2);
-			
+
 			int stringHeight = Gui::GetStringHeight(0.6f, Lang::get("SAVE_SELECTION"), font);
 			int stringY = savePromptBtn.y - (stringHeight - savePromptBtn.h) / 2;
 			Gui::DrawString(savePromptBtn.x + CHECK_WIDTH, stringY, 0.6f, UIThemes->TextColor(), Lang::get("SAVE_SELECTION"), 0, 0, font);

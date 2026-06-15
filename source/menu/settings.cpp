@@ -34,6 +34,7 @@
 
 extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
+static Thread helperThread = nullptr;
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 45, 32, 271, 22 },
 	{ 45, 57, 271, 22 },
@@ -147,6 +148,12 @@ static void DrawSettingsDir(int selection) {
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
 	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor(), 1.0f);
 	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("DIRECTORY_SETTINGS"), 248, 0, font);
+
+	static int rotation = 0;
+	if (helperThread) {
+		GFX::DrawIconRotated(sprites_queue_idx, 304, 12, rotation, UIThemes->TextColor(), 1.0f, 0.5f, 0.5f);
+		rotation = (rotation + 3) % 90;
+	}
 
 	for (int i = 0; i < (int)dirButtons.size(); i++) {
 		Gui::Draw_Rect(dirButtons[i].x, dirButtons[i].y, dirButtons[i].w, dirButtons[i].h, (selection == i ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
@@ -392,7 +399,6 @@ static void SettingsHandleDir(int &page, int &selection) {
 		}
 	}
 
-	static Thread helperThread = nullptr;
 	if (((hDown & KEY_A) || selected) && helperThread == nullptr) {
 		std::string path = "";
 		bool changed = false;

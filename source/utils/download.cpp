@@ -877,13 +877,13 @@ void UpdateAction() {
 
 	// Ensure we're connected to Wi-Fi
 	if (!checkWifiStatus()) {
-		Msg::DisplayMsg(Lang::get("CONNECTING_WIFI"), Lang::get("A_IGNORE_B_EXIT"));
-
 		uint32_t Down = 0;
 		while (!checkWifiStatus() && aptMainLoop()) {
 			gspWaitForVBlank();
 			hidScanInput();
 			Down = hidKeysDown();
+
+			Msg::DisplayMsg(Lang::get("CONNECTING_WIFI"), Lang::get("A_IGNORE_B_EXIT"), true);
 
 			if (Down & KEY_A) {
 				break;
@@ -904,7 +904,6 @@ void UpdateAction() {
 
 		if (res.Status == DL_ERROR_CURL) {
 			if (cres == CURLE_PEER_FAILED_VERIFICATION) {
-				Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"));
 
 				time_t currentTime = time(NULL);
 				uint32_t Down = 0;
@@ -912,6 +911,8 @@ void UpdateAction() {
 					gspWaitForVBlank();
 					hidScanInput();
 					Down = hidKeysDown();
+
+					Msg::DisplayMsg(Lang::get("SSL_ERROR"), Lang::get("A_UPDATE_Y_SKIP_B_EXIT"), true);
 
 					if (Down & KEY_A) {
 						UpdateCACert("");

@@ -148,6 +148,7 @@ void Overlays::SelectStore() {
 	}
 
 	bool updateList = true;
+	int rotation = 0.0f;
 	while(!doOut) {
 		if (updateList) {
 			updateList = false;
@@ -186,7 +187,7 @@ void Overlays::SelectStore() {
 		Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
 		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
 		GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UIThemes->TextColor());
-		Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 310, 0, font);
+		Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 272, 0, font);
 
 		if (info.size() > 0) {
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
@@ -195,6 +196,9 @@ void Overlays::SelectStore() {
 			}
 		} else if (helperThread) {
 			Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Lang::get("LOADING_UNISTORE_LIST"))) / 2, 0.6f, UIThemes->TextColor(), Lang::get("LOADING_UNISTORE_LIST"), 315, 0, font);
+
+			GFX::DrawIconRotated(sprites_queue_idx, 304, 12, rotation, UIThemes->TextColor(), 1.0f, 0.5f, 0.5f);
+			rotation = (rotation + 3) % 90;
 		}
 
 		GFX::DrawIcon(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());

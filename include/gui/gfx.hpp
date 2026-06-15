@@ -44,16 +44,16 @@ extern std::unique_ptr<Theme> UIThemes;
 namespace GFX {
 	void DrawTop(void);
 	void DrawBottom();
-	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawBox(float xPos, float yPos, float width = 50, float height = 50, bool selected = false, uint32_t clr = 0, uint32_t borderClr = 0);
+	void DrawSprite(int img, int x, int y, float ScaleX = 1.0f, float ScaleY = 1.0f);
+	void DrawBox(float xPos, float yPos, float width = 50.0f, float height = 50.0f, bool selected = false, uint32_t clr = 0, uint32_t borderClr = 0);
 	void DrawCheckbox(float xPos, float yPos, bool selected);
 	void DrawToggle(float xPos, float yPos, bool toggled);
 	void DrawTime();
 	void DrawBattery();
 	void HandleBattery();
 	void DrawWifi();
-	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1, float ScaleY = 1);
-	void DrawIconRotated(const int Idx, int X, int Y, float Angle = 0, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1, float ScaleY = 1);
+	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
+	void DrawIconRotated(const int Idx, int X, int Y, float Angle = 0.0f, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
 };
 
 #endif
