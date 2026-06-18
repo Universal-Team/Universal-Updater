@@ -45,4 +45,6 @@ inline uint32_t hRepeat, hUp, hDown, hHeld;
 inline touchPosition touch;
 inline C2D_Font font;
 
+extern Thread helperThread;
+
 #endif

@@ -34,7 +34,6 @@
 
 extern bool exiting, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
-static Thread helperThread = nullptr;
 static const std::vector<Structs::ButtonPos> mainButtons = {
 	{ 45, 32, 271, 22 },
 	{ 45, 57, 271, 22 },

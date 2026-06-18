@@ -134,7 +134,6 @@ void Overlays::SelectStore() {
 	int selection = 0, sPos = 0;
 
 	static std::vector<UniStoreInfo> info;
-	static Thread helperThread = nullptr;
 	ThreadFunc helper = [] (void *) {
 		info.clear();
 		info = GetUniStoreInfo(_STORE_PATH);

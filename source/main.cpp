@@ -32,6 +32,7 @@
 
 #define ARG_AMOUNT 4 // In case for more args, change this. It must be ARG amount + 1, because of 3DSX Path.
 std::string _3dsxPath = "";
+Thread helperThread = nullptr;
 
 /* ARG Init. */
 static void InitForARG() {
@@ -70,6 +71,7 @@ static void InitForARG() {
 
 /* ARG Exit. */
 static Result ExitForARG() {
+	if (helperThread) threadJoin(helperThread, U64_MAX);
 	Gui::exit();
 	Init::UnloadFont();
 	StoreUtils::meta->Save();

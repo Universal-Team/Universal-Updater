@@ -216,6 +216,9 @@ Result Init::MainLoop() {
 	Exit Universal-Updater.
 */
 Result Init::Exit() {
+	// Ensure any helper thread is complete
+	if (helperThread) threadJoin(helperThread, U64_MAX);
+
 	Gui::exit();
 	Gui::unloadSheet(sprites);
 	UnloadFont();
