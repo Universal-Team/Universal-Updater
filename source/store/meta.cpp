@@ -85,6 +85,7 @@ void Meta::ImportMetadata() {
 	}
 
 	config->metadata(false);
+	this->changesMade = true;
 }
 
 /*
@@ -161,6 +162,9 @@ std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, con
 	Write to file.. called on destructor.
 */
 void Meta::Save() {
+	if (!changesMade) return;
+	changesMade = false;
+
 	FILE *file = fopen(_META_PATH, "wb");
 	const std::string dump = this->metadataJson.dump(1, '\t');
 	fwrite(dump.c_str(), 1, dump.size(), file);

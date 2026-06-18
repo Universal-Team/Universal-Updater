@@ -51,10 +51,12 @@ public:
 
 	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
 		this->metadataJson[unistoreName][entry]["updated"] = updated;
+		this->changesMade = true;
 	};
 
 	void SetMarks(const std::string &unistoreName, const std::string &entry, int marks) {
 		this->metadataJson[unistoreName][entry]["marks"] = marks;
+		this->changesMade = true;
 	};
 
 	/* TODO: Handle this better. */
@@ -63,8 +65,6 @@ public:
 		bool write = true;
 
 		if (!installs.empty()) {
-			write = !installs.empty();
-
 			for (int i = 0; i < (int)installs.size(); i++) {
 				if (installs[i] == name) {
 					write = false;
@@ -73,7 +73,10 @@ public:
 			}
 		}
 
-		if (write) this->metadataJson[unistoreName][entry]["installed"] += name;
+		if (write) {
+			this->metadataJson[unistoreName][entry]["installed"] += name;
+			this->changesMade = true;
+		}
 	}
 
 	/* Remove installed state from a download list entry. */
@@ -84,17 +87,22 @@ public:
 		for (int i = 0; i < (int)installs.size(); i++) {
 			if (installs[i] == name) {
 				this->metadataJson[unistoreName][entry]["installed"].erase(i);
+				this->changesMade = true;
 				break;
 			}
 		}
 
-		if (this->metadataJson[unistoreName][entry]["installed"].empty() && this->metadataJson[unistoreName][entry].contains("updated")) this->metadataJson[unistoreName][entry].erase("updated");
+		if (this->metadataJson[unistoreName][entry]["installed"].empty() && this->metadataJson[unistoreName][entry].contains("updated")) {
+			this->metadataJson[unistoreName][entry].erase("updated");
+			this->changesMade = true;
+		}
 	}
 
 	void ImportMetadata();
 	void Save();
 private:
 	nlohmann::json metadataJson = nullptr;
+	bool changesMade = false;
 };
 
 #endif
