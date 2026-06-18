@@ -160,7 +160,7 @@ std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, con
 
 	Write to file.. called on destructor.
 */
-void Meta::SaveCall() {
+void Meta::Save() {
 	FILE *file = fopen(_META_PATH, "wb");
 	const std::string dump = this->metadataJson.dump(1, '\t');
 	fwrite(dump.c_str(), 1, dump.size(), file);

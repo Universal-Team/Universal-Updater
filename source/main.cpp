@@ -49,6 +49,7 @@ static void InitForARG() {
 	mkdir("sdmc:/3ds/Universal-Updater/shortcuts", 0777);
 
 	config = std::make_unique<Config>();
+	StoreUtils::meta = std::make_unique<Meta>();
 	UIThemes = std::make_unique<Theme>();
 	UIThemes->LoadTheme(config->theme());
 
@@ -71,6 +72,7 @@ static void InitForARG() {
 static Result ExitForARG() {
 	Gui::exit();
 	Init::UnloadFont();
+	StoreUtils::meta->Save();
 	gfxExit();
 	cfguExit();
 	acExit();

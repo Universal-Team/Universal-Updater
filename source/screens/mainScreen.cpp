@@ -46,8 +46,6 @@ extern void notConnectedMsg();
 	- Downloads Universal-DB.. in case nothing exist.
 */
 MainScreen::MainScreen() {
-	StoreUtils::meta = std::make_unique<Meta>();
-
 	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE"));
 
 	/* Check if lastStore is accessible. */

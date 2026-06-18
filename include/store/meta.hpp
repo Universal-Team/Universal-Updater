@@ -42,7 +42,7 @@ enum favoriteMarks {
 class Meta {
 public:
 	Meta();
-	~Meta() { this->SaveCall(); };
+	~Meta() { this->Save(); };
 
 	std::string GetUpdated(const std::string &unistoreName, const std::string &entry) const;
 	int GetMarks(const std::string &unistoreName, const std::string &entry) const;
@@ -92,7 +92,7 @@ public:
 	}
 
 	void ImportMetadata();
-	void SaveCall();
+	void Save();
 private:
 	nlohmann::json metadataJson = nullptr;
 };

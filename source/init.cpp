@@ -135,6 +135,7 @@ Result Init::Initialize() {
 	AM_InitializeExternalTitleDatabase(false);
 
 	config = std::make_unique<Config>();
+	StoreUtils::meta = std::make_unique<Meta>();
 	UIThemes = std::make_unique<Theme>();
 	UIThemes->LoadTheme(config->theme());
 
@@ -222,6 +223,7 @@ Result Init::Exit() {
 	gfxExit();
 	cfguExit();
 	config->save();
+	StoreUtils::meta->Save();
 	ptmuExit();
 	acExit();
 	amExit();
