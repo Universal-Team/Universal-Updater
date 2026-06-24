@@ -50,14 +50,16 @@ static const std::vector<Structs::ButtonPos> downloadBoxes = {
 };
 
 static const std::vector<Structs::ButtonPos> installedPos = {
-	{ 288, 32, 24, 24 },
-	{ 288, 62, 24, 24 },
-	{ 288, 92, 24, 24 },
-	{ 288, 122, 24, 24 },
-	{ 288, 152, 24, 24 },
-	{ 288, 182, 24, 24 },
-	{ 288, 212, 24, 24 },
+	{ 292, 32, 24, 24 },
+	{ 292, 62, 24, 24 },
+	{ 292, 92, 24, 24 },
+	{ 292, 122, 24, 24 },
+	{ 292, 152, 24, 24 },
+	{ 292, 182, 24, 24 },
+	{ 292, 212, 24, 24 },
 };
+
+static const Structs::ButtonPos clearUpdatePos = { 296, 4, 20, 20 };
 
 /*
 	With this, we can create a shortcut. ;P
@@ -140,7 +142,11 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	GFX::DrawBottom();
 	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 273, 0, font);
+	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
+
+	if(entry->GetUpdateAvl()) {
+		GFX::DrawSprite(sprites_update_app_idx, clearUpdatePos.x, clearUpdatePos.y);
+	}
 
 	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
 		if (entries.size() > 0) {
@@ -148,7 +154,7 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UIThemes->MarkSelected());
 				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UIThemes->TextColor(), entries[(i + StoreUtils::store->GetDownloadSIndex())], 235, 0, font);
 
-				if (installs[(i + StoreUtils::store->GetDownloadSIndex())]) GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, installs[(i + StoreUtils::store->GetDownloadSIndex())] ? UIThemes->TextColor() : UIThemes->MarkSelected());
 			}
 
 			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UIThemes->TextColor());
@@ -216,6 +222,11 @@ void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const 
 
 		bool selected = false;
 		if (smallDelay == 0 && hDown & KEY_TOUCH) {
+			if (touching(touch, clearUpdatePos)) {
+				StoreUtils::meta->SetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
+				StoreUtils::RefreshInstalledApps(entry->GetTitle());
+			}
+
 			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
 				if (touching(touch, downloadBoxes[i])) {
 					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
@@ -240,8 +251,14 @@ void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const 
 						if (installs[i + StoreUtils::store->GetDownloadSIndex()]) {
 							StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
 							installs[i + StoreUtils::store->GetDownloadSIndex()] = false;
-							StoreUtils::RefreshInstalledApps(entry->GetTitle());
+						} else {
+							if(StoreUtils::meta->GetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle()) == "")
+								StoreUtils::meta->SetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), "---");
+
+							StoreUtils::meta->SetInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
+							installs[i + StoreUtils::store->GetDownloadSIndex()] = true;
 						}
+						StoreUtils::RefreshInstalledApps(entry->GetTitle());
 					}
 
 					break;
