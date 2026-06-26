@@ -127,40 +127,39 @@ void MainScreen::Draw(void) const {
 	GFX::DrawWifi();
 	Animation::QueueEntryDone();
 
-	/* Download-ception. */
-	if (this->storeMode == 1) {
-		StoreUtils::DrawDownList(this->dwnldList, this->fetchDown, StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldSizes, this->installs);
+	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
+	GFX::DrawBottom();
 
-	} else {
-		if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
-		GFX::DrawBottom();
+	switch(this->storeMode) {
+		case 0:
+			/* Entry Info. */
+			if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DrawEntryInfo(StoreUtils::entries[StoreUtils::store->GetEntry()]);
+			break;
 
-		switch(this->storeMode) {
-			case 0:
-				/* Entry Info. */
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DrawEntryInfo(StoreUtils::entries[StoreUtils::store->GetEntry()]);
-				break;
+		case 1:
+			/* Download List. */
+			StoreUtils::DrawDownList(this->dwnldList, this->fetchDown, StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldSizes, this->installs);
+			break;
 
-			case 2:
-				/* Queue Menu. */
-				StoreUtils::DrawQueueMenu(this->queueIndex);
-				break;
+		case 2:
+			/* Queue Menu. */
+			StoreUtils::DrawQueueMenu(this->queueIndex);
+			break;
 
-			case 3:
-				/* Search + Favorites. */
-				StoreUtils::DrawSearchMenu();
-				break;
+		case 3:
+			/* Search + Favorites. */
+			StoreUtils::DrawSearchMenu();
+			break;
 
-			case 4:
-				/* Sorting. */
-				StoreUtils::DrawSorting();
-				break;
+		case 4:
+			/* Sorting. */
+			StoreUtils::DrawSorting();
+			break;
 
-			case 5:
-				/* Settings. */
-				StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
-				break;
-		}
+		case 5:
+			/* Settings. */
+			StoreUtils::DrawSettings(this->sPage, this->sSelection, this->sPos);
+			break;
 	}
 
 	StoreUtils::DrawSideMenu(this->storeMode);
