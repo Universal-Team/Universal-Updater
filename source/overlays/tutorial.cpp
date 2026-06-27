@@ -218,6 +218,14 @@ void Tutorial::Logic(u32 hDown, touchPosition &touch, MainScreen &ms) {
 			tutorialPage = 4;
 			goto base;
 
+		case 21:
+		case 31:
+		case 41:
+		case 51:
+		case 61:
+			tutorialPage = 4;
+			goto base;
+
 		case 100:
 			ms.SwitchPage(5, 0);
 			fadeTargetBottom = 0;
