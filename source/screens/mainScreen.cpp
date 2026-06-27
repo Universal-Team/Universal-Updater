@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "fileBrowse.hpp"
 #include "mainScreen.hpp"
+#include "tutorial.hpp"
 #include "queueSystem.hpp"
 #include "screenshot.hpp"
 #include "storeUtils.hpp"
@@ -118,6 +119,7 @@ void MainScreen::Draw(void) const {
 	GFX::DrawBattery();
 	GFX::DrawWifi();
 	Animation::QueueEntryDone();
+	Tutorial::DrawTop();
 
 	if (this->storeMode == 1) {
 		// The downloads list is special because it also draws on the top screen.
@@ -167,6 +169,7 @@ void MainScreen::Draw(void) const {
 	}
 	if (this->showMarks && StoreUtils::store && StoreUtils::store->GetValid()) StoreUtils::DisplayMarkBox(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetMarks());
 	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadeAlpha));
+	Tutorial::DrawBottom();
 }
 
 /*
@@ -175,6 +178,10 @@ void MainScreen::Draw(void) const {
 void MainScreen::Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) {
 	Animation::HandleQueueEntryDone();
 	GFX::HandleBattery();
+	Tutorial::Logic(hDown, touch, *this);
+	hDown = hDown & Tutorial::GetKeyMask();
+	hRepeat = hRepeat & Tutorial::GetKeyMask();
+	hHeld = hHeld & Tutorial::GetKeyMask();
 
 	/* Screenshots Menu. */
 	if (this->storeMode == 6) {

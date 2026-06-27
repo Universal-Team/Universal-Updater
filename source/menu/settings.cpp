@@ -108,6 +108,7 @@ static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UITheme.EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
 	Gui::DrawStringCentered(20, 2, 0.6, UITheme.TextColor(), Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawString(290, 4, 0.6f, UITheme.TextColor(), "(?)");
 
 	for (int i = 0; i < 8; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
