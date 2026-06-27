@@ -106,11 +106,14 @@ void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::shared_p
 /*
 	As the name says: Release notes logic.
 
+	u32 hDown: Keys down.
+	u32 hHeld: Keys held.
+	touchPosition &touch: Touch screen status.
 	float &scrollOffset: The scroll offset for the Release Notes text.
 	float &scrollDelta: The scroll delta for the Release Notes text.
 	int &storeMode: The store mode to properly return back.
 */
-void StoreUtils::ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode) {
+void StoreUtils::ReleaseNotesLogic(u32 hDown, u32 hHeld, touchPosition &touch, float &scrollOffset, float &scrollDelta, int &storeMode) {
 	int linesPerScreen = ((240.0f - 25.0f) / Gui::GetStringHeight(0.5f, "", font));
 	scrollOffset += scrollDelta;
 	if (scrollDelta > 0) {
@@ -146,7 +149,7 @@ void StoreUtils::ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int 
 			touches[0] = touches[1];
 			touches[1] = touch;
 		}
-		if (hUp & KEY_TOUCH && touches[1].py > 25) {
+		if (!(hHeld & KEY_TOUCH) && touches[1].py > 25) {
 			scrollDelta = touches[0].py - touches[1].py;
 		}
 

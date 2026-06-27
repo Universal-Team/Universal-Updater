@@ -128,12 +128,14 @@ void StoreUtils::DrawGrid() {
 
 	- Scroll through the Grid with the D-Pad.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
 	const int &currentMode: Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
 	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::GridLogic(u32 hDown, u32 hRepeat, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetBox() > 9) {

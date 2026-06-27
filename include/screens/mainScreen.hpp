@@ -49,7 +49,7 @@ class MainScreen : public Screen {
 public:
 	MainScreen();
 	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	void Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) override;
 private:
 	std::vector<std::string> dwnldList, dwnldSizes, dwnldTypes;
 

@@ -174,6 +174,9 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	- Execute an Entry of the download list.
 	- Return back to EntryInfo through `B`.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	const std::shared_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
 	const std::vector<std::string> &entries: Const Reference to the download list, since we do not modify anything in it.
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
@@ -181,7 +184,7 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 	std::vector<bool> &installs: Reference to the installed states.
 */
-void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
+void StoreUtils::DownloadHandle(u32 hDown, u32 hRepeat, touchPosition &touch, const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
 		if (smallDelay > 0) {
 			smallDelay--;
