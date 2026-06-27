@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2021 Universal-Team
+*   Copyright (C) 2019-2026 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,49 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
-#define _UNIVERSAL_UPDATER_MAIN_SCREEN_HPP
+#ifndef _UNIVERSAL_UPDATER_TUTORIAL_HPP
+#define _UNIVERSAL_UPDATER_TUTORIAL_HPP
 
 #include "common.hpp"
-#include "store.hpp"
-#include "storeEntry.hpp"
-#include "storeUtils.hpp"
+#include "mainScreen.hpp"
+#include <3ds.h>
 
-/*
-	Modes:
+#define KEYS_ALL 0xFFFFFFFF
+#define KEYS_NONE 0
+#define KEYS_DPAD (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)
 
-	0: Entry Info.
-	1: Download List.
-	2: Queue.
-	3: Search + Favorites.
-	4: Sorting.
-	5: Settings / Credits(?).
-	6: Screenshot Menu.
-	7: Release Notes.
-*/
+namespace Tutorial {
+	void DrawTop(void);
+	void DrawBottom(void);
+	void Logic(u32 hDown, touchPosition &touch, MainScreen &ms);
 
-class MainScreen : public Screen {
-public:
-	MainScreen();
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) override;
-
-	void SwitchPage(int mode, int page) { storeMode = mode; sPage = page; }
-
-private:
-	std::vector<std::string> dwnldList, dwnldSizes, dwnldTypes;
-
-	bool initialized = false, fetchDown = false, showMarks = false,
-		 screenshotFetch = false, canDisplay = false;
-
-	int storeMode = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
-		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, queueIndex = 0;
-	float scrollOffset = 0.0f, scrollDelta = 0.0f;
-
-	std::vector<bool> installs = { };
-	std::string screenshotName = "";
-
-	C2D_Image Screenshot = { nullptr, nullptr };
+	u32 GetKeyMask(void);
 };
 
 #endif

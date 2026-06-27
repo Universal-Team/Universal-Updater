@@ -107,7 +107,8 @@ static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-
 static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6f, UIThemes->TextColor(), Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawString(290, 4, 0.6f, UIThemes->TextColor(), "(?)");
 
 	for (int i = 0; i < 8; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
