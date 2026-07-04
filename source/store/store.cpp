@@ -450,6 +450,33 @@ std::string Store::GetLicenseEntry(int index) const {
 }
 
 /*
+	Return the LLM generated content status of an index.
+
+	int index: The index.
+*/
+std::string Store::GetLlmGenerationEntry(int index) const {
+	if (!this->valid) return Lang::get("LLM_UNKNOWN");
+	if (index > (int)this->storeJson["storeContent"].size() - 1) return Lang::get("LLM_UNKNOWN"); // Empty.
+
+	if (this->storeJson["storeContent"][index]["info"].contains("llm_generation") && this->storeJson["storeContent"][index]["info"]["llm_generation"].is_string()) {
+		const std::string &str = this->storeJson["storeContent"][index]["info"]["llm_generation"];
+		if (str == "" || str == "unknown") {
+			return Lang::get("LLM_UNKNOWN");
+		} else if (str == "yes") {
+			return Lang::get("YES");
+		} else if (str == "no") {
+			return Lang::get("NO");
+		} else if (str == "minor") {
+			return Lang::get("LLM_MINOR");
+		} else {
+			return str;
+		}
+	}
+
+	return Lang::get("LLM_UNKNOWN");
+}
+
+/*
 	Return the Wiki of an index.
 
 	int index: The index.

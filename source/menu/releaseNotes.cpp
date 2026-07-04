@@ -91,9 +91,18 @@ void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::shared_p
 	}
 	uint32_t accentColor = (config->useAccentColor() && entry) ? entry->GetAccentColor() : 0;
 
+	std::string title;
+	if (config->changelog()) {
+		title = std::string("Universal-Updater ") + C_V;
+	} else {
+		title = entry->GetTitle();
+		if(entry->GetVersion() != "")
+			title += " – " + entry->GetVersion();
+	}
+
 	Gui::Draw_Rect(0, 0, 320, 25, accentColor ? accentColor : UIThemes->EntryBar());
 	Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-	Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UIThemes->TextColor(), config->changelog() ? std::string("Universal-Updater ") + C_V : entry->GetTitle(), 310, 0, font);
+	Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UIThemes->TextColor(), title, 310, 0, font);
 
 	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
 

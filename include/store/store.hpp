@@ -61,6 +61,7 @@ public:
 	std::string GetLastUpdatedEntry(int index) const;
 	int GetStarsEntry(int index) const;
 	std::string GetLicenseEntry(int index) const;
+	std::string GetLlmGenerationEntry(int index) const;
 	std::string GetWikiEntry(int index) const;
 	std::string GetPreinstallMessage(int index) const;
 	std::vector<std::string> GetInstalledFiles(int index) const;

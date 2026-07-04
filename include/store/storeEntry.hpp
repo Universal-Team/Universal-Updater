@@ -44,6 +44,7 @@ public:
 	const std::string &GetLastUpdated() const { return this->LastUpdated; };
 	int GetStars() const { return this->Stars; };
 	const std::string &GetLicense() const { return this->License; };
+	const std::string &GetLlmGeneration() const { return this->LlmGeneration; };
 	const std::string &GetWiki() const { return this->Wiki; };
 	const std::string &GetPreinstallMessage() const { return this->PreinstallMessage; };
 	const std::vector<std::string> &GetInstalledFiles(int index) const { return this->InstalledFiles; };
@@ -80,7 +81,7 @@ public:
 	};
 
 private:
-	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, MarkString, ReleaseNotes, Wiki, PreinstallMessage;
+	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, LlmGeneration, MarkString, ReleaseNotes, Wiki, PreinstallMessage;
 	int Stars;
 	C2D_Image Icon;
 	int SheetIndex, EntryIndex, Marks;
