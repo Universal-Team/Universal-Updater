@@ -130,10 +130,9 @@ void StoreUtils::DrawGrid() {
 
 	const int &currentMode: Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
-	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::GridLogic(int &currentMode, int &lastMode, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetBox() > 9) {
@@ -211,7 +210,6 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 		}
 
 		if (hDown & KEY_A) {
-			fetch = true;
 			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;

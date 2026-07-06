@@ -1065,7 +1065,8 @@ void UpdateAction() {
 				return;
 			}
 
-			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
+			// TODO!! does this work??? (updatingSelf)
+			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", true, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
 			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
 			Msg::waitMsg(Lang::get("UPDATE_DONE"));
 			exiting = true;

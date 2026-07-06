@@ -55,69 +55,69 @@ static const std::vector<Structs::ButtonPos> QueueBoxes = {
 	{ 292, 140, 20, 20 } // Remove next Queue.
 };
 
-extern std::deque<std::unique_ptr<Queue>> queueEntries;
+extern std::deque<QueueEntry> queueEntries;
 
 void DrawStatus(QueueStatus s) {
+	if (queueEntries.empty()) return;
+	const QueueEntry &entry = queueEntries[0];
+	const Script &script = entry.storeEntry->GetScript(entry.scriptIndex);
+
+	// Display as overall progress
 	if (!ShowQueueProgress) {
-		if (!queueEntries.empty()) {
-			Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, UIThemes->TextColor(), queueEntries[0]->name, 230, 0, font);
+		Gui::DrawString(QueueBoxes[0].x + 10, QueueBoxes[0].y + 5, 0.4f, UIThemes->TextColor(), script.GetName(), 230, 0, font);
 
-			char prog[256];
-			snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), queueEntries[0]->current, queueEntries[0]->total);
-			Gui::DrawString(QueueBoxes[0].x + 241, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), prog, 80, 0, font, C2D_AlignRight);
+		char prog[256];
+		snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), entry.currentStep, script.GetActions().size());
+		Gui::DrawString(QueueBoxes[0].x + 241, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), prog, 80, 0, font, C2D_AlignRight);
 
-			Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, UIThemes->ProgressbarOut());
-			Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)queueEntries[0]->current / (float)queueEntries[0]->total) * 180.0f), 28, UIThemes->ProgressbarIn());
+		Gui::Draw_Rect(QueueBoxes[0].x + 60, QueueBoxes[0].y + 30, 182, 30, UIThemes->ProgressbarOut());
+		Gui::Draw_Rect(QueueBoxes[0].x + 60 + 1, QueueBoxes[0].y + 30 + 1, (int)(((float)entry.currentStep / (float)script.GetActions().size()) * 180.0f), 28, UIThemes->ProgressbarIn());
 
-			switch(s) {
-				case QueueStatus::Done:
-				case QueueStatus::Failed:
-				case QueueStatus::None:
-					break;
+		switch(s) {
+			case QueueStatus::Done:
+			case QueueStatus::Failed:
+			case QueueStatus::None:
+				break;
 
-				case QueueStatus::Copying:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_COPYING"), 120, 0, font);
-					break;
+			case QueueStatus::Copying:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_COPYING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Deleting:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_DELETING"), 120, 0, font);
-					break;
+			case QueueStatus::Deleting:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_DELETING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Downloading:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_DOWNLOADING"), 120, 0, font);
-					break;
+			case QueueStatus::Downloading:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_DOWNLOADING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Extracting:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_EXTRACTING"), 120, 0, font);
-					break;
+			case QueueStatus::Extracting:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_EXTRACTING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Installing:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_INSTALLING"), 120, 0, font);
-					break;
+			case QueueStatus::Installing:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_INSTALLING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Moving:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_MOVING"), 120, 0, font);
-					break;
+			case QueueStatus::Moving:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_MOVING"), 120, 0, font);
+				break;
 
-				case QueueStatus::Request:
-					Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_WAITING"), 120, 0, font);
-					break;
-			}
+			case QueueStatus::Request:
+				Gui::DrawString(QueueBoxes[0].x + 60, QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), Lang::get("OP_WAITING"), 120, 0, font);
+				break;
 		}
 
 		return;
 	}
 
-	char str[256], str2[256];
-
 	/* Progress. */
-	if (!queueEntries.empty()) {
-		char prog[256];
-		snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), queueEntries[0]->current, queueEntries[0]->total);
-		Gui::DrawString((QueueBoxes[0].x + 241), QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), prog, 80, 0, font, C2D_AlignRight);
-	}
+	char prog[256];
+	snprintf(prog, sizeof(prog), Lang::get("QUEUE_PROGRESS").c_str(), entry.currentStep, script.GetActions().size());
+	Gui::DrawString((QueueBoxes[0].x + 241), QueueBoxes[0].y + 68, 0.4f, UIThemes->TextColor(), prog, 80, 0, font, C2D_AlignRight);
 
 	/* String Handle. */
+	char str[256], str2[256];
 	switch(s) {
 		case QueueStatus::Done:
 		case QueueStatus::Failed:
@@ -233,24 +233,25 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 	if (!queueEntries.empty()) {
 		Gui::Draw_Rect(QueueBoxes[0].x, QueueBoxes[0].y, QueueBoxes[0].w, QueueBoxes[0].h, UIThemes->MarkSelected());
 
-		const C2D_Image tempImg = queueEntries[0]->icn;
+		const C2D_Image tempImg = queueEntries[0].storeEntry->GetIcon();
 		const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 		const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
 		C2D_DrawImageAt(tempImg, QueueBoxes[0].x + 5 + offsetW, QueueBoxes[0].y + 21 + offsetH, 0.5f);
 
-		DrawStatus(queueEntries[0]->status);
+		DrawStatus(queueEntries[0].status);
 		GFX::DrawIcon(sprites_cancel_idx, QueueBoxes[2].x, QueueBoxes[2].y, UIThemes->TextColor());
 
 		/* The next Queue Entries being displayed below. */
 		if ((1 + queueMenuIdx) < (int)queueEntries.size()) {
 			Gui::Draw_Rect(QueueBoxes[1].x, QueueBoxes[1].y, QueueBoxes[1].w, QueueBoxes[1].h, UIThemes->MarkUnselected());
 
-			const C2D_Image tempImg2 = queueEntries[1 + queueMenuIdx]->icn;
+			const C2D_Image tempImg2 = queueEntries[1 + queueMenuIdx].storeEntry->GetIcon();
 			const uint8_t offsetW2 = (48 - tempImg2.subtex->width) / 2; // Center W.
 			const uint8_t offsetH2 = (48 - tempImg2.subtex->height) / 2; // Center H.
 			C2D_DrawImageAt(tempImg2, QueueBoxes[1].x + 5 + offsetW2, QueueBoxes[1].y + 21 + offsetH2, 0.5f);
 
-			Gui::DrawString(QueueBoxes[1].x + 10, QueueBoxes[1].y + 5, 0.4f, UIThemes->TextColor(), queueEntries[1 + queueMenuIdx]->name, 230, 0, font);
+			const std::string &name = queueEntries[1 + queueMenuIdx].storeEntry->GetScript(queueEntries[1 + queueMenuIdx].scriptIndex).GetName();
+			Gui::DrawString(QueueBoxes[1].x + 10, QueueBoxes[1].y + 5, 0.4f, UIThemes->TextColor(), name, 230, 0, font);
 
 			Gui::DrawString(QueueBoxes[1].x + 60, QueueBoxes[1].y + 30, 0.4f, UIThemes->TextColor(), Lang::get("QUEUE_POSITION") + ": " + std::to_string(queueMenuIdx + 1), 0, 0, font);
 

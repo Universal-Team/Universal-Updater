@@ -64,8 +64,8 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 		Gui::DrawStringCentered(20, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
 		Gui::DrawString(53, 115, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 255, 0, font);
-		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 255, 0, font);
-		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 255, 0, font);
+		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategoryString(), 255, 0, font);
+		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsoleString(), 255, 0, font);
 		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + StringUtils::RelativeDate(entry->GetLastUpdated()), 255, 0, font);
 		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 255, 0, font);
 		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LLM_GENERATED_CONTENT") + ": " + entry->GetLlmGeneration(), 255, 0, font);
@@ -86,12 +86,11 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 	- Show the MarkMenu with START.
 
 	bool &showMark: Reference to showMark.. to show the mark menu.
-	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 	bool &sFetch: Reference to the screenshot fetch.
 	int &mode: Reference to the store mode.
 	const std::shared_ptr<StoreEntry> &entry: The store Entry.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
+void StoreUtils::EntryHandle(bool &showMark, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
 	if (entry) {
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 

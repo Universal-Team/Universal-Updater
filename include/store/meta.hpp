@@ -48,6 +48,7 @@ public:
 	int GetMarks(const std::string &unistoreName, const std::string &entry) const;
 	bool UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const;
 	std::vector<std::string> GetInstalled(const std::string &unistoreName, const std::string &entry) const;
+	bool GetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) const;
 
 	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
 		this->metadataJson[unistoreName][entry]["updated"] = updated;
@@ -59,21 +60,8 @@ public:
 		this->changesMade = true;
 	};
 
-	/* TODO: Handle this better. */
 	void SetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
-		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
-		bool write = true;
-
-		if (!installs.empty()) {
-			for (int i = 0; i < (int)installs.size(); i++) {
-				if (installs[i] == name) {
-					write = false;
-					break;
-				}
-			}
-		}
-
-		if (write) {
+		if (!this->GetInstalled(unistoreName, entry, name)) {
 			this->metadataJson[unistoreName][entry]["installed"] += name;
 			this->changesMade = true;
 		}

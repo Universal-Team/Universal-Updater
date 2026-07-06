@@ -39,9 +39,9 @@
 
 	const std::string &str: The string which should be converted.
 */
-std::string StringUtils::toLowerCase(const std::string &str) {
+std::string StringUtils::toUpperCase(const std::string &str) {
 	std::string lower;
-	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
+	transform(str.begin(), str.end(), std::back_inserter(lower), toupper); // Transform the string to lowercase.
 
 	return lower;
 }

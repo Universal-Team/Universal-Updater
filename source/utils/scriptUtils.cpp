@@ -63,23 +63,6 @@ Result ScriptUtils::removeFile(const std::string &file, bool isARG) {
 	return ret;
 }
 
-/* Boot a title. */
-void ScriptUtils::bootTitle(const std::string &TitleID, bool isNAND, bool isARG) {
-	std::string MSG = Lang::get("BOOT_TITLE") + "\n\n";
-	if (isNAND)	MSG += Lang::get("MEDIATYPE_NAND") + "\n" + TitleID;
-	else MSG += Lang::get("MEDIATYPE_SD") + "\n" + TitleID;
-
-	const u64 ID = std::stoull(TitleID, 0, 16);
-	if (isARG) {
-		if (Msg::promptMsg(MSG)) {
-			Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
-		}
-
-	} else {
-		Title::Launch(ID, isNAND ? MEDIATYPE_NAND : MEDIATYPE_SD);
-	}
-}
-
 /* Prompt message. */
 Result ScriptUtils::prompt(const std::string &message, const std::string &name) {
 	Result ret = NONE;
@@ -320,258 +303,93 @@ Result ScriptUtils::extractFile(const std::string &file, const std::string &inpu
 /*
 	NOTE: This is for the argument system for now. This might get replaced completely with the Queue System in the future.
 */
-Result ScriptUtils::runFunctions(nlohmann::json storeJson, int selection, const std::string &entry) {
+Result ScriptUtils::runFunctions(const StoreEntry &entry, const Script &script) {
 	Result ret = NONE; // No Error as of yet.
 
-	if (!storeJson.contains("storeContent")) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
-	if ((int)storeJson["storeContent"].size() < selection) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
-	if (!storeJson["storeContent"][selection].contains(entry)) { Msg::waitMsg(Lang::get("SYNTAX_ERROR")); return SYNTAX_ERROR; };
-
-	nlohmann::json Script = nullptr;
-
-	/* Detect if array or new object thing. Else return Syntax error. :P */
-	if (storeJson["storeContent"][selection][entry].type() == nlohmann::json::value_t::array) {
-		Script = storeJson["storeContent"][selection][entry];
-
-	} else if (storeJson["storeContent"][selection][entry].type() == nlohmann::json::value_t::object) {
-		if (storeJson["storeContent"][selection][entry].contains("script") && storeJson["storeContent"][selection][entry]["script"].is_array()) {
-			Script = storeJson["storeContent"][selection][entry]["script"];
-
-		} else {
-			Msg::waitMsg(Lang::get("SYNTAX_ERROR"));
-			return SYNTAX_ERROR;
-		}
-	}
-
-
-	for(int i = 0; i < (int)Script.size(); i++) {
-		if (ret == NONE) {
-			std::string type = "";
-
-			if (Script[i].contains("type") && Script[i]["type"].is_string()) {
-				type = Script[i]["type"];
-
-			} else {
-				ret = SYNTAX_ERROR;
+	for(int i = 0; i < (int)script.GetActions().size() && ret == NONE; i++) {
+		const Action &action = script.GetAction(i);
+		switch (action.GetType()) {
+			case Action::Type::DeleteFile: {
+				ret = ScriptUtils::removeFile(action.GetInput(), true);
+				break;
 			}
 
-			if (type == "deleteFile") {
-				bool missing = false;
-				std::string file = "";
-
-
-				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
-					file = Script[i]["file"];
-				}
-				else missing = true;
-
-				if (!missing) ret = ScriptUtils::removeFile(file, true);
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "downloadFile") {
-				bool missing = false;
-				std::string file = "", output = "";
-
-				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
-					file = Script[i]["file"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
-					output = Script[i]["output"];
-				}
-				else missing = true;
-
+			case Action::Type::DownloadFile: {
 				char message[256];
-				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), output.substr(output.find_first_of("/") + 1).c_str());
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), action.GetOutput().substr(action.GetOutput().find_first_of("/") + 1).c_str());
+				ret = ScriptUtils::downloadFile(action.GetInput(), action.GetOutput(), message, true);
+				break;
+			}
 
-				if (!missing) ret = ScriptUtils::downloadFile(file, output, message, true);
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "downloadRelease") {
-				bool missing = false, includePrereleases = false;
-				std::string repo = "", file = "", output = "";
-
-				if (Script[i].contains("repo") && Script[i]["repo"].is_string()) {
-					repo = Script[i]["repo"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
-					file = Script[i]["file"];
-				}
-				else  missing = true;
-
-				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
-					output = Script[i]["output"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("includePrereleases") && Script[i]["includePrereleases"].is_boolean())
-					includePrereleases = Script[i]["includePrereleases"];
-
+			case Action::Type::DownloadRelease: {
 				char message[256];
-				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), output.substr(output.find_first_of("/") + 1).c_str());
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_DOWNLOADING").c_str(), action.GetOutput().substr(action.GetOutput().find_first_of("/") + 1).c_str());
+				ret = ScriptUtils::downloadRelease(action.GetExtra(), action.GetInput(), action.GetOutput(), action.GetPrereleases(), message, true);
+				break;
+			}
 
-				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, message, true);
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "extractFile") {
-				bool missing = false;
-				std::string file = "", input = "", output = "";
-
-				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
-					file = Script[i]["file"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("input") && Script[i]["input"].is_string()) {
-					input = Script[i]["input"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("output") && Script[i]["output"].is_string()) {
-					output = Script[i]["output"];
-				}
-				else missing = true;
-
+			case Action::Type::ExtractFile: {
 				char message[256];
-				snprintf(message, sizeof(message), Lang::get("SHORTCUT_EXTRACTING").c_str(), file.substr(file.find_first_of("/") + 1).c_str());
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_EXTRACTING").c_str(), action.GetExtra().substr(action.GetExtra().find_first_of("/") + 1).c_str());
+				ret = ScriptUtils::extractFile(action.GetExtra(), action.GetInput(), action.GetOutput(), message, true);
+				break;
+			}
 
-				if (!missing) ret = ScriptUtils::extractFile(file, input, output, message, true);
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "installCia") {
-				bool missing = false, updateSelf = false;
-				std::string file = "";
-
-				if (Script[i].contains("file") && Script[i]["file"].is_string()) {
-					file = Script[i]["file"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("updateSelf") && Script[i]["updateSelf"].is_boolean()) {
-					updateSelf = Script[i]["updateSelf"];
-				}
-
+			case Action::Type::InstallCia: {
 				char message[256];
-				snprintf(message, sizeof(message), Lang::get("SHORTCUT_INSTALLING").c_str(), file.substr(file.find_first_of("/") + 1).c_str());
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_INSTALLING").c_str(), action.GetInput().substr(action.GetInput().find_first_of("/") + 1).c_str());
+				ScriptUtils::installFile(action.GetInput(), false, message, true);
+				break;
+			}
 
-				if (!missing) ScriptUtils::installFile(file, updateSelf, message, true);
-				else ret = SYNTAX_ERROR;
+			case Action::Type::Mkdir: {
+				makeDirs(action.GetInput().c_str());
+				break;
+			}
 
-			} else if (type == "mkdir") {
-				bool missing = false;
-				std::string directory = "";
-
-				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
-					directory = Script[i]["directory"];
-				}
-				else missing = true;
-
-				if (!missing) makeDirs(directory.c_str());
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "rmdir") {
-				bool missing = false;
-				std::string directory = "", promptmsg = "";
-				bool required = false;
-
-				if (Script[i].contains("directory") && Script[i]["directory"].is_string()) {
-					directory = Script[i]["directory"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("required") && Script[i]["required"].is_boolean()) {
-					required = Script[i]["required"];
-				}
-
-				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
-				if (!missing && directory != "") {
-					if (access(directory.c_str(), F_OK) != 0 && required) ret = DELETE_ERROR;
-					else {
-						if (Msg::promptMsg(promptmsg)) removeDirRecursive(directory.c_str());
+			case Action::Type::Rmdir: {
+				if (action.GetInput() == "") {
+					ret = SYNTAX_ERROR;
+				} else {
+					std::string message = Lang::get("DELETE_PROMPT") + "\n" + action.GetInput();
+					if (access(action.GetInput().c_str(), F_OK) == 0) {
+						if (Msg::promptMsg(message)) removeDirRecursive(action.GetInput().c_str());
 					}
 				}
-
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "promptMessage" || type == "promptMsg") {
-				std::string Message = "", Name = "";
-				int skipCount = -1;
-
-				if (Script[i].contains("message") && Script[i]["message"].is_string()) {
-					Message = Script[i]["message"];
-				}
-
-				if (Script[i].contains("name") && Script[i]["name"].is_string()) {
-					Name =
-						storeJson["storeContent"][selection]["info"]["title"].get_ref<const std::string &>()
-						+ "/"
-						+ Script[i]["name"].get_ref<const std::string &>();
-				}
-
-				if (Script[i].contains("count") && Script[i]["count"].is_number()) {
-					skipCount = Script[i]["count"];
-				}
-
-				ret = ScriptUtils::prompt(Message, Name);
-
-				if (skipCount > -1 && ret == SCRIPT_CANCELED) {
-					ret = NONE;
-					i += skipCount; // Skip.
-				}
-
-			} else if (type == "exit") {
 				break;
+			}
 
-			} else if (type == "copy") {
-				std::string source = "", destination = "";
-				bool missing = false;
-
-				if (Script[i].contains("source") && Script[i]["source"].is_string()) {
-					source = Script[i]["source"];
+			case Action::Type::PromptMessage: {
+				std::string name = entry.GetTitle() + "/" + action.GetExtra();
+				ret = ScriptUtils::prompt(action.GetInput(), name);
+				if (action.GetCount() > 0 && ret == SCRIPT_CANCELED) {
+					ret = NONE;
+					i += action.GetCount(); // Skip.
 				}
-				else missing = true;
+				break;
+			}
 
-				if (Script[i].contains("destination") && Script[i]["destination"].is_string()) {
-					destination = Script[i]["destination"];
-				}
-				else missing = true;
+			case Action::Type::Error:
+			case Action::Type::Exit: {
+				ret = SCRIPT_CANCELED;
+				break;
+			}
 
+			case Action::Type::Copy: {
 				char message[256];
-				snprintf(message, sizeof(message), Lang::get("SHORTCUT_COPYING").c_str(), source.substr(source.find_first_of("/") + 1).c_str());
+				snprintf(message, sizeof(message), Lang::get("SHORTCUT_COPYING").c_str(), action.GetInput().substr(action.GetInput().find_first_of("/") + 1).c_str());
+				ret = ScriptUtils::copyFile(action.GetInput(), action.GetOutput(), message, true);
+				break;
+			}
 
-				if (!missing) ret = ScriptUtils::copyFile(source, destination, message, true);
-				else ret = SYNTAX_ERROR;
+			case Action::Type::Move: {
+				ret = ScriptUtils::renameFile(action.GetInput(), action.GetOutput(), true);
+				break;
+			}
 
-			} else if (type == "move") {
-				std::string oldFile = "", newFile = "";
-				bool missing = false;
-
-				if (Script[i].contains("old") && Script[i]["old"].is_string()) {
-					oldFile = Script[i]["old"];
-				}
-				else missing = true;
-
-				if (Script[i].contains("new") && Script[i]["new"].is_string()) {
-					newFile = Script[i]["new"];
-				}
-				else missing = true;
-
-				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, true);
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "skip") {
-				int skipCount = -1;
-
-				if (Script[i].contains("count") && Script[i]["count"].is_number()) {
-					skipCount = Script[i]["count"];
-				}
-
-				if (skipCount > 0) {
-					i += skipCount; // Skip.
-				}
+			case Action::Type::Skip: {
+				if (action.GetCount() > 0) i += action.GetCount();
+				break;
 			}
 		}
 	}

@@ -135,7 +135,7 @@ void Animation::displayProgressBar() {
 
 static int rotation = 0;
 extern bool QueueRuns;
-extern std::deque<std::unique_ptr<Queue>> queueEntries;
+extern std::deque<QueueEntry> queueEntries;
 
 void Animation::DrawQueue(int x, int y, int w, int h) {
 	GFX::DrawIconRotated(sprites_queue_idx, x + w/2, y + h/2, rotation);

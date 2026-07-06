@@ -117,10 +117,9 @@ void StoreUtils::DrawList() {
 
 	int &currentMode: Const Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
-	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::ListLogic(int &currentMode, int &lastMode, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 1) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 1);
@@ -143,7 +142,6 @@ void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 		}
 
 		if (hDown & KEY_A) {
-			fetch = true;
 			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;

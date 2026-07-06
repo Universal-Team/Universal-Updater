@@ -74,11 +74,9 @@ static void DeleteStore(const std::string &file) {
 
 		/* Cause it's an array, delete all Spritesheets which exist. */
 		for (int i = 0; i < (int)sht.size(); i++) {
-			if (sht[i] != "") {
-				if (!(StringUtils::toLowerCase(sht[i]).find(StringUtils::toLowerCase("/")) != std::string::npos)) {
-					if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
-						deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
-					}
+			if (!sht[i].empty() && sht[i].find('/') == std::string::npos) {
+				if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
+					deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
 				}
 			}
 		}
@@ -87,11 +85,9 @@ static void DeleteStore(const std::string &file) {
 	} else if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
 		const std::string fl = storeJson["storeInfo"]["sheet"];
 
-		if (fl != "") {
-			if (!(StringUtils::toLowerCase(fl).find(StringUtils::toLowerCase("/")) != std::string::npos)) {
-				if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
-					deleteFile((std::string(_STORE_PATH) + fl).c_str());
-				}
+		if (!fl.empty() && fl.find('/') == std::string::npos) {
+			if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
+				deleteFile((std::string(_STORE_PATH) + fl).c_str());
 			}
 		}
 	}
@@ -133,7 +129,7 @@ void Overlays::SelectStore() {
 	bool doOut = false, skipUpdate = false;
 	int selection = 0, sPos = 0;
 
-	static std::vector<UniStoreInfo> info;
+	static std::vector<Store::Info> info;
 	ThreadFunc helper = [] (void *) {
 		info.clear();
 		info = GetUniStoreInfo(_STORE_PATH);
@@ -165,19 +161,19 @@ void Overlays::SelectStore() {
 		GFX::DrawTop();
 
 		if (info.size() > 0) {
-			if (info[selection].StoreSize != -1) {
-				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), info[selection].Title, 390, 0, font);
-				Gui::DrawStringCentered(0, 30, 0.6f, UIThemes->TextColor(), info[selection].Author, 380, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.5f, UIThemes->TextColor(), info[selection].Description, 380, 130, font, C2D_WordWrap);
+			if (info[selection].valid) {
+				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), info[selection].title, 390, 0, font);
+				Gui::DrawStringCentered(0, 30, 0.6f, UIThemes->TextColor(), info[selection].author, 380, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.5f, UIThemes->TextColor(), info[selection].description, 380, 130, font, C2D_WordWrap);
 
 			} else {
 				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 390, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.6f, UIThemes->TextColor(), info[selection].error, 390, 0, font);
 			}
 
-			Gui::DrawString(10, 190, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].StoreSize), 150, 0, font);
-			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("VERSION") + ": " + std::to_string(info[selection].Version), 150, 0, font);
-			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].Revision), 150, 0, font);
-			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].FileName, 380, 0, font);
+			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].entryCount), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].revision), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].file, 380, 0, font);
 		}
 
 		Animation::QueueEntryDone();
@@ -191,7 +187,7 @@ void Overlays::SelectStore() {
 		if (info.size() > 0) {
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
 				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].Title, 295, 0, font);
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].title, 295, 0, font);
 			}
 		} else if (helperThread) {
 			Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Lang::get("LOADING_UNISTORE_LIST"))) / 2, 0.6f, UIThemes->TextColor(), Lang::get("LOADING_UNISTORE_LIST"), 315, 0, font);
@@ -253,32 +249,20 @@ void Overlays::SelectStore() {
 					}
 				}
 
-				if (selected && info[selection].File != "") { // Ensure to check for this.
-					if (!(info[selection].File.find("/") != std::string::npos)) {
-						/* Load selected one. */
-						if (info[selection].Version == -1) Msg::waitMsg(Lang::get("UNISTORE_INVALID_ERROR"));
-						else if (info[selection].Version < 3) Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
-						else if (info[selection].Version > _UNISTORE_VERSION) Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
-						else {
-							config->lastStore(info[selection].FileName);
-							if(!config->autoupdate())
-								skipUpdate = true;
-							StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].FileName, info[selection].FileName, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
-							StoreUtils::LoadEntries();
-							StoreUtils::ResetSearch();
-							doOut = true;
-						}
-
-					} else {
-						Msg::waitMsg(Lang::get("FILE_SLASH"));
-					}
+				if (selected && info[selection].valid) {
+					/* Load selected one. */
+					config->lastStore(info[selection].file);
+					if (!config->autoupdate()) skipUpdate = true;
+					StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].file, info[selection].file, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
+					StoreUtils::ResetSearch();
+					doOut = true;
 				}
 			}
 
 			/* Delete UniStore. */
 			if ((hidKeysDown() & KEY_X) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[6]))) {
-				if (info[selection].FileName != "") {
-					DeleteStore(info[selection].FileName);
+				if (info[selection].file != "") {
+					DeleteStore(info[selection].file);
 					selection = 0;
 					updateList = true;
 				}
@@ -287,8 +271,8 @@ void Overlays::SelectStore() {
 			/* Download latest UniStore. */
 			if ((hidKeysDown() & KEY_START) || (hidKeysDown() & KEY_TOUCH && touching(touch, mainButtons[7]))) {
 				if (checkWifiStatus()) {
-					if (info[selection].URL != "") {
-						if (UpdateStore(info[selection].FileName)) {
+					if (info[selection].url != "") {
+						if (UpdateStore(info[selection].file)) {
 							updateList = true;
 							skipUpdate = true;
 						}

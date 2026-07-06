@@ -74,12 +74,12 @@ void Meta::ImportMetadata() {
 		oldJson = { };
 
 	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
-	std::vector<UniStoreInfo> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
+	std::vector<Store::Info> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
 
 	for (int i = 0; i < (int)info.size(); i++) {
-		if (info[i].Title != "" && oldJson.contains(info[i].FileName)) {
-			for(auto it = oldJson[info[i].FileName].begin(); it != oldJson[info[i].FileName].end(); ++it) {
-				this->SetUpdated(info[i].Title, it.key().c_str(), it.value().get<std::string>());
+		if (info[i].title != "" && oldJson.contains(info[i].file)) {
+			for(auto it = oldJson[info[i].file].begin(); it != oldJson[info[i].file].end(); ++it) {
+				this->SetUpdated(info[i].title, it.key().c_str(), it.value().get<std::string>());
 			}
 		}
 	}
@@ -154,6 +154,24 @@ std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, con
 
 	if (this->metadataJson[unistoreName][entry]["installed"].is_array()) return this->metadataJson[unistoreName][entry]["installed"];
 	return { };
+}
+
+/*
+	Get the marks.
+
+	const std::string &unistoreName: The UniStore name.
+	const std::string &entry: The Entry name.
+*/
+bool Meta::GetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) const {
+	const std::vector<std::string> &installs = GetInstalled(unistoreName, entry);
+
+	for (const std::string &install : installs) {
+		if (install == name) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /*

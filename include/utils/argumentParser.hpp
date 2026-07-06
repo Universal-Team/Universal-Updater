@@ -28,20 +28,19 @@
 #define _UNIVERSAL_UPDATER_ARGUMENT_PARSER_HPP
 
 #include "json.hpp"
-#include "store.hpp"
+#include "storeEntry.hpp"
 #include <string>
 
 class ArgumentParser {
 public:
-	ArgumentParser(const std::string &file, const std::string &entry, int dlIndex);
-	void Load();
+	ArgumentParser(const std::string &storeFileName, const std::string &entryTitle, int dlIndex);
 	void Execute();
 	bool GetValid() const { return this->isValid; };
 private:
-	std::unique_ptr<Store> store = nullptr;
 	bool isValid = false;
-	std::string file = "", executeEntry = "", entry = "";
-	int dlIndex = -1, entryIndex = -1;
+	std::unique_ptr<Store> store = nullptr;
+	std::shared_ptr<StoreEntry> entry;
+	int dlIndex = -1;
 };
 
 #endif

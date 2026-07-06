@@ -27,9 +27,10 @@
 #ifndef _UNIVERSAL_UPDATER_STORE_HPP
 #define _UNIVERSAL_UPDATER_STORE_HPP
 
-#include "json.hpp"
+#include "rapidjson/document.h"
 #include <citro2d.h>
 #include <string>
+#include <vector>
 
 class Store {
 public:
@@ -37,47 +38,40 @@ public:
 		automatic,
 		forced,
 		skip,
-		spritesheet
+		spritesheet,
+		header
+	};
+
+	struct Info {
+		bool valid;
+		std::string error;
+		int entryCount;
+
+		std::string title;
+		std::string author;
+		std::string description;
+		int revision;
+
+		std::string file;
+		std::string url;
+		std::string infoUrl;
+		std::vector<std::string> sheets;
+		std::vector<std::string> sheetUrls;
+
+		int bgIndex = -1;
+		int bgSheet = 0;
 	};
 
 	Store(const std::string &file, const std::string &fileName, UpdateMode updateMode);
 	~Store();
-	void LoadFromFile(const std::string &file);
+	void LoadFromFile(const std::string &file, bool loadContent);
 	void loadSheets();
 	void unloadSheets();
 	void update(const std::string &file, UpdateMode updateMode);
 
-	/* Get Information of the UniStore itself. */
-	std::string GetUniStoreTitle() const;
-	std::string GetUniStoreAuthor() const;
+	const Store::Info &GetInfo() const { return this->info; }
 
-	/* Get Information of the UniStore entries. */
-	std::string GetTitleEntry(int index) const;
-	std::string GetAuthorEntry(int index) const;
-	std::string GetDescriptionEntry(int index) const;
-	std::vector<std::string> GetCategoryIndex(int index) const;
-	std::string GetVersionEntry(int index) const;
-	std::vector<std::string> GetConsoleEntry(int index) const;
-	std::string GetLastUpdatedEntry(int index) const;
-	int GetStarsEntry(int index) const;
-	std::string GetLicenseEntry(int index) const;
-	std::string GetLlmGenerationEntry(int index) const;
-	std::string GetWikiEntry(int index) const;
-	std::string GetPreinstallMessage(int index) const;
-	std::vector<std::string> GetInstalledFiles(int index) const;
-	std::vector<int> GetTitleIds(int index) const;
-	bool GetIconValid(int index) const;
-	C2D_Image GetIconEntry(int index) const;
-	std::string GetFileSizes(int index, const std::string &entry) const;
-	std::string GetFileTypes(int index, const std::string &entry) const;
-	std::vector<std::string> GetScreenshotList(int index) const;
-	std::vector<std::string> GetScreenshotNames(int index) const;
-	std::string GetReleaseNotes(int index) const;
-	uint32_t GetAccentColorEntry(int index) const;
-
-	std::vector<std::string> GetDownloadList(int index) const;
-
-	int GetStoreSize() const { return (int)this->storeJson["storeContent"].size(); };
+	int GetStoreSize() const { return this->info.entryCount; }
 
 	int GetScreenIndx() const { return this->screenIndex; };
 	void SetScreenIndx(int v) { this->screenIndex = v; };
@@ -86,19 +80,24 @@ public:
 	void SetAnimOffset(int v) { this->animOffset = v; };
 
 	int GetEntry() const { return this->entry; };
-	void SetEntry(int v) { this->entry = v; };
+	void SetEntry(int v) {
+		this->entry = v;
+
+		// Also reset download list
+		this->downScrollOffset = 0;
+		this->downIndex = 0;
+	};
 
 	int GetBox() const { return this->box; };
 	void SetBox(int v) { this->box = v; };
 
-	int GetDownloadSIndex() const { return this->downIndex; };
-	void SetDownloadSIndex(int v) { this->downIndex = v; };
+	int GetDownloadScrollOffset() const { return this->downScrollOffset; };
+	void SetDownloadScrollOffset(int v) { this->downScrollOffset = v; };
 
-	int GetDownloadIndex() const { return this->downEntry; };
-	void SetDownloadIndex(int v) { this->downEntry = v; };
+	int GetDownloadIndex() const { return this->downIndex; };
+	void SetDownloadIndex(int v) { this->downIndex = v; };
 
-	nlohmann::json &GetJson() { return this->storeJson; };
-	bool GetValid() const { return this->valid; };
+	bool GetValid() const { return this->info.valid; };
 
 	/* Both of these things are used for custom BG support. */
 	C2D_Image GetStoreImg() const { return this->storeBG; };
@@ -108,17 +107,21 @@ public:
 	const std::vector<std::string> &GetCategories() const { return this->categories; }
 	const std::vector<std::string> &GetConsoles() const { return this->consoles; }
 
-	/* Return filename of the UniStore. */
-	std::string GetFileName() const { return this->fileName; };
+	bool GetIconValid(int iconIndex, int sheetIndex) const;
+	C2D_Image GetIconEntry(int iconIndex, int sheetIndex) const;
+
 private:
+	bool LoadStoreInfo(const rapidjson::Value &storeInfo);
+	bool LoadStoreContent(const rapidjson::Value &storeContent);
+
 	void SetC2DBGImage();
-	nlohmann::json storeJson = nullptr;
+	std::vector<std::string> categories;
+	std::vector<std::string> consoles;
 	std::vector<C2D_SpriteSheet> sheets;
 	C2D_Image storeBG = { nullptr };
-	bool valid = false, hasSheet = false, hasCustomBG = false;
-	int screenIndex = 0, entry = 0, box = 0, downEntry = 0, downIndex = 0, animOffset = 0;
-	std::string fileName = "";
-	std::vector<std::string> categories, consoles;
+	bool hasSheet = false, hasCustomBG = false;
+	int screenIndex = 0, entry = 0, box = 0, downIndex = 0, downScrollOffset = 0, animOffset = 0;
+	Info info;
 };
 
 #endif

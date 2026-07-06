@@ -35,7 +35,6 @@
 
 extern int fadeAlpha;
 
-extern UniStoreInfo GetInfo(const std::string &file, const std::string &fileName);
 extern void notConnectedMsg();
 
 /*
@@ -57,16 +56,10 @@ MainScreen::MainScreen() {
 
 	} else {
 		/* check version and file here. */
-		const UniStoreInfo info = GetInfo((_STORE_PATH + config->lastStore()), config->lastStore());
-
-		if (info.Version != 3 && info.Version != _UNISTORE_VERSION) {
+		const Store::Info info = Store((_STORE_PATH + config->lastStore()), config->lastStore(), Store::UpdateMode::header).GetInfo();
+		/* Ensure the UniStore is valid, has a filename, and that filename has no "/". */
+		if (!info.valid || info.file == "" || info.file.find("/") != std::string::npos) {
 			config->lastStore("universal-db.unistore");
-		}
-
-		if (info.File != "") { // Ensure to check for this.
-			if ((info.File.find("/") != std::string::npos)) {
-				config->lastStore("universal-db.unistore"); // It does contain a '/' which is invalid.
-			}
 		}
 	}
 
@@ -93,7 +86,6 @@ MainScreen::MainScreen() {
 			notConnectedMsg();
 		}
 	}
-	StoreUtils::LoadEntries();
 	StoreUtils::SortEntries();
 
 	// Display Release changelog for Universal-Updater.
@@ -120,7 +112,7 @@ void MainScreen::Draw(void) const {
 	Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
 	Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
 
-	if (StoreUtils::store && StoreUtils::store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), StoreUtils::store->GetUniStoreTitle(), 360, 0, font);
+	if (StoreUtils::store && StoreUtils::store->GetValid()) Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), StoreUtils::store->GetInfo().title, 360, 0, font);
 	else Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 370, 0, font);
 	GFX::DrawTime();
 	GFX::DrawBattery();
@@ -138,7 +130,7 @@ void MainScreen::Draw(void) const {
 
 		case 1:
 			/* Download List. */
-			StoreUtils::DrawDownList(this->dwnldList, this->fetchDown, StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldSizes, this->installs);
+			StoreUtils::DrawDownList(StoreUtils::entries[StoreUtils::store->GetEntry()]);
 			break;
 
 		case 2:
@@ -228,53 +220,18 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (!this->showMarks) {
 		if (storeMode == 0 || storeMode == 3 || storeMode == 4) {
-			config->list() ? StoreUtils::ListLogic(storeMode, this->lastMode, this->fetchDown, this->smallDelay) : StoreUtils::GridLogic(storeMode, this->lastMode, this->fetchDown, this->smallDelay);
+			config->list() ? StoreUtils::ListLogic(storeMode, this->lastMode, this->smallDelay) : StoreUtils::GridLogic(storeMode, this->lastMode, this->smallDelay);
 		}
 
-		StoreUtils::SideMenuHandle(storeMode, this->fetchDown, this->lastMode);
-
-		/* Fetch Download list. */
-		if (this->fetchDown) {
-			this->installs.clear();
-			this->dwnldList.clear();
-			this->dwnldSizes.clear();
-			this->dwnldTypes.clear();
-
-			if (StoreUtils::store && StoreUtils::store->GetValid()) {
-				const std::vector<std::string> installedNames = StoreUtils::meta->GetInstalled(StoreUtils::store->GetUniStoreTitle(), StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTitle());
-				StoreUtils::store->SetDownloadIndex(0); // Reset to 0.
-				StoreUtils::store->SetDownloadSIndex(0);
-
-				if ((int)StoreUtils::entries.size() > StoreUtils::store->GetEntry()) {
-					this->dwnldList = StoreUtils::store->GetDownloadList(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetEntryIndex());
-					this->dwnldSizes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetSizes();
-					this->dwnldTypes = StoreUtils::entries[StoreUtils::store->GetEntry()]->GetTypes();
-
-					for (int i = 0; i < (int)this->dwnldList.size(); i++) {
-						bool good = false;
-
-						for (int i2 = 0; i2 < (int)installedNames.size(); i2++) {
-							if (installedNames[i2] == this->dwnldList[i]) {
-								this->installs.push_back( true );
-								good = true;
-							}
-						}
-
-						if (!good) this->installs.push_back( false );
-					}
-				}
-			}
-
-			this->fetchDown = false;
-		}
+		StoreUtils::SideMenuHandle(storeMode, this->lastMode);
 
 		switch(storeMode) {
 			case 0:
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->fetchDown, this->screenshotFetch, storeMode, StoreUtils::entries[StoreUtils::store->GetEntry()]);
+				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->screenshotFetch, storeMode, StoreUtils::entries[StoreUtils::store->GetEntry()]);
 				break;
 
 			case 1:
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(StoreUtils::entries[StoreUtils::store->GetEntry()], this->dwnldList, storeMode, this->lastMode, this->smallDelay, this->installs, this->dwnldTypes);
+				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(StoreUtils::entries[StoreUtils::store->GetEntry()], storeMode, this->lastMode, this->smallDelay);
 				break;
 
 			case 2:

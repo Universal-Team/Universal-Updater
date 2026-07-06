@@ -32,11 +32,11 @@
 #include "storeUtils.hpp"
 #include <unistd.h>
 
-std::deque<std::unique_ptr<Queue>> queueEntries;
+std::deque<QueueEntry> queueEntries;
 int QueueSystem::RequestNeeded = -1, QueueSystem::RequestAnswer = -1;
 bool QueueSystem::Wait = false, QueueSystem::Popup = false, QueueSystem::CancelCallback = false;
 std::string QueueSystem::RequestMsg = "", QueueSystem::RequestMsgName = "", QueueSystem::EndMsg = "";
-int QueueSystem::LastElement = 0;
+int QueueSystem::PriorElement = 0;
 
 bool QueueRuns = false;
 static Thread queueThread = nullptr;
@@ -47,8 +47,8 @@ static Thread queueThread = nullptr;
 	nlohmann::json obj: The object.
 	C2D_Image icn: The icon.
 */
-void QueueSystem::AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) {
-	queueEntries.push_back( std::make_unique<Queue>(obj, icn, name, uName, eName, lUpdated) );
+void QueueSystem::AddToQueue(const std::shared_ptr<StoreEntry> &entry, int script) {
+	queueEntries.emplace_back(entry, script);
 
 	/* If not already running, let it run!! */
 	if (!QueueRuns && !QueueSystem::Wait) {
@@ -110,147 +110,58 @@ void QueueSystem::QueueHandle() {
 	while(QueueRuns) {
 		Result ret = NONE; // No Error as of yet.
 
-		for(int i = QueueSystem::LastElement; ret == NONE && i < queueEntries[0]->total && !QueueSystem::CancelCallback; i++) {
-			queueEntries[0]->current++;
+		QueueEntry &entry = queueEntries[0];
+		const Script &script = entry.storeEntry->GetScript(entry.scriptIndex);
+		for(int i = QueueSystem::PriorElement; ret == NONE && i < (int)script.GetActions().size() && !QueueSystem::CancelCallback; i++) {
+			const Action &action = script.GetAction(i);
+			entry.currentStep++;
 
-			std::string type = "";
-
-			if (queueEntries[0]->obj[i].contains("type") && queueEntries[0]->obj[i]["type"].is_string()) {
-				type = queueEntries[0]->obj[i]["type"];
-
-			} else {
-				ret = SYNTAX_ERROR;
-			}
-
-			/* Deleting a file. */
-			if (type == "deleteFile") {
-				bool missing = false;
-				std::string file = "";
-				queueEntries[0]->status = QueueStatus::Deleting;
-
-				if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
-					file = queueEntries[0]->obj[i]["file"];
-				} else missing = true;
-
-				if (!missing) ret = ScriptUtils::removeFile(file, "");
-				else ret = SYNTAX_ERROR;
-
-				/* Downloading from a URL. */
-			} else if (type == "downloadFile") {
-				bool missing = false;
-				std::string file = "", output = "";
-
-				queueEntries[0]->status = QueueStatus::Downloading;
-
-				if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
-					file = queueEntries[0]->obj[i]["file"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("output") && queueEntries[0]->obj[i]["output"].is_string()) {
-					output = queueEntries[0]->obj[i]["output"];
-				} else missing = true;
-
-				if (!missing) ret = ScriptUtils::downloadFile(file, output, "", false);
-				else ret = SYNTAX_ERROR;
-
-				/* Download from a GitHub Release. */
-			} else if (type == "downloadRelease") {
-				bool missing = false, includePrereleases = false;
-				std::string repo = "", file = "", output = "";
-
-				queueEntries[0]->status = QueueStatus::Downloading;
-
-				if (queueEntries[0]->obj[i].contains("repo") && queueEntries[0]->obj[i]["repo"].is_string()) {
-					repo = queueEntries[0]->obj[i]["repo"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
-					file = queueEntries[0]->obj[i]["file"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("output") && queueEntries[0]->obj[i]["output"].is_string()) {
-					output = queueEntries[0]->obj[i]["output"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("includePrereleases") && queueEntries[0]->obj[i]["includePrereleases"].is_boolean())
-					includePrereleases = queueEntries[0]->obj[i]["includePrereleases"];
-
-				if (!missing) ret = ScriptUtils::downloadRelease(repo, file, output, includePrereleases, "", false);
-				else ret = SYNTAX_ERROR;
-
-				/* Extracting files. */
-			} else if (type == "extractFile") {
-				bool missing = false;
-				std::string file = "", input = "", output = "";
-				queueEntries[0]->status = QueueStatus::Extracting;
-
-				if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
-					file = queueEntries[0]->obj[i]["file"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("input") && queueEntries[0]->obj[i]["input"].is_string()) {
-					input = queueEntries[0]->obj[i]["input"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("output") && queueEntries[0]->obj[i]["output"].is_string()) {
-					output = queueEntries[0]->obj[i]["output"];
-				} else missing = true;
-
-				if (!missing) ret = ScriptUtils::extractFile(file, input, output, "", false);
-				else ret = SYNTAX_ERROR;
-
-			/* Installing CIAs. */
-			} else if (type == "installCia") {
-				bool missing = false, updateSelf = false;
-				std::string file = "";
-				queueEntries[0]->status = QueueStatus::Installing;
-
-				if (queueEntries[0]->obj[i].contains("file") && queueEntries[0]->obj[i]["file"].is_string()) {
-					file = queueEntries[0]->obj[i]["file"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("updateSelf") && queueEntries[0]->obj[i]["updateSelf"].is_boolean()) {
-					updateSelf = queueEntries[0]->obj[i]["updateSelf"];
+			switch (action.GetType()) {
+				case Action::Type::DeleteFile: {
+					entry.status = QueueStatus::Deleting;
+					ret = ScriptUtils::removeFile(action.GetInput());
+					break;
 				}
 
-				if (!missing) ScriptUtils::installFile(file, updateSelf, "");
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "mkdir") {
-				bool missing = false;
-				std::string directory = "";
-
-				if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
-					directory = queueEntries[0]->obj[i]["directory"];
-				} else missing = true;
-
-				if (!missing) makeDirs(directory.c_str());
-				else ret = SYNTAX_ERROR;
-
-			/* Request Type 1. */
-			} else if (type == "rmdir") {
-				bool missing = false;
-				std::string directory = "", message = "", promptmsg = "";
-				bool required = false;
-				queueEntries[0]->status = QueueStatus::Request;
-
-				if (queueEntries[0]->obj[i].contains("directory") && queueEntries[0]->obj[i]["directory"].is_string()) {
-					directory = queueEntries[0]->obj[i]["directory"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("required") && queueEntries[0]->obj[i]["required"].is_boolean()) {
-					required = queueEntries[0]->obj[i]["required"];
+				case Action::Type::DownloadFile: {
+					entry.status = QueueStatus::Downloading;
+					ret = ScriptUtils::downloadFile(action.GetInput(), action.GetOutput());
+					break;
 				}
 
-				promptmsg = Lang::get("DELETE_PROMPT") + "\n" + directory;
+				case Action::Type::DownloadRelease: {
+					entry.status = QueueStatus::Downloading;
+					ret = ScriptUtils::downloadRelease(action.GetExtra(), action.GetInput(), action.GetOutput(), action.GetPrereleases());
+					break;
+				}
 
-				if (!missing && directory != "") {
-					if (access(directory.c_str(), F_OK) != 0 && required) ret = DELETE_ERROR;
-					else {
+				case Action::Type::ExtractFile: {
+					entry.status = QueueStatus::Extracting;
+					ret = ScriptUtils::extractFile(action.GetExtra(), action.GetInput(), action.GetOutput());
+					break;
+				}
+
+				case Action::Type::InstallCia: {
+					entry.status = QueueStatus::Installing;
+					ScriptUtils::installFile(action.GetInput(), false);
+					break;
+				}
+
+				case Action::Type::Mkdir: {
+					makeDirs(action.GetInput().c_str());
+					break;
+				}
+
+				case Action::Type::Rmdir: {
+					if (action.GetInput() == "") {
+						ret = SYNTAX_ERROR;
+					} else if (access(action.GetInput().c_str(), F_OK) == 0) {
+						// Only prompt if the directory is real.
+						entry.status = QueueStatus::Request;
 						if (QueueSystem::RequestNeeded == RMDIR_REQUEST) {
 							/* There we already did it. :) */
-							queueEntries[0]->status = QueueStatus::Deleting;
-							if (QueueSystem::RequestAnswer == 1) removeDirRecursive(directory.c_str());
+							entry.status = QueueStatus::Deleting;
+							if (QueueSystem::RequestAnswer == 1) removeDirRecursive(action.GetInput().c_str());
 							/* Reset. */
 							QueueSystem::RequestNeeded = NO_REQUEST;
 							QueueSystem::RequestAnswer = NO_REQUEST;
@@ -258,108 +169,85 @@ void QueueSystem::QueueHandle() {
 
 						} else {
 							/* We are in the process of the need of an answer. */
-							QueueSystem::RequestNeeded = RMDIR_REQUEST; // Type 1.
-							QueueSystem::RequestMsg = promptmsg;
-							QueueSystem::LastElement = i; // So we know, where we go again after the Request.
+							QueueSystem::RequestNeeded = RMDIR_REQUEST;
+							QueueSystem::RequestMsg = Lang::get("DELETE_PROMPT") + "\n" + action.GetInput();
+							QueueSystem::PriorElement = i; // So we know, where we go again after the Request.
 							ret = PROMPT_RET;
 						}
 					}
+					break;
 				}
 
-				else ret = SYNTAX_ERROR;
+				case Action::Type::PromptMessage: {
+					entry.status = QueueStatus::Request;
+					std::string name = entry.storeEntry->GetTitle() + "/" + action.GetExtra();
+					if (!name.empty() && config->savedPrompt(name) != PromptValue::Unset) {
+						if (config->savedPrompt(name) == PromptValue::No) {
+							if(action.GetCount() > 0) {
+								i += action.GetCount();
+								entry.currentStep += action.GetCount();
+							} else {
+								ret = SCRIPT_CANCELED;
+							}
+						}
+					} else if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
+						/* This happens when we come back after answering. */
+						if (QueueSystem::RequestAnswer == SCRIPT_CANCELED) {
+							if(action.GetCount() > 0) {
+								i += action.GetCount();
+								entry.currentStep += action.GetCount();
+							} else {
+								ret = SCRIPT_CANCELED;
+							}
+						}
 
-			/* Request Type 2. */
-			} else if (type == "promptMessage" || type == "promptMsg") {
-				std::string Message = "", Name = "";
-				int skipCount = -1;
-				queueEntries[0]->status = QueueStatus::Request;
+						/* Reset. */
+						QueueSystem::RequestAnswer = NO_REQUEST;
+						QueueSystem::RequestNeeded = NO_REQUEST;
+						QueueSystem::RequestMsg = "";
+						QueueSystem::RequestMsgName = "";
 
-				if (queueEntries[0]->obj[i].contains("message") && queueEntries[0]->obj[i]["message"].is_string()) {
-					Message = queueEntries[0]->obj[i]["message"];
-				}
-
-				if (queueEntries[0]->obj[i].contains("name") && queueEntries[0]->obj[i]["name"].is_string()) {
-					Name = queueEntries[0]->entryName + "/" + queueEntries[0]->obj[i]["name"].get_ref<const std::string &>();
-				}
-
-				if (queueEntries[0]->obj[i].contains("count") && queueEntries[0]->obj[i]["count"].is_number()) {
-					skipCount = queueEntries[0]->obj[i]["count"];
-				}
-
-				if (!Name.empty() && config->savedPrompt(Name) != PromptValue::Unset) {
-					if ((skipCount > -1) && (config->savedPrompt(Name) == PromptValue::No)) {
-						i += skipCount; // Skip.
-						queueEntries[0]->current += skipCount;
+					} else {
+						QueueSystem::RequestNeeded = PROMPT_REQUEST;
+						QueueSystem::RequestMsg = action.GetInput();
+						QueueSystem::RequestMsgName = name;
+						QueueSystem::PriorElement = i; // So we know, where we go again after the Request.
+						ret = PROMPT_RET;
 					}
-				} else if (QueueSystem::RequestNeeded == PROMPT_REQUEST) {
-					if ((skipCount > -1) && (QueueSystem::RequestAnswer == SCRIPT_CANCELED)) {
-						i += skipCount; // Skip.
-						queueEntries[0]->current += skipCount;
+					break;
+				}
+
+				case Action::Type::Error:
+				case Action::Type::Exit: {
+					ret = SCRIPT_CANCELED;
+					break;
+				}
+
+				case Action::Type::Copy: {
+					entry.status = QueueStatus::Copying;
+					ret = ScriptUtils::copyFile(action.GetInput(), action.GetOutput());
+					break;
+				}
+
+				case Action::Type::Move: {
+					entry.status = QueueStatus::Moving;
+					ret = ScriptUtils::renameFile(action.GetInput(), action.GetOutput());
+					break;
+				}
+
+				case Action::Type::Skip: {
+					if (action.GetCount() > 0) {
+						i += action.GetCount();
+						entry.currentStep += action.GetCount();
 					}
-
-					/* Reset. */
-					QueueSystem::RequestAnswer = NO_REQUEST;
-					QueueSystem::RequestNeeded = NO_REQUEST;
-					QueueSystem::RequestMsg = "";
-					QueueSystem::RequestMsgName = "";
-
-				} else {
-					QueueSystem::RequestNeeded = PROMPT_REQUEST; // Type 2.
-					QueueSystem::RequestMsg = Message;
-					QueueSystem::RequestMsgName = Name;
-					QueueSystem::LastElement = i; // So we know, where we go again after the Request.
-					ret = PROMPT_RET;
+					break;
 				}
-
-			} else if (type == "exit") {
-				ret = SCRIPT_CANCELED;
-
-			} else if (type == "copy") {
-				std::string source = "", destination = "";
-				bool missing = false;
-				queueEntries[0]->status = QueueStatus::Copying;
-
-				if (queueEntries[0]->obj[i].contains("source") && queueEntries[0]->obj[i]["source"].is_string()) {
-					source = queueEntries[0]->obj[i]["source"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("destination") && queueEntries[0]->obj[i]["destination"].is_string()) {
-					destination = queueEntries[0]->obj[i]["destination"];
-				} else missing = true;
-
-				if (!missing) ret = ScriptUtils::copyFile(source, destination, "");
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "move") {
-				std::string oldFile = "", newFile = "";
-				bool missing = false;
-				queueEntries[0]->status = QueueStatus::Moving;
-
-				if (queueEntries[0]->obj[i].contains("old") && queueEntries[0]->obj[i]["old"].is_string()) {
-					oldFile = queueEntries[0]->obj[i]["old"];
-				} else missing = true;
-
-				if (queueEntries[0]->obj[i].contains("new") && queueEntries[0]->obj[i]["new"].is_string()) {
-					newFile = queueEntries[0]->obj[i]["new"];
-				} else missing = true;
-
-				if (!missing) ret = ScriptUtils::renameFile(oldFile, newFile, "");
-				else ret = SYNTAX_ERROR;
-
-			} else if (type == "skip") {
-				int skipCount = -1;
-
-				if (queueEntries[0]->obj[i].contains("count") && queueEntries[0]->obj[i]["count"].is_number()) {
-					skipCount = queueEntries[0]->obj[i]["count"];
-				}
-
-				if (skipCount > 0) i += skipCount; // Skip.
 			}
 		}
 
 		/* If we expect a prompt, we go to this. */
 		if (ret == PROMPT_RET) {
-			queueEntries[0]->current = QueueSystem::LastElement + 1; // Cause no Zero.
+			queueEntries[0].currentStep = QueueSystem::PriorElement + 1; // Cause no Zero.
 			QueueSystem::Wait = true;
 			QueueRuns = false;
 		}
@@ -367,10 +255,10 @@ void QueueSystem::QueueHandle() {
 		if (!QueueSystem::Wait) {
 			/* Canceled or None is for me -> Done. */
 			if (ret == NONE || ret == SCRIPT_CANCELED) {
-				queueEntries[0]->status = QueueStatus::Done;
+				queueEntries[0].status = QueueStatus::Done;
 
 			} else { // Else it failed..
-				queueEntries[0]->status = QueueStatus::Failed;
+				queueEntries[0].status = QueueStatus::Failed;
 			}
 
 			/* Display if failed or succeeded. */
@@ -378,14 +266,14 @@ void QueueSystem::QueueHandle() {
 				char msg[256];
 
 				if (QueueSystem::CancelCallback) {
-					snprintf(msg, sizeof(msg), Lang::get("ACTION_CANCELED").c_str(), queueEntries[0]->name.c_str());
+					snprintf(msg, sizeof(msg), Lang::get("ACTION_CANCELED").c_str(), script.GetName().c_str());
 
 				} else {
-					if (queueEntries[0]->status == QueueStatus::Failed) {
-						snprintf(msg, sizeof(msg), Lang::get("ACTION_FAILED").c_str(), queueEntries[0]->name.c_str());
+					if (queueEntries[0].status == QueueStatus::Failed) {
+						snprintf(msg, sizeof(msg), Lang::get("ACTION_FAILED").c_str(), script.GetName().c_str());
 
 					} else {
-						snprintf(msg, sizeof(msg), Lang::get("ACTION_SUCCEEDED").c_str(), queueEntries[0]->name.c_str());
+						snprintf(msg, sizeof(msg), Lang::get("ACTION_SUCCEEDED").c_str(), script.GetName().c_str());
 					}
 				}
 
@@ -393,18 +281,18 @@ void QueueSystem::QueueHandle() {
 				QueueSystem::Popup = true;
 			}
 
-			if (queueEntries[0]->status == QueueStatus::Done) { // ONLY update, if successful.
+			if (queueEntries[0].status == QueueStatus::Done) { // ONLY update, if successful.
 				if (StoreUtils::meta) {
-					StoreUtils::meta->SetUpdated(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->lastUpdated);
-					StoreUtils::meta->SetInstalled(queueEntries[0]->unistoreName, queueEntries[0]->entryName, queueEntries[0]->name);
-					StoreUtils::RefreshInstalledApps(queueEntries[0]->entryName);
+					StoreUtils::meta->SetUpdated(entry.storeEntry->GetUniStore(), entry.storeEntry->GetTitle(), entry.storeEntry->GetLastUpdated());
+					StoreUtils::meta->SetInstalled(entry.storeEntry->GetUniStore(), entry.storeEntry->GetTitle(), script.GetName());
+					StoreUtils::RefreshInstalledApps(entry.storeEntry->GetTitle());
 				}
 			}
 
 			if (QueueSystem::CancelCallback) QueueSystem::CancelCallback = false; // Reset.
 
 			queueEntries.pop_front();
-			if (QueueSystem::LastElement != 0) QueueSystem::LastElement = 0;
+			if (QueueSystem::PriorElement != 0) QueueSystem::PriorElement = 0;
 			if (queueEntries.empty()) QueueRuns = false; // The queue ended.
 			ret = NONE; // Reset.
 		}
