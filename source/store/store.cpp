@@ -46,7 +46,7 @@ extern bool checkWifiStatus();
 	const std::string &fileName: The UniStore file.. without full path.
 	UpdateMode updateMode: How to update
 */
-Store::Store(const std::string &file, const std::string &fileName, UpdateMode updateMode) {
+Store::Store(const std::string &file, const std::string &fileName, UpdateMode updateMode, bool loadContent) {
 	if (file.length() > 4) {
 		if(*(u32*)(file.c_str() + file.length() - 4) == (0xE0DED0E << 3 | (2 + 1))) {
 			this->info.valid = false;
@@ -54,7 +54,7 @@ Store::Store(const std::string &file, const std::string &fileName, UpdateMode up
 		}
 	}
 
-	this->update(file, updateMode);
+	this->update(file, updateMode, loadContent);
 };
 
 /*
@@ -62,9 +62,11 @@ Store::Store(const std::string &file, const std::string &fileName, UpdateMode up
 
 	const std::string &file: Const Reference to the fileName.
 */
-void Store::update(const std::string &file, UpdateMode updateMode) {
+void Store::update(const std::string &file, UpdateMode updateMode, bool loadContent) {
 	this->LoadFromFile(file, false);
-	if (updateMode == UpdateMode::header) return;
+
+	/* If we're not updating and don't want content, we're already done. */
+	if (updateMode == UpdateMode::skip && !loadContent) return;
 
 	bool doSheet = true;
 	int rev = (updateMode == UpdateMode::forced) ? -1 : this->info.revision;
@@ -107,7 +109,7 @@ void Store::update(const std::string &file, UpdateMode updateMode) {
 	}
 
 	if(this->info.valid) {
-		this->LoadFromFile(file, true);
+		this->LoadFromFile(file, loadContent);
 	}
 }
 

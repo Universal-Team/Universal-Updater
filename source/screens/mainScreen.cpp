@@ -56,7 +56,7 @@ MainScreen::MainScreen() {
 
 	} else {
 		/* check version and file here. */
-		const Store::Info info = Store((_STORE_PATH + config->lastStore()), config->lastStore(), Store::UpdateMode::header).GetInfo();
+		const Store::Info info = Store((_STORE_PATH + config->lastStore()), config->lastStore(), Store::UpdateMode::skip, false).GetInfo();
 		/* Ensure the UniStore is valid, has a filename, and that filename has no "/". */
 		if (!info.valid || info.file == "" || info.file.find("/") != std::string::npos) {
 			config->lastStore("universal-db.unistore");
@@ -75,12 +75,12 @@ MainScreen::MainScreen() {
 		}
 	}
 
-	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), updateMode);
+	StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), updateMode, true);
 	if (!StoreUtils::store->GetValid()) {
 		if (checkWifiStatus()) {
 			config->lastStore("universal-db.unistore");
 			DownloadUniStore("https://db.universal-team.net/unistore/universal-db.unistore", -1, Lang::get("DOWNLOADING_UNIVERSAL_DB"));
-			StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), Store::UpdateMode::spritesheet);
+			StoreUtils::store = std::make_unique<Store>(storePath, config->lastStore(), Store::UpdateMode::spritesheet, true);
 
 		} else {
 			notConnectedMsg();

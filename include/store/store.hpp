@@ -38,8 +38,7 @@ public:
 		automatic,
 		forced,
 		skip,
-		spritesheet,
-		header
+		spritesheet
 	};
 
 	struct Info {
@@ -62,12 +61,12 @@ public:
 		int bgSheet = 0;
 	};
 
-	Store(const std::string &file, const std::string &fileName, UpdateMode updateMode);
+	Store(const std::string &file, const std::string &fileName, UpdateMode updateMode, bool loadContent);
 	~Store();
 	void LoadFromFile(const std::string &file, bool loadContent);
 	void loadSheets();
 	void unloadSheets();
-	void update(const std::string &file, UpdateMode updateMode);
+	void update(const std::string &file, UpdateMode updateMode, bool loadContent);
 
 	const Store::Info &GetInfo() const { return this->info; }
 

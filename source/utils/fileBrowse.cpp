@@ -88,7 +88,7 @@ std::vector<Store::Info> GetUniStoreInfo(const std::string &path) {
 	for(uint i = 0; i < dirContents.size(); i++) {
 		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
 		if ((path + dirContents[i].name).find(".unistore") != std::string::npos) {
-			info.emplace_back(Store(path + dirContents[i].name, dirContents[i].name, Store::UpdateMode::header).GetInfo());
+			info.emplace_back(Store(path + dirContents[i].name, dirContents[i].name, Store::UpdateMode::skip, false).GetInfo());
 		}
 	}
 

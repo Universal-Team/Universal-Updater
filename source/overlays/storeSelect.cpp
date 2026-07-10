@@ -104,7 +104,7 @@ static bool DownloadStore() {
 
 	std::string file;
 	DownloadUniStore(URL, -1, Lang::get("DOWNLOADING_UNISTORE"), &file);
-	Store(_STORE_PATH + file, file, Store::UpdateMode::spritesheet);
+	Store(_STORE_PATH + file, file, Store::UpdateMode::spritesheet, false);
 
 	hidScanInput(); // Re-Scan.
 	return true;
@@ -112,7 +112,7 @@ static bool DownloadStore() {
 
 static bool UpdateStore(const std::string &file) {
 	if (file == "") return false;
-	Store(_STORE_PATH + file, file, Store::UpdateMode::forced);
+	Store(_STORE_PATH + file, file, Store::UpdateMode::forced, false);
 	return true;
 }
 
@@ -253,7 +253,7 @@ void Overlays::SelectStore() {
 					/* Load selected one. */
 					config->lastStore(info[selection].file);
 					if (!config->autoupdate()) skipUpdate = true;
-					StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].file, info[selection].file, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic);
+					StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].file, info[selection].file, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic, true);
 					StoreUtils::ResetSearch();
 					doOut = true;
 				}

@@ -40,7 +40,7 @@ ArgumentParser::ArgumentParser(const std::string &storeFileName, const std::stri
 	if (this->dlIndex == -1 || storeFileName.empty()) return;
 	if (access((std::string(_STORE_PATH) + storeFileName).c_str(), F_OK) != 0) return;
 
-	this->store = std::make_unique<Store>(_STORE_PATH + storeFileName, storeFileName, Store::UpdateMode::skip);
+	this->store = std::make_unique<Store>(_STORE_PATH + storeFileName, storeFileName, Store::UpdateMode::skip, true);
 	if (!this->store->GetValid()) return;
 
 	for (const std::shared_ptr<StoreEntry> &entry : StoreUtils::allEntries) {
