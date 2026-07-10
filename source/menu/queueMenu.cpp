@@ -289,7 +289,7 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 						break;
 				}
 
-			} else {
+			} else if (QueueRuns) {
 				ShowQueueProgress = !ShowQueueProgress; // In case no request expected, switch from progress to total progress mode etc.
 			}
 
@@ -327,8 +327,10 @@ void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
 					break;
 			}
 
-		} else {
+		} else if (QueueRuns) {
 			ShowQueueProgress = !ShowQueueProgress; // In case no request expected, switch from progress to total progress mode etc.
+		} else {
+			storeMode = 0; // Return to entry info
 		}
 	}
 
