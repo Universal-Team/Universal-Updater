@@ -34,6 +34,7 @@
 #include <fstream>
 
 #define DOWNLOAD_ENTRIES 7
+extern int fadeAlpha;
 extern std::string _3dsxPath;
 extern bool exiting, is3DSX, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -105,7 +106,7 @@ static bool CreateShortcut(const std::string &entryName, int index, const std::s
 	Draw the Download entries part.
 */
 void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
-	uint32_t accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
+	uint32_t accentColor = (config->useAccentColor() && entry) ? entry->GetAccentColor() : 0;
 
 	/* For the Top Screen. */
 	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
@@ -126,21 +127,18 @@ void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
 		}
 	}
 
-	GFX::DrawTime();
-	GFX::DrawBattery();
-	GFX::DrawWifi();
-	Animation::QueueEntryDone();
-
+	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 	GFX::DrawBottom();
 	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
 	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
 
-	if(entry->GetUpdateAvl()) {
-		GFX::DrawSprite(sprites_update_app_idx, clearUpdatePos.x, clearUpdatePos.y);
-	}
 
 	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
+		if(entry->GetUpdateAvl()) {
+			GFX::DrawSprite(sprites_update_app_idx, clearUpdatePos.x, clearUpdatePos.y);
+		}
+
 		if (entry->GetScripts().size() > 0) {
 			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entry->GetScripts().size(); i++) {
 				const Script &script = entry->GetScript(i);
