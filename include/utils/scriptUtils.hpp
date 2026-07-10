@@ -46,13 +46,12 @@ namespace ScriptUtils {
 	bool matchPattern(const std::string &pattern, const std::string &tested);
 
 	Result removeFile(const std::string &file, bool isARG = false);
-	// void bootTitle(const std::string &TitleID, bool isNAND, bool isARG = false);
 	Result prompt(const std::string &message, const std::string &name);
 	Result copyFile(const std::string &source, const std::string &destination, const std::string &message = "", bool isARG = false);
 	Result renameFile(const std::string &oldName, const std::string &newName, bool isARG = false);
 	Result downloadRelease(const std::string &repo, const std::string &file, const std::string &output, bool includePrereleases, const std::string &message = "", bool isARG = false);
 	Result downloadFile(const std::string &file, const std::string &output, const std::string &message = "", bool isARG = false);
-	void installFile(const std::string &file, bool updatingSelf, const std::string &message = "", bool isARG = false);
+	void installFile(const std::string &file, const std::string &message = "", bool isARG = false);
 	Result extractFile(const std::string &file, const std::string &input, const std::string &output, const std::string &message = "", bool isARG = false);
 
 	Result runFunctions(const StoreEntry &entry, const Script &script);

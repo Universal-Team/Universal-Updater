@@ -143,7 +143,7 @@ void QueueSystem::QueueHandle() {
 
 				case Action::Type::InstallCia: {
 					entry.status = QueueStatus::Installing;
-					ScriptUtils::installFile(action.GetInput(), false);
+					ScriptUtils::installFile(action.GetInput());
 					break;
 				}
 

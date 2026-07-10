@@ -229,7 +229,7 @@ Result ScriptUtils::downloadFile(const std::string &file, const std::string &out
 }
 
 /* Install CIA files. */
-void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const std::string &message, bool isARG) {
+void ScriptUtils::installFile(const std::string &file, const std::string &message, bool isARG) {
 	std::string in;
 	in = std::regex_replace(file, std::regex("%ARCHIVE_DEFAULT%"), config->archPath());
 	in = std::regex_replace(in, std::regex("%3DSX%/(.*)\\.(.*)"), config->_3dsxPath() + (config->_3dsxInFolder() ? "/$1/$1.$2" : "/$1.$2"));
@@ -247,7 +247,7 @@ void ScriptUtils::installFile(const std::string &file, bool updatingSelf, const 
 		thread = threadCreate((ThreadFunc)Animation::displayProgressBar, NULL, 64 * 1024, prio - 1, -2, false);
 	}
 
-	Title::Install(in.c_str(), updatingSelf);
+	Title::Install(in.c_str());
 
 	if (isARG) {
 		showProgressBar = false;
@@ -338,7 +338,7 @@ Result ScriptUtils::runFunctions(const StoreEntry &entry, const Script &script) 
 			case Action::Type::InstallCia: {
 				char message[256];
 				snprintf(message, sizeof(message), Lang::get("SHORTCUT_INSTALLING").c_str(), action.GetInput().substr(action.GetInput().find_first_of("/") + 1).c_str());
-				ScriptUtils::installFile(action.GetInput(), false, message, true);
+				ScriptUtils::installFile(action.GetInput(), message, true);
 				break;
 			}
 

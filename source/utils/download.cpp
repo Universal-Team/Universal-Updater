@@ -1056,20 +1056,16 @@ void UpdateAction() {
 					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
 
 		if (dlRes == ScriptState::NONE) {
+			exiting = true;
 			if (is3DSX) {
-				Msg::waitMsg(Lang::get("UPDATE_DONE"));
 				romfsExit();
 				deleteFile(_3dsxPath.c_str());
 				rename((_3dsxPath + ".temp").c_str(), _3dsxPath.c_str());
-				exiting = true;
-				return;
+				Msg::waitMsg(Lang::get("UPDATE_DONE"));
+			} else {
+				ScriptUtils::installFile("sdmc:/Universal-Updater.cia", Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
+				ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
 			}
-
-			// TODO!! does this work??? (updatingSelf)
-			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", true, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
-			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
-			Msg::waitMsg(Lang::get("UPDATE_DONE"));
-			exiting = true;
 		}
 	}
 }
