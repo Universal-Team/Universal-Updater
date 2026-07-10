@@ -35,15 +35,27 @@
 #define SEC_PER_YEAR 31556952
 
 /*
+	To lowercase conversion.
+
+	const std::string &str: The string which should be converted.
+*/
+std::string StringUtils::toLowerCase(const std::string &str) {
+	std::string lower;
+	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
+
+	return lower;
+}
+
+/*
 	To uppercase conversion.
 
 	const std::string &str: The string which should be converted.
 */
 std::string StringUtils::toUpperCase(const std::string &str) {
-	std::string lower;
-	transform(str.begin(), str.end(), std::back_inserter(lower), toupper); // Transform the string to uppercase.
+	std::string upper;
+	transform(str.begin(), str.end(), std::back_inserter(upper), toupper); // Transform the string to uppercase.
 
-	return lower;
+	return upper;
 }
 
 /*

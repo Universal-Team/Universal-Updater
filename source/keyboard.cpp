@@ -55,9 +55,7 @@ bool Input::getTextKeyboard(std::string &Output, uint maxLength, const std::stri
 
 		for (uint i = 0; i < entries.size(); i++) {
 			/* Checking for not nullptr. */
-			// TODO!! is there a reason to lowercase??
-			// if (entries[i]) swkbdSetDictWord(&words[i], StringUtils::toLowerCase(entries[i]->GetTitle()).c_str(), entries[i]->GetTitle().c_str());
-			if (entries[i]) swkbdSetDictWord(&words[i], entries[i]->GetTitle().c_str(), entries[i]->GetTitle().c_str());
+			if (entries[i]) swkbdSetDictWord(&words[i], StringUtils::toLowerCase(entries[i]->GetTitle()).c_str(), entries[i]->GetTitle().c_str());
 			else swkbdSetDictWord(&words[i], "", "");
 		}
 
