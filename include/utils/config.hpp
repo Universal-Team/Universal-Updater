@@ -127,8 +127,9 @@ public:
 	PromptValue savedPrompt(const std::string &name);
 	void savePrompt(const std::string &name, bool v);
 
+	std::string proxyStr() const { return this->v_proxy; };
 	std::string proxyUrl() const { return this->v_proxyUrl; };
-	void proxyUrl(const std::string &v) { this->v_proxyUrl = v; if (!this->changesMade) this->changesMade = true; }
+	void proxyUrl(const std::string &v);
 private:
 	/* Mainly helper. */
 	bool getBool(const std::string &key);
@@ -151,7 +152,8 @@ private:
 				v_shortcutPath = "sdmc:/3ds/Universal-Updater/shortcuts",
 				v_firmPath = "sdmc:/luma/payloads",
 				v_theme = "Default",
-				v_proxyUrl = "<TEMP>";
+				v_proxy = "<DEFAULT>",
+				v_proxyUrl = "";
 
 	bool v_list = false,
 		v_autoUpdate = true,

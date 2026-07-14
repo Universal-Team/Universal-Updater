@@ -233,7 +233,7 @@ static void DrawProxySettings(int selection) {
 	Gui::DrawString(51, 30, 0.4f, UIThemes->TextColor(), Lang::get("PROXY_URL_DESC"), 265, 0, font);
 	Gui::Draw_Rect(proxyInputBar.x - 1, proxyInputBar.y - 1, proxyInputBar.w + 2, proxyInputBar.h + 2, UIThemes->SearchBarOutline());
 	Gui::Draw_Rect(proxyInputBar.x, proxyInputBar.y, proxyInputBar.w, proxyInputBar.h, UIThemes->SearchBar());
-	Gui::DrawString(proxyInputBar.x + 6, proxyInputBar.y + 6, 0.6, UIThemes->TextColor(), config->proxyUrl(), proxyInputBar.w - 12, proxyInputBar.h - 12, font);
+	Gui::DrawString(proxyInputBar.x + 6, proxyInputBar.y + 6, 0.6, UIThemes->TextColor(), config->proxyStr(), proxyInputBar.w - 12, proxyInputBar.h - 12, font);
 }
 
 
@@ -712,7 +712,7 @@ static void ProxySettingsLogic(int &page, int &selection) {
 
 	if ((hDown & KEY_A)||((hDown & KEY_TOUCH)&&touching(touch, proxyInputBar))) {
 		std::string temp;
-		if (Input::getTextKeyboard(temp, 2083, Lang::get("PROXY_HINT_TEXT"), config->proxyUrl())) {
+		if (Input::getTextKeyboard(temp, 2083, Lang::get("PROXY_HINT_TEXT"), config->proxyStr())) {
 			config->proxyUrl(temp);
 		}
 	}

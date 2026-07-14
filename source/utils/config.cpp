@@ -103,6 +103,40 @@ void Config::initialize() {
 }
 
 /*
+	Set the Proxy URL.
+*/
+void Config::proxyUrl(const std::string &v) {
+	this->changesMade = true;
+	this->v_proxy = v;
+
+	// If the proxy starts '<' (invalid char, <DEFAULT>), then try use the system proxy
+	if (!v.empty() && v[0] == '<') {
+		bool enabled = false;
+		ACU_GetProxyEnable(&enabled);
+
+		if (enabled) {
+			u16 port;
+			char host[0x100], userName[0x20], password[0x20];
+			ACU_GetProxyPort(&port);
+			ACU_GetProxyHost(host);
+			ACU_GetProxyUserName(userName);
+			ACU_GetProxyPassword(password);
+
+			std::string userPass = "";
+			if (strcmp(userName, "") != 0) {
+				userPass = std::string(userName) + ":" + password + "@";
+			}
+
+			this->v_proxyUrl = std::string("http://") + userPass + host + ":" + std::to_string(port);
+		} else {
+			this->v_proxyUrl = "";
+		}
+	} else {
+		this->v_proxyUrl = v;
+	}
+}
+
+/*
 	Constructor of the config.
 */
 Config::Config() {
@@ -142,31 +176,8 @@ Config::Config() {
 	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
 	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
 	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
-	if (this->json.contains("ProxyURL")) this->proxyUrl(this->getString("ProxyURL"));
 
-	// If <TEMP> that means proxy has never been saved to JSON, try system proxy
-	if (this->proxyUrl() == "<TEMP>") {
-		bool enabled = false;
-		ACU_GetProxyEnable(&enabled);
-
-		if (enabled) {
-			u16 port;
-			char host[0x100], userName[0x20], password[0x20];
-			ACU_GetProxyPort(&port);
-			ACU_GetProxyHost(host);
-			ACU_GetProxyUserName(userName);
-			ACU_GetProxyPassword(password);
-
-			std::string userPass = "";
-			if (strcmp(userName, "") != 0) {
-				userPass = std::string(userName) + ":" + password + "@";
-			}
-
-			this->proxyUrl(std::string("http://") + userPass + host + ":" + std::to_string(port));
-		} else {
-			this->proxyUrl("");
-		}
-	}
+	this->proxyUrl((this->json.contains("ProxyURL")) ? this->getString("ProxyURL") : "<DEFAULT>");
 
 	/* Exceptions for it. It was an INT before. */
 	if (this->json.contains("Active_Theme")) {
@@ -218,7 +229,7 @@ void Config::save() {
 		this->setBool("Display_Changelog", this->changelog());
 		this->setString("Active_Theme", this->theme());
 		this->setBool("Prompt", this->prompt());
-		this->setString("ProxyURL", this->proxyUrl());
+		this->setString("ProxyURL", this->proxyStr());
 
 		this->json["SavedPrompts"] = nlohmann::json::object();
 		for(const auto &prompt : this->v_savedPrompts) {
