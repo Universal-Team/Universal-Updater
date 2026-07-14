@@ -27,7 +27,6 @@
 #include "animation.hpp"
 #include "download.hpp"
 #include "files.hpp"
-#include "json.hpp"
 #include "lang.hpp"
 #include "queueSystem.hpp"
 #include "screenshot.hpp"
@@ -407,21 +406,21 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 
 	std::string assetUrl;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+	rapidjson::Document json;
+	json.Parse(result_buf);
+	if (includePrereleases ? json.IsArray() : json.IsObject()) {
+		if (includePrereleases && json.Size() == 0) {
+			ret = -2; // No releases.
+		} else {
+			const rapidjson::Value &parsedAPI = includePrereleases ? json[0] : json;
 
-		if (parsedAPI.size() == 0) ret = -2; // All were prereleases and those are being ignored.
-
-		if (ret != -2) {
-			if (includePrereleases) parsedAPI = parsedAPI[0];
-
-			if (parsedAPI["assets"].is_array()) {
-				for (auto jsonAsset : parsedAPI["assets"]) {
-					if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
-						std::string assetName = jsonAsset["name"];
+			if (parsedAPI.HasMember("assets") && parsedAPI["assets"].IsArray()) {
+				for (const rapidjson::Value &jsonAsset : parsedAPI["assets"].GetArray()) {
+					if (jsonAsset.IsObject() && jsonAsset["name"].IsString() && jsonAsset["browser_download_url"].IsString()) {
+						std::string assetName = jsonAsset["name"].GetString();
 
 						if (ScriptUtils::matchPattern(asset, assetName)) {
-							assetUrl = jsonAsset["browser_download_url"];
+							assetUrl = jsonAsset["browser_download_url"].GetString();
 							break;
 						}
 					}
@@ -516,12 +515,12 @@ bool IsUpdateAvailable(const std::string &URL, int revCurrent) {
 		return false;
 	}
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
-			if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-				const int rev = parsedAPI["storeInfo"]["revision"];
+	rapidjson::Document parsedAPI;
+	parsedAPI.Parse(result_buf);
+	if (parsedAPI.IsObject()) {
+		if (parsedAPI.HasMember("storeInfo") && parsedAPI.HasMember("storeContent")) {
+			if (parsedAPI["storeInfo"].HasMember("revision") && parsedAPI["storeInfo"]["revision"].IsInt()) {
+				const int rev = parsedAPI["storeInfo"]["revision"].GetInt();
 				socExit();
 				free(result_buf);
 				free(socubuf);
@@ -602,24 +601,23 @@ bool DownloadUniStore(const std::string &URL, int currentRev, const std::string 
 	}
 
 	if (getAvailableSpace() >= result_written) {
-		if (nlohmann::json::accept(result_buf)) {
-			nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-			if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			if (parsedAPI.HasMember("storeInfo") && parsedAPI.HasMember("storeContent")) {
 				/* Ensure, version == _UNISTORE_VERSION. */
-				if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
-					if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
-						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-							const int rev = parsedAPI["storeInfo"]["revision"];
+				if (parsedAPI["storeInfo"].HasMember("version") && parsedAPI["storeInfo"]["version"].IsInt()) {
+					if (parsedAPI["storeInfo"]["version"].GetInt() == 3 || parsedAPI["storeInfo"]["version"].GetInt() == 4) {
+						if (parsedAPI["storeInfo"].HasMember("revision") && parsedAPI["storeInfo"]["revision"].IsInt()) {
+							const int rev = parsedAPI["storeInfo"]["revision"].GetInt();
 
 							if (rev > currentRev) {
-								if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-									std::string fileName = parsedAPI["storeInfo"]["file"];
+								if (parsedAPI["storeInfo"].HasMember("file") && parsedAPI["storeInfo"]["file"].IsString()) {
+									std::string fileName = parsedAPI["storeInfo"]["file"].GetString();
 									if(retFile) *retFile = fileName;
 
 									/* Make sure it's not "/", otherwise it breaks. */
 									if (!(fileName.find("/") != std::string::npos)) {
-
 										FILE *out = fopen((std::string(_STORE_PATH) + fileName).c_str(), "w");
 										fwrite(result_buf, sizeof(char), result_written, out);
 										fclose(out);
@@ -640,10 +638,10 @@ bool DownloadUniStore(const std::string &URL, int currentRev, const std::string 
 							}
 						}
 
-					} else if (parsedAPI["storeInfo"]["version"] < 3) {
+					} else if (parsedAPI["storeInfo"]["version"].GetInt() < 3) {
 						Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 
-					} else if (parsedAPI["storeInfo"]["version"] > _UNISTORE_VERSION) {
+					} else if (parsedAPI["storeInfo"]["version"].GetInt() > _UNISTORE_VERSION) {
 						Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 
 					}
