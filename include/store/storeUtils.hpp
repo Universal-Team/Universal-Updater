@@ -46,23 +46,23 @@ namespace StoreUtils {
 
 	/* Grid. */
 	void DrawGrid();
-	void GridLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
+	void GridLogic(int &currentMode, int &lastMode, int &smallDelay);
 
 	/* Top List. */
 	void DrawList();
-	void ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay);
+	void ListLogic(int &currentMode, int &lastMode, int &smallDelay);
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry);
-	void EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry);
+	void EntryHandle(bool &showMark, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry);
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
-	void SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu);
+	void SideMenuHandle(int &currentMenu, int &lastMenu);
 
 	/* Download entries. */
-	void DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs);
-	void DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types);
+	void DrawDownList(const std::shared_ptr<StoreEntry> &entry);
+	void DownloadHandle(const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay);
 
 	/* Queue System. */
 	void DrawQueueMenu(const int queueIndex);
@@ -121,7 +121,6 @@ namespace StoreUtils {
 
 	void RefreshInstalledApps(const std::string &nameFilter);
 
-	void AddToQueue(int index, const std::string &entry, const std::string &entryName, const std::string &lUpdated);
 	void AddAllToQueue();
 };
 

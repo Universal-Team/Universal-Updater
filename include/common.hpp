@@ -37,8 +37,10 @@
 
 #define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
 #define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
-#define _THEME_AMOUNT 2
+#define _THEME_PATH "sdmc:/3ds/Universal-Updater/Themes.json"
+#define _CONFIG_PATH "sdmc:/3ds/Universal-Updater/Config.json"
 #define _UNISTORE_VERSION 4
+#define UU_TITLE_ID 0x0004000004391700
 
 inline std::unique_ptr<Config> config;
 inline uint32_t hRepeat, hUp, hDown, hHeld;

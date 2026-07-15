@@ -153,33 +153,33 @@ void QRCode::drawThread() {
 			C2D_DrawImageAt(this->image, 0, 0, 0.5, nullptr, 1.0f, 1.0f);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->EntryBar());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->EntryOutline());
+			Gui::Draw_Rect(0, 0, 320, 25, UITheme.EntryBar());
+			Gui::Draw_Rect(0, 25, 320, 1, UITheme.EntryOutline());
 
 		} else {
 			GFX::DrawTop();
-			Gui::DrawStringCentered(0, 1, 0.7, UIThemes->TextColor(), Lang::get("STORE_INFO"), 390, 0, font);
+			Gui::DrawStringCentered(0, 1, 0.7, UITheme.TextColor(), Lang::get("STORE_INFO"), 390, 0, font);
 
 			if (this->stores.size() > 0) {
-				Gui::DrawStringCentered(0, 30, 0.7f, UIThemes->TextColor(), this->stores[this->selectedStore].Title, 390, 0, font);
-				Gui::DrawStringCentered(0, 50, 0.6f, UIThemes->TextColor(), this->stores[this->selectedStore].Author, 380, 0, font);
-				Gui::DrawStringCentered(0, 90, 0.5f, UIThemes->TextColor(), this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
+				Gui::DrawStringCentered(0, 30, 0.7f, UITheme.TextColor(), this->stores[this->selectedStore].Title, 390, 0, font);
+				Gui::DrawStringCentered(0, 50, 0.6f, UITheme.TextColor(), this->stores[this->selectedStore].Author, 380, 0, font);
+				Gui::DrawStringCentered(0, 90, 0.5f, UITheme.TextColor(), this->stores[this->selectedStore].Description, 380, 130, font, C2D_WordWrap);
 			}
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->EntryBar());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->EntryOutline());
-			Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("RECOMMENDED_UNISTORES"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, UITheme.EntryBar());
+			Gui::Draw_Rect(0, 25, 320, 1, UITheme.EntryOutline());
+			Gui::DrawStringCentered(0, 2, 0.6, UITheme.TextColor(), Lang::get("RECOMMENDED_UNISTORES"), 310, 0, font);
 
 			for(int i = 0; i < 6 && i < (int)this->stores.size(); i++) {
-				if (this->sPos + i == this->selectedStore) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), this->stores[this->sPos + i].Title, 295, 0, font);
+				if (this->sPos + i == this->selectedStore) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UITheme.TextColor(), this->stores[this->sPos + i].Title, 295, 0, font);
 			}
 		}
 
-		GFX::DrawIcon((this->displayList ? sprites_qr_code_idx : sprites_list_idx), mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());
-		if (this->displayList) GFX::DrawIcon(sprites_keyboard_idx, mainButtons[7].x, mainButtons[7].y, UIThemes->TextColor());
-		GFX::DrawIcon(sprites_arrow_idx, mainButtons[8].x, mainButtons[8].y, UIThemes->TextColor());
+		GFX::DrawIcon((this->displayList ? sprites_qr_code_idx : sprites_list_idx), mainButtons[6].x, mainButtons[6].y, UITheme.TextColor());
+		if (this->displayList) GFX::DrawIcon(sprites_keyboard_idx, mainButtons[7].x, mainButtons[7].y, UITheme.TextColor());
+		GFX::DrawIcon(sprites_arrow_idx, mainButtons[8].x, mainButtons[8].y, UITheme.TextColor());
 		C3D_FrameEnd(0);
 	}
 

@@ -47,10 +47,10 @@ static const std::vector<Structs::ButtonPos> sidePos = {
 void StoreUtils::DrawSideMenu(int currentMenu) {
 	for (int i = 0; i < 6; i++) {
 		if (i == currentMenu) {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UIThemes->SideBarSelected());
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UITheme.SideBarSelected());
 
 		} else {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UIThemes->SideBarUnselected());
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UITheme.SideBarUnselected());
 		}
 	}
 
@@ -61,7 +61,7 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 	GFX::DrawIcon(sprites_sort_idx, sidePos[4].x, sidePos[4].y);
 	GFX::DrawIcon(sprites_settings_idx, sidePos[5].x, sidePos[5].y);
 
-	Gui::Draw_Rect(40, 0, 1, 240, UIThemes->BarOutline());
+	Gui::Draw_Rect(40, 0, 1, 240, UITheme.BarOutline());
 }
 
 /*
@@ -74,14 +74,13 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
 	int &lastMenu: Reference to the last menu.
 */
-void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu) {
+void StoreUtils::SideMenuHandle(int &currentMenu, int &lastMenu) {
 	Animation::QueueAnimHandle();
 
 	if (hDown & KEY_TOUCH) {
 		for (int i = 0; i < 6; i++) {
 			if (touching(touch, sidePos[i])) {
 				lastMenu = currentMenu;
-				if (i == 1) fetch = true; // Fetch download list, if 1.
 				currentMenu = i;
 				break;
 			}
@@ -91,7 +90,6 @@ void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu) {
 	if (hRepeat & KEY_R) {
 		if (currentMenu < 5) {
 			lastMenu = currentMenu;
-			if (currentMenu + 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu++;
 		}
 	}
@@ -99,7 +97,6 @@ void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu) {
 	if (hRepeat & KEY_L) {
 		if (currentMenu > 0) {
 			lastMenu = currentMenu;
-			if (currentMenu - 1 == 1) fetch = true; // Fetch download list, if 1.
 			currentMenu--;
 		}
 	}

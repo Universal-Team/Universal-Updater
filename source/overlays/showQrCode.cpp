@@ -146,28 +146,28 @@ void Overlays::ShowQrCodeUrl(const std::string &title, const std::string &url) {
 		// Not using GFX::DrawTop because the QR doesn't fit as
 		// nicely with the border.
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 0, 400, 240, UIThemes->BGColor());
+		Gui::Draw_Rect(0, 0, 400, 240, UITheme.BGColor());
 
 		C2D_DrawRectSolid(drawX - drawBorder, drawY - drawBorder, 0.75f, drawSize + drawBorder * 2, drawSize + drawBorder * 2, WHITE);
 		C2D_DrawImageAt(qrImage, drawX, drawY, 1.f, &imageTint);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
-		Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-		GFX::DrawIcon(sprites_arrow_idx, backButton.x, backButton.y, UIThemes->TextColor());
-		Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), title, 310, 0, font);
+		Gui::Draw_Rect(0, 0, 320, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 25, 320, 1, UITheme.BarOutline());
+		GFX::DrawIcon(sprites_arrow_idx, backButton.x, backButton.y, UITheme.TextColor());
+		Gui::DrawStringCentered(0, 2, 0.6, UITheme.TextColor(), title, 310, 0, font);
 
 		int y = 34;
 		for (const std::string &urlLine :  wrappedUrlLines) {
-			Gui::DrawStringCentered(0, y, 0.6f, UIThemes->TextColor(), urlLine, 312, 0, font);
+			Gui::DrawStringCentered(0, y, 0.6f, UITheme.TextColor(), urlLine, 312, 0, font);
 			y += 20;
 			if (y >= browserButton.y) break;
 		}
 
 		const bool browserAllowed = !QueueRuns && aptIsHomeAllowed();
-		Gui::Draw_Rect(browserButton.x, browserButton.y, browserButton.w, browserButton.h, browserAllowed ? UIThemes->MarkSelected() : UIThemes->MarkUnselected());
-		Gui::DrawStringCentered(0, browserButton.y + 4, 0.45f, UIThemes->TextColor(), Lang::get("OPEN_URL_WEB_BROWSER"), 255, 0, font);
+		Gui::Draw_Rect(browserButton.x, browserButton.y, browserButton.w, browserButton.h, browserAllowed ? UITheme.MarkSelected() : UITheme.MarkUnselected());
+		Gui::DrawStringCentered(0, browserButton.y + 4, 0.45f, UITheme.TextColor(), Lang::get("OPEN_URL_WEB_BROWSER"), 255, 0, font);
 
 		C3D_FrameEnd(0);
 

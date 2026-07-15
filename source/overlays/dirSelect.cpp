@@ -66,31 +66,31 @@ std::string Overlays::SelectDir(const std::string &oldDir, const std::string &ms
 
 		if (StoreUtils::store && config->usebg() && StoreUtils::store->customBG()) {
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+			Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), msg, 380, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), msg, 380, 0, font);
 
-		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 217, 0.6f, UIThemes->TextColor(), currentPath, 390, 0, font);
+		Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
+		Gui::DrawStringCentered(0, 217, 0.6f, UITheme.TextColor(), currentPath, 390, 0, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
 
-		Gui::Draw_Rect(0, 215, 320, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 320, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 220, 0.5f, UIThemes->TextColor(), Lang::get("START_SELECT"), 310, 0, font);
+		Gui::Draw_Rect(0, 215, 320, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 320, 1, UITheme.BarOutline());
+		Gui::DrawStringCentered(0, 220, 0.5f, UITheme.TextColor(), Lang::get("START_SELECT"), 310, 0, font);
 
 		if (dirContents.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)dirContents.size(); i++) {
-				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), dirContents[sPos + i].name, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UITheme.TextColor(), dirContents[sPos + i].name, 295, 0, font);
 			}
 		}
 

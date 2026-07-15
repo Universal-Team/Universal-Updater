@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "cia.hpp"
 #include "common.hpp"
 #include "download.hpp"
 #include "init.hpp"
@@ -38,17 +39,17 @@ bool exiting = false, is3DSX = false, needUnloadFont = false;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
 u32 old_time_limit;
-std::unique_ptr<Theme> UIThemes = nullptr;
+Theme UITheme;
 std::unique_ptr<Sound> Music = nullptr;
 bool dspfirmFound = false;
 
 /*
 	Set, if 3DSX or CIA.
 */
-static void getCurrentUsage(){
+static void getCurrentUsage() {
 	u64 id;
 	APT_GetProgramID(&id);
-	is3DSX = (id != 0x0004000004391700);
+	is3DSX = (id != UU_TITLE_ID);
 }
 
 /*
@@ -136,8 +137,7 @@ Result Init::Initialize() {
 
 	config = std::make_unique<Config>();
 	StoreUtils::meta = std::make_unique<Meta>();
-	UIThemes = std::make_unique<Theme>();
-	UIThemes->LoadTheme(config->theme());
+	UITheme = Theme(config->theme());
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {
@@ -178,7 +178,8 @@ Result Init::Initialize() {
 Result Init::MainLoop() {
 	bool fullExit = false;
 
-	if (Initialize() == -1) fullExit = true;
+	bool updateDone = Initialize() == -1;
+	if (updateDone) fullExit = true;
 
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
@@ -209,6 +210,13 @@ Result Init::MainLoop() {
 
 	/* Exit all services and exit the app. */
 	Exit();
+
+	/* If a CIA install was updated, reload the app. */
+	if (updateDone && !is3DSX) {
+		aptInit();
+		Title::Launch(UU_TITLE_ID, MEDIATYPE_SD);
+	}
+
 	return 0;
 }
 

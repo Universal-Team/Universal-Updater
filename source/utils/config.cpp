@@ -26,80 +26,35 @@
 
 #include "common.hpp"
 #include "config.hpp"
-#include "json.hpp"
-#include <string>
-#include <unistd.h>
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/prettywriter.h"
+#include <array>
+
+using namespace rapidjson;
 
 /*
 	Detects system language and is used later to set app language to system language.
 */
-void Config::sysLang() {
+const std::string &Config::sysLang() const {
+	static const std::array<std::string, 12> keys = {
+		"jp",    // Japanese
+		"en",    // English
+		"fr",    // French
+		"de",    // German
+		"it",    // Italian
+		"es",    // Spanish
+		"zh-CN", // Chinese (Simplified)
+		"ko",    // Korean
+		"nl",    // Dutch
+		"pt",    // Portuguese
+		"ru",    // Russian
+		"zh-TW"  // Chinese (Traditional)
+	};
+
 	u8 language = 1;
 	CFGU_GetSystemLanguage(&language);
-
-	switch(language) {
-		case 0:
-			this->language("jp"); // Japanese
-			break;
-
-		case 1:
-			this->language("en"); // English
-			break;
-
-		case 2:
-			this->language("fr"); // French
-			break;
-
-		case 3:
-			this->language("de"); // German
-			break;
-
-		case 4:
-			this->language("it"); // Italian
-			break;
-
-		case 5:
-			this->language("es"); // Spanish
-			break;
-
-		case 6:
-			this->language("zh-CN"); // Chinese (Simplified)
-			break;
-
-		case 7:
-			this->language("ko"); // Korean
-			break;
-
-		case 8:
-			this->language("nl"); // Dutch
-			break;
-
-		case 9:
-			this->language("pt"); // Portuguese
-			break;
-
-		case 10:
-			this->language("ru"); // Russian
-			break;
-
-		case 11:
-			this->language("zh-TW"); // Chinese (Traditional)
-			break;
-
-		default:
-			this->language("en"); // Fall back to English if missing
-			break;
-	}
-}
-
-/*
-	In case it doesn't exist.
-*/
-void Config::initialize() {
-	FILE *temp = fopen("sdmc:/3ds/Universal-Updater/Config.json", "w");
-	char tmp[2] = { '{', '}' };
-	fwrite(tmp, sizeof(tmp), 1, temp);
-	fclose(temp);
+	return language < keys.size() ? keys[language] : keys[1];
 }
 
 /*
@@ -140,155 +95,101 @@ void Config::proxyUrl(const std::string &v) {
 	Constructor of the config.
 */
 Config::Config() {
-	if (access("sdmc:/3ds/Universal-Updater/Config.json", F_OK) != 0) {
-		this->initialize();
-	}
+	FILE *file = fopen(_CONFIG_PATH, "rt");
+	if (!file) return;
 
-	FILE *file = fopen("sdmc:/3ds/Universal-Updater/Config.json", "rt");
-	if (file) {
-		this->json = nlohmann::json::parse(file, nullptr, false);
-		fclose(file);
-	}
-	if (this->json.is_discarded())
-		this->json = { };
+	Document json;
+	char *readBuffer = new char[0x10000];
+	FileReadStream is(file, readBuffer, 0x10000);
+	json.ParseStream(is);
+	delete[] readBuffer;
+	fclose(file);
 
-	/* Let us create a new one. */
-	if (!this->json.contains("Version")) this->initialize();
+	// So we don't error on future configs
+	if (!json.HasMember("Version") || json["Version"].GetInt() != 1) return;
 
-	if (!this->json.contains("Language")) this->sysLang();
-	else this->language(this->getString("Language"));
+	if (json.HasMember("Language") && json["Language"].IsString())                 this->language(json["Language"].GetString());
+	if (json.HasMember("LastStore") && json["LastStore"].IsString())               this->lastStore(json["LastStore"].GetString());
+	if (json.HasMember("_3DSX_Path") && json["_3DSX_Path"].IsString())             this->_3dsxPath(json["_3DSX_Path"].GetString());
+	if (json.HasMember("NDS_Path") && json["NDS_Path"].IsString())                 this->ndsPath(json["NDS_Path"].GetString());
+	if (json.HasMember("Archive_Path") && json["Archive_Path"].IsString())         this->archPath(json["Archive_Path"].GetString());
+	if (json.HasMember("Shortcut_Path") && json["Shortcut_Path"].IsString())       this->shortcut(json["Shortcut_Path"].GetString());
+	if (json.HasMember("Firm_Path") && json["Firm_Path"].IsString())               this->firmPath(json["Firm_Path"].GetString());
+	if (json.HasMember("Active_Theme") && json["Active_Theme"].IsString())         this->theme(json["Active_Theme"].GetString());
 
-	if (this->json.contains("LastStore")) this->lastStore(this->getString("LastStore"));
-	if (this->json.contains("List")) this->list(this->getBool("List"));
-	if (this->json.contains("SortBy")) this->sortBy((SortType)this->getInt("SortBy"));
-	if (this->json.contains("SortAscending")) this->sortAscending(this->getBool("SortAscending"));
-	if (this->json.contains("AutoUpdate")) this->autoupdate(this->getBool("AutoUpdate"));
-	if (this->json.contains("_3DSX_Path")) this->_3dsxPath(this->getString("_3DSX_Path"));
-	if (this->json.contains("_3DSX_InFolder")) this->_3dsxInFolder(this->getBool("_3DSX_InFolder"));
-	if (this->json.contains("NDS_Path")) this->ndsPath(this->getString("NDS_Path"));
-	if (this->json.contains("Archive_Path")) this->archPath(this->getString("Archive_Path"));
-	if (this->json.contains("Firm_Path")) this->firmPath(this->getString("Firm_Path"));
-	if (this->json.contains("MetaData")) this->metadata(this->getBool("MetaData"));
-	if (this->json.contains("UpdateCheck")) this->updatecheck(this->getBool("UpdateCheck"));
-	if (this->json.contains("UpdateNightly")) this->updategit(this->getBool("UpdateNightly"));
-	if (this->json.contains("UseUniStoreBG")) this->usebg(this->getBool("UseUniStoreBG"));
-	if (this->json.contains("UseAccentColor")) this->useAccentColor(this->getBool("UseAccentColor"));
-	if (this->json.contains("CustomFont")) this->customfont(this->getBool("CustomFont"));
-	if (this->json.contains("Shortcut_Path")) this->shortcut(this->getString("Shortcut_Path"));
-	if (this->json.contains("Display_Changelog")) this->changelog(this->getBool("Display_Changelog"));
+	if (json.HasMember("List") && json["List"].IsBool())                           this->list(json["List"].GetBool());
+	if (json.HasMember("AutoUpdate") && json["AutoUpdate"].IsBool())               this->autoupdate(json["AutoUpdate"].GetBool());
+	if (json.HasMember("UpdateCheck") && json["UpdateCheck"].IsBool())             this->updatecheck(json["UpdateCheck"].GetBool());
+	if (json.HasMember("UpdateNightly") && json["UpdateNightly"].IsBool())         this->updategit(json["UpdateNightly"].GetBool());
+	if (json.HasMember("UseUniStoreBG") && json["UseUniStoreBG"].IsBool())         this->usebg(json["UseUniStoreBG"].GetBool());
+	if (json.HasMember("CustomFont") && json["CustomFont"].IsBool())               this->customfont(json["CustomFont"].GetBool());
+	if (json.HasMember("Display_Changelog") && json["Display_Changelog"].IsBool()) this->changelog(json["Display_Changelog"].GetBool());
+	if (json.HasMember("_3DSX_InFolder") && json["_3DSX_InFolder"].IsBool())       this->_3dsxInFolder(json["_3DSX_InFolder"].GetBool());
+	if (json.HasMember("UseAccentColor") && json["UseAccentColor"].IsBool())       this->useAccentColor(json["UseAccentColor"].GetBool());
+	if (json.HasMember("SortAscending") && json["SortAscending"].IsBool())         this->sortAscending(json["SortAscending"].GetBool());
 
-	this->proxyUrl((this->json.contains("ProxyURL")) ? this->getString("ProxyURL") : "<DEFAULT>");
+	if (json.HasMember("SortBy") && json["SortBy"].IsInt())                        this->sortBy((SortType)json["SortBy"].GetInt());
 
-	/* Exceptions for it. It was an INT before. */
-	if (this->json.contains("Active_Theme")) {
-		if (this->json["Active_Theme"].is_number()) {
-			this->json["Active_Theme"] = "Default";
-			this->theme(this->getString("Active_Theme"));
+	this->proxyUrl((json.HasMember("ProxyURL") && json["ProxyURL"].IsString()) ? json["ProxyURL"].GetString() : "<DEFAULT>");
 
-		} else {
-			this->theme(this->getString("Active_Theme"));
+	if(json.HasMember("SavedPrompts") && json["SavedPrompts"].IsObject()) {
+		for(const auto &prompt : json["SavedPrompts"].GetObject()) {
+			if (prompt.value.IsBool()) {
+				this->v_savedPrompts[prompt.name.GetString()] = prompt.value.GetBool();
+			}
 		}
 	}
-
-	if (this->json.contains("Prompt")) this->prompt(this->getBool("Prompt"));
-
-	if(this->json.contains("SavedPrompts")) {
-		for(const auto &prompt : this->json["SavedPrompts"].items()) {
-			this->v_savedPrompts.emplace_back(prompt.key(), prompt.value());
-		}
-	}
-
-	this->changesMade = false; // No changes made yet.
 }
 
 /* Write to config if changesMade. */
 void Config::save() {
-	if (this->changesMade) {
-		FILE *file = fopen("sdmc:/3ds/Universal-Updater/Config.json", "w");
+	if (!this->changesMade) return;
+	this->changesMade = false;
 
-		/* Set values. */
-		this->setString("Language", this->language());
-		this->setInt("Version", 1);
-		this->setString("LastStore", this->lastStore());
-		this->setBool("List", this->list());
-		this->setInt("SortBy", (int)this->sortBy());
-		this->setBool("SortAscending", this->sortAscending());
-		this->setBool("AutoUpdate", this->autoupdate());
-		this->setString("_3DSX_Path", this->_3dsxPath());
-		this->setBool("_3DSX_InFolder", this->_3dsxInFolder());
-		this->setString("NDS_Path", this->ndsPath());
-		this->setString("Archive_Path", this->archPath());
-		this->setString("Firm_Path", this->firmPath());
-		this->setBool("MetaData", this->metadata());
-		this->setBool("UpdateCheck", this->updatecheck());
-		this->setBool("UpdateNightly", this->updategit());
-		this->setBool("UseUniStoreBG", this->usebg());
-		this->setBool("UseAccentColor", this->useAccentColor());
-		this->setBool("CustomFont", this->customfont());
-		this->setString("Shortcut_Path", this->shortcut());
-		this->setBool("Display_Changelog", this->changelog());
-		this->setString("Active_Theme", this->theme());
-		this->setBool("Prompt", this->prompt());
-		this->setString("ProxyURL", this->proxyStr());
+	Document json;
+	json.SetObject();
+	Document::AllocatorType &a = json.GetAllocator();
 
-		this->json["SavedPrompts"] = nlohmann::json::object();
-		for(const auto &prompt : this->v_savedPrompts) {
-			this->json["SavedPrompts"][prompt.first] = prompt.second;
-		}
+	json.AddMember("Version", Value(1), a);
 
-		/* Write changes to file. */
-		const std::string dump = this->json.dump(1, '\t');
-		fwrite(dump.c_str(), 1, this->json.dump(1, '\t').size(), file);
-		fclose(file);
-	}
-}
+	json.AddMember("Language",      Value().SetString(this->language().c_str(),  this->language().size(), a),  a);
+	json.AddMember("LastStore",     Value().SetString(this->lastStore().c_str(), this->lastStore().size(), a), a);
+	json.AddMember("_3DSX_Path",    Value().SetString(this->_3dsxPath().c_str(), this->_3dsxPath().size(), a), a);
+	json.AddMember("NDS_Path",      Value().SetString(this->ndsPath().c_str(),   this->ndsPath().size(), a),   a);
+	json.AddMember("Archive_Path",  Value().SetString(this->archPath().c_str(),  this->archPath().size(), a),  a);
+	json.AddMember("Shortcut_Path", Value().SetString(this->shortcut().c_str(),  this->shortcut().size(), a),  a);
+	json.AddMember("Firm_Path",     Value().SetString(this->firmPath().c_str(),  this->firmPath().size(), a),  a);
+	json.AddMember("Active_Theme",  Value().SetString(this->theme().c_str(),     this->theme().size(), a),     a);
+	json.AddMember("ProxyURL",      Value().SetString(this->proxyStr().c_str(),  this->proxyStr().size(), a),  a);
 
-/* Helper functions. */
-bool Config::getBool(const std::string &key) {
-	if (!this->json.contains(key)) return false;
+	json.AddMember("List",              Value().SetBool(this->list()),           a);
+	json.AddMember("AutoUpdate",        Value().SetBool(this->autoupdate()),     a);
+	json.AddMember("SortAscending",     Value().SetBool(this->sortAscending()),  a);
+	json.AddMember("_3DSX_InFolder",    Value().SetBool(this->_3dsxInFolder()),  a);
+	json.AddMember("UpdateCheck",       Value().SetBool(this->updatecheck()),    a);
+	json.AddMember("UpdateNightly",     Value().SetBool(this->updategit()),      a);
+	json.AddMember("UseUniStoreBG",     Value().SetBool(this->usebg()),          a);
+	json.AddMember("UseAccentColor",    Value().SetBool(this->useAccentColor()), a);
+	json.AddMember("CustomFont",        Value().SetBool(this->customfont()),     a);
+	json.AddMember("Display_Changelog", Value().SetBool(this->changelog()),      a);
 
-	return this->json.at(key).get_ref<const bool &>();
-}
-void Config::setBool(const std::string &key, bool v) {
-	this->json[key] = v;
-};
+	json.AddMember("SortBy", Value((int)this->sortBy()), a);
 
-int Config::getInt(const std::string &key) {
-	if (!this->json.contains(key)) return 0;
-
-	return this->json.at(key).get_ref<const int64_t &>();
-}
-void Config::setInt(const std::string &key, int v) {
-	this->json[key] = v;
-};
-
-std::string Config::getString(const std::string &key) {
-	if (!this->json.contains(key)) return "";
-
-	return this->json.at(key).get_ref<const std::string &>();
-}
-void Config::setString(const std::string &key, const std::string &v) {
-	this->json[key] = v;
-};
-
-PromptValue Config::savedPrompt(const std::string &name) {
-	for(size_t i = 0; i < this->v_savedPrompts.size(); i++) {
-		if(this->v_savedPrompts[i].first == name)
-			return this->v_savedPrompts[i].second ? PromptValue::Yes : PromptValue::No;
+	json.AddMember(Value("SavedPrompts"), Value(kObjectType), a);
+	for(const auto &prompt : this->v_savedPrompts) {
+		json["SavedPrompts"].AddMember(Value(prompt.first.c_str(), prompt.first.size()), Value().SetBool(prompt.second), a);
 	}
 
-	return PromptValue::Unset;
-}
+	FILE *out = fopen(_CONFIG_PATH, "w");
+	if (out) {
+		char *writeBuffer = new char[0x10000];
+		FileWriteStream os(out, writeBuffer, 0x10000);
 
-void Config::savePrompt(const std::string &name, bool v) {
-	this->changesMade = true;
+		PrettyWriter<FileWriteStream> writer(os);
+		writer.SetIndent('\t', 1);
+		json.Accept(writer);
 
-	for(size_t i = 0; i < this->v_savedPrompts.size(); i++) {
-		if(this->v_savedPrompts[i].first == name) {
-			this->v_savedPrompts[i].second = v;
-			return;
-		}
+		delete[] writeBuffer;
+		fclose(out);
 	}
-
-	this->v_savedPrompts.emplace_back(name, v);
 }

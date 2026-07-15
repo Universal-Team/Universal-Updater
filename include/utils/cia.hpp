@@ -34,7 +34,7 @@
 namespace Title {
 	Result Launch(u64 titleId, FS_MediaType mediaType);
 	Result DeletePrevious(u64 titleid, FS_MediaType media);
-	Result Install(const char *ciaPath, bool updateSelf);
+	Result Install(const char *ciaPath);
 };
 
 #endif

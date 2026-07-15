@@ -27,7 +27,6 @@
 #include "animation.hpp"
 #include "download.hpp"
 #include "files.hpp"
-#include "json.hpp"
 #include "lang.hpp"
 #include "queueSystem.hpp"
 #include "screenshot.hpp"
@@ -407,21 +406,21 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 
 	std::string assetUrl;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
+	rapidjson::Document json;
+	json.Parse(result_buf);
+	if (includePrereleases ? json.IsArray() : json.IsObject()) {
+		if (includePrereleases && json.Size() == 0) {
+			ret = -2; // No releases.
+		} else {
+			const rapidjson::Value &parsedAPI = includePrereleases ? json[0] : json;
 
-		if (parsedAPI.size() == 0) ret = -2; // All were prereleases and those are being ignored.
-
-		if (ret != -2) {
-			if (includePrereleases) parsedAPI = parsedAPI[0];
-
-			if (parsedAPI["assets"].is_array()) {
-				for (auto jsonAsset : parsedAPI["assets"]) {
-					if (jsonAsset.is_object() && jsonAsset["name"].is_string() && jsonAsset["browser_download_url"].is_string()) {
-						std::string assetName = jsonAsset["name"];
+			if (parsedAPI.HasMember("assets") && parsedAPI["assets"].IsArray()) {
+				for (const rapidjson::Value &jsonAsset : parsedAPI["assets"].GetArray()) {
+					if (jsonAsset.IsObject() && jsonAsset["name"].IsString() && jsonAsset["browser_download_url"].IsString()) {
+						std::string assetName = jsonAsset["name"].GetString();
 
 						if (ScriptUtils::matchPattern(asset, assetName)) {
-							assetUrl = jsonAsset["browser_download_url"];
+							assetUrl = jsonAsset["browser_download_url"].GetString();
 							break;
 						}
 					}
@@ -451,11 +450,6 @@ Result downloadFromRelease(const std::string &url, const std::string &asset, con
 	@return True if Wi-Fi is connected; false if not.
 */
 bool checkWifiStatus(void) {
-#ifdef CITRA
-	// Citra's Wi-Fi check doesn't work
-	return true;
-#endif
-
 	u32 wifiStatus;
 	bool res = false;
 
@@ -521,12 +515,12 @@ bool IsUpdateAvailable(const std::string &URL, int revCurrent) {
 		return false;
 	}
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
-			if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-				const int rev = parsedAPI["storeInfo"]["revision"];
+	rapidjson::Document parsedAPI;
+	parsedAPI.Parse(result_buf);
+	if (parsedAPI.IsObject()) {
+		if (parsedAPI.HasMember("storeInfo") && parsedAPI.HasMember("storeContent")) {
+			if (parsedAPI["storeInfo"].HasMember("revision") && parsedAPI["storeInfo"]["revision"].IsInt()) {
+				const int rev = parsedAPI["storeInfo"]["revision"].GetInt();
 				socExit();
 				free(result_buf);
 				free(socubuf);
@@ -607,24 +601,23 @@ bool DownloadUniStore(const std::string &URL, int currentRev, const std::string 
 	}
 
 	if (getAvailableSpace() >= result_written) {
-		if (nlohmann::json::accept(result_buf)) {
-			nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-			if (parsedAPI.contains("storeInfo") && parsedAPI.contains("storeContent")) {
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			if (parsedAPI.HasMember("storeInfo") && parsedAPI.HasMember("storeContent")) {
 				/* Ensure, version == _UNISTORE_VERSION. */
-				if (parsedAPI["storeInfo"].contains("version") && parsedAPI["storeInfo"]["version"].is_number()) {
-					if (parsedAPI["storeInfo"]["version"] == 3 || parsedAPI["storeInfo"]["version"] == 4) {
-						if (parsedAPI["storeInfo"].contains("revision") && parsedAPI["storeInfo"]["revision"].is_number()) {
-							const int rev = parsedAPI["storeInfo"]["revision"];
+				if (parsedAPI["storeInfo"].HasMember("version") && parsedAPI["storeInfo"]["version"].IsInt()) {
+					if (parsedAPI["storeInfo"]["version"].GetInt() == 3 || parsedAPI["storeInfo"]["version"].GetInt() == 4) {
+						if (parsedAPI["storeInfo"].HasMember("revision") && parsedAPI["storeInfo"]["revision"].IsInt()) {
+							const int rev = parsedAPI["storeInfo"]["revision"].GetInt();
 
 							if (rev > currentRev) {
-								if (parsedAPI["storeInfo"].contains("file") && parsedAPI["storeInfo"]["file"].is_string()) {
-									std::string fileName = parsedAPI["storeInfo"]["file"];
+								if (parsedAPI["storeInfo"].HasMember("file") && parsedAPI["storeInfo"]["file"].IsString()) {
+									std::string fileName = parsedAPI["storeInfo"]["file"].GetString();
 									if(retFile) *retFile = fileName;
 
 									/* Make sure it's not "/", otherwise it breaks. */
 									if (!(fileName.find("/") != std::string::npos)) {
-
 										FILE *out = fopen((std::string(_STORE_PATH) + fileName).c_str(), "w");
 										fwrite(result_buf, sizeof(char), result_written, out);
 										fclose(out);
@@ -645,10 +638,10 @@ bool DownloadUniStore(const std::string &URL, int currentRev, const std::string 
 							}
 						}
 
-					} else if (parsedAPI["storeInfo"]["version"] < 3) {
+					} else if (parsedAPI["storeInfo"]["version"].GetInt() < 3) {
 						Msg::waitMsg(Lang::get("UNISTORE_TOO_OLD"));
 
-					} else if (parsedAPI["storeInfo"]["version"] > _UNISTORE_VERSION) {
+					} else if (parsedAPI["storeInfo"]["version"].GetInt() > _UNISTORE_VERSION) {
 						Msg::waitMsg(Lang::get("UNISTORE_TOO_NEW"));
 
 					}
@@ -797,9 +790,9 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 		return UUUpdate(DL_ERROR_CURL);
 	}
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
+	rapidjson::Document parsedAPI;
+	parsedAPI.Parse(result_buf);
+	if (parsedAPI.IsObject()) {
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -810,13 +803,13 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 		UUUpdate update = {DL_CANCEL};
 
 		if (git) {
-			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
-				const std::string name = parsedAPI["name"].get_ref<const std::string &>();
+			if (parsedAPI.HasMember("name") && parsedAPI["name"].IsString()) {
+				const std::string name = parsedAPI["name"].GetString();
 				update.Version = name.substr(name.size() - 7);
 
 				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) {
-					if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
-						update.Notes = parsedAPI["body"];
+					if (parsedAPI.HasMember("body") && parsedAPI["body"].IsString()) {
+						update.Notes = parsedAPI["body"].GetString();
 						update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
 					}
 
@@ -824,9 +817,9 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 				}
 			}
 		} else {
-			if (parsedAPI.contains("release") && parsedAPI["release"].is_object()) {
-				const std::string &version = parsedAPI["release"]["version"];
-				const std::string &notes = parsedAPI["release"]["notes"];
+			if (parsedAPI.HasMember("release") && parsedAPI["release"].IsObject()) {
+				const std::string &version = parsedAPI["release"]["version"].GetString();
+				const std::string &notes = parsedAPI["release"]["notes"].GetString();
 				if (strcasecmp(version.c_str(), C_V) > 0) {
 					update = {DL_OK, version, notes};
 				}
@@ -978,28 +971,28 @@ void UpdateAction() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+			Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
 			for (size_t i = 0; i < wrappedNotes.size(); i++) {
 				if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f)
-					Gui::DrawString(5, 26.0f + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 390, 0, font);
+					Gui::DrawString(5, 26.0f + i * fontHeight - scrollOffset, 0.5f, UITheme.TextColor(), wrappedNotes[i], 390, 0, font);
 			}
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+			Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
+			Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
 			char updMsg[150];
 			snprintf(updMsg, sizeof(updMsg), Lang::get("UPDATE_AVAILABLE").c_str(), res.Version.c_str());
-			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), updMsg, 390, 0, font);
+			Gui::DrawStringCentered(0, 217, 0.7f, UITheme.TextColor(), updMsg, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 320, 1, UITheme.BarOutline());
+			Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font);
 
 			for(uint i = 0; i < promptButtons.size(); i++) {
-				Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
-				Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+				Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UITheme.BarColor());
+				Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UITheme.TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
 			}
 
 			C3D_FrameEnd(0);
@@ -1056,31 +1049,28 @@ void UpdateAction() {
 					(is3DSX ? (_3dsxPath + ".temp") : "sdmc:/Universal-Updater.cia"), false, Lang::get("DONLOADING_UNIVERSAL_UPDATER"), true);
 
 		if (dlRes == ScriptState::NONE) {
+			exiting = true;
 			if (is3DSX) {
-				Msg::waitMsg(Lang::get("UPDATE_DONE"));
 				romfsExit();
 				deleteFile(_3dsxPath.c_str());
 				rename((_3dsxPath + ".temp").c_str(), _3dsxPath.c_str());
-				exiting = true;
-				return;
+				Msg::waitMsg(Lang::get("UPDATE_DONE"));
+			} else {
+				ScriptUtils::installFile("sdmc:/Universal-Updater.cia", Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
+				ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
 			}
-
-			ScriptUtils::installFile("sdmc:/Universal-Updater.cia", false, Lang::get("INSTALL_UNIVERSAL_UPDATER"), true);
-			ScriptUtils::removeFile("sdmc:/Universal-Updater.cia", true);
-			Msg::waitMsg(Lang::get("UPDATE_DONE"));
-			exiting = true;
 		}
 	}
 }
 
-static StoreList fetch(const std::string &entry, nlohmann::json &js) {
-	StoreList store = { "", "", "", "" };
-	if (!js.contains(entry)) return store;
+static StoreList fetch(const std::string &entry, const rapidjson::Value &json) {
+	StoreList store;
+	if (!json.IsObject()) return store;
 
-	if (js[entry].contains("title") && js[entry]["title"].is_string()) store.Title = js[entry]["title"];
-	if (js[entry].contains("author") && js[entry]["author"].is_string()) store.Author = js[entry]["author"];
-	if (js[entry].contains("url") && js[entry]["url"].is_string()) store.URL = js[entry]["url"];
-	if (js[entry].contains("description") && js[entry]["description"].is_string()) store.Description = js[entry]["description"];
+	if (json.HasMember("title") && json["title"].IsString())             store.Title       = json["title"].GetString();
+	if (json.HasMember("author") && json["author"].IsString())           store.Author      = json["author"].GetString();
+	if (json.HasMember("url") && json["url"].IsString())                 store.URL         = json["url"].GetString();
+	if (json.HasMember("description") && json["description"].IsString()) store.Description = json["description"].GetString();
 
 	return store;
 }
@@ -1118,11 +1108,13 @@ std::vector<StoreList> FetchStores() {
 	if (cres != CURLE_OK)
 		goto cleanup;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		for(auto it = parsedAPI.begin(); it != parsedAPI.end(); ++it) {
-			stores.push_back( fetch(it.key(), parsedAPI) );
+	{
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			for(const auto &item : parsedAPI.GetObject()) {
+				stores.push_back(fetch(item.name.GetString(), item.value));
+			}
 		}
 	}
 
@@ -1141,9 +1133,9 @@ cleanup:
 /*
 	Fetch themes from the repo.
 */
-nlohmann::json FetchThemes() {
+std::vector<Theme> FetchThemes() {
 	Msg::DisplayMsg(Lang::get("FETCHING_THEMES"));
-	nlohmann::json Themes;
+	std::vector<Theme> Themes;
 
 	Result ret = 0;
 	CURLcode cres;
@@ -1160,18 +1152,25 @@ nlohmann::json FetchThemes() {
 	CURL *hnd = curl_easy_init();
 
 	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/Themes.json");
-	if (ret != 0)
-		goto cleanup;
+	if (ret != 0) goto cleanup;
 
 	cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
-	if (cres != CURLE_OK)
-		goto cleanup;
+	if (cres != CURLE_OK) goto cleanup;
 
-	if (nlohmann::json::accept(result_buf))
-		Themes = nlohmann::json::parse(result_buf);
+	{
+		rapidjson::Document json;
+		json.Parse(result_buf);
+		if (json.IsObject()) {
+			for (const auto &item : json.GetObject()) {
+				if (item.value.IsObject()) {
+					Themes.emplace_back(item.value, item.name.GetString());
+				}
+			}
+		}
+	}
 
 cleanup:
 	socExit();
@@ -1252,64 +1251,44 @@ C2D_Image FetchScreenshot(const std::string &URL) {
 std::string GetChangelog() {
 	if (!checkWifiStatus()) return "";
 
-	Result ret = 0;
+	CURLcode cres;
+	Result retcode;
+	std::string result;
 
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf) return "";
 
-	ret = socInit((u32 *)socubuf, 0x100000);
+	retcode = socInit((u32 *)socubuf, 0x100000);
 
-	if (R_FAILED(ret)) {
+	if (R_FAILED(retcode)) {
 		free(socubuf);
 		return "";
 	}
 
 	CURL *hnd = curl_easy_init();
 
-	ret = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
-	if (ret != 0) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return "";
-	}
+	retcode = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
+	if (retcode != 0) goto cleanup;
 
-	CURLcode cres = curl_easy_perform(hnd);
+	cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
-	char *newbuf = (char *)realloc(result_buf, result_written + 1);
-	result_buf = newbuf;
+	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
-	if (cres != CURLE_OK) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return "";
-	}
+	if (cres != CURLE_OK) goto cleanup;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
-			socExit();
-			free(result_buf);
-			free(socubuf);
-			result_buf = nullptr;
-			result_sz = 0;
-			result_written = 0;
-
-			std::string notes = parsedAPI["body"];
-			notes.erase(remove(notes.begin(), notes.end(), '\r'), notes.end()); // Remove the CRLF \r's.
-			return notes;
+	{
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			if (parsedAPI.HasMember("body") && parsedAPI["body"].IsString()) {
+				result = parsedAPI["body"].GetString();
+				result.erase(remove(result.begin(), result.end(), '\r'), result.end()); // Remove the CRLF \r's.
+			}
 		}
 	}
 
+cleanup:
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -1317,5 +1296,5 @@ std::string GetChangelog() {
 	result_sz = 0;
 	result_written = 0;
 
-	return "";
+	return result;
 }

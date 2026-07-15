@@ -34,6 +34,7 @@
 #include <fstream>
 
 #define DOWNLOAD_ENTRIES 7
+extern int fadeAlpha;
 extern std::string _3dsxPath;
 extern bool exiting, is3DSX, QueueRuns;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -103,65 +104,57 @@ static bool CreateShortcut(const std::string &entryName, int index, const std::s
 
 /*
 	Draw the Download entries part.
-
-	const std::vector<std::string> &entries: Const Reference to the download list as a vector of strings.
-	bool fetch: if fetching or not.
-	const std::shared_ptr<StoreEntry> &entry: Const Reference to the StoreEntry.
-	const std::vector<std::string> &sizes: Const Reference to the download sizes as a vector of strings.
 */
-void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetch, const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &sizes, const std::vector<bool> &installs) {
-	uint32_t accentColor = 0;
+void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
+	uint32_t accentColor = (config->useAccentColor() && entry) ? entry->GetAccentColor() : 0;
 
 	/* For the Top Screen. */
-	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
-		if (entries.size() > 0) {
-			accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
+	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
+		if (accentColor) Gui::Draw_Rect(0, 173, 400, 1, UITheme.EntryOutline());
+		Gui::Draw_Rect(0, 174, 400, 66, accentColor ? accentColor : UITheme.DownListPrev());
+		const C2D_Image tempImg = entry->GetIcon();
+		const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
+		const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
+		C2D_DrawImageAt(tempImg, 9 + offsetW, 174 + 9 + offsetH, 0.5);
 
-			if (accentColor) Gui::Draw_Rect(0, 173, 400, 1, UIThemes->EntryOutline());
-			Gui::Draw_Rect(0, 174, 400, 66, accentColor ? accentColor : UIThemes->DownListPrev());
-			const C2D_Image tempImg = entry->GetIcon();
-			const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
-			const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
-			C2D_DrawImageAt(tempImg, 9 + offsetW, 174 + 9 + offsetH, 0.5);
+		if ((int)entry->GetScripts().size() > StoreUtils::store->GetDownloadIndex()) {
+			const Script &script = entry->GetScript(StoreUtils::store->GetDownloadIndex());
+			Gui::DrawString(70, 174 + 15, 0.45f, accentColor ? WHITE : UITheme.TextColor(), script.GetName(), 310, 0, font);
 
-			Gui::DrawString(70, 174 + 15, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), entries[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
-
-			if (!sizes.empty()) {
-				if (sizes[StoreUtils::store->GetDownloadIndex()] != "") {
-					Gui::DrawString(70, 174 + 30, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("SIZE") + ": " +  sizes[StoreUtils::store->GetDownloadIndex()], 310, 0, font);
-				}
+			if (script.GetSize() != "") {
+				Gui::DrawString(70, 174 + 30, 0.45f, accentColor ? WHITE : UITheme.TextColor(), Lang::get("SIZE") + ": " + script.GetSize(), 310, 0, font);
 			}
 		}
 	}
 
-	GFX::DrawTime();
-	GFX::DrawBattery();
-	GFX::DrawWifi();
-	Animation::QueueEntryDone();
-
+	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 	GFX::DrawBottom();
-	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UIThemes->EntryBar());
-	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UITheme.EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
+	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UITheme.TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
 
-	if(entry->GetUpdateAvl()) {
-		GFX::DrawSprite(sprites_update_app_idx, clearUpdatePos.x, clearUpdatePos.y);
-	}
 
-	if (StoreUtils::store && StoreUtils::store->GetValid() && !fetch && entry) {
-		if (entries.size() > 0) {
-			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entries.size(); i++) {
-				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UIThemes->TextColor(), entries[(i + StoreUtils::store->GetDownloadSIndex())], 235, 0, font);
+	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
+		if(entry->GetUpdateAvl()) {
+			GFX::DrawSprite(sprites_update_app_idx, clearUpdatePos.x, clearUpdatePos.y);
+		}
 
-				GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, installs[(i + StoreUtils::store->GetDownloadSIndex())] ? UIThemes->TextColor() : UIThemes->MarkSelected());
+		if (entry->GetScripts().size() > 0) {
+			for (int i = 0; i < DOWNLOAD_ENTRIES && i < (int)entry->GetScripts().size(); i++) {
+				const Script &script = entry->GetScript(i);
+
+				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadScrollOffset())
+					Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UITheme.TextColor(), script.GetName(), 235, 0, font);
+
+				GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, script.IsInstalled() ? UITheme.TextColor() : UITheme.MarkSelected());
 			}
 
-			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UIThemes->TextColor());
+			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UITheme.TextColor());
 
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, UIThemes->TextColor(), Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
+			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, UITheme.TextColor(), Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
 		}
 	}
 }
@@ -175,128 +168,129 @@ void StoreUtils::DrawDownList(const std::vector<std::string> &entries, bool fetc
 	- Return back to EntryInfo through `B`.
 
 	const std::shared_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
-	const std::vector<std::string> &entries: Const Reference to the download list, since we do not modify anything in it.
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
 	const int &lastMode: Const Reference to the last mode.
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 	std::vector<bool> &installs: Reference to the installed states.
 */
-void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, const std::vector<std::string> &entries, int &currentMenu, const int &lastMode, int &smallDelay, std::vector<bool> &installs, const std::vector<std::string> &types) {
-	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
-		if (smallDelay > 0) {
-			smallDelay--;
-		}
-
-		if ((hDown & (KEY_Y | KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entries.empty()) {
-			if (is3DSX) { // Only allow if 3DSX.
-				if (StoreUtils::entries.size() <= 0) return; // Smaller than 0 -> No No.
-
-				if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"), "Universal-Updater/shortcut", true)) {
-					if (CreateShortcut(entry->GetTitle(), StoreUtils::store->GetDownloadIndex(), StoreUtils::store->GetFileName(), entry->GetAuthor())) {
-						Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
-					}
-				}
-			}
-		}
-
-		if (hRepeat & KEY_DOWN) {
-			if (StoreUtils::store->GetDownloadIndex() < (int)entries.size() - 1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + 1);
-			else StoreUtils::store->SetDownloadIndex(0);
-		}
-
-		if (hRepeat & KEY_UP) {
-			if (StoreUtils::store->GetDownloadIndex() > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - 1);
-			else StoreUtils::store->SetDownloadIndex(entries.size() - 1);
-		}
-
-
-		if (hRepeat & KEY_RIGHT) {
-			if (StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES < (int)entries.size()-1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES);
-			else StoreUtils::store->SetDownloadIndex(entries.size()-1);
-		}
-
-		if (hRepeat & KEY_LEFT) {
-			if (StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES);
-			else StoreUtils::store->SetDownloadIndex(0);
-		}
-
-		bool selected = false;
-		if (smallDelay == 0 && hDown & KEY_TOUCH) {
-			if (touching(touch, clearUpdatePos)) {
-				StoreUtils::meta->SetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entry->GetLastUpdated());
-				StoreUtils::RefreshInstalledApps(entry->GetTitle());
-			}
-
-			for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
-				if (touching(touch, downloadBoxes[i])) {
-					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-						if(StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadSIndex()) {
-							selected = true;
-						} else {
-							int scrollIndex = StoreUtils::store->GetDownloadSIndex();
-							StoreUtils::store->SetDownloadIndex(scrollIndex + i);
-
-							if (i == 0 && scrollIndex > 0)
-								StoreUtils::store->SetDownloadSIndex(scrollIndex - 1);
-							else if (i == (DOWNLOAD_ENTRIES - 1) && scrollIndex + DOWNLOAD_ENTRIES < (int)entries.size())
-								StoreUtils::store->SetDownloadSIndex(scrollIndex + 1);
-						}
-					}
-
-					break;
-				}
-
-				if (touching(touch, installedPos[i])) {
-					if (i + StoreUtils::store->GetDownloadSIndex() < (int)entries.size()) {
-						if (installs[i + StoreUtils::store->GetDownloadSIndex()]) {
-							StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
-							installs[i + StoreUtils::store->GetDownloadSIndex()] = false;
-						} else {
-							if(StoreUtils::meta->GetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle()) == "")
-								StoreUtils::meta->SetUpdated(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), "---");
-
-							StoreUtils::meta->SetInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[i + StoreUtils::store->GetDownloadSIndex()]);
-							installs[i + StoreUtils::store->GetDownloadSIndex()] = true;
-						}
-						StoreUtils::RefreshInstalledApps(entry->GetTitle());
-					}
-
-					break;
-				}
-			}
-		}
-
-		if (smallDelay == 0 && (hDown & KEY_A || selected) && !entries.empty()) {
-			std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + entries[StoreUtils::store->GetDownloadIndex()];
-			std::string PromptSaveKey = "";
-			if (types[StoreUtils::store->GetDownloadIndex()] == "git" || types[StoreUtils::store->GetDownloadIndex()] == "nightly") Msg += "\n\n" + Lang::get("NOTE_GIT");
-			else if (types[StoreUtils::store->GetDownloadIndex()] == "prerelease") Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
-			else PromptSaveKey = "Universal-Updater/confirm-install";
-
-			const std::string &preinstallMessage = entry->GetPreinstallMessage();
-			std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
-
-			if (Msg::promptMsg(Msg, PromptSaveKey, true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
-				StoreUtils::AddToQueue(entry->GetEntryIndex(), entries[StoreUtils::store->GetDownloadIndex()], entry->GetTitle(), entry->GetLastUpdated());
-			}
-		}
-
-		if (hDown & KEY_X && !entries.empty()) {
-			if (installs[StoreUtils::store->GetDownloadIndex()]) {
-				StoreUtils::meta->RemoveInstalled(StoreUtils::store->GetUniStoreTitle(), entry->GetTitle(), entries[StoreUtils::store->GetDownloadIndex()]);
-				installs[StoreUtils::store->GetDownloadIndex()] = false;
-				StoreUtils::RefreshInstalledApps(entry->GetTitle());
-			}
-		}
-
-		if (hDown & KEY_B) currentMenu = lastMode; // Go back to EntryInfo.
-
-		/* Quit UU. */
-		if (hDown & KEY_START && !QueueRuns)
-			exiting = true;
-
-		/* Scroll Handle. */
-		if (StoreUtils::store->GetDownloadIndex() < StoreUtils::store->GetDownloadSIndex()) StoreUtils::store->SetDownloadSIndex(StoreUtils::store->GetDownloadIndex());
-		else if (StoreUtils::store->GetDownloadIndex() > StoreUtils::store->GetDownloadSIndex() + DOWNLOAD_ENTRIES - 1) StoreUtils::store->SetDownloadSIndex(StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES + 1);
+void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay) {
+	if (!StoreUtils::store || !entry) return; // Ensure, store & entry is not a nullptr.
+	if (smallDelay > 0) {
+		smallDelay--;
 	}
+
+	if ((hDown & (KEY_Y | KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, downloadBoxes[6]))) && !entry->GetScripts().empty()) {
+		if (is3DSX) { // Only allow if 3DSX.
+			if (Msg::promptMsg(Lang::get("CREATE_SHORTCUT"), "Universal-Updater/shortcut", true)) {
+				if (CreateShortcut(entry->GetTitle(), StoreUtils::store->GetDownloadIndex(), StoreUtils::store->GetInfo().file, entry->GetAuthor())) {
+					Msg::waitMsg(Lang::get("SHORTCUT_CREATED"));
+				}
+			}
+		}
+	}
+
+	if (hRepeat & KEY_DOWN) {
+		if (StoreUtils::store->GetDownloadIndex() < (int)entry->GetScripts().size() - 1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + 1);
+		else StoreUtils::store->SetDownloadIndex(0);
+	}
+
+	if (hRepeat & KEY_UP) {
+		if (StoreUtils::store->GetDownloadIndex() > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - 1);
+		else StoreUtils::store->SetDownloadIndex(entry->GetScripts().size() - 1);
+	}
+
+
+	if (hRepeat & KEY_RIGHT) {
+		if (StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES < (int)entry->GetScripts().size() - 1) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() + DOWNLOAD_ENTRIES);
+		else StoreUtils::store->SetDownloadIndex(entry->GetScripts().size() - 1);
+	}
+
+	if (hRepeat & KEY_LEFT) {
+		if (StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES > 0) StoreUtils::store->SetDownloadIndex(StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES);
+		else StoreUtils::store->SetDownloadIndex(0);
+	}
+
+	bool selected = false;
+	if (smallDelay == 0 && hDown & KEY_TOUCH) {
+		if (touching(touch, clearUpdatePos)) {
+			StoreUtils::meta->SetUpdated(entry->GetUniStore(), entry->GetTitle(), entry->GetLastUpdated());
+			StoreUtils::RefreshInstalledApps(entry->GetTitle());
+		}
+
+		for (int i = 0; i < DOWNLOAD_ENTRIES; i++) {
+			if (touching(touch, downloadBoxes[i])) {
+				if (i + StoreUtils::store->GetDownloadScrollOffset() < (int)entry->GetScripts().size()) {
+					if(StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadScrollOffset()) {
+						selected = true;
+					} else {
+						int scrollIndex = StoreUtils::store->GetDownloadScrollOffset();
+						StoreUtils::store->SetDownloadIndex(scrollIndex + i);
+
+						if (i == 0 && scrollIndex > 0)
+							StoreUtils::store->SetDownloadScrollOffset(scrollIndex - 1);
+						else if (i == (DOWNLOAD_ENTRIES - 1) && scrollIndex + DOWNLOAD_ENTRIES < (int)entry->GetScripts().size())
+							StoreUtils::store->SetDownloadScrollOffset(scrollIndex + 1);
+					}
+				}
+
+				break;
+			}
+
+			if (touching(touch, installedPos[i])) {
+				if (i + StoreUtils::store->GetDownloadScrollOffset() < (int)entry->GetScripts().size()) {
+					Script &script = entry->GetScript(i + StoreUtils::store->GetDownloadScrollOffset());
+					if (script.IsInstalled()) {
+						StoreUtils::meta->RemoveInstalled(entry->GetUniStore(), entry->GetTitle(), script.GetName());
+					} else {
+						if (StoreUtils::meta->GetUpdated(entry->GetUniStore(), entry->GetTitle()) == "")
+							StoreUtils::meta->SetUpdated(entry->GetUniStore(), entry->GetTitle(), "---");
+
+						StoreUtils::meta->SetInstalled(entry->GetUniStore(), entry->GetTitle(), script.GetName());
+					}
+					StoreUtils::RefreshInstalledApps(entry->GetTitle());
+				}
+
+				break;
+			}
+		}
+	}
+
+	if (smallDelay == 0 && (hDown & KEY_A || selected) && !entry->GetScripts().empty()) {
+		const Script &script = entry->GetScript(StoreUtils::store->GetDownloadIndex());
+		std::string Msg = Lang::get("EXECUTE_ENTRY") + "\n\n" + script.GetName();
+		std::string PromptSaveKey = "";
+		if (script.IsGit()) Msg += "\n\n" + Lang::get("NOTE_GIT");
+		else if (script.IsPrerelease()) Msg += "\n\n" + Lang::get("NOTE_PRERELEASE");
+		else PromptSaveKey = "Universal-Updater/confirm-install";
+
+		const std::string &preinstallMessage = entry->GetPreinstallMessage();
+		std::string SecondMsg = preinstallMessage + "\n\n" + Lang::get("EXECUTE_ENTRY_WITH_MESSAGE");
+
+		if (Msg::promptMsg(Msg, PromptSaveKey, true) && (preinstallMessage.empty() || Msg::promptMsg(SecondMsg))) {
+			QueueSystem::AddToQueue(entry, StoreUtils::store->GetDownloadIndex());
+		}
+	}
+
+	if (hDown & KEY_X && !entry->GetScripts().empty()) {
+		Script &script = entry->GetScript(StoreUtils::store->GetDownloadIndex());
+		if (script.IsInstalled()) {
+			StoreUtils::meta->RemoveInstalled(entry->GetUniStore(), entry->GetTitle(), script.GetName());
+		} else {
+			if (StoreUtils::meta->GetUpdated(entry->GetUniStore(), entry->GetTitle()) == "")
+				StoreUtils::meta->SetUpdated(entry->GetUniStore(), entry->GetTitle(), "---");
+
+			StoreUtils::meta->SetInstalled(entry->GetUniStore(), entry->GetTitle(), script.GetName());
+		}
+		StoreUtils::RefreshInstalledApps(entry->GetTitle());
+	}
+
+	if (hDown & KEY_B) currentMenu = lastMode; // Go back to EntryInfo.
+
+	/* Quit UU. */
+	if (hDown & KEY_START && !QueueRuns)
+		exiting = true;
+
+	/* Scroll Handle. */
+	if (StoreUtils::store->GetDownloadIndex() < StoreUtils::store->GetDownloadScrollOffset()) StoreUtils::store->SetDownloadScrollOffset(StoreUtils::store->GetDownloadIndex());
+	else if (StoreUtils::store->GetDownloadIndex() > StoreUtils::store->GetDownloadScrollOffset() + DOWNLOAD_ENTRIES - 1) StoreUtils::store->SetDownloadScrollOffset(StoreUtils::store->GetDownloadIndex() - DOWNLOAD_ENTRIES + 1);
 }

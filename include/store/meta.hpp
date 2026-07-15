@@ -27,7 +27,7 @@
 #ifndef _UNIVERSAL_UPDATER_META_HPP
 #define _UNIVERSAL_UPDATER_META_HPP
 
-#include "json.hpp"
+#include <map>
 #include <string>
 #include <vector>
 
@@ -40,69 +40,67 @@ enum favoriteMarks {
 };
 
 class Meta {
+	struct App {
+		std::vector<std::string> installed;
+		std::string updated;
+		int marks;
+	};
+
+	// 2D map stores -> apps
+	std::map<std::string, std::map<std::string, App>> apps;
+	bool changesMade = false;
+
+	static std::string emptyString;
+	static std::vector<std::string> emptyVector;
+
 public:
 	Meta();
-	~Meta() { this->Save(); };
+	~Meta() { this->Save(); }
 
-	std::string GetUpdated(const std::string &unistoreName, const std::string &entry) const;
-	int GetMarks(const std::string &unistoreName, const std::string &entry) const;
-	bool UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const;
-	std::vector<std::string> GetInstalled(const std::string &unistoreName, const std::string &entry) const;
+	void Save();
+
+	const std::vector<std::string> &GetInstalled(const std::string &unistoreName, const std::string &entry) const {
+		if (this->apps.count(unistoreName) == 0 || this->apps.at(unistoreName).count(entry) == 0) return emptyVector;
+		return this->apps.at(unistoreName).at(entry).installed;
+	}
+
+	bool GetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) const {
+		if (this->apps.count(unistoreName) == 0 || this->apps.at(unistoreName).count(entry) == 0) return false;
+		for (const std::string &item : this->apps.at(unistoreName).at(entry).installed) {
+			if (item == name) return true;
+		}
+		return false;
+	}
+
+	void SetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
+		if (!this->GetInstalled(unistoreName, entry, name)) {
+			this->apps[unistoreName][entry].installed.push_back(name);
+			this->changesMade = true;
+		}
+	}
+
+	std::string GetUpdated(const std::string &unistoreName, const std::string &entry) const {
+		if (this->apps.count(unistoreName) == 0 || this->apps.at(unistoreName).count(entry) == 0) return emptyString;
+		return this->apps.at(unistoreName).at(entry).updated;
+	}
 
 	void SetUpdated(const std::string &unistoreName, const std::string &entry, const std::string &updated) {
-		this->metadataJson[unistoreName][entry]["updated"] = updated;
+		this->apps[unistoreName][entry].updated = updated;
 		this->changesMade = true;
-	};
+	}
+
+	int GetMarks(const std::string &unistoreName, const std::string &entry) const {
+		if (this->apps.count(unistoreName) == 0 || this->apps.at(unistoreName).count(entry) == 0) return 0;
+		return this->apps.at(unistoreName).at(entry).marks;
+	}
 
 	void SetMarks(const std::string &unistoreName, const std::string &entry, int marks) {
-		this->metadataJson[unistoreName][entry]["marks"] = marks;
+		this->apps[unistoreName][entry].marks = marks;
 		this->changesMade = true;
-	};
-
-	/* TODO: Handle this better. */
-	void SetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
-		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
-		bool write = true;
-
-		if (!installs.empty()) {
-			for (int i = 0; i < (int)installs.size(); i++) {
-				if (installs[i] == name) {
-					write = false;
-					break;
-				}
-			}
-		}
-
-		if (write) {
-			this->metadataJson[unistoreName][entry]["installed"] += name;
-			this->changesMade = true;
-		}
 	}
 
-	/* Remove installed state from a download list entry. */
-	void RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
-		const std::vector<std::string> installs = this->GetInstalled(unistoreName, entry);
-		if (installs.empty()) return;
-
-		for (int i = 0; i < (int)installs.size(); i++) {
-			if (installs[i] == name) {
-				this->metadataJson[unistoreName][entry]["installed"].erase(i);
-				this->changesMade = true;
-				break;
-			}
-		}
-
-		if (this->metadataJson[unistoreName][entry]["installed"].empty() && this->metadataJson[unistoreName][entry].contains("updated")) {
-			this->metadataJson[unistoreName][entry].erase("updated");
-			this->changesMade = true;
-		}
-	}
-
-	void ImportMetadata();
-	void Save();
-private:
-	nlohmann::json metadataJson = nullptr;
-	bool changesMade = false;
+	bool UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const;
+	void RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name);
 };
 
 #endif

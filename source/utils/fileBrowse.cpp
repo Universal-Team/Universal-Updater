@@ -26,9 +26,9 @@
 
 #include "fileBrowse.hpp"
 #include "files.hpp"
-#include "json.hpp"
 #include "structs.hpp"
 #include <3ds.h>
+#include <algorithm>
 #include <cstring>
 #include <filesystem>
 #include <functional>
@@ -74,70 +74,12 @@ std::vector<DirEntry> getDirectoryContents(const std::string &dir) {
 }
 
 /*
-	Return UniStore info.
-
-	const std::string &file: Const Reference to the path of the file.
-	const std::string &fieName: Const Reference to the filename, without path.
-*/
-UniStoreInfo GetInfo(const std::string &file, const std::string &fileName) {
-	UniStoreInfo Temp = { "", "", "", "", fileName, "", -1, -1, -1 }; // Title, Author, URL, File (to check if no slash exist), FileName, Desc, Version, Revision, entries.
-
-	if (fileName.length() > 4) {
-		if(*(u32*)(fileName.c_str() + fileName.length() - 4) == (1886349435 & ~(1 << 3))) return Temp;
-	}
-
-	nlohmann::json JSON;
-	FILE *temp = fopen(file.c_str(), "rt");
-	if(temp) {
-		JSON = nlohmann::json::parse(temp, nullptr, false);
-		fclose(temp);
-	}
-	if (JSON.is_discarded())
-		JSON = { };
-
-
-	if (!JSON.contains("storeInfo")) return Temp; // storeInfo does not exist.
-
-	if (JSON["storeInfo"].contains("title") && JSON["storeInfo"]["title"].is_string()) {
-		Temp.Title = JSON["storeInfo"]["title"];
-	}
-
-	if (JSON["storeInfo"].contains("file") && JSON["storeInfo"]["file"].is_string()) {
-		Temp.File = JSON["storeInfo"]["file"];
-	}
-
-	if (JSON["storeInfo"].contains("author") && JSON["storeInfo"]["author"].is_string()) {
-		Temp.Author = JSON["storeInfo"]["author"];
-	}
-
-	if (JSON["storeInfo"].contains("url") && JSON["storeInfo"]["url"].is_string()) {
-		Temp.URL = JSON["storeInfo"]["url"];
-	}
-
-	if (JSON["storeInfo"].contains("description") && JSON["storeInfo"]["description"].is_string()) {
-		Temp.Description = JSON["storeInfo"]["description"];
-	}
-
-	if (JSON["storeInfo"].contains("version") && JSON["storeInfo"]["version"].is_number()) {
-		Temp.Version = JSON["storeInfo"]["version"];
-	}
-
-	if (JSON["storeInfo"].contains("revision") && JSON["storeInfo"]["revision"].is_number()) {
-		Temp.Revision = JSON["storeInfo"]["revision"];
-	}
-
-	if (JSON.contains("storeContent")) Temp.StoreSize = JSON["storeContent"].size();
-
-	return Temp;
-}
-
-/*
 	Return UniStore info vector.
 
 	const std::string &path: Const Reference to the path, where to check.
 */
-std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
-	std::vector<UniStoreInfo> info;
+std::vector<Store::Info> GetUniStoreInfo(const std::string &path) {
+	std::vector<Store::Info> info;
 
 	if (access(path.c_str(), F_OK) != 0) return {}; // Folder does not exist.
 
@@ -146,12 +88,12 @@ std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path) {
 	for(uint i = 0; i < dirContents.size(); i++) {
 		/* Make sure to ONLY push .unistores, and no folders. Avoids crashes in that case too. */
 		if ((path + dirContents[i].name).find(".unistore") != std::string::npos) {
-			info.push_back( GetInfo(path + dirContents[i].name, dirContents[i].name) );
+			info.emplace_back(Store(path + dirContents[i].name, dirContents[i].name, Store::UpdateMode::skip, false).GetInfo());
 		}
 	}
 
-	sort(info.begin(), info.end(), [](const UniStoreInfo &lhs, const UniStoreInfo &rhs) {
-		return strcasecmp(lhs.Title.c_str(), rhs.Title.c_str()) < 0;
+	sort(info.begin(), info.end(), [](const Store::Info &lhs, const Store::Info &rhs) {
+		return strcasecmp(lhs.title.c_str(), rhs.title.c_str()) < 0;
 	});
 
 	return info;

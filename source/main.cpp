@@ -51,8 +51,7 @@ static void InitForARG() {
 
 	config = std::make_unique<Config>();
 	StoreUtils::meta = std::make_unique<Meta>();
-	UIThemes = std::make_unique<Theme>();
-	UIThemes->LoadTheme(config->theme());
+	UITheme = Theme(config->theme());
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {
@@ -91,11 +90,11 @@ int main(int argc, char *argv[]) {
 	if (argc == ARG_AMOUNT) {
 		InitForARG();
 
-		const std::string file = argv[1];
-		const std::string entry = argv[2];
+		const std::string storeFileName = argv[1];
+		const std::string entryTitle = argv[2];
 		int dlIndex = atoi(argv[3]);
 
-		std::unique_ptr<ArgumentParser> arg = std::make_unique<ArgumentParser>(file, entry, dlIndex);
+		std::unique_ptr<ArgumentParser> arg = std::make_unique<ArgumentParser>(storeFileName, entryTitle, dlIndex);
 
 		if (arg->GetValid()) arg->Execute(); // Execute, if valid.
 		else Msg::waitMsg(Lang::get("ARGUMENT_INVALID"));

@@ -36,37 +36,19 @@
 	const std::string &entry: Const Reference to the Entry Title name.
 	int dlIndex: The Download index.
 */
-ArgumentParser::ArgumentParser(const std::string &file, const std::string &entry, int dlIndex) {
-	if (dlIndex != -1 && file != "") {
-		this->file = file;
-		this->entry = entry;
-		this->dlIndex = dlIndex;
+ArgumentParser::ArgumentParser(const std::string &storeFileName, const std::string &entryTitle, int dlIndex) : dlIndex(dlIndex) {
+	if (this->dlIndex == -1 || storeFileName.empty()) return;
+	if (access((std::string(_STORE_PATH) + storeFileName).c_str(), F_OK) != 0) return;
 
-		this->Load();
-	}
-}
-
-/*
-	Prepare UniStore and get valid state.
-*/
-void ArgumentParser::Load() {
-	if (access((std::string(_STORE_PATH) + this->file).c_str(), F_OK) != 0) return;
-
-	this->store = std::make_unique<Store>(_STORE_PATH + this->file, this->file, Store::UpdateMode::skip);
+	this->store = std::make_unique<Store>(_STORE_PATH + storeFileName, storeFileName, Store::UpdateMode::skip, true);
 	if (!this->store->GetValid()) return;
 
-	for (int i = 0; i < this->store->GetStoreSize(); i++) {
-		if (this->store->GetTitleEntry(i) == this->entry) {
-			this->entryIndex = i;
-			const std::vector<std::string> dlList = this->store->GetDownloadList(this->entryIndex);
-
-			if (dlList.empty()) return;
-
-			if ((int)dlList.size() >= this->dlIndex) {
-				this->executeEntry = dlList[this->dlIndex];
-				this->isValid = true;
-				return;
-			}
+	for (const std::shared_ptr<StoreEntry> &entry : StoreUtils::allEntries) {
+		if (entry->GetTitle() == entryTitle) {
+			if (this->dlIndex >= (int)entry->GetScripts().size()) return;
+			this->entry = entry;
+			this->isValid = true;
+			return;
 		}
 	}
 }
@@ -76,8 +58,8 @@ void ArgumentParser::Load() {
 */
 void ArgumentParser::Execute() {
 	if (this->isValid) {
-		if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + this->executeEntry)) {
-			ScriptUtils::runFunctions(this->store->GetJson(), this->entryIndex, this->executeEntry);
+		if (Msg::promptMsg(Lang::get("EXECUTE_ENTRY") + "\n\n" + this->entry->GetScript(this->dlIndex).GetName())) {
+			ScriptUtils::runFunctions(*this->entry, this->entry->GetScript(this->dlIndex));
 		}
 	}
 }
