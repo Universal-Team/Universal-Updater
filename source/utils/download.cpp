@@ -790,9 +790,9 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 		return UUUpdate(DL_ERROR_CURL);
 	}
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
+	rapidjson::Document parsedAPI;
+	parsedAPI.Parse(result_buf);
+	if (parsedAPI.IsObject()) {
 		socExit();
 		free(result_buf);
 		free(socubuf);
@@ -803,13 +803,13 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 		UUUpdate update = {DL_CANCEL};
 
 		if (git) {
-			if (parsedAPI.contains("name") && parsedAPI["name"].is_string()) {
-				const std::string name = parsedAPI["name"].get_ref<const std::string &>();
+			if (parsedAPI.HasMember("name") && parsedAPI["name"].IsString()) {
+				const std::string name = parsedAPI["name"].GetString();
 				update.Version = name.substr(name.size() - 7);
 
 				if (strcasecmp(update.Version.c_str(), GIT_SHA) != 0) {
-					if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
-						update.Notes = parsedAPI["body"];
+					if (parsedAPI.HasMember("body") && parsedAPI["body"].IsString()) {
+						update.Notes = parsedAPI["body"].GetString();
 						update.Notes.erase(remove(update.Notes.begin(), update.Notes.end(), '\r'), update.Notes.end()); // Remove the CRLF \r's.
 					}
 
@@ -817,9 +817,9 @@ UUUpdate IsUUUpdateAvailable(bool git, CURLcode *curlReturn) {
 				}
 			}
 		} else {
-			if (parsedAPI.contains("release") && parsedAPI["release"].is_object()) {
-				const std::string &version = parsedAPI["release"]["version"];
-				const std::string &notes = parsedAPI["release"]["notes"];
+			if (parsedAPI.HasMember("release") && parsedAPI["release"].IsObject()) {
+				const std::string &version = parsedAPI["release"]["version"].GetString();
+				const std::string &notes = parsedAPI["release"]["notes"].GetString();
 				if (strcasecmp(version.c_str(), C_V) > 0) {
 					update = {DL_OK, version, notes};
 				}
@@ -1063,14 +1063,14 @@ void UpdateAction() {
 	}
 }
 
-static StoreList fetch(const std::string &entry, nlohmann::json &js) {
-	StoreList store = { "", "", "", "" };
-	if (!js.contains(entry)) return store;
+static StoreList fetch(const std::string &entry, const rapidjson::Value &json) {
+	StoreList store;
+	if (!json.IsObject()) return store;
 
-	if (js[entry].contains("title") && js[entry]["title"].is_string()) store.Title = js[entry]["title"];
-	if (js[entry].contains("author") && js[entry]["author"].is_string()) store.Author = js[entry]["author"];
-	if (js[entry].contains("url") && js[entry]["url"].is_string()) store.URL = js[entry]["url"];
-	if (js[entry].contains("description") && js[entry]["description"].is_string()) store.Description = js[entry]["description"];
+	if (json.HasMember("title") && json["title"].IsString())             store.Title       = json["title"].GetString();
+	if (json.HasMember("author") && json["author"].IsString())           store.Author      = json["author"].GetString();
+	if (json.HasMember("url") && json["url"].IsString())                 store.URL         = json["url"].GetString();
+	if (json.HasMember("description") && json["description"].IsString()) store.Description = json["description"].GetString();
 
 	return store;
 }
@@ -1108,11 +1108,13 @@ std::vector<StoreList> FetchStores() {
 	if (cres != CURLE_OK)
 		goto cleanup;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		for(auto it = parsedAPI.begin(); it != parsedAPI.end(); ++it) {
-			stores.push_back( fetch(it.key(), parsedAPI) );
+	{
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			for(const auto &item : parsedAPI.GetObject()) {
+				stores.push_back(fetch(item.name.GetString(), item.value));
+			}
 		}
 	}
 
@@ -1249,64 +1251,44 @@ C2D_Image FetchScreenshot(const std::string &URL) {
 std::string GetChangelog() {
 	if (!checkWifiStatus()) return "";
 
-	Result ret = 0;
+	CURLcode cres;
+	Result retcode;
+	std::string result;
 
 	void *socubuf = memalign(0x1000, 0x100000);
 	if (!socubuf) return "";
 
-	ret = socInit((u32 *)socubuf, 0x100000);
+	retcode = socInit((u32 *)socubuf, 0x100000);
 
-	if (R_FAILED(ret)) {
+	if (R_FAILED(retcode)) {
 		free(socubuf);
 		return "";
 	}
 
 	CURL *hnd = curl_easy_init();
 
-	ret = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
-	if (ret != 0) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return "";
-	}
+	retcode = setupContext(hnd, "https://api.github.com/repos/Universal-Team/Universal-Updater/releases/latest");
+	if (retcode != 0) goto cleanup;
 
-	CURLcode cres = curl_easy_perform(hnd);
+	cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
-	char *newbuf = (char *)realloc(result_buf, result_written + 1);
-	result_buf = newbuf;
+	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
 
-	if (cres != CURLE_OK) {
-		socExit();
-		free(result_buf);
-		free(socubuf);
-		result_buf = nullptr;
-		result_sz = 0;
-		result_written = 0;
-		return "";
-	}
+	if (cres != CURLE_OK) goto cleanup;
 
-	if (nlohmann::json::accept(result_buf)) {
-		nlohmann::json parsedAPI = nlohmann::json::parse(result_buf);
-
-		if (parsedAPI.contains("body") && parsedAPI["body"].is_string()) {
-			socExit();
-			free(result_buf);
-			free(socubuf);
-			result_buf = nullptr;
-			result_sz = 0;
-			result_written = 0;
-
-			std::string notes = parsedAPI["body"];
-			notes.erase(remove(notes.begin(), notes.end(), '\r'), notes.end()); // Remove the CRLF \r's.
-			return notes;
+	{
+		rapidjson::Document parsedAPI;
+		parsedAPI.Parse(result_buf);
+		if (parsedAPI.IsObject()) {
+			if (parsedAPI.HasMember("body") && parsedAPI["body"].IsString()) {
+				result = parsedAPI["body"].GetString();
+				result.erase(remove(result.begin(), result.end(), '\r'), result.end()); // Remove the CRLF \r's.
+			}
 		}
 	}
 
+cleanup:
 	socExit();
 	free(result_buf);
 	free(socubuf);
@@ -1314,5 +1296,5 @@ std::string GetChangelog() {
 	result_sz = 0;
 	result_written = 0;
 
-	return "";
+	return result;
 }

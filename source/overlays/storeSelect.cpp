@@ -59,35 +59,13 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 	const std::string &file: The file of the UniStore.
 */
 static void DeleteStore(const std::string &file) {
-	nlohmann::json storeJson;
-	FILE *temp = fopen((std::string(_STORE_PATH) + file).c_str(), "rt");
-	if (temp) {
-		storeJson = nlohmann::json::parse(temp, nullptr, false);
-		fclose(temp);
-	}
-	if (storeJson.is_discarded())
-		storeJson = {};
+	Store store(std::string(_STORE_PATH) + file, file, Store::UpdateMode::skip, false);
 
-	/* Check, if Spritesheet exist on UniStore. */
-	if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_array()) {
-		const std::vector<std::string> sht = storeJson["storeInfo"]["sheet"].get<std::vector<std::string>>();
-
-		/* Cause it's an array, delete all Spritesheets which exist. */
-		for (int i = 0; i < (int)sht.size(); i++) {
-			if (!sht[i].empty() && sht[i].find('/') == std::string::npos) {
-				if (access((std::string(_STORE_PATH) + sht[i]).c_str(), F_OK) == 0) {
-					deleteFile((std::string(_STORE_PATH) + sht[i]).c_str());
-				}
-			}
-		}
-
-	/* Else, if it's just a string.. check and delete single Spritesheet. */
-	} else if (storeJson["storeInfo"].contains("sheet") && storeJson["storeInfo"]["sheet"].is_string()) {
-		const std::string fl = storeJson["storeInfo"]["sheet"];
-
-		if (!fl.empty() && fl.find('/') == std::string::npos) {
-			if (access((std::string(_STORE_PATH) + fl).c_str(), F_OK) == 0) {
-				deleteFile((std::string(_STORE_PATH) + fl).c_str());
+	/* Cause it's an array, delete all Spritesheets which exist. */
+	for (const std::string &sheet : store.GetInfo().sheets) {
+		if (!sheet.empty() && sheet.find('/') == std::string::npos) {
+			if (access((std::string(_STORE_PATH) + sheet).c_str(), F_OK) == 0) {
+				deleteFile((std::string(_STORE_PATH) + sheet).c_str());
 			}
 		}
 	}
