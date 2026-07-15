@@ -27,7 +27,6 @@
 #ifndef _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 #define _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 
-#include "json.hpp"
 #include <citro2d.h>
 #include <deque>
 #include <memory>

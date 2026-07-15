@@ -27,7 +27,6 @@
 #ifndef _UNIVERSAL_UPDATER_SCRIPT_UTILS_HPP
 #define _UNIVERSAL_UPDATER_SCRIPT_UTILS_HPP
 
-#include "json.hpp"
 #include <3ds.h>
 #include <string>
 

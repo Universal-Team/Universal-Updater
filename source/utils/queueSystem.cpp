@@ -44,8 +44,8 @@ static Thread queueThread = nullptr;
 /*
 	Adds an entry to the queue.
 
-	nlohmann::json obj: The object.
-	C2D_Image icn: The icon.
+	const std::shared_ptr<StoreEntry> &entry: The entry being downloaded
+	int script: Which download script we're running.
 */
 void QueueSystem::AddToQueue(const std::shared_ptr<StoreEntry> &entry, int script) {
 	queueEntries.emplace_back(entry, script);
@@ -262,26 +262,25 @@ void QueueSystem::QueueHandle() {
 			}
 
 			/* Display if failed or succeeded. */
-			if (config->prompt()) {
-				char msg[256];
+			char msg[256];
 
-				if (QueueSystem::CancelCallback) {
-					snprintf(msg, sizeof(msg), Lang::get("ACTION_CANCELED").c_str(), script.GetName().c_str());
+			if (QueueSystem::CancelCallback) {
+				snprintf(msg, sizeof(msg), Lang::get("ACTION_CANCELED").c_str(), script.GetName().c_str());
+
+			} else {
+				if (queueEntries[0].status == QueueStatus::Failed) {
+					snprintf(msg, sizeof(msg), Lang::get("ACTION_FAILED").c_str(), script.GetName().c_str());
 
 				} else {
-					if (queueEntries[0].status == QueueStatus::Failed) {
-						snprintf(msg, sizeof(msg), Lang::get("ACTION_FAILED").c_str(), script.GetName().c_str());
-
-					} else {
-						snprintf(msg, sizeof(msg), Lang::get("ACTION_SUCCEEDED").c_str(), script.GetName().c_str());
-					}
+					snprintf(msg, sizeof(msg), Lang::get("ACTION_SUCCEEDED").c_str(), script.GetName().c_str());
 				}
-
-				QueueSystem::EndMsg = msg;
-				QueueSystem::Popup = true;
 			}
 
-			if (queueEntries[0].status == QueueStatus::Done) { // ONLY update, if successful.
+			QueueSystem::EndMsg = msg;
+			QueueSystem::Popup = true;
+
+			/* ONLY update, if successful. */
+			if (queueEntries[0].status == QueueStatus::Done) {
 				if (StoreUtils::meta) {
 					StoreUtils::meta->SetUpdated(entry.storeEntry->GetUniStore(), entry.storeEntry->GetTitle(), entry.storeEntry->GetLastUpdated());
 					StoreUtils::meta->SetInstalled(entry.storeEntry->GetUniStore(), entry.storeEntry->GetTitle(), script.GetName());
