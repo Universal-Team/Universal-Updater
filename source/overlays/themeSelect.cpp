@@ -30,6 +30,8 @@
 #include "overlay.hpp"
 #include "rapidjson/filereadstream.h"
 #include "storeUtils.hpp"
+#include <algorithm>
+
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 static const std::vector<Structs::ButtonPos> mainButtons = {

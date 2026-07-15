@@ -31,6 +31,7 @@
 #include "scriptUtils.hpp"
 #include "stringutils.hpp"
 #include "store.hpp"
+#include <algorithm>
 #include <unistd.h>
 
 using namespace rapidjson;

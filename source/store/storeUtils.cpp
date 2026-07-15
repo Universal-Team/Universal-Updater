@@ -27,6 +27,7 @@
 #include "common.hpp"
 #include "queueSystem.hpp"
 #include "storeUtils.hpp"
+#include <algorithm>
 
 std::unique_ptr<Meta> StoreUtils::meta = nullptr;
 std::unique_ptr<Store> StoreUtils::store = nullptr;

@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "stringutils.hpp"
+#include <algorithm>
 #include <charconv>
 #include <time.h>
 #include <stdarg.h>

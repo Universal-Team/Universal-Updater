@@ -28,6 +28,7 @@
 #include "files.hpp"
 #include "structs.hpp"
 #include <3ds.h>
+#include <algorithm>
 #include <cstring>
 #include <filesystem>
 #include <functional>

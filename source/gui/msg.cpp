@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "msg.hpp"
+#include <algorithm>
 
 // Width of checkbox + padding
 #define CHECK_WIDTH 18
