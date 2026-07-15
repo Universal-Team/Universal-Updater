@@ -47,10 +47,10 @@ static const std::vector<Structs::ButtonPos> sidePos = {
 void StoreUtils::DrawSideMenu(int currentMenu) {
 	for (int i = 0; i < 6; i++) {
 		if (i == currentMenu) {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UIThemes->SideBarSelected());
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UITheme.SideBarSelected());
 
 		} else {
-			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UIThemes->SideBarUnselected());
+			Gui::Draw_Rect(sidePos[i].x, sidePos[i].y, sidePos[i].w, sidePos[i].h, UITheme.SideBarUnselected());
 		}
 	}
 
@@ -61,7 +61,7 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 	GFX::DrawIcon(sprites_sort_idx, sidePos[4].x, sidePos[4].y);
 	GFX::DrawIcon(sprites_settings_idx, sidePos[5].x, sidePos[5].y);
 
-	Gui::Draw_Rect(40, 0, 1, 240, UIThemes->BarOutline());
+	Gui::Draw_Rect(40, 0, 1, 240, UITheme.BarOutline());
 }
 
 /*

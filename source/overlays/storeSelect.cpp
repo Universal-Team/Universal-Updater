@@ -162,43 +162,43 @@ void Overlays::SelectStore() {
 
 		if (info.size() > 0) {
 			if (info[selection].valid) {
-				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), info[selection].title, 390, 0, font);
-				Gui::DrawStringCentered(0, 30, 0.6f, UIThemes->TextColor(), info[selection].author, 380, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.5f, UIThemes->TextColor(), info[selection].description, 380, 130, font, C2D_WordWrap);
+				Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), info[selection].title, 390, 0, font);
+				Gui::DrawStringCentered(0, 30, 0.6f, UITheme.TextColor(), info[selection].author, 380, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.5f, UITheme.TextColor(), info[selection].description, 380, 130, font, C2D_WordWrap);
 
 			} else {
-				Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("INVALID_UNISTORE"), 390, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.6f, UIThemes->TextColor(), info[selection].error, 390, 0, font);
+				Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), Lang::get("INVALID_UNISTORE"), 390, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.6f, UITheme.TextColor(), info[selection].error, 390, 0, font);
 			}
 
-			Gui::DrawString(10, 200, 0.4, UIThemes->TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].entryCount), 150, 0, font);
-			Gui::DrawString(10, 210, 0.4, UIThemes->TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].revision), 150, 0, font);
-			Gui::DrawString(10, 220, 0.4, UIThemes->TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].file, 380, 0, font);
+			Gui::DrawString(10, 200, 0.4, UITheme.TextColor(), "- " + Lang::get("ENTRIES") + ": " + std::to_string(info[selection].entryCount), 150, 0, font);
+			Gui::DrawString(10, 210, 0.4, UITheme.TextColor(), "- " + Lang::get("REVISION") + ": " + std::to_string(info[selection].revision), 150, 0, font);
+			Gui::DrawString(10, 220, 0.4, UITheme.TextColor(), "- " + Lang::get("FILE_NAME") + ": " + info[selection].file, 380, 0, font);
 		}
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
 
-		Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-		GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UIThemes->TextColor());
-		Gui::DrawStringCentered(0, 2, 0.6, UIThemes->TextColor(), Lang::get("SELECT_UNISTORE_2"), 272, 0, font);
+		Gui::Draw_Rect(0, 0, 320, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 25, 320, 1, UITheme.BarOutline());
+		GFX::DrawIcon(sprites_arrow_idx, mainButtons[9].x, mainButtons[9].y, UITheme.TextColor());
+		Gui::DrawStringCentered(0, 2, 0.6, UITheme.TextColor(), Lang::get("SELECT_UNISTORE_2"), 272, 0, font);
 
 		if (info.size() > 0) {
 			for(int i = 0; i < 6 && i < (int)info.size(); i++) {
-				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), info[sPos + i].title, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UITheme.TextColor(), info[sPos + i].title, 295, 0, font);
 			}
 		} else if (helperThread) {
-			Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Lang::get("LOADING_UNISTORE_LIST"))) / 2, 0.6f, UIThemes->TextColor(), Lang::get("LOADING_UNISTORE_LIST"), 315, 0, font);
+			Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Lang::get("LOADING_UNISTORE_LIST"))) / 2, 0.6f, UITheme.TextColor(), Lang::get("LOADING_UNISTORE_LIST"), 315, 0, font);
 
-			GFX::DrawIconRotated(sprites_queue_idx, 304, 12, rotation, UIThemes->TextColor(), 1.0f, 0.5f, 0.5f);
+			GFX::DrawIconRotated(sprites_queue_idx, 304, 12, rotation, UITheme.TextColor(), 1.0f, 0.5f, 0.5f);
 			rotation = (rotation + 3) % 90;
 		}
 
-		GFX::DrawIcon(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y, UIThemes->TextColor());
-		GFX::DrawIcon(sprites_update_idx, mainButtons[7].x, mainButtons[7].y, UIThemes->TextColor());
-		GFX::DrawIcon(sprites_add_idx, mainButtons[8].x, mainButtons[8].y, UIThemes->TextColor());
+		GFX::DrawIcon(sprites_delete_idx, mainButtons[6].x, mainButtons[6].y, UITheme.TextColor());
+		GFX::DrawIcon(sprites_update_idx, mainButtons[7].x, mainButtons[7].y, UITheme.TextColor());
+		GFX::DrawIcon(sprites_add_idx, mainButtons[8].x, mainButtons[8].y, UITheme.TextColor());
 		C3D_FrameEnd(0);
 
 		hidScanInput();

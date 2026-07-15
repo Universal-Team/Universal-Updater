@@ -51,8 +51,7 @@ static void InitForARG() {
 
 	config = std::make_unique<Config>();
 	StoreUtils::meta = std::make_unique<Meta>();
-	UIThemes = std::make_unique<Theme>();
-	UIThemes->LoadTheme(config->theme());
+	UITheme = Theme(config->theme());
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {

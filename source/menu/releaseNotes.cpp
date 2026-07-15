@@ -82,12 +82,12 @@ const std::vector<std::string> &StoreUtils::ProcessReleaseNotes(std::string rele
 
 void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::shared_ptr<StoreEntry> &entry) {
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 26, 320, 214, UIThemes->BGColor());
+	Gui::Draw_Rect(0, 26, 320, 214, UITheme.BGColor());
 
 	float fontHeight = Gui::GetStringHeight(0.5f, "", font);
 	for (size_t i = 0; i < wrappedNotes.size(); i++) {
 		if (25 + i * fontHeight > scrollOffset && 25 + i * fontHeight < scrollOffset + 240.0f)
-		Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 310, 0, font);
+		Gui::DrawString(5, 25 + i * fontHeight - scrollOffset, 0.5f, UITheme.TextColor(), wrappedNotes[i], 310, 0, font);
 	}
 	uint32_t accentColor = (config->useAccentColor() && entry) ? entry->GetAccentColor() : 0;
 
@@ -100,11 +100,11 @@ void StoreUtils::DrawReleaseNotes(const float &scrollOffset, const std::shared_p
 			title += " – " + entry->GetVersion();
 	}
 
-	Gui::Draw_Rect(0, 0, 320, 25, accentColor ? accentColor : UIThemes->EntryBar());
-	Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-	Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UIThemes->TextColor(), title, 310, 0, font);
+	Gui::Draw_Rect(0, 0, 320, 25, accentColor ? accentColor : UITheme.EntryBar());
+	Gui::Draw_Rect(0, 25, 320, 1, UITheme.BarOutline());
+	Gui::DrawStringCentered(0, 1, 0.7f, accentColor ? WHITE : UITheme.TextColor(), title, 310, 0, font);
 
-	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UIThemes->TextColor());
+	GFX::DrawIcon(sprites_arrow_idx, back.x, back.y, UITheme.TextColor());
 
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 240, DIM_COLOR); // Darken.

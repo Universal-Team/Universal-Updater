@@ -26,7 +26,6 @@
 
 #include "fileBrowse.hpp"
 #include "files.hpp"
-#include "json.hpp"
 #include "structs.hpp"
 #include <3ds.h>
 #include <cstring>

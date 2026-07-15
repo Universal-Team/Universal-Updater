@@ -971,28 +971,28 @@ void UpdateAction() {
 			C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+			Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
 			for (size_t i = 0; i < wrappedNotes.size(); i++) {
 				if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f)
-					Gui::DrawString(5, 26.0f + i * fontHeight - scrollOffset, 0.5f, UIThemes->TextColor(), wrappedNotes[i], 390, 0, font);
+					Gui::DrawString(5, 26.0f + i * fontHeight - scrollOffset, 0.5f, UITheme.TextColor(), wrappedNotes[i], 390, 0, font);
 			}
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater", 390, 0, font);
-			Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+			Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
+			Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), "Universal-Updater", 390, 0, font);
+			Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
 			char updMsg[150];
 			snprintf(updMsg, sizeof(updMsg), Lang::get("UPDATE_AVAILABLE").c_str(), res.Version.c_str());
-			Gui::DrawStringCentered(0, 217, 0.7f, UIThemes->TextColor(), updMsg, 390, 0, font);
+			Gui::DrawStringCentered(0, 217, 0.7f, UITheme.TextColor(), updMsg, 390, 0, font);
 
 			GFX::DrawBottom();
-			Gui::Draw_Rect(0, 0, 320, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 320, 1, UIThemes->BarOutline());
-			Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font);
+			Gui::Draw_Rect(0, 0, 320, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 320, 1, UITheme.BarOutline());
+			Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), Lang::get("UPDATE_OR_CANCEL"), 310, 0, font);
 
 			for(uint i = 0; i < promptButtons.size(); i++) {
-				Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
-				Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+				Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UITheme.BarColor());
+				Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UITheme.TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
 			}
 
 			C3D_FrameEnd(0);
@@ -1131,9 +1131,9 @@ cleanup:
 /*
 	Fetch themes from the repo.
 */
-nlohmann::json FetchThemes() {
+std::vector<Theme> FetchThemes() {
 	Msg::DisplayMsg(Lang::get("FETCHING_THEMES"));
-	nlohmann::json Themes;
+	std::vector<Theme> Themes;
 
 	Result ret = 0;
 	CURLcode cres;
@@ -1150,18 +1150,25 @@ nlohmann::json FetchThemes() {
 	CURL *hnd = curl_easy_init();
 
 	ret = setupContext(hnd, "https://github.com/Universal-Team/Universal-Updater/raw/master/resources/Themes.json");
-	if (ret != 0)
-		goto cleanup;
+	if (ret != 0) goto cleanup;
 
 	cres = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	result_buf = (char *)realloc(result_buf, result_written + 1);
 	result_buf[result_written] = 0; // nullbyte to end it as a proper C style string.
-	if (cres != CURLE_OK)
-		goto cleanup;
+	if (cres != CURLE_OK) goto cleanup;
 
-	if (nlohmann::json::accept(result_buf))
-		Themes = nlohmann::json::parse(result_buf);
+	{
+		rapidjson::Document json;
+		json.Parse(result_buf);
+		if (json.IsObject()) {
+			for (const auto &item : json.GetObject()) {
+				if (item.value.IsObject()) {
+					Themes.emplace_back(item.value, item.name.GetString());
+				}
+			}
+		}
+	}
 
 cleanup:
 	socExit();

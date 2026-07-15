@@ -110,8 +110,8 @@ void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
 
 	/* For the Top Screen. */
 	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
-		if (accentColor) Gui::Draw_Rect(0, 173, 400, 1, UIThemes->EntryOutline());
-		Gui::Draw_Rect(0, 174, 400, 66, accentColor ? accentColor : UIThemes->DownListPrev());
+		if (accentColor) Gui::Draw_Rect(0, 173, 400, 1, UITheme.EntryOutline());
+		Gui::Draw_Rect(0, 174, 400, 66, accentColor ? accentColor : UITheme.DownListPrev());
 		const C2D_Image tempImg = entry->GetIcon();
 		const uint8_t offsetW = (48 - tempImg.subtex->width) / 2; // Center W.
 		const uint8_t offsetH = (48 - tempImg.subtex->height) / 2; // Center H.
@@ -119,19 +119,19 @@ void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
 
 		if ((int)entry->GetScripts().size() > StoreUtils::store->GetDownloadIndex()) {
 			const Script &script = entry->GetScript(StoreUtils::store->GetDownloadIndex());
-			Gui::DrawString(70, 174 + 15, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), script.GetName(), 310, 0, font);
+			Gui::DrawString(70, 174 + 15, 0.45f, accentColor ? WHITE : UITheme.TextColor(), script.GetName(), 310, 0, font);
 
 			if (script.GetSize() != "") {
-				Gui::DrawString(70, 174 + 30, 0.45f, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("SIZE") + ": " + script.GetSize(), 310, 0, font);
+				Gui::DrawString(70, 174 + 30, 0.45f, accentColor ? WHITE : UITheme.TextColor(), Lang::get("SIZE") + ": " + script.GetSize(), 310, 0, font);
 			}
 		}
 	}
 
 	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, fadeAlpha));
 	GFX::DrawBottom();
-	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UIThemes->EntryBar());
-	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UIThemes->TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, accentColor ? accentColor : UITheme.EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
+	Gui::DrawStringCentered(17, 2, 0.6, accentColor ? WHITE : UITheme.TextColor(), Lang::get("AVAILABLE_DOWNLOADS"), 223, 0, font);
 
 
 	if (StoreUtils::store && StoreUtils::store->GetValid() && entry) {
@@ -144,17 +144,17 @@ void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
 				const Script &script = entry->GetScript(i);
 
 				if (StoreUtils::store->GetDownloadIndex() == i + StoreUtils::store->GetDownloadScrollOffset())
-					Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UIThemes->TextColor(), script.GetName(), 235, 0, font);
+					Gui::Draw_Rect(downloadBoxes[i].x, downloadBoxes[i].y, downloadBoxes[i].w, downloadBoxes[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[i].y + 4, 0.45f, UITheme.TextColor(), script.GetName(), 235, 0, font);
 
-				GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, script.IsInstalled() ? UIThemes->TextColor() : UIThemes->MarkSelected());
+				GFX::DrawIcon(sprites_installed_idx, installedPos[i].x, installedPos[i].y, script.IsInstalled() ? UITheme.TextColor() : UITheme.MarkSelected());
 			}
 
-			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UIThemes->TextColor());
+			if (is3DSX) GFX::DrawIcon(sprites_shortcut_idx, downloadBoxes[6].x, downloadBoxes[6].y, UITheme.TextColor());
 
 
 		} else { // If no downloads available..
-			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, UIThemes->TextColor(), Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
+			Gui::DrawStringCentered(46 - 160 + (241 / 2), downloadBoxes[0].y + 4, 0.5f, UITheme.TextColor(), Lang::get("NO_DOWNLOADS_AVAILABLE"), 235, 0, font);
 		}
 	}
 }

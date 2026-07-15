@@ -127,62 +127,62 @@ void StoreUtils::DoSearch() {
 	isAND: isAND for the AND / OR mode.
 */
 void StoreUtils::DrawSearchMenu() {
-	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
-	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(21, 2, 0.6, UIThemes->TextColor(), Lang::get("SEARCH_FILTERS"), 269, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, UITheme.EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
+	Gui::DrawStringCentered(21, 2, 0.6, UITheme.TextColor(), Lang::get("SEARCH_FILTERS"), 269, 0, font);
 
-	Gui::Draw_Rect(searchBar.x - 1, searchBar.y - 1, searchBar.w + 2, searchBar.h + 2, UIThemes->SearchBarOutline());
-	Gui::Draw_Rect(searchBar.x, searchBar.y, searchBar.w, searchBar.h, UIThemes->SearchBar());
+	Gui::Draw_Rect(searchBar.x - 1, searchBar.y - 1, searchBar.w + 2, searchBar.h + 2, UITheme.SearchBarOutline());
+	Gui::Draw_Rect(searchBar.x, searchBar.y, searchBar.w, searchBar.h, UITheme.SearchBar());
 
-	Gui::DrawStringCentered(24, 46, 0.6, UIThemes->TextColor(), searchResult, 265, 0, font);
+	Gui::DrawStringCentered(24, 46, 0.6, UITheme.TextColor(), searchResult, 265, 0, font);
 
 	/* Checkboxes. */
 	for (size_t i = 0; i < nameDescription.size(); i++) {
 		GFX::DrawCheckbox(nameDescription[i].x, nameDescription[i].y, searchIncludes[i]);
-		Gui::DrawString(nameDescription[i].x + 18, nameDescription[i].y + 1, 0.4, UIThemes->TextColor(), Lang::get(nameDescriptionLabels[i]), 90, 0, font);
+		Gui::DrawString(nameDescription[i].x + 18, nameDescription[i].y + 1, 0.4, UITheme.TextColor(), Lang::get(nameDescriptionLabels[i]), 90, 0, font);
 	}
 
-	Gui::Draw_Rect(detailedSearch.x, detailedSearch.y, detailedSearch.w, detailedSearch.h, detailedMode ? UIThemes->MarkSelected() : UIThemes->MarkUnselected());
-	Gui::DrawStringCentered(23, detailedSearch.y + 6, 0.45f, UIThemes->TextColor(), Lang::get("DETAILED_SEARCH"), 200, 0, font);
+	Gui::Draw_Rect(detailedSearch.x, detailedSearch.y, detailedSearch.w, detailedSearch.h, detailedMode ? UITheme.MarkSelected() : UITheme.MarkUnselected());
+	Gui::DrawStringCentered(23, detailedSearch.y + 6, 0.45f, UITheme.TextColor(), Lang::get("DETAILED_SEARCH"), 200, 0, font);
 
 	if(detailedMode) {
-		Gui::DrawString(51, authorSearchBar.y + 7, 0.6, UIThemes->TextColor(), Lang::get("AUTHOR"), 50, 0, font);
-		Gui::Draw_Rect(authorSearchBar.x - 1, authorSearchBar.y - 1, authorSearchBar.w + 2, authorSearchBar.h + 2, UIThemes->SearchBarOutline());
-		Gui::Draw_Rect(authorSearchBar.x, authorSearchBar.y, authorSearchBar.w, authorSearchBar.h, UIThemes->SearchBar());
-		Gui::DrawStringCentered(authorSearchBar.x - 160 + authorSearchBar.w / 2, authorSearchBar.y + 5, 0.6, UIThemes->TextColor(), authorSearchResult, authorSearchBar.w - 10, 0, font);
+		Gui::DrawString(51, authorSearchBar.y + 7, 0.6, UITheme.TextColor(), Lang::get("AUTHOR"), 50, 0, font);
+		Gui::Draw_Rect(authorSearchBar.x - 1, authorSearchBar.y - 1, authorSearchBar.w + 2, authorSearchBar.h + 2, UITheme.SearchBarOutline());
+		Gui::Draw_Rect(authorSearchBar.x, authorSearchBar.y, authorSearchBar.w, authorSearchBar.h, UITheme.SearchBar());
+		Gui::DrawStringCentered(authorSearchBar.x - 160 + authorSearchBar.w / 2, authorSearchBar.y + 5, 0.6, UITheme.TextColor(), authorSearchResult, authorSearchBar.w - 10, 0, font);
 
-		Gui::DrawStringCentered(categoryBtn.x - 160 + categoryBtn.w / 2, categoryBtn.y - 20, 0.6, UIThemes->TextColor(), Lang::get("CATEGORY"), categoryBtn.w, 0, font);
-		Gui::Draw_Rect(categoryBtn.x, categoryBtn.y, categoryBtn.w, categoryBtn.h, category == -1 ? UIThemes->MarkUnselected() : UIThemes->MarkSelected());
-		if (category > -1 && store) Gui::DrawStringCentered((categoryBtn.x - 160 + categoryBtn.w / 2), categoryBtn.y + 5, 0.6, UIThemes->TextColor(), StoreUtils::store->GetCategories()[category], categoryBtn.w - 10, 0, font);
+		Gui::DrawStringCentered(categoryBtn.x - 160 + categoryBtn.w / 2, categoryBtn.y - 20, 0.6, UITheme.TextColor(), Lang::get("CATEGORY"), categoryBtn.w, 0, font);
+		Gui::Draw_Rect(categoryBtn.x, categoryBtn.y, categoryBtn.w, categoryBtn.h, category == -1 ? UITheme.MarkUnselected() : UITheme.MarkSelected());
+		if (category > -1 && store) Gui::DrawStringCentered((categoryBtn.x - 160 + categoryBtn.w / 2), categoryBtn.y + 5, 0.6, UITheme.TextColor(), StoreUtils::store->GetCategories()[category], categoryBtn.w - 10, 0, font);
 
-		Gui::DrawStringCentered(consoleBtn.x - 160 + consoleBtn.w / 2, consoleBtn.y - 20, 0.6, UIThemes->TextColor(), Lang::get("CONSOLE"), consoleBtn.w, 0, font);
-		Gui::Draw_Rect(consoleBtn.x, consoleBtn.y, consoleBtn.w, consoleBtn.h, console == -1 ? UIThemes->MarkUnselected() : UIThemes->MarkSelected());
-		if (console > -1 && store) Gui::DrawStringCentered((consoleBtn.x - 160 + consoleBtn.w / 2), consoleBtn.y + 5, 0.6, UIThemes->TextColor(), StoreUtils::store->GetConsoles()[console], consoleBtn.w - 10, 0, font);
+		Gui::DrawStringCentered(consoleBtn.x - 160 + consoleBtn.w / 2, consoleBtn.y - 20, 0.6, UITheme.TextColor(), Lang::get("CONSOLE"), consoleBtn.w, 0, font);
+		Gui::Draw_Rect(consoleBtn.x, consoleBtn.y, consoleBtn.w, consoleBtn.h, console == -1 ? UITheme.MarkUnselected() : UITheme.MarkSelected());
+		if (console > -1 && store) Gui::DrawStringCentered((consoleBtn.x - 160 + consoleBtn.w / 2), consoleBtn.y + 5, 0.6, UITheme.TextColor(), StoreUtils::store->GetConsoles()[console], consoleBtn.w - 10, 0, font);
 	} else {
 		/* Filters. */
-		Gui::DrawString(84, filters[0].y - 20, 0.5f, UIThemes->TextColor(), Lang::get("FILTER_TO"), 265, 0, font);
+		Gui::DrawString(84, filters[0].y - 20, 0.5f, UITheme.TextColor(), Lang::get("FILTER_TO"), 265, 0, font);
 
 		for (size_t i = 0; i < markKeys.size(); i++) {
 			Gui::Draw_Rect(filters[i].x, filters[i].y, filters[i].w, filters[i].h, ((marks & markKeys[i]) ?
-				UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
-			Gui::DrawString(filters[i].x + 9, filters[i].y + 7, 0.5f, UIThemes->TextColor(), markLabels[i], 0, 0, font);
+				UITheme.SideBarUnselected() : UITheme.BoxInside()));
+			Gui::DrawString(filters[i].x + 9, filters[i].y + 7, 0.5f, UITheme.TextColor(), markLabels[i], 0, 0, font);
 		}
-		Gui::Draw_Rect(filters[5].x, filters[5].y, filters[5].w, filters[5].h, (updateFilter ? UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
-		GFX::DrawIcon(sprites_update_filter_idx, filters[5].x + 8, filters[5].y + 8, UIThemes->TextColor());
-		Gui::Draw_Rect(filters[6].x, filters[6].y, filters[6].w, filters[6].h, (installedFilter ? UIThemes->SideBarUnselected() : UIThemes->BoxInside()));
-		GFX::DrawIcon(sprites_installed_filter_idx, filters[6].x + 8, filters[6].y + 8, UIThemes->TextColor());
+		Gui::Draw_Rect(filters[5].x, filters[5].y, filters[5].w, filters[5].h, (updateFilter ? UITheme.SideBarUnselected() : UITheme.BoxInside()));
+		GFX::DrawIcon(sprites_update_filter_idx, filters[5].x + 8, filters[5].y + 8, UITheme.TextColor());
+		Gui::Draw_Rect(filters[6].x, filters[6].y, filters[6].w, filters[6].h, (installedFilter ? UITheme.SideBarUnselected() : UITheme.BoxInside()));
+		GFX::DrawIcon(sprites_installed_filter_idx, filters[6].x + 8, filters[6].y + 8, UITheme.TextColor());
 
-		Gui::Draw_Rect(sendToQueue.x, sendToQueue.y, sendToQueue.w, sendToQueue.h, UIThemes->MarkUnselected());
-		Gui::DrawStringCentered(23, sendToQueue.y + 6, 0.45f, UIThemes->TextColor(), Lang::get("SELECTION_QUEUE"), 200, 0, font);
+		Gui::Draw_Rect(sendToQueue.x, sendToQueue.y, sendToQueue.w, sendToQueue.h, UITheme.MarkUnselected());
+		Gui::DrawStringCentered(23, sendToQueue.y + 6, 0.45f, UITheme.TextColor(), Lang::get("SELECTION_QUEUE"), 200, 0, font);
 
 		/* NOT. */
-		Gui::Draw_Rect(notBtn.x, notBtn.y, notBtn.w, notBtn.h, (isNOT ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-		Gui::DrawString(notBtn.x + 4, notBtn.y, 0.4f, UIThemes->TextColor(), notLabel, 0, 0, font);
+		Gui::Draw_Rect(notBtn.x, notBtn.y, notBtn.w, notBtn.h, (isNOT ? UITheme.MarkSelected() : UITheme.MarkUnselected()));
+		Gui::DrawString(notBtn.x + 4, notBtn.y, 0.4f, UITheme.TextColor(), notLabel, 0, 0, font);
 
 		/* AND / OR. */
 		for(size_t i = 0; i < andOr.size(); i++) {
-			Gui::Draw_Rect(andOr[i].x, andOr[i].y, andOr[i].w, andOr[i].h, ((isAND ^ i) ? UIThemes->MarkSelected() : UIThemes->MarkUnselected()));
-			Gui::DrawString(andOr[i].x + 4, andOr[i].y, 0.4f, UIThemes->TextColor(), andOrLabels[i], 0, 0, font);
+			Gui::Draw_Rect(andOr[i].x, andOr[i].y, andOr[i].w, andOr[i].h, ((isAND ^ i) ? UITheme.MarkSelected() : UITheme.MarkUnselected()));
+			Gui::DrawString(andOr[i].x + 4, andOr[i].y, 0.4f, UITheme.TextColor(), andOrLabels[i], 0, 0, font);
 		}
 	}
 }

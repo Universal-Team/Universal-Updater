@@ -39,7 +39,7 @@ bool exiting = false, is3DSX = false, needUnloadFont = false;
 C2D_SpriteSheet sprites;
 int fadeAlpha = 0;
 u32 old_time_limit;
-std::unique_ptr<Theme> UIThemes = nullptr;
+Theme UITheme;
 std::unique_ptr<Sound> Music = nullptr;
 bool dspfirmFound = false;
 
@@ -137,8 +137,7 @@ Result Init::Initialize() {
 
 	config = std::make_unique<Config>();
 	StoreUtils::meta = std::make_unique<Meta>();
-	UIThemes = std::make_unique<Theme>();
-	UIThemes->LoadTheme(config->theme());
+	UITheme = Theme(config->theme());
 
 	CFG_Region region = CFG_REGION_USA;
 	if(config->language() == "zh-CN") {

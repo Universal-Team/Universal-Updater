@@ -28,6 +28,7 @@
 #include "common.hpp"
 #include "download.hpp"
 #include "overlay.hpp"
+#include "rapidjson/filereadstream.h"
 #include "storeUtils.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
@@ -43,9 +44,42 @@ static const std::vector<Structs::ButtonPos> mainButtons = {
 
 /* Select a Theme. */
 void Overlays::SelectTheme() {
-	nlohmann::json NewThemes = FetchThemes();
-	UIThemes->AddThemes(NewThemes);
-	auto Themes = UIThemes->ThemeNames();
+	// Fetch the theme list and ensure everything is in the local JSON
+	std::vector<Theme> Themes = FetchThemes();
+	for (const Theme &theme : Themes) {
+		theme.AddToJson();
+	}
+
+	// Load in the rest of the themes
+	{
+		FILE *in = fopen(_THEME_PATH, "r");
+		if (!in) return;
+
+		rapidjson::Document json;
+		char *readBuffer = new char[0x10000];
+		rapidjson::FileReadStream is(in, readBuffer, 0x10000);
+		json.ParseStream(is);
+		delete[] readBuffer;
+		fclose(in);
+
+		if (json.IsObject()) {
+			for (const auto &theme : json.GetObject()) {
+				bool add = true;
+				for (const Theme &old : Themes) {
+					if (theme.name.GetString() == old.Name()) {
+						add = false;
+						break;
+					}
+				}
+
+				if (add) Themes.emplace_back(theme.value, theme.name.GetString());
+			}
+		}
+	}
+
+	std::sort(Themes.begin(), Themes.end(), [] (const Theme &lhs, const Theme &rhs) {
+		return strcasecmp(lhs.Name().c_str(), rhs.Name().c_str()) < 0;
+	});
 
 
 	bool Finish = false;
@@ -60,30 +94,30 @@ void Overlays::SelectTheme() {
 		bool customBg = config->usebg() && StoreUtils::store && StoreUtils::store->customBG();
 		if (customBg) {
 			Gui::ScreenDraw(Top);
-			Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-			Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+			Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+			Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
 			GFX::DrawTop();
 		}
 
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), Lang::get("SELECT_A_THEME"), 380, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), Lang::get("SELECT_A_THEME"), 380, 0, font);
 
-		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 40, 0.5f, customBg ? WHITE : UIThemes->TextColor(), Themes[selection].second, 380, 140, font);
+		Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
+		Gui::DrawStringCentered(0, 40, 0.5f, customBg ? WHITE : UITheme.TextColor(), Themes[selection].Description(), 380, 140, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
 
-		Gui::Draw_Rect(0, 215, 320, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 320, 1, UIThemes->BarOutline());
+		Gui::Draw_Rect(0, 215, 320, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 320, 1, UITheme.BarOutline());
 
 		if (Themes.size() > 0) {
 			for(int i = 0; i < 7 && i < (int)Themes.size(); i++) {
-				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
-				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UIThemes->TextColor(), Themes[sPos + i].first, 295, 0, font);
+				if (sPos + i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
+				Gui::DrawStringCentered(10 - 160 + (300 / 2), mainButtons[i].y + 4, 0.45f, UITheme.TextColor(), Themes[sPos + i].Name(), 295, 0, font);
 			}
 		}
 
@@ -116,19 +150,19 @@ void Overlays::SelectTheme() {
 			}
 
 			if (hidKeysDown() & KEY_A) {
-				config->theme(Themes[selection].first);
+				config->theme(Themes[selection].Name());
 				Finish = true;
 			}
 
 			// Load theme on every key press, as a preview
-			UIThemes->LoadTheme(Themes[selection].first);
+			UITheme = Themes[selection];
 
 			if (hidKeysDown() & KEY_TOUCH) {
 				for (int i = 0; i < 7; i++) {
 					if (touching(touch, mainButtons[i])) {
 						if (i + sPos < (int)Themes.size()) {
-							UIThemes->LoadTheme(Themes[i + sPos].first);
-							config->theme(Themes[i + sPos].first);
+							UITheme = Themes[i + sPos];
+							config->theme(Themes[i + sPos].Name());
 							Finish = true;
 						}
 					}
@@ -143,7 +177,12 @@ void Overlays::SelectTheme() {
 			Finish = true;
 
 			// Reset to saved theme
-			UIThemes->LoadTheme(config->theme());
+			for(const Theme &theme : Themes) {
+				if (theme.Name() == config->theme()) {
+					UITheme = theme;
+					break;
+				}
+			}
 		}
 	}
 }

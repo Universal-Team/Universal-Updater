@@ -41,21 +41,21 @@ void Overlays::ShowCredits() {
 
 		GFX::DrawTop();
 		GFX::DrawSprite(sprites_universal_updater_idx, 220, 26);
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), "Universal-Updater - " + Lang::get("CREDITS"), 395, 0, font);
 
-		Gui::DrawString(10, 30, 0.5f, UIThemes->TextColor(), "- Universal-Team", 0, 0, font);
-		Gui::DrawString(10, 50, 0.5f, UIThemes->TextColor(), "- devkitPro", 0, 0, font);
-		Gui::DrawString(10, 70, 0.5f, UIThemes->TextColor(), "- dlbeer", 0, 0, font);
-		Gui::DrawString(10, 90, 0.5f, UIThemes->TextColor(), "- FlagBrew", 0, 0, font);
-		Gui::DrawString(10, 110, 0.5f, UIThemes->TextColor(), "- https://icons8.com/", 0, 0, font);
-		Gui::DrawString(10, 130, 0.5f, UIThemes->TextColor(), "- Ivandeve", 0, 0, font);
-		Gui::DrawString(10, 150, 0.5f, UIThemes->TextColor(), "- PabloMK7", 0, 0, font);
-		Gui::DrawString(10, 170, 0.5f, UIThemes->TextColor(), Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
-		Gui::DrawString(10, 197, 0.5f, UIThemes->TextColor(), Lang::get("GITHUB"), 390, 0, font);
+		Gui::DrawString(10, 30, 0.5f, UITheme.TextColor(), "- Universal-Team", 0, 0, font);
+		Gui::DrawString(10, 50, 0.5f, UITheme.TextColor(), "- devkitPro", 0, 0, font);
+		Gui::DrawString(10, 70, 0.5f, UITheme.TextColor(), "- dlbeer", 0, 0, font);
+		Gui::DrawString(10, 90, 0.5f, UITheme.TextColor(), "- FlagBrew", 0, 0, font);
+		Gui::DrawString(10, 110, 0.5f, UITheme.TextColor(), "- https://icons8.com/", 0, 0, font);
+		Gui::DrawString(10, 130, 0.5f, UITheme.TextColor(), "- Ivandeve", 0, 0, font);
+		Gui::DrawString(10, 150, 0.5f, UITheme.TextColor(), "- PabloMK7", 0, 0, font);
+		Gui::DrawString(10, 170, 0.5f, UITheme.TextColor(), Lang::get("CONTRIBUTOR_TRANSLATORS"), 210, 0, font);
+		Gui::DrawString(10, 197, 0.5f, UITheme.TextColor(), Lang::get("GITHUB"), 390, 0, font);
 
-		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("CURRENT_VERSION") + std::string(VER_NUMBER), 390, 0, font);
+		Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
+		Gui::DrawStringCentered(0, 218, 0.6f, UITheme.TextColor(), Lang::get("CURRENT_VERSION") + std::string(VER_NUMBER), 390, 0, font);
 
 		Animation::QueueEntryDone();
 		GFX::DrawBottom();
