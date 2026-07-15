@@ -29,6 +29,7 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/prettywriter.h"
+#include <array>
 
 using namespace rapidjson;
 
@@ -118,7 +119,6 @@ Config::Config() {
 
 	if (json.HasMember("List") && json["List"].IsBool())                           this->list(json["List"].GetBool());
 	if (json.HasMember("AutoUpdate") && json["AutoUpdate"].IsBool())               this->autoupdate(json["AutoUpdate"].GetBool());
-	if (json.HasMember("MetaData") && json["MetaData"].IsBool())                   this->metadata(json["MetaData"].GetBool());
 	if (json.HasMember("UpdateCheck") && json["UpdateCheck"].IsBool())             this->updatecheck(json["UpdateCheck"].GetBool());
 	if (json.HasMember("UpdateNightly") && json["UpdateNightly"].IsBool())         this->updategit(json["UpdateNightly"].GetBool());
 	if (json.HasMember("UseUniStoreBG") && json["UseUniStoreBG"].IsBool())         this->usebg(json["UseUniStoreBG"].GetBool());
@@ -144,6 +144,7 @@ Config::Config() {
 /* Write to config if changesMade. */
 void Config::save() {
 	if (!this->changesMade) return;
+	this->changesMade = false;
 
 	Document json;
 	json.SetObject();
@@ -163,7 +164,6 @@ void Config::save() {
 
 	json.AddMember("List",              Value().SetBool(this->list()),           a);
 	json.AddMember("AutoUpdate",        Value().SetBool(this->autoupdate()),     a);
-	json.AddMember("MetaData",          Value().SetBool(this->metadata()),       a);
 	json.AddMember("SortAscending",     Value().SetBool(this->sortAscending()),  a);
 	json.AddMember("_3DSX_InFolder",    Value().SetBool(this->_3dsxInFolder()),  a);
 	json.AddMember("UpdateCheck",       Value().SetBool(this->updatecheck()),    a);

@@ -27,7 +27,14 @@
 #include "common.hpp"
 #include "fileBrowse.hpp"
 #include "meta.hpp"
-#include <unistd.h>
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/prettywriter.h"
+
+using namespace rapidjson;
+
+std::string Meta::emptyString;
+std::vector<std::string> Meta::emptyVector;
 
 /*
 	The Constructor of the Meta.
@@ -35,143 +42,41 @@
 	Includes MetaData file creation, if non existent.
 */
 Meta::Meta() {
-	if (access(_META_PATH, F_OK) != 0) {
-		FILE *temp = fopen(_META_PATH, "w");
-		char tmp[2] = { '{', '}' };
-		fwrite(tmp, sizeof(tmp), 1, temp);
-		fclose(temp);
-	}
+	FILE *file = fopen(_META_PATH, "r");
+	if (!file) return;
 
-	FILE *temp = fopen(_META_PATH, "rt");
-	if (temp) {
-		this->metadataJson = nlohmann::json::parse(temp, nullptr, false);
-		fclose(temp);
-	}
-	if (this->metadataJson.is_discarded())
-		this->metadataJson = { };
+	Document json;
+	char *readBuffer = new char[0x10000];
+	FileReadStream is(file, readBuffer, 0x10000);
+	json.ParseStream(is);
+	delete[] readBuffer;
+	fclose(file);
 
-	if (config->metadata()) this->ImportMetadata();
-}
+	if (!json.IsObject()) return;
 
-/*
-	Import the old Metadata of the 'updates.json' file.
-*/
-void Meta::ImportMetadata() {
-	if (access("sdmc:/3ds/Universal-Updater/updates.json", F_OK) != 0) {
-		config->metadata(false);
-		return; // Not found.
-	}
+	for (const auto &store : json.GetObject()) {
+		if (!store.value.IsObject()) continue;
+		for (const auto &app : store.value.GetObject()) {
+			if (!app.value.IsObject()) continue;
+			std::vector<std::string> installed;
+			std::string updated;
+			int marks = 0;
 
-	Msg::DisplayMsg(Lang::get("FETCHING_METADATA"));
-
-	nlohmann::json oldJson;
-	FILE *old = fopen("sdmc:/3ds/Universal-Updater/updates.json", "rt");
-	if (old) {
-		oldJson = nlohmann::json::parse(old, nullptr, false);
-		fclose(old);
-	}
-	if (oldJson.is_discarded())
-		oldJson = { };
-
-	Msg::DisplayMsg(Lang::get("LOADING_UNISTORE_LIST"));
-	std::vector<Store::Info> info = GetUniStoreInfo(_STORE_PATH); // Fetch UniStores.
-
-	for (int i = 0; i < (int)info.size(); i++) {
-		if (info[i].title != "" && oldJson.contains(info[i].file)) {
-			for(auto it = oldJson[info[i].file].begin(); it != oldJson[info[i].file].end(); ++it) {
-				this->SetUpdated(info[i].title, it.key().c_str(), it.value().get<std::string>());
+			if (app.value.HasMember("installed") && app.value["installed"].IsArray()) {
+				for (const Value &item : app.value["installed"].GetArray()) {
+					if (item.IsString()) installed.push_back(item.GetString());
+				}
 			}
+
+			if (app.value.HasMember("updated") && app.value["updated"].IsString())
+				updated = app.value["updated"].GetString();
+
+			if (app.value.HasMember("marks") && app.value["marks"].IsInt())
+				marks = app.value["marks"].GetInt();
+
+			this->apps[store.name.GetString()][app.name.GetString()] = {installed, updated, marks};
 		}
 	}
-
-	config->metadata(false);
-	this->changesMade = true;
-}
-
-/*
-	Get Last Updated.
-
-	const std::string &unistoreName: The UniStore name.
-	const std::string &entry: The Entry name.
-*/
-std::string Meta::GetUpdated(const std::string &unistoreName, const std::string &entry) const {
-	if (!this->metadataJson.contains(unistoreName)) return ""; // UniStore Name does not exist.
-
-	if (!this->metadataJson[unistoreName].contains(entry)) return ""; // Entry does not exist.
-
-	if (!this->metadataJson[unistoreName][entry].contains("updated")) return ""; // updated does not exist.
-
-	if (this->metadataJson[unistoreName][entry]["updated"].is_string()) return this->metadataJson[unistoreName][entry]["updated"];
-	return "";
-}
-
-/*
-	Get the marks.
-
-	const std::string &unistoreName: The UniStore name.
-	const std::string &entry: The Entry name.
-*/
-int Meta::GetMarks(const std::string &unistoreName, const std::string &entry) const {
-	int temp = 0;
-
-	if (!this->metadataJson.contains(unistoreName)) return temp; // UniStore Name does not exist.
-
-	if (!this->metadataJson[unistoreName].contains(entry)) return temp; // Entry does not exist.
-
-	if (!this->metadataJson[unistoreName][entry].contains("marks")) return temp; // marks does not exist.
-
-	if (this->metadataJson[unistoreName][entry]["marks"].is_number()) return this->metadataJson[unistoreName][entry]["marks"];
-	return temp;
-}
-
-/*
-	Return, if update available.
-
-	const std::string &unistoreName: The UniStore name.
-	const std::string &entry: The Entry name.
-	const std::string &updated: Compare for the update.
-*/
-bool Meta::UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const {
-	if (this->GetUpdated(unistoreName, entry) != "" && updated != "") {
-		return strcasecmp(updated.c_str(), this->GetUpdated(unistoreName, entry).c_str()) > 0;
-	}
-
-	return false;
-}
-
-/*
-	Get the marks.
-
-	const std::string &unistoreName: The UniStore name.
-	const std::string &entry: The Entry name.
-*/
-std::vector<std::string> Meta::GetInstalled(const std::string &unistoreName, const std::string &entry) const {
-	if (!this->metadataJson.contains(unistoreName)) return { }; // UniStore Name does not exist.
-
-	if (!this->metadataJson[unistoreName].contains(entry)) return { }; // Entry does not exist.
-
-	if (!this->metadataJson[unistoreName][entry].contains("installed")) return { }; // marks does not exist.
-
-	if (this->metadataJson[unistoreName][entry]["installed"].is_array()) return this->metadataJson[unistoreName][entry]["installed"];
-	return { };
-}
-
-/*
-	Get the marks.
-
-	const std::string &unistoreName: The UniStore name.
-	const std::string &entry: The Entry name.
-*/
-bool Meta::GetInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) const {
-	const std::vector<std::string> &installs = GetInstalled(unistoreName, entry);
-
-	for (const std::string &install : installs) {
-		if (install == name) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /*
@@ -180,11 +85,74 @@ bool Meta::GetInstalled(const std::string &unistoreName, const std::string &entr
 	Write to file.. called on destructor.
 */
 void Meta::Save() {
-	if (!changesMade) return;
-	changesMade = false;
+	if (!this->changesMade) return;
+	this->changesMade = false;
 
-	FILE *file = fopen(_META_PATH, "wb");
-	const std::string dump = this->metadataJson.dump(1, '\t');
-	fwrite(dump.c_str(), 1, dump.size(), file);
-	fclose(file);
+	Document json;
+	json.SetObject();
+	Document::AllocatorType &a = json.GetAllocator();
+
+	for (const auto &store : this->apps) {
+		json.AddMember(Value(store.first.c_str(), store.first.size(), a), Value(kObjectType), a);
+		for (const auto &app : store.second) {
+			// If no info, skip!
+			if (app.second.installed.empty() && app.second.updated.empty() && app.second.marks == 0)
+				continue;
+
+			json[store.first.c_str()].AddMember(Value(app.first.c_str(), app.first.size(), a), Value(kObjectType), a);
+			Value &appJson = json[store.first.c_str()][app.first.c_str()];
+
+			if (!app.second.installed.empty()) {
+				appJson.AddMember("installed", Value(kArrayType), a);
+				for (const std::string &file : app.second.installed) {
+					appJson["installed"].PushBack(Value().SetString(file.c_str(), file.size(), a), a);
+				}
+			}
+
+			if (!app.second.updated.empty())
+				appJson.AddMember("updated", Value().SetString(app.second.updated.c_str(), app.second.updated.size(), a), a);
+
+			if (app.second.marks != 0)
+				appJson.AddMember("marks", Value(app.second.marks), a);
+		}
+	}
+
+	FILE *out = fopen(_META_PATH, "w");
+	if (out) {
+		char *writeBuffer = new char[0x10000];
+		FileWriteStream os(out, writeBuffer, 0x10000);
+
+		PrettyWriter<FileWriteStream> writer(os);
+		writer.SetIndent('\t', 1);
+		json.Accept(writer);
+
+		delete[] writeBuffer;
+		fclose(out);
+	}
+}
+
+bool Meta::UpdateAvailable(const std::string &unistoreName, const std::string &entry, const std::string &updated) const {
+	if (!this->GetUpdated(unistoreName, entry).empty() && !updated.empty()) {
+		return strcasecmp(updated.c_str(), this->GetUpdated(unistoreName, entry).c_str()) > 0;
+	}
+	return false;
+}
+
+/* Remove installed state from a download list entry. */
+void Meta::RemoveInstalled(const std::string &unistoreName, const std::string &entry, const std::string &name) {
+	std::vector<std::string> &installs = this->apps[unistoreName][entry].installed;
+	if (installs.empty()) return;
+
+	for (auto it = installs.begin(); it != installs.end(); it++) {
+		if (*it == name) {
+			installs.erase(it);
+			this->changesMade = true;
+			break;
+		}
+	}
+
+	if (installs.empty()) {
+		this->apps[unistoreName][entry].updated = "";
+		this->changesMade = true;
+	}
 }

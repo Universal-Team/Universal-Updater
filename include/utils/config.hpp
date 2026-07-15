@@ -82,10 +82,6 @@ public:
 	std::string firmPath() const { return this->v_firmPath; };
 	void firmPath(const std::string &v) { this->v_firmPath = v; this->changesMade = true; };
 
-	/* Fetching old metadata. */
-	bool metadata() const { return this->v_metadata; };
-	void metadata(bool v) { this->v_metadata = v; this->changesMade = true; };
-
 	/* U-U Update check on startup. */
 	bool updatecheck() const { return this->v_updateCheck; };
 	void updatecheck(bool v) { this->v_updateCheck = v; this->changesMade = true; };
