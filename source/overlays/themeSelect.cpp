@@ -64,6 +64,8 @@ void Overlays::SelectTheme() {
 
 		if (json.IsObject()) {
 			for (const auto &theme : json.GetObject()) {
+				if (!theme.value.IsObject()) continue;
+
 				bool add = true;
 				for (const Theme &old : Themes) {
 					if (theme.name.GetString() == old.Name()) {
