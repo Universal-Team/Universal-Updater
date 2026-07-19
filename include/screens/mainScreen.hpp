@@ -49,11 +49,14 @@ class MainScreen : public Screen {
 public:
 	MainScreen();
 	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	void Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) override;
+
+	void SwitchPage(int mode, int page) { storeMode = mode; sPage = page; }
+
 private:
 	std::vector<std::string> dwnldList, dwnldSizes, dwnldTypes;
 
-	bool initialized = false, fetchDown = false, showMarks = false, showSettings = false,
+	bool initialized = false, fetchDown = false, showMarks = false,
 		 screenshotFetch = false, canDisplay = false;
 
 	int storeMode = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,

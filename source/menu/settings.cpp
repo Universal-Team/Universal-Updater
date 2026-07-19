@@ -107,7 +107,8 @@ static const std::pair<int, int> langSprites[] = { {-1, 0}, {-1, 0}, {-1, 0}, {-
 static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(20, 2, 0.6, UIThemes->TextColor(), Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawStringCentered(20, 2, 0.6f, UIThemes->TextColor(), Lang::get("SETTINGS"), 280, 0, font);
+	Gui::DrawString(290, 4, 0.6f, UIThemes->TextColor(), "(?)");
 
 	for (int i = 0; i < 8; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UIThemes->MarkSelected());
@@ -247,12 +248,14 @@ static void DrawProxySettings(int selection) {
 	- Show the Credits.
 	- Exit Universal-Updater.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &page: Reference to the page.
-	bool &dspSettings: Reference to the display Settings.
 	int &storeMode: Reference to the store Mode.
 	int &selection: Reference to the Selection.
 */
-static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int &selection) {
+static void SettingsHandleMain(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &storeMode, int &selection) {
 	if (hDown & KEY_B) {
 		selection = 0;
 		storeMode = 0;
@@ -352,10 +355,13 @@ static void SettingsHandleMain(int &page, bool &dspSettings, int &storeMode, int
 	- Change the Directory of...
 		- 3DSX, NDS & Archives.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void SettingsHandleDir(int &page, int &selection) {
+static void SettingsHandleDir(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 4;
@@ -472,10 +478,13 @@ static void SettingsHandleDir(int &page, int &selection) {
 	- Enable / Disable Automatically updating the UniStore on boot.
 	- Enable / Disable Automatically check for Universal-Updater updates on boot.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void AutoUpdateLogic(int &page, int &selection) {
+static void AutoUpdateLogic(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 2;
@@ -529,10 +538,13 @@ static void AutoUpdateLogic(int &page, int &selection) {
 
 	- Enable / Disable using the SpriteSheet Background Image, if exist.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 */
-static void GUISettingsLogic(int &page, int &selection) {
+static void GUISettingsLogic(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 3;
@@ -597,11 +609,14 @@ static void GUISettingsLogic(int &page, int &selection) {
 
 	- Select the language, which should be used with the app.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &page: Reference to the page.
 	int &selection: Reference to the Selection.
 	int &sPos: Reference to the ScreenPos variable.
 */
-static void LanguageLogic(int &page, int &selection, int &sPos) {
+static void LanguageLogic(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &selection, int &sPos) {
 	if (hRepeat & KEY_DOWN) {
 		if (selection < (int)languages.size() - 1) selection++;
 		else selection = 0;
@@ -697,7 +712,7 @@ static void LanguageLogic(int &page, int &selection, int &sPos) {
 	else if (selection > sPos + 6 - 1) sPos = selection - 6 + 1;
 }
 
-static void ProxySettingsLogic(int &page, int &selection) {
+static void ProxySettingsLogic(u32 hDown, touchPosition &touch, int &page, int &selection) {
 	if (hDown & KEY_B) {
 		page = 0;
 		selection = 5;
@@ -710,7 +725,7 @@ static void ProxySettingsLogic(int &page, int &selection) {
 		}
 	}
 
-	if ((hDown & KEY_A)||((hDown & KEY_TOUCH)&&touching(touch, proxyInputBar))) {
+	if ((hDown & KEY_A) || ((hDown & KEY_TOUCH) && touching(touch, proxyInputBar))) {
 		std::string temp;
 		if (Input::getTextKeyboard(temp, 2083, Lang::get("PROXY_HINT_TEXT"), config->proxyStr())) {
 			config->proxyUrl(temp);
@@ -756,35 +771,34 @@ void StoreUtils::DrawSettings(int page, int selection, int sPos) {
 	Settings Handle.
 
 	int &page: Reference to the page.
-	bool &dspSettings: Reference to the display Settings.
 	int &storeMode: Reference to the store Mode.
 	int &selection: Reference to the Selection.
 	int &sPos: Reference to screen position.
 */
-void StoreUtils::SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, int &sPos) {
+void StoreUtils::SettingsHandle(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &storeMode, int &selection, int &sPos) {
 	switch(page) {
 		case 0:
-			SettingsHandleMain(page, dspSettings, storeMode, selection);
+			SettingsHandleMain(hDown, hRepeat, touch, page, storeMode, selection);
 			break;
 
 		case 1:
-			SettingsHandleDir(page, selection);
+			SettingsHandleDir(hDown, hRepeat, touch, page, selection);
 			break;
 
 		case 2:
-			AutoUpdateLogic(page, selection);
+			AutoUpdateLogic(hDown, hRepeat, touch, page, selection);
 			break;
 
 		case 3:
-			GUISettingsLogic(page, selection);
+			GUISettingsLogic(hDown, hRepeat, touch, page, selection);
 			break;
 
 		case 4:
-			LanguageLogic(page, selection, sPos);
+			LanguageLogic(hDown, hRepeat, touch, page, selection, sPos);
 			break;
 
 		case 5:
-			ProxySettingsLogic(page, selection);
+			ProxySettingsLogic(hDown, touch, page, selection);
 			break;
 	}
 }

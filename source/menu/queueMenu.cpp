@@ -260,7 +260,7 @@ void StoreUtils::DrawQueueMenu(const int queueIndex) {
 	}
 }
 
-void StoreUtils::QueueMenuHandle(int &queueIndex, int &storeMode) {
+void StoreUtils::QueueMenuHandle(u32 hDown, touchPosition &touch, int &queueIndex, int &storeMode) {
 	if (!queueEntries.empty()) {
 		if ((1 + queueMenuIdx) > (int)queueEntries.size() - 1) queueMenuIdx = std::max<int>((int)(queueEntries.size() - 1) - 1, 0); // Ensure this really doesn't go below 0.
 	}

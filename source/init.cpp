@@ -183,10 +183,10 @@ Result Init::MainLoop() {
 	/* Loop as long as the status is not fullExit. */
 	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
-		hHeld = hidKeysHeld();
-		hUp = hidKeysUp();
-		hDown = hidKeysDown();
-		hRepeat = hidKeysDownRepeat();
+		u32 hHeld = hidKeysHeld();
+		u32 hDown = hidKeysDown();
+		u32 hRepeat = hidKeysDownRepeat();
+		touchPosition touch;
 		hidTouchRead(&touch);
 
 		Gui::clearTextBufs();
@@ -196,7 +196,7 @@ Result Init::MainLoop() {
 		Gui::DrawScreen(false);
 		C3D_FrameEnd(0);
 
-		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, true, false);
+		if (!exiting) Gui::ScreenLogic(hDown, hRepeat, hHeld, touch, true, false);
 		else {
 			if (hidKeysDown() & KEY_START) fullExit = true; // Make it optionally faster.
 

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Updater
-*   Copyright (C) 2019-2021 Universal-Team
+*   Copyright (C) 2019-2026 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,25 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_UPDATER_COMMON_HPP
-#define _UNIVERSAL_UPDATER_COMMON_HPP
+#ifndef _UNIVERSAL_UPDATER_TUTORIAL_HPP
+#define _UNIVERSAL_UPDATER_TUTORIAL_HPP
 
-#include "config.hpp"
-#include "gfx.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "screenCommon.hpp"
+#include "common.hpp"
+#include "mainScreen.hpp"
 #include <3ds.h>
-#include <vector>
 
-#define _STORE_PATH "sdmc:/3ds/Universal-Updater/stores/"
-#define _META_PATH "sdmc:/3ds/Universal-Updater/MetaData.json"
-#define _THEME_AMOUNT 2
-#define _UNISTORE_VERSION 4
+#define KEYS_ALL 0xFFFFFFFF
+#define KEYS_NONE 0
+#define KEYS_DPAD (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)
 
-inline std::unique_ptr<Config> config;
-inline C2D_Font font;
+namespace Tutorial {
+	void DrawTop(void);
+	void DrawBottom(void);
+	void Logic(u32 hDown, touchPosition &touch, MainScreen &ms);
 
-extern Thread helperThread;
+	u32 GetKeyMask(void);
+};
 
 #endif

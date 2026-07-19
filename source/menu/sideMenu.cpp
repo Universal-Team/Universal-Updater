@@ -70,11 +70,14 @@ void StoreUtils::DrawSideMenu(int currentMenu) {
 
 	- Switch between the Menus through the sidebar.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	int &currentMenu: Reference to the store Mode / Menu.
 	bool &fetch: Reference of the download fetch variable.. so we know, if we need to fetch the download entries.
 	int &lastMenu: Reference to the last menu.
 */
-void StoreUtils::SideMenuHandle(int &currentMenu, bool &fetch, int &lastMenu) {
+void StoreUtils::SideMenuHandle(u32 hDown, u32 hRepeat, touchPosition &touch, int &currentMenu, bool &fetch, int &lastMenu) {
 	Animation::QueueAnimHandle();
 
 	if (hDown & KEY_TOUCH) {

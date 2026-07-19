@@ -115,12 +115,14 @@ void StoreUtils::DrawList() {
 
 	- Scroll through the Grid with the D-Pad Up / Down and skip 3 entries with Left / Right.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
 	int &currentMode: Const Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
 	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::ListLogic(u32 hDown, u32 hRepeat, int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 1) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 1);

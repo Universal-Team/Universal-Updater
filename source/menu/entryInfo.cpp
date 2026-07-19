@@ -85,13 +85,15 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 	- Go to the download list, by pressing `A`.
 	- Show the MarkMenu with START.
 
+	u32 hDown: Keys down.
+	touchPosition &touch: Touch screen status.
 	bool &showMark: Reference to showMark.. to show the mark menu.
 	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 	bool &sFetch: Reference to the screenshot fetch.
 	int &mode: Reference to the store mode.
 	const std::shared_ptr<StoreEntry> &entry: The store Entry.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
+void StoreUtils::EntryHandle(u32 hDown, touchPosition &touch, bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
 	if (entry) {
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 
