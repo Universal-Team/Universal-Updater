@@ -118,9 +118,9 @@ Config::Config() {
 	if (json.HasMember("Active_Theme") && json["Active_Theme"].IsString())         this->theme(json["Active_Theme"].GetString());
 
 	if (json.HasMember("List") && json["List"].IsBool())                           this->list(json["List"].GetBool());
-	if (json.HasMember("AutoUpdate") && json["AutoUpdate"].IsBool())               this->autoupdate(json["AutoUpdate"].GetBool());
-	if (json.HasMember("UpdateCheck") && json["UpdateCheck"].IsBool())             this->updatecheck(json["UpdateCheck"].GetBool());
-	if (json.HasMember("UpdateNightly") && json["UpdateNightly"].IsBool())         this->updategit(json["UpdateNightly"].GetBool());
+	if (json.HasMember("AutoUpdate") && json["AutoUpdate"].IsBool())               this->autoUpdateUniStores(json["AutoUpdate"].GetBool());
+	if (json.HasMember("UpdateCheck") && json["UpdateCheck"].IsBool())             this->autoUpdateSelf(json["UpdateCheck"].GetBool());
+	if (json.HasMember("UpdateNightly") && json["UpdateNightly"].IsBool())         this->useGitUpdates(json["UpdateNightly"].GetBool());
 	if (json.HasMember("UseUniStoreBG") && json["UseUniStoreBG"].IsBool())         this->usebg(json["UseUniStoreBG"].GetBool());
 	if (json.HasMember("CustomFont") && json["CustomFont"].IsBool())               this->customfont(json["CustomFont"].GetBool());
 	if (json.HasMember("Display_Changelog") && json["Display_Changelog"].IsBool()) this->changelog(json["Display_Changelog"].GetBool());
@@ -163,11 +163,11 @@ void Config::save() {
 	json.AddMember("ProxyURL",      Value().SetString(this->proxyStr().c_str(),  this->proxyStr().size(), a),  a);
 
 	json.AddMember("List",              Value().SetBool(this->list()),           a);
-	json.AddMember("AutoUpdate",        Value().SetBool(this->autoupdate()),     a);
+	json.AddMember("AutoUpdate",        Value().SetBool(this->autoUpdateUniStores()),     a);
 	json.AddMember("SortAscending",     Value().SetBool(this->sortAscending()),  a);
 	json.AddMember("_3DSX_InFolder",    Value().SetBool(this->_3dsxInFolder()),  a);
-	json.AddMember("UpdateCheck",       Value().SetBool(this->updatecheck()),    a);
-	json.AddMember("UpdateNightly",     Value().SetBool(this->updategit()),      a);
+	json.AddMember("UpdateCheck",       Value().SetBool(this->autoUpdateSelf()),    a);
+	json.AddMember("UpdateNightly",     Value().SetBool(this->useGitUpdates()),      a);
 	json.AddMember("UseUniStoreBG",     Value().SetBool(this->usebg()),          a);
 	json.AddMember("UseAccentColor",    Value().SetBool(this->useAccentColor()), a);
 	json.AddMember("CustomFont",        Value().SetBool(this->customfont()),     a);

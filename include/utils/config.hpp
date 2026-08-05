@@ -64,8 +64,8 @@ public:
 	void sortAscending(bool v) { this->v_sortAscending = v; this->changesMade = true; };
 
 	/* Auto update on boot. */
-	bool autoupdate() const { return this->v_autoUpdate; };
-	void autoupdate(bool v) { this->v_autoUpdate = v; this->changesMade = true; };
+	bool autoUpdateUniStores() const { return this->v_autoUpdateUniStores; };
+	void autoUpdateUniStores(bool v) { this->v_autoUpdateUniStores = v; this->changesMade = true; };
 
 	bool _3dsxInFolder() const { return this->v_3dsxInFolder; };
 	void _3dsxInFolder(bool v) { this->v_3dsxInFolder = v; this->changesMade = true; };
@@ -83,12 +83,12 @@ public:
 	void firmPath(const std::string &v) { this->v_firmPath = v; this->changesMade = true; };
 
 	/* U-U Update check on startup. */
-	bool updatecheck() const { return this->v_updateCheck; };
-	void updatecheck(bool v) { this->v_updateCheck = v; this->changesMade = true; };
+	bool autoUpdateSelf() const { return this->v_autoUpdateSelf; };
+	void autoUpdateSelf(bool v) { this->v_autoUpdateSelf = v; this->changesMade = true; };
 
 	/* Check for git/release on startup. */
-	bool updategit() const { return this->v_updateGit; };
-	void updategit(bool v) { this->v_updateGit = v; this->changesMade = true; };
+	bool useGitUpdates() const { return this->v_useGitUpdates; };
+	void useGitUpdates(bool v) { this->v_useGitUpdates = v; this->changesMade = true; };
 
 	/* U-U Update check on startup. */
 	bool usebg() const { return this->v_showBg; };
@@ -144,10 +144,10 @@ private:
 				v_proxyUrl = "";
 
 	bool v_list = false,
-		v_autoUpdate = true,
 		v_metadata = true,
-		v_updateCheck = true,
-		v_updateGit = false,
+		v_autoUpdateUniStores = true,
+		v_autoUpdateSelf = true,
+		v_useGitUpdates = false,
 		v_showBg = true,
 		v_customFont = false,
 		v_changelog = true,

@@ -179,17 +179,17 @@ static void DrawAutoUpdate(int selection) {
 	/* Toggle Boxes. */
 	Gui::Draw_Rect(40, 44, 280, 24, (selection == 0 ? UITheme.MarkSelected() : UITheme.MarkUnselected()));
 	Gui::DrawString(47, 48, 0.5f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_UNISTORE"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[0].x, toggleAbles[0].y, config->autoupdate());
+	GFX::DrawToggle(toggleAbles[0].x, toggleAbles[0].y, config->autoUpdateUniStores());
 	Gui::DrawString(47, 75, 0.4f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_UNISTORE_DESC"), 265, 0, font, C2D_WordWrap);
 
 	Gui::Draw_Rect(40, 110, 280, 24, (selection == 1 ? UITheme.MarkSelected() : UITheme.MarkUnselected()));
 	Gui::DrawString(47, 114, 0.5f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_UU"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[1].x, toggleAbles[1].y, config->updatecheck());
+	GFX::DrawToggle(toggleAbles[1].x, toggleAbles[1].y, config->autoUpdateSelf());
 	Gui::DrawString(47, 141, 0.4f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_UU_DESC"), 265, 0, font, C2D_WordWrap);
 
 	Gui::Draw_Rect(40, 180, 280, 24, (selection == 2 ? UITheme.MarkSelected() : UITheme.MarkUnselected()));
 	Gui::DrawString(47, 184, 0.5f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_GIT"), 210, 0, font);
-	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->updategit());
+	GFX::DrawToggle(toggleAbles[2].x, toggleAbles[2].y, config->useGitUpdates());
 	Gui::DrawString(47, 211, 0.4f, UITheme.TextColor(), Lang::get("AUTO_UPDATE_GIT_DESC"), 265, 0, font, C2D_WordWrap);
 }
 
@@ -495,28 +495,28 @@ static void AutoUpdateLogic(int &page, int &selection) {
 			selection = 2;
 
 		} else if (touching(touch, toggleAbles[0])) {
-			config->autoupdate(!config->autoupdate());
+			config->autoUpdateUniStores(!config->autoUpdateUniStores());
 
 		} else if (touching(touch, toggleAbles[1])) {
-			config->updatecheck(!config->updatecheck());
+			config->autoUpdateSelf(!config->autoUpdateSelf());
 
 		} else if (touching(touch, toggleAbles[2])) {
-			config->updategit(!config->updategit());
+			config->useGitUpdates(!config->useGitUpdates());
 		}
 	}
 
 	if (hDown & KEY_A) {
 		switch(selection) {
 			case 0:
-				config->autoupdate(!config->autoupdate());
+				config->autoUpdateUniStores(!config->autoUpdateUniStores());
 				break;
 
 			case 1:
-				config->updatecheck(!config->updatecheck());
+				config->autoUpdateSelf(!config->autoUpdateSelf());
 				break;
 
 			case 2:
-				config->updategit(!config->updategit());
+				config->useGitUpdates(!config->useGitUpdates());
 				break;
 		}
 	}

@@ -65,6 +65,10 @@ Store::Store(const std::string &file, const std::string &fileName, UpdateMode up
 void Store::update(const std::string &file, UpdateMode updateMode, bool loadContent) {
 	this->LoadFromFile(file, false);
 
+	/* If auto-update is disabled*/
+	if (!config->autoUpdateUniStores() && updateMode == UpdateMode::automatic)
+		updateMode = UpdateMode::skip;
+
 	/* If we're not updating and don't want content, we're already done. */
 	if (updateMode == UpdateMode::skip && !loadContent) return;
 

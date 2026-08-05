@@ -887,7 +887,7 @@ void UpdateAction() {
 		}
 	}
 
-	bool useGit = config->updategit();
+	bool useGit = config->useGitUpdates();
 	UUUpdate res = {DL_CANCEL};
 	bool retry;
 	do {
@@ -954,7 +954,7 @@ void UpdateAction() {
 
 	// This is where we actually check if we're going to do the update or not
 	// because everything above this point is Wi-Fi sanity checking.
-	if (res.Status == DL_OK && config->updatecheck()) {
+	if (res.Status == DL_OK && config->autoUpdateSelf()) {
 		bool confirmed = false;
 		float scrollOffset = 0.0f, scrollDelta = 0.0f;
 

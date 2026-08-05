@@ -230,7 +230,6 @@ void Overlays::SelectStore() {
 				if (selected && info[selection].valid) {
 					/* Load selected one. */
 					config->lastStore(info[selection].file);
-					if (!config->autoupdate()) skipUpdate = true;
 					StoreUtils::store = std::make_unique<Store>(_STORE_PATH + info[selection].file, info[selection].file, skipUpdate ? Store::UpdateMode::skip : Store::UpdateMode::automatic, true);
 					StoreUtils::ResetSearch();
 					doOut = true;
