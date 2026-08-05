@@ -36,11 +36,13 @@
 #define KEYS_DPAD (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)
 
 namespace Tutorial {
+	void Start();
+	u32 GetKeyMask(void);
+
 	void DrawTop(void);
 	void DrawBottom(void);
 	void Logic(u32 hDown, touchPosition &touch, MainScreen &ms);
 
-	u32 GetKeyMask(void);
 };
 
 #endif

@@ -30,6 +30,7 @@
 #include "overlay.hpp"
 #include "scriptUtils.hpp"
 #include "storeUtils.hpp"
+#include "tutorial.hpp"
 #include <unistd.h>
 
 extern bool exiting, QueueRuns;
@@ -86,9 +87,10 @@ static const std::vector<Structs::ButtonPos> dirIcons = {
 	{ 288, 210, 24, 24 }
 };
 
+static const Structs::ButtonPos tutorial = { 290, 4, 16, 16 };
 static const Structs::ButtonPos back = { 45, 0, 24, 24 }; // Back arrow for directory.
 static const Structs::ButtonPos Theme = { 40, 196, 280, 24 }; // Themes.
-Structs::ButtonPos proxyInputBar = { 51, 95, 262, 30 };
+static const Structs::ButtonPos proxyInputBar = { 51, 95, 262, 30 };
 
 
 static const std::vector<std::string> mainStrings = { "LANGUAGE", "SELECT_UNISTORE", "AUTO_UPDATE_SETTINGS_BTN", "GUI_SETTINGS_BTN", "DIRECTORY_SETTINGS_BTN", "PROXY_SETTINGS_BTN", "CREDITS_BTN", "EXIT_APP" };
@@ -108,7 +110,7 @@ static void DrawSettingsMain(int selection) {
 	Gui::Draw_Rect(40, 0, 280, 25, UITheme.EntryBar());
 	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
 	Gui::DrawStringCentered(20, 2, 0.6, UITheme.TextColor(), Lang::get("SETTINGS"), 280, 0, font);
-	Gui::DrawString(290, 4, 0.6f, UITheme.TextColor(), "(?)");
+	Gui::DrawString(tutorial.x, tutorial.y, 0.6f, UITheme.TextColor(), "(?)");
 
 	for (int i = 0; i < 8; i++) {
 		if (i == selection) Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, UITheme.MarkSelected());
@@ -288,6 +290,10 @@ static void SettingsHandleMain(u32 hDown, u32 hRepeat, touchPosition &touch, int
 				if (i == selection) selected = true;
 				else selection = i;
 			}
+		}
+
+		if (touching(touch, tutorial)) {
+			Tutorial::Start();
 		}
 	}
 

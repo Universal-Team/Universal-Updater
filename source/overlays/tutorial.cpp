@@ -2,7 +2,7 @@
 #include "storeUtils.hpp"
 #include <citro2d.h>
 
-static bool drawTutorial = true;
+static bool drawTutorial = false;
 static u32 keyMask = KEYS_ALL;
 static int tutorialPage = 0;
 
@@ -14,9 +14,14 @@ static int blinkTimer = 0;
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
+void Tutorial::Start() {
+	drawTutorial = true;
+	tutorialPage = 0;
+}
+
 u32 Tutorial::GetKeyMask(void) { return keyMask; }
 
-u32 textColor(int fadeLevel, bool blink = false) {
+static u32 textColor(int fadeLevel, bool blink = false) {
 	if (blink && blinkTimer < 30) fadeLevel = 0;
 	return (UITheme.TextColor() & 0x00FFFFFF) | ((fadeLevel * 255 / 180) << 24);
 }
