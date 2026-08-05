@@ -48,5 +48,6 @@ inline touchPosition touch;
 inline C2D_Font font;
 
 extern Thread helperThread;
+extern C2D_SpriteSheet sprites;
 
 #endif

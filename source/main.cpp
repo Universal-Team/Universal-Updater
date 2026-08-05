@@ -64,6 +64,7 @@ static void InitForARG() {
 	Gui::init(region);
 
 	Lang::load(config->language());
+	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	Init::LoadFont();
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 }

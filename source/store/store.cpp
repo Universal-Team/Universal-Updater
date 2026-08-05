@@ -36,7 +36,6 @@
 
 using namespace rapidjson;
 
-extern C2D_SpriteSheet sprites;
 extern bool checkWifiStatus();
 
 
