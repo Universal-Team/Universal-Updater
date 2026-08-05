@@ -32,15 +32,15 @@
 /* Draw the base top screen. */
 void GFX::DrawTop(void) {
 	Gui::ScreenDraw(Top);
-	Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-	Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
-	Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
+	Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+	Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
+	Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
 }
 
 /* Draw the base bottom screen. */
 void GFX::DrawBottom() {
 	Gui::ScreenDraw(Bottom);
-	Gui::Draw_Rect(0, 0, 320, 240, UIThemes->BGColor());
+	Gui::Draw_Rect(0, 0, 320, 240, UITheme.BGColor());
 }
 
 /*
@@ -55,14 +55,14 @@ void GFX::DrawBottom() {
 	uint32_t borderClr: (Optional) The color of the border if selected.
 */
 void GFX::DrawBox(float xPos, float yPos, float width, float height, bool selected, uint32_t clr, uint32_t borderClr) {
-	if (!clr) clr = UIThemes->BoxInside();
+	if (!clr) clr = UITheme.BoxInside();
 
 	Gui::Draw_Rect(xPos, yPos, width, height, clr); // Draw middle BG.
 
 	if (selected) {
 		static constexpr int depth = 3;
 
-		if (!borderClr) borderClr = UIThemes->BoxSelected();
+		if (!borderClr) borderClr = UITheme.BoxSelected();
 
 		Gui::Draw_Rect(xPos - depth, yPos - depth, width + depth * 2, depth, borderClr); // Top.
 		Gui::Draw_Rect(xPos - depth, yPos - depth, depth, height + depth * 2, borderClr); // Left.
@@ -94,7 +94,7 @@ void GFX::DrawSprite(int img, int x, int y, float ScaleX, float ScaleY) {
 	bool selected: if checked, or not.
 */
 void GFX::DrawCheckbox(float xPos, float yPos, bool selected) {
-	GFX::DrawIcon((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos, UIThemes->TextColor(), 1.0f);
+	GFX::DrawIcon((selected ? sprites_checked_idx : sprites_unchecked_idx), xPos, yPos, UITheme.TextColor(), 1.0f);
 }
 
 /*
@@ -113,7 +113,7 @@ void GFX::DrawTime() {
 	struct tm *timeStruct	= gmtime((const time_t *)&unixTime);
 	const std::string str	= StringUtils::format("%02i:%02i", timeStruct->tm_hour, timeStruct->tm_min); // <Hour>:<Minute>.
 
-	Gui::DrawString(11, 5, 0.5f, UIThemes->TextColor(), str, 0, 0, font);
+	Gui::DrawString(11, 5, 0.5f, UITheme.TextColor(), str, 0, 0, font);
 }
 
 static int blinkDelay = 40;
@@ -127,38 +127,38 @@ void GFX::DrawBattery() {
 	PTMU_GetAdapterState(&chargerPlugged); // Get if charger adapter is plugged.
 
 	if (chargerPlugged) {
-		GFX::DrawIcon((chargeState ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1, UIThemes->TextColor());
+		GFX::DrawIcon((chargeState ? sprites_battery_charge_idx : sprites_battery_charge_full_idx), 366, 1, UITheme.TextColor());
 		if (batteryLow) batteryLow = false; // Cause we're charging.
 
 	} else {
 		switch(level) {
 			case 0: // Blinky.
-				GFX::DrawIcon((blinkState ? sprites_battery_blink_idx : sprites_battery_0_idx), 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon((blinkState ? sprites_battery_blink_idx : sprites_battery_0_idx), 366, 1, UITheme.TextColor());
 				if (!batteryLow) batteryLow = true;
 				break;
 
 			case 1: // Red.
-				GFX::DrawIcon(sprites_battery_0_idx, 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_battery_0_idx, 366, 1, UITheme.TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 2: // One.
-				GFX::DrawIcon(sprites_battery_1_idx, 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_battery_1_idx, 366, 1, UITheme.TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 3: // Two.
-				GFX::DrawIcon(sprites_battery_2_idx, 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_battery_2_idx, 366, 1, UITheme.TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 4: // Three.
-				GFX::DrawIcon(sprites_battery_3_idx, 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_battery_3_idx, 366, 1, UITheme.TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 
 			case 5: // Full.
-				GFX::DrawIcon(sprites_battery_4_idx, 366, 1, UIThemes->TextColor());
+				GFX::DrawIcon(sprites_battery_4_idx, 366, 1, UITheme.TextColor());
 				if (batteryLow) batteryLow = false; // Cause we're not low.
 				break;
 		}
@@ -190,7 +190,7 @@ void GFX::DrawWifi() {
 	};
 
 	u8 level = osGetWifiStrength();
-	GFX::DrawIcon(wifiIcons[level], 330, 0, UIThemes->TextColor());
+	GFX::DrawIcon(wifiIcons[level], 330, 0, UITheme.TextColor());
 }
 
 /*

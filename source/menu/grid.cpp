@@ -67,13 +67,13 @@ void StoreUtils::DrawGrid() {
 
 		// Set up tint for missing icons.
 		C2D_ImageTint tint;
-		C2D_PlainImageTint(&tint, UIThemes->SideBarIconColor(), 1.0f);
+		C2D_PlainImageTint(&tint, UITheme.SideBarIconColor(), 1.0f);
 
 		if (config->usebg() && StoreUtils::store->customBG()) {
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
-			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+			Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
 		}
 
 		if (StoreUtils::store->GetAnimOffset() < 0) {
@@ -88,8 +88,8 @@ void StoreUtils::DrawGrid() {
 		int barHeight = std::max(206 / rows, 3);
 		int pos = (206 - barHeight) * StoreUtils::store->GetScreenIndx() / (rows - 1);
 
-		Gui::Draw_Rect(393, 30, 3, 206, UIThemes->SideBarUnselected());
-		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UIThemes->SideBarSelected());
+		Gui::Draw_Rect(393, 30, 3, 206, UITheme.SideBarUnselected());
+		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UITheme.SideBarSelected());
 
 		for (int i = 0, i2 = -5 + (StoreUtils::store->GetScreenIndx() * 5); i2 < 20 + (StoreUtils::store->GetScreenIndx() * 5) && i2 < (int)StoreUtils::entries.size(); i2++, i++) {
 			uint32_t accentColor = 0;
@@ -130,10 +130,9 @@ void StoreUtils::DrawGrid() {
 
 	const int &currentMode: Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
-	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::GridLogic(int &currentMode, int &lastMode, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetBox() > 9) {
@@ -211,7 +210,6 @@ void StoreUtils::GridLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 		}
 
 		if (hDown & KEY_A) {
-			fetch = true;
 			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;

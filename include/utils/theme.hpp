@@ -27,18 +27,17 @@
 #ifndef _UNIVERSAL_UPDATER_THEME_HPP
 #define _UNIVERSAL_UPDATER_THEME_HPP
 
-#include "json.hpp"
+#include "rapidjson/document.h"
 #include <citro2d.h>
 #include <string>
 
 class Theme {
 public:
-	Theme(void);
-	nlohmann::json InitWithDefaultColors(void);
-	void LoadTheme(const std::string &ThemeName);
-	void AddThemes(const nlohmann::json &NewThemes);
-	std::vector<std::pair<std::string, std::string>> ThemeNames();
-	uint32_t GetThemeColor(const std::string &ThemeName, const std::string &Key, const uint32_t DefaultColor);
+	Theme() {}
+	Theme(const std::string &name);
+	Theme(const rapidjson::Value &json, const std::string &name) : vName(name) { Load(json); }
+
+	bool AddToJson(void) const;
 
 	uint32_t BarColor() const { return this->vBarColor; };
 	uint32_t BGColor() const { return this->vBGColor; };
@@ -59,17 +58,36 @@ public:
 	uint32_t MarkUnselected() const { return this->vMarkUnselected; };
 	uint32_t DownListPrev() const { return this->vDownListPrev; };
 	uint32_t SideBarIconColor() const { return this->vSideBarIconColor; };
+
+	const std::string &Name() const { return this->vName; }
+	const std::string &Description() const { return this->vDescription; }
+
 private:
-	const char *ThemePath = "sdmc:/3ds/Universal-Updater/Themes.json";
+	void Load(const rapidjson::Value &json);
+	uint32_t GetThemeColor(const rapidjson::Value &json, const char *Key, const uint32_t DefaultColor) const;
+	bool SetThemeColor(rapidjson::Value &json, const char *Key, const uint32_t Color, rapidjson::Document::AllocatorType &a) const;
 
-	uint32_t vBarColor = 0, vBGColor = 0, vBarOutline = 0, vTextColor = 0, vEntryBar = 0, vEntryOutline = 0,
-			 vBoxInside = 0, vBoxSelected = 0, vBoxUnselected = 0, vProgressbarOut = 0, vProgressbarIn = 0,
-			 vSearchBar = 0, vSearchBarOutline = 0, vSideBarSelected = 0, vSideBarUnselected = 0,
-			 vMarkSelected = 0, vMarkUnselected = 0, vDownListPrev = 0, vSideBarIconColor = 0;
+	uint32_t vBarColor          = C2D_Color32( 50,  73,  98, 255),
+			 vBGColor           = C2D_Color32( 38,  44,  77, 255),
+			 vBarOutline        = C2D_Color32( 25,  30,  53, 255),
+			 vTextColor         = C2D_Color32(255, 255, 255, 255),
+			 vEntryBar          = C2D_Color32( 50,  73,  98, 255),
+			 vEntryOutline      = C2D_Color32( 25,  30,  53, 255),
+			 vBoxInside         = C2D_Color32( 28,  33,  58, 255),
+			 vBoxSelected       = C2D_Color32(108, 130, 155, 255),
+			 vBoxUnselected     = C2D_Color32(  0,   0,   0, 255),
+			 vProgressbarOut    = C2D_Color32( 28,  33,  58, 255),
+			 vProgressbarIn     = C2D_Color32( 77, 101, 128, 255),
+			 vSearchBar         = C2D_Color32( 51,  75, 102, 255),
+			 vSearchBarOutline  = C2D_Color32( 25,  30,  53, 255),
+			 vSideBarSelected   = C2D_Color32(108, 130, 155, 255),
+			 vSideBarUnselected = C2D_Color32( 77, 101, 128, 255),
+			 vMarkSelected      = C2D_Color32( 77, 101, 128, 255),
+			 vMarkUnselected    = C2D_Color32( 28,  33,  58, 255),
+			 vDownListPrev      = C2D_Color32( 28,  33,  58, 255),
+			 vSideBarIconColor  = C2D_Color32(173, 204, 239, 255);
 
-	int SelectedTheme = 0;
-	bool Loaded = false;
-	nlohmann::json json = nullptr;
+	std::string vName, vDescription;
 };
 
 #endif

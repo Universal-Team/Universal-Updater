@@ -28,19 +28,22 @@
 #define _UNIVERSAL_UPDATER_STORE_ENTRY_HPP
 
 #include "meta.hpp"
+#include "rapidjson/document.h"
+#include "script.hpp"
 #include "store.hpp"
 #include "stringutils.hpp"
+#include <citro2d.h>
 
 class StoreEntry {
 public:
-	StoreEntry(const std::unique_ptr<Store> &store, const std::unique_ptr<Meta> &meta, int index);
+	StoreEntry(const rapidjson::Value &json, const Store &store);
 
 	const std::string &GetTitle() const { return this->Title; };
 	const std::string &GetAuthor() const { return this->Author; };
 	const std::string &GetDescription() const { return this->Description; };
-	const std::string &GetCategory() const { return this->Category; };
 	const std::string &GetVersion() const { return this->Version; };
-	const std::string &GetConsole() const { return this->Console; };
+	const std::string &GetCategoryString() const { return this->Category; };
+	const std::string &GetConsoleString() const { return this->Console; };
 	const std::string &GetLastUpdated() const { return this->LastUpdated; };
 	int GetStars() const { return this->Stars; };
 	const std::string &GetLicense() const { return this->License; };
@@ -51,19 +54,19 @@ public:
 	const std::vector<int> &GetTitleIds(int index) const { return this->TitleIds; };
 	int GetMarks() const { return this->Marks; };
 	const std::string &GetMarkString() const { return this->MarkString; }
+	const std::string &GetUniStore() const { return this->UniStore; };
 
 	bool HasIcon() const { return this->vHasIcon; }
 	C2D_Image GetIcon() const { return this->Icon; };
 
 	int GetSheetIndex() const { return this->SheetIndex; };
-	int GetEntryIndex() const { return this->EntryIndex; };
 
 	uint32_t GetAccentColor() const { return this->AccentColor; };
 
-	const std::vector<std::string> &GetCategoryFull() const { return this->FullCategory; };
-	const std::vector<std::string> &GetConsoleFull() const { return this->FullConsole; };
-	const std::vector<std::string> &GetSizes() const { return this->Sizes; };
-	const std::vector<std::string> &GetTypes() const { return this->Types; };
+	Script &GetScript(int i) { return this->Scripts[i]; };
+	std::vector<Script> &GetScripts() { return this->Scripts; };
+	const std::vector<std::string> &GetCategories() const { return this->FullCategory; };
+	const std::vector<std::string> &GetConsoles() const { return this->FullConsole; };
 	const std::vector<std::string> &GetScreenshots() const { return this->Screenshots; };
 	const std::vector<std::string> &GetScreenshotNames() const { return this->ScreenshotNames; };
 	const std::string &GetReleaseNotes() const { return this->ReleaseNotes; };
@@ -81,14 +84,15 @@ public:
 	};
 
 private:
-	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, LlmGeneration, MarkString, ReleaseNotes, Wiki, PreinstallMessage;
-	int Stars;
+	std::string Title, Author, Description, Category, Version, Console, LastUpdated, License, LlmGeneration, MarkString, ReleaseNotes, Wiki, PreinstallMessage, UniStore;
+	int Stars = 0;
 	C2D_Image Icon;
-	int SheetIndex, EntryIndex, Marks;
-	uint32_t AccentColor;
-	std::vector<std::string> FullCategory, FullConsole, Sizes, Types, Screenshots, ScreenshotNames, InstalledFiles;
+	int SheetIndex = 0, Marks = 0;
+	uint32_t AccentColor = 0;
+	std::vector<Script> Scripts;
+	std::vector<std::string> FullCategory, FullConsole, Screenshots, ScreenshotNames, InstalledFiles;
 	std::vector<int> TitleIds;
-	bool UpdateAvailable, vHasIcon, Installed;
+	bool UpdateAvailable = false, vHasIcon = false, Installed = false;
 };
 
 #endif

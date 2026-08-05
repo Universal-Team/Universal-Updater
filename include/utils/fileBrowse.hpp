@@ -27,6 +27,7 @@
 #ifndef _UNIVERSAL_UPDATER_FILE_BROWSE_HPP
 #define _UNIVERSAL_UPDATER_FILE_BROWSE_HPP
 
+#include "store.hpp"
 #include <dirent.h>
 #include <string>
 #include <sys/stat.h>
@@ -41,26 +42,11 @@ struct DirEntry {
 	bool isDirectory;
 };
 
-/*
-	UniStore Info struct.
-*/
-struct UniStoreInfo {
-	std::string Title;
-	std::string Author;
-	std::string URL;
-	std::string File; // Used to check, if File does NOT contain a slash or so.
-	std::string FileName;
-	std::string Description;
-	int Version;
-	int Revision;
-	int StoreSize;
-};
-
 bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList);
 std::vector<DirEntry> getDirectoryContents(const std::string &dir, const std::vector<std::string> &extensionList);
 std::vector<DirEntry> getDirectoryContents(const std::string &dir);
 
-std::vector<UniStoreInfo> GetUniStoreInfo(const std::string &path);
+std::vector<Store::Info> GetUniStoreInfo(const std::string &path);
 
 void dirCopy(DirEntry *entry, const char *destinationPath, const char *sourcePath);
 int fcopy(const char *sourcePath, const char *destinationPath);

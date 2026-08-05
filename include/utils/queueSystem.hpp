@@ -27,7 +27,6 @@
 #ifndef _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 #define _UNIVERSAL_UPDATER_QUEUE_SYSTEM_HPP
 
-#include "json.hpp"
 #include <citro2d.h>
 #include <deque>
 #include <memory>
@@ -58,26 +57,23 @@ enum RequestType {
 namespace QueueSystem {
 	extern int RequestNeeded, RequestAnswer;
 	extern std::string RequestMsg, RequestMsgName, EndMsg;
-	extern int LastElement;
+	extern int PriorElement;
 	extern bool Wait, Popup, CancelCallback;
 
 	void QueueHandle(); // Handles the Queue.
-	void AddToQueue(nlohmann::json obj, const C2D_Image &icn, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated); // Adds to Queue.
+	void AddToQueue(const std::shared_ptr<StoreEntry> &entry, int script); // Adds to Queue.
 	void ClearQueue(); // Clears the Queue.
 	void Resume();
 };
 
-class Queue {
-public:
-	Queue(nlohmann::json object, const C2D_Image &img, const std::string &name, const std::string &uName, const std::string &eName, const std::string &lUpdated) :
-		obj(object), icn(img), total(object.size()), current(QueueSystem::LastElement), name(name), unistoreName(uName), entryName(eName), lastUpdated(lUpdated) { };
+struct QueueEntry {
+	QueueEntry(const std::shared_ptr<StoreEntry> &entry, int script) :
+		storeEntry(entry), scriptIndex(script) { };
 
 	QueueStatus status = QueueStatus::None;
-	nlohmann::json obj;
-	C2D_Image icn;
-	int total, current;
-	std::string name = "", unistoreName = "", entryName = "", lastUpdated = "";
-	int Stars = 0;
+	std::shared_ptr<StoreEntry> storeEntry;
+	int scriptIndex;
+	int currentStep = 0;
 };
 
 #endif

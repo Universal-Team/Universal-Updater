@@ -47,8 +47,8 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 	if (StoreUtils::store && entry) { // Ensure, store & entry is not a nullptr.
 		uint32_t accentColor = config->useAccentColor() ? entry->GetAccentColor() : 0;
 
-		Gui::Draw_Rect(40, 0, 280, 36, accentColor ? accentColor : UIThemes->EntryBar());
-		Gui::Draw_Rect(40, 36, 280, 1, UIThemes->EntryOutline());
+		Gui::Draw_Rect(40, 0, 280, 36, accentColor ? accentColor : UITheme.EntryBar());
+		Gui::Draw_Rect(40, 36, 280, 1, UITheme.EntryOutline());
 
 		std::string title = entry->GetTitle();
 		if(entry->GetMarks())
@@ -58,23 +58,23 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 		if(entry->GetStars())
 			subtitle += " – " + StringUtils::formatNumber(entry->GetStars()) + " ☆";
 
-		Gui::DrawStringCentered(20, 0, 0.6, accentColor ? WHITE : UIThemes->TextColor(), title, 255, 0, font);
-		Gui::DrawStringCentered(20, 20, 0.4, accentColor ? WHITE : UIThemes->TextColor(), subtitle, 255, 0, font);
+		Gui::DrawStringCentered(20, 0, 0.6, accentColor ? WHITE : UITheme.TextColor(), title, 255, 0, font);
+		Gui::DrawStringCentered(20, 20, 0.4, accentColor ? WHITE : UITheme.TextColor(), subtitle, 255, 0, font);
 
-		Gui::DrawStringCentered(20, 50, 0.4, UIThemes->TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
+		Gui::DrawStringCentered(20, 50, 0.4, UITheme.TextColor(), entry->GetDescription(), 248, 0, font, C2D_WordWrap);
 
-		Gui::DrawString(53, 115, 0.45, UIThemes->TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 255, 0, font);
-		Gui::DrawString(53, 130, 0.45, UIThemes->TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategory(), 255, 0, font);
-		Gui::DrawString(53, 145, 0.45, UIThemes->TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsole(), 255, 0, font);
-		Gui::DrawString(53, 160, 0.45, UIThemes->TextColor(), Lang::get("LAST_UPDATED") + ": " + StringUtils::RelativeDate(entry->GetLastUpdated()), 255, 0, font);
-		Gui::DrawString(53, 175, 0.45, UIThemes->TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 255, 0, font);
-		Gui::DrawString(53, 190, 0.45, UIThemes->TextColor(), Lang::get("LLM_GENERATED_CONTENT") + ": " + entry->GetLlmGeneration(), 255, 0, font);
+		Gui::DrawString(53, 115, 0.45, UITheme.TextColor(), Lang::get("VERSION") + ": " + entry->GetVersion(), 255, 0, font);
+		Gui::DrawString(53, 130, 0.45, UITheme.TextColor(), Lang::get("CATEGORY") + ": " + entry->GetCategoryString(), 255, 0, font);
+		Gui::DrawString(53, 145, 0.45, UITheme.TextColor(), Lang::get("CONSOLE") + ": " + entry->GetConsoleString(), 255, 0, font);
+		Gui::DrawString(53, 160, 0.45, UITheme.TextColor(), Lang::get("LAST_UPDATED") + ": " + StringUtils::RelativeDate(entry->GetLastUpdated()), 255, 0, font);
+		Gui::DrawString(53, 175, 0.45, UITheme.TextColor(), Lang::get("LICENSE") + ": " + entry->GetLicense(), 255, 0, font);
+		Gui::DrawString(53, 190, 0.45, UITheme.TextColor(), Lang::get("LLM_GENERATED_CONTENT") + ": " + entry->GetLlmGeneration(), 255, 0, font);
 
 		GFX::DrawBox(btn.x, btn.y, btn.w, btn.h, false);
-		if (!entry->GetScreenshots().empty()) GFX::DrawIcon(sprites_screenshot_idx, sshot.x, sshot.y, UIThemes->TextColor());
-		if (entry->GetReleaseNotes() != "") GFX::DrawIcon(sprites_notes_idx, notes.x, notes.y, UIThemes->TextColor());
-		if (entry->GetWiki() != "") GFX::DrawIcon(sprites_wiki_idx, wiki.x, wiki.y, UIThemes->TextColor());
-		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UIThemes->TextColor(), "★", 0, 0, font);
+		if (!entry->GetScreenshots().empty()) GFX::DrawIcon(sprites_screenshot_idx, sshot.x, sshot.y, UITheme.TextColor());
+		if (entry->GetReleaseNotes() != "") GFX::DrawIcon(sprites_notes_idx, notes.x, notes.y, UITheme.TextColor());
+		if (entry->GetWiki() != "") GFX::DrawIcon(sprites_wiki_idx, wiki.x, wiki.y, UITheme.TextColor());
+		Gui::DrawString(btn.x + 5, btn.y + 2, 0.6f, UITheme.TextColor(), "★", 0, 0, font);
 	}
 }
 
@@ -86,12 +86,11 @@ void StoreUtils::DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry) {
 	- Show the MarkMenu with START.
 
 	bool &showMark: Reference to showMark.. to show the mark menu.
-	bool &fetch: Reference to fetch, so we know, if we need to fetch, when accessing download list.
 	bool &sFetch: Reference to the screenshot fetch.
 	int &mode: Reference to the store mode.
 	const std::shared_ptr<StoreEntry> &entry: The store Entry.
 */
-void StoreUtils::EntryHandle(bool &showMark, bool &fetch, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
+void StoreUtils::EntryHandle(bool &showMark, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry) {
 	if (entry) {
 		if ((hDown & KEY_SELECT) || (hDown & KEY_TOUCH && touching(touch, btn))) showMark = true;
 

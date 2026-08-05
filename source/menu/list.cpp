@@ -42,14 +42,14 @@ void StoreUtils::DrawList() {
 
 		// Set up tint for missing icons.
 		C2D_ImageTint tint;
-		C2D_PlainImageTint(&tint, UIThemes->SideBarIconColor(), 1.0f);
+		C2D_PlainImageTint(&tint, UITheme.SideBarIconColor(), 1.0f);
 
 		bool customBg = config->usebg() && StoreUtils::store->customBG();
 		if (customBg) {
 			C2D_DrawImageAt(StoreUtils::store->GetStoreImg(), 0, 26, 0.5f, nullptr);
 
 		} else {
-			Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+			Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
 		}
 
 		if (StoreUtils::store->GetAnimOffset() < 0) {
@@ -64,8 +64,8 @@ void StoreUtils::DrawList() {
 		int barHeight = std::max(206 / rows, 3);
 		int pos = (206 - barHeight) * StoreUtils::store->GetScreenIndx() / (rows - 1);
 
-		Gui::Draw_Rect(393, 30, 3, 206, UIThemes->SideBarUnselected());
-		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UIThemes->SideBarSelected());
+		Gui::Draw_Rect(393, 30, 3, 206, UITheme.SideBarUnselected());
+		Gui::Draw_Rect(393, 30 + pos - (StoreUtils::store->GetAnimOffset() / 60.0f * ((206 - barHeight) / rows)), 3, barHeight, UITheme.SideBarSelected());
 
 		if (StoreUtils::entries.size() > 0) {
 			for (int i = 0; i < 5; i++) {
@@ -99,8 +99,8 @@ void StoreUtils::DrawList() {
 						} else if (entry.GetInstalled()) {
 							GFX::DrawSprite(sprites_installed_app_idx, StoreBoxesList[i].x + 32, StoreBoxesList[i].y + 32 + StoreUtils::store->GetAnimOffset());
 						}
-						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, (accentColor || customBg) ? WHITE : UIThemes->TextColor(), title, 300, 0, font);
-						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, (accentColor || customBg) ? WHITE : UIThemes->TextColor(), entry.GetAuthor(), 300, 0, font);
+						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 5 + StoreUtils::store->GetAnimOffset(), 0.6f, (accentColor || customBg) ? WHITE : UITheme.TextColor(), title, 300, 0, font);
+						Gui::DrawStringCentered(29, StoreBoxesList[i].y + 24 + StoreUtils::store->GetAnimOffset(), 0.6f, (accentColor || customBg) ? WHITE : UITheme.TextColor(), entry.GetAuthor(), 300, 0, font);
 					}
 				}
 			}
@@ -117,10 +117,9 @@ void StoreUtils::DrawList() {
 
 	int &currentMode: Const Reference to the current Mode.
 	int &lastMode: Reference to the last mode.
-	bool &fetch: Reference to fetch.
 	int &smallDelay: Reference to the small delay.
 */
-void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &smallDelay) {
+void StoreUtils::ListLogic(int &currentMode, int &lastMode, int &smallDelay) {
 	if (StoreUtils::store) { // Ensure, store is not a nullptr.
 		if (hRepeat & KEY_DOWN) {
 			if (StoreUtils::store->GetEntry() < (int)StoreUtils::entries.size() - 1) StoreUtils::store->SetEntry(StoreUtils::store->GetEntry() + 1);
@@ -143,7 +142,6 @@ void StoreUtils::ListLogic(int &currentMode, int &lastMode, bool &fetch, int &sm
 		}
 
 		if (hDown & KEY_A) {
-			fetch = true;
 			smallDelay = 5;
 			lastMode = currentMode;
 			currentMode = 1;

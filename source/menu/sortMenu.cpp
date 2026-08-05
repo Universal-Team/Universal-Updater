@@ -50,7 +50,7 @@ static const std::vector<Structs::ButtonPos> viewButtons = {
 };
 
 static void DrawCheck(Structs::ButtonPos button, bool v) {
-	GFX::DrawIcon((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), button.x + 1, button.y, UIThemes->TextColor());
+	GFX::DrawIcon((v ? sprites_sort_checked_idx : sprites_sort_unchecked_idx), button.x + 1, button.y, UITheme.TextColor());
 }
 
 /*
@@ -80,34 +80,34 @@ static const uint8_t GetType(SortType st) {
 	Draw the Sort Menu.
 */
 void StoreUtils::DrawSorting() {
-	Gui::Draw_Rect(40, 0, 280, 25, UIThemes->EntryBar());
-	Gui::Draw_Rect(40, 25, 280, 1, UIThemes->EntryOutline());
-	Gui::DrawStringCentered(17, 2, 0.6, UIThemes->TextColor(), Lang::get("SORTING"), 273, 0, font);
+	Gui::Draw_Rect(40, 0, 280, 25, UITheme.EntryBar());
+	Gui::Draw_Rect(40, 25, 280, 1, UITheme.EntryOutline());
+	Gui::DrawStringCentered(17, 2, 0.6, UITheme.TextColor(), Lang::get("SORTING"), 273, 0, font);
 
 	/* Sort By. */
-	Gui::DrawString(typeButtons[0].x + 1, typeButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("SORT_BY"), 90, 0, font);
+	Gui::DrawString(typeButtons[0].x + 1, typeButtons[0].y - 20, 0.6f, UITheme.TextColor(), Lang::get("SORT_BY"), 90, 0, font);
 	for (uint i = 0; i < 4; i++) {
 		DrawCheck(typeButtons[i], i == GetType(config->sortBy()));
 	}
 
-	Gui::DrawString(typeButtons[0].x + 21, typeButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("TITLE"), 80, 0, font);
-	Gui::DrawString(typeButtons[1].x + 21, typeButtons[1].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("AUTHOR"), 80, 0, font);
-	Gui::DrawString(typeButtons[2].x + 21, typeButtons[2].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("LAST_UPDATED"), 80, 0, font);
-	Gui::DrawString(typeButtons[3].x + 21, typeButtons[3].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("POPULARITY"), 80, 0, font);
+	Gui::DrawString(typeButtons[0].x + 21, typeButtons[0].y + 2, 0.4f, UITheme.TextColor(), Lang::get("TITLE"), 80, 0, font);
+	Gui::DrawString(typeButtons[1].x + 21, typeButtons[1].y + 2, 0.4f, UITheme.TextColor(), Lang::get("AUTHOR"), 80, 0, font);
+	Gui::DrawString(typeButtons[2].x + 21, typeButtons[2].y + 2, 0.4f, UITheme.TextColor(), Lang::get("LAST_UPDATED"), 80, 0, font);
+	Gui::DrawString(typeButtons[3].x + 21, typeButtons[3].y + 2, 0.4f, UITheme.TextColor(), Lang::get("POPULARITY"), 80, 0, font);
 
 	/* Direction. */
-	Gui::DrawString(dirButtons[0].x + 1, dirButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("DIRECTION"), 80, 0, font);
+	Gui::DrawString(dirButtons[0].x + 1, dirButtons[0].y - 20, 0.6f, UITheme.TextColor(), Lang::get("DIRECTION"), 80, 0, font);
 	DrawCheck(dirButtons[0], config->sortAscending());
 	DrawCheck(dirButtons[1], !config->sortAscending());
-	Gui::DrawString(dirButtons[0].x + 21, dirButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("ASCENDING"), 80, 0, font);
-	Gui::DrawString(dirButtons[1].x + 21, dirButtons[1].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("DESCENDING"), 80, 0, font);
+	Gui::DrawString(dirButtons[0].x + 21, dirButtons[0].y + 2, 0.4f, UITheme.TextColor(), Lang::get("ASCENDING"), 80, 0, font);
+	Gui::DrawString(dirButtons[1].x + 21, dirButtons[1].y + 2, 0.4f, UITheme.TextColor(), Lang::get("DESCENDING"), 80, 0, font);
 
 	/* Top Style. */
-	Gui::DrawString(viewButtons[0].x + 1, viewButtons[0].y - 20, 0.6f, UIThemes->TextColor(), Lang::get("TOP_STYLE"), 200, 0, font);
+	Gui::DrawString(viewButtons[0].x + 1, viewButtons[0].y - 20, 0.6f, UITheme.TextColor(), Lang::get("TOP_STYLE"), 200, 0, font);
 	DrawCheck(viewButtons[0], config->list());
 	DrawCheck(viewButtons[1], !config->list());
-	Gui::DrawString(viewButtons[0].x + 21, viewButtons[0].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("LIST"), 90, 0, font);
-	Gui::DrawString(viewButtons[1].x + 21, viewButtons[1].y + 2, 0.4f, UIThemes->TextColor(), Lang::get("GRID"), 90, 0, font);
+	Gui::DrawString(viewButtons[0].x + 21, viewButtons[0].y + 2, 0.4f, UITheme.TextColor(), Lang::get("LIST"), 90, 0, font);
+	Gui::DrawString(viewButtons[1].x + 21, viewButtons[1].y + 2, 0.4f, UITheme.TextColor(), Lang::get("GRID"), 90, 0, font);
 }
 
 /*

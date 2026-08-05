@@ -27,11 +27,11 @@
 #ifndef _UNIVERSAL_UPDATER_LANG_HPP
 #define _UNIVERSAL_UPDATER_LANG_HPP
 
-#include "json.hpp"
+#include <map>
 #include <string>
 
 namespace Lang {
-	std::string get(const std::string &key);
+	const std::string &get(const std::string &key);
 	void load(const std::string &lang);
 };
 

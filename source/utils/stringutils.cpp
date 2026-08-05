@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "stringutils.hpp"
+#include <algorithm>
 #include <charconv>
 #include <time.h>
 #include <stdarg.h>
@@ -44,6 +45,18 @@ std::string StringUtils::toLowerCase(const std::string &str) {
 	transform(str.begin(), str.end(), std::back_inserter(lower), tolower); // Transform the string to lowercase.
 
 	return lower;
+}
+
+/*
+	To uppercase conversion.
+
+	const std::string &str: The string which should be converted.
+*/
+std::string StringUtils::toUpperCase(const std::string &str) {
+	std::string upper;
+	transform(str.begin(), str.end(), std::back_inserter(upper), toupper); // Transform the string to uppercase.
+
+	return upper;
 }
 
 /*

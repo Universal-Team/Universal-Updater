@@ -88,7 +88,7 @@ static FS_MediaType getTitleDestination(u64 titleId) {
 
 u32 installSize = 0, installOffset = 0;
 
-Result Title::Install(const char *ciaPath, bool updatingSelf) {
+Result Title::Install(const char *ciaPath) {
 	u32 bytes_read = 0, bytes_written;
 	installSize = 0, installOffset = 0; u64 size = 0;
 	Handle ciaHandle, fileHandle;
@@ -108,10 +108,8 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 
 	media = getTitleDestination(info.titleID);
 
-	if (!updatingSelf) {
-		ret = Title::DeletePrevious(info.titleID, media);
-		if (R_FAILED(ret)) return ret;
-	}
+	ret = Title::DeletePrevious(info.titleID, media);
+	if (R_FAILED(ret)) return ret;
 
 	ret = FSFILE_GetSize(fileHandle, &size);
 	if (R_FAILED(ret)) {
@@ -152,10 +150,6 @@ Result Title::Install(const char *ciaPath, bool updatingSelf) {
 	ret = FSFILE_Close(fileHandle);
 	if (R_FAILED(ret)) {
 		return ret;
-	}
-
-	if (updatingSelf) {
-		if (R_FAILED(ret = Title::Launch(info.titleID, MEDIATYPE_SD))) return ret;
 	}
 
 	return 0;

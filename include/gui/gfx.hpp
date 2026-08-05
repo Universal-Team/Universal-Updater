@@ -33,7 +33,7 @@
 #include <citro2d.h>
 #include <string>
 
-extern std::unique_ptr<Theme> UIThemes;
+extern Theme UITheme;
 
 /* Standard Colors. */
 #define WHITE C2D_Color32(255, 255, 255, 255)
@@ -52,8 +52,8 @@ namespace GFX {
 	void DrawBattery();
 	void HandleBattery();
 	void DrawWifi();
-	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
-	void DrawIconRotated(const int Idx, int X, int Y, float Angle = 0.0f, uint32_t Color = UIThemes->SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
+	void DrawIcon(const int Idx, int X, int Y, uint32_t Color = UITheme.SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
+	void DrawIconRotated(const int Idx, int X, int Y, float Angle = 0.0f, uint32_t Color = UITheme.SideBarIconColor(), float BlendPower = 1.0f, float ScaleX = 1.0f, float ScaleY = 1.0f);
 };
 
 #endif

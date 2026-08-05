@@ -26,6 +26,7 @@
 
 #include "common.hpp"
 #include "msg.hpp"
+#include <algorithm>
 
 // Width of checkbox + padding
 #define CHECK_WIDTH 18
@@ -53,18 +54,18 @@ void Msg::DisplayMsg(const std::string &Text, const std::string &BottomText, boo
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UIThemes->TextColor(), Text, spinner ? 352 : 395, 0, font);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, Text)) / 2, 0.6f, UITheme.TextColor(), Text, spinner ? 352 : 395, 0, font);
 
 	if (spinner) {
 		static int rotation = 0;
-		GFX::DrawIconRotated(sprites_queue_idx, 384, 12, rotation, UIThemes->TextColor(), 1.0f, 0.5f, 0.5f);
+		GFX::DrawIconRotated(sprites_queue_idx, 384, 12, rotation, UITheme.TextColor(), 1.0f, 0.5f, 0.5f);
 		rotation = (rotation + 3) % 90;
 	}
 
 	if(!BottomText.empty()) {
-		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), BottomText, 390, 0, font);
+		Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
+		Gui::DrawStringCentered(0, 218, 0.6f, UITheme.TextColor(), BottomText, 390, 0, font);
 	}
 
 	GFX::DrawBottom();
@@ -83,7 +84,7 @@ void Msg::DisplayWarnMsg(const std::string &Text) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 1, 0.6f, UIThemes->TextColor(), Text, 390, 0, font);
+	Gui::DrawStringCentered(0, 1, 0.6f, UITheme.TextColor(), Text, 390, 0, font);
 
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -133,21 +134,21 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 		C2D_TargetClear(Bottom, TRANSPARENT);
 
 		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 26, 400, 214, UIThemes->BGColor());
+		Gui::Draw_Rect(0, 26, 400, 214, UITheme.BGColor());
 		for (size_t i = 0; i < wrappedMsg.size(); i++) {
 			if (26.0f + i * fontHeight > scrollOffset && 26.0f + i * fontHeight < scrollOffset + 240.0f)
-				Gui::DrawStringCentered(5, 26.0f + verticalOffset + i * fontHeight - scrollOffset, 0.6f, UIThemes->TextColor(), wrappedMsg[i], 390, 0, font);
+				Gui::DrawStringCentered(5, 26.0f + verticalOffset + i * fontHeight - scrollOffset, 0.6f, UITheme.TextColor(), wrappedMsg[i], 390, 0, font);
 		}
-		Gui::Draw_Rect(0, 0, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 25, 400, 1, UIThemes->BarOutline());
-		Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-		Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
+		Gui::Draw_Rect(0, 0, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 25, 400, 1, UITheme.BarOutline());
+		Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+		Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
 
-		Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), saveKey.empty() ? Lang::get("YES_OR_NO") : Lang::get("YES_NO_OR_SAVE"), 390, 0, font);
+		Gui::DrawStringCentered(0, 218, 0.6f, UITheme.TextColor(), saveKey.empty() ? Lang::get("YES_OR_NO") : Lang::get("YES_NO_OR_SAVE"), 390, 0, font);
 		GFX::DrawBottom();
 		for(uint i = 0; i < promptButtons.size(); i++) {
-			Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UIThemes->BarColor());
-			Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UIThemes->TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
+			Gui::Draw_Rect(promptButtons[i].x, promptButtons[i].y, promptButtons[i].w, promptButtons[i].h, UITheme.BarColor());
+			Gui::DrawStringCentered(promptButtons[i].x - 160 + promptButtons[i].w / 2, promptButtons[i].y + 15, 0.6f, UITheme.TextColor(), Lang::get(promptLabels[i]), promptButtons[i].w - 10, 0, font);
 		}
 
 		Structs::ButtonPos savePromptBtn = {0, 160, 0, 14};
@@ -157,7 +158,7 @@ bool Msg::promptMsg(const std::string &promptMsg, const std::string &saveKey, bo
 
 			int stringHeight = Gui::GetStringHeight(0.6f, Lang::get("SAVE_SELECTION"), font);
 			int stringY = savePromptBtn.y - (stringHeight - savePromptBtn.h) / 2;
-			Gui::DrawString(savePromptBtn.x + CHECK_WIDTH, stringY, 0.6f, UIThemes->TextColor(), Lang::get("SAVE_SELECTION"), 0, 0, font);
+			Gui::DrawString(savePromptBtn.x + CHECK_WIDTH, stringY, 0.6f, UITheme.TextColor(), Lang::get("SAVE_SELECTION"), 0, 0, font);
 			GFX::DrawCheckbox(savePromptBtn.x, savePromptBtn.y, save);
 		}
 
@@ -232,10 +233,10 @@ void Msg::waitMsg(const std::string &msg) {
 	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, UIThemes->TextColor(), msg, 395, 0, font);
-	Gui::Draw_Rect(0, 215, 400, 25, UIThemes->BarColor());
-	Gui::Draw_Rect(0, 214, 400, 1, UIThemes->BarOutline());
-	Gui::DrawStringCentered(0, 218, 0.6f, UIThemes->TextColor(), Lang::get("KEY_CONTINUE"), 390, 0, font);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.6f, msg)) / 2, 0.6f, UITheme.TextColor(), msg, 395, 0, font);
+	Gui::Draw_Rect(0, 215, 400, 25, UITheme.BarColor());
+	Gui::Draw_Rect(0, 214, 400, 1, UITheme.BarOutline());
+	Gui::DrawStringCentered(0, 218, 0.6f, UITheme.TextColor(), Lang::get("KEY_CONTINUE"), 390, 0, font);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 

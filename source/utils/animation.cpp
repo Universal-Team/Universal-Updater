@@ -52,8 +52,8 @@ extern curl_off_t downloadNow;
 	u64 totalProgress: The total progress.
 */
 void Animation::DrawProgressBar(u64 currentProgress, u64 totalProgress) {
-	Gui::Draw_Rect(30, 120, 342, 30, UIThemes->ProgressbarOut());
-	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, UIThemes->ProgressbarIn());
+	Gui::Draw_Rect(30, 120, 342, 30, UITheme.ProgressbarOut());
+	Gui::Draw_Rect(31, 121, (int)(((float)currentProgress / (float)totalProgress) * 338.0f), 28, UITheme.ProgressbarIn());
 }
 
 /*
@@ -101,29 +101,29 @@ void Animation::displayProgressBar() {
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
 		GFX::DrawTop();
-		Gui::DrawStringCentered(0, 1, 0.7f, UIThemes->TextColor(), progressBarMsg, 390, 0, font);
+		Gui::DrawStringCentered(0, 1, 0.7f, UITheme.TextColor(), progressBarMsg, 390, 0, font);
 
 		switch(progressbarType) {
 			case ProgressBar::Downloading:
-				Gui::DrawStringCentered(0, 80, 0.6f, UIThemes->TextColor(), str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, UITheme.TextColor(), str, 390, 0, font);
 				Animation::DrawProgressBar(downloadNow, downloadTotal);
 				break;
 
 			case ProgressBar::Extracting:
-				Gui::DrawStringCentered(0, 180, 0.6f, UIThemes->TextColor(), str, 390, 0, font);
-				Gui::DrawStringCentered(0, 100, 0.6f, UIThemes->TextColor(), std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
-				Gui::DrawStringCentered(0, 40, 0.6f, UIThemes->TextColor(), Lang::get("CURRENTLY_EXTRACTING"), 390, 0, font);
-				Gui::DrawStringCentered(0, 70, 0.6f, UIThemes->TextColor(), extractingFile, 390, 0, font);
+				Gui::DrawStringCentered(0, 180, 0.6f, UITheme.TextColor(), str, 390, 0, font);
+				Gui::DrawStringCentered(0, 100, 0.6f, UITheme.TextColor(), std::to_string(filesExtracted) + " / " + std::to_string(extractFilesCount) + " " + (filesExtracted == 1 ? (Lang::get("FILE_EXTRACTED")).c_str() :(Lang::get("FILES_EXTRACTED"))), 390, 0, font);
+				Gui::DrawStringCentered(0, 40, 0.6f, UITheme.TextColor(), Lang::get("CURRENTLY_EXTRACTING"), 390, 0, font);
+				Gui::DrawStringCentered(0, 70, 0.6f, UITheme.TextColor(), extractingFile, 390, 0, font);
 				Animation::DrawProgressBar(writeOffset, extractSize);
 				break;
 
 			case ProgressBar::Installing:
-				Gui::DrawStringCentered(0, 80, 0.6f, UIThemes->TextColor(), str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, UITheme.TextColor(), str, 390, 0, font);
 				Animation::DrawProgressBar(installOffset, installSize);
 				break;
 
 			case ProgressBar::Copying:
-				Gui::DrawStringCentered(0, 80, 0.6f, UIThemes->TextColor(), str, 390, 0, font);
+				Gui::DrawStringCentered(0, 80, 0.6f, UITheme.TextColor(), str, 390, 0, font);
 				Animation::DrawProgressBar(copyOffset, copySize);
 				break;
 		}
@@ -135,11 +135,11 @@ void Animation::displayProgressBar() {
 
 static int rotation = 0;
 extern bool QueueRuns;
-extern std::deque<std::unique_ptr<Queue>> queueEntries;
+extern std::deque<QueueEntry> queueEntries;
 
 void Animation::DrawQueue(int x, int y, int w, int h) {
 	GFX::DrawIconRotated(sprites_queue_idx, x + w/2, y + h/2, rotation);
-	Gui::DrawStringCentered(x + 20 - 160, y + 11, 0.6f, UIThemes->SideBarIconColor(), QueueSystem::Wait ? "!" : std::to_string(queueEntries.size()), 0, 0, font);
+	Gui::DrawStringCentered(x + 20 - 160, y + 11, 0.6f, UITheme.SideBarIconColor(), QueueSystem::Wait ? "!" : std::to_string(queueEntries.size()), 0, 0, font);
 }
 void Animation::QueueAnimHandle() {
 	if (QueueRuns) {
@@ -153,10 +153,10 @@ void Animation::QueueAnimHandle() {
 
 void Animation::QueueEntryDone() {
 	if (QueueSystem::Popup) {
-		Gui::Draw_Rect(0, DisplayY, 400, 34, UIThemes->DownListPrev());
+		Gui::Draw_Rect(0, DisplayY, 400, 34, UITheme.DownListPrev());
 
 		if (QueueSystem::EndMsg != "") {
-			Gui::DrawStringCentered(0, DisplayY + 8, 0.6f, UIThemes->TextColor(), QueueSystem::EndMsg, 395, 0, font);
+			Gui::DrawStringCentered(0, DisplayY + 8, 0.6f, UITheme.TextColor(), QueueSystem::EndMsg, 395, 0, font);
 		}
 	}
 }

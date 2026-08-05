@@ -25,39 +25,38 @@
 */
 
 #include "lang.hpp"
-#include <stdio.h>
-#include <unistd.h>
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
-static nlohmann::json appJson;
+std::map<std::string, std::string> Strings;
 
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return key;
-
-	return appJson.at(key).get_ref<const std::string&>();
+const std::string &Lang::get(const std::string &key) {
+	// Count of a std::map always returns either 0 or 1
+	if (Strings.count(key) == 0) return key;
+	return Strings.at(key);
 }
 
 void Lang::load(const std::string &lang) {
-	FILE *values;
+	// Check if the path exists and fallback to en if not.
+	std::string path = "romfs:/lang/" + lang + "/app.json";
+	if (access(path.c_str(), F_OK) != 0)
+		path = "romfs:/lang/en/app.json";
 
-	/* Check if exist. */
-	if (access(("romfs:/lang/" + lang + "/app.json").c_str(), F_OK) == 0) {
-		values = fopen(("romfs:/lang/" + lang + "/app.json").c_str(), "rt");
-		if (values) {
-			appJson = nlohmann::json::parse(values, nullptr, false);
-			fclose(values);
-		}
-		if (appJson.is_discarded())
-			appJson = { };
-		return;
+	FILE *values = fopen(path.c_str(), "rt");
+	if (values) {
+		rapidjson::Document json;
+		char *readBuffer = new char[0x10000];
+		rapidjson::FileReadStream is(values, readBuffer, 0x10000);
+		json.ParseStream(is);
+		delete[] readBuffer;
+		fclose(values);
 
-	} else {
-		values = fopen("romfs:/lang/en/app.json", "rt");
-		if (values) {
-			appJson = nlohmann::json::parse(values, nullptr, false);
-			fclose(values);
+		if (json.IsObject()) {
+			for (const auto &item : json.GetObject()) {
+				if (item.value.IsString()) {
+					Strings[item.name.GetString()] = item.value.GetString();
+				}
+			}
 		}
-		if (appJson.is_discarded())
-			appJson = { };
-		return;
 	}
 }
