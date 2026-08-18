@@ -121,7 +121,7 @@ void StoreUtils::DrawSorting() {
 
 	- Change the Top Style.
 */
-void StoreUtils::SortHandle(void) {
+void StoreUtils::SortHandle(u32 hDown, touchPosition &touch) {
 	SortType st = config->sortBy();
 	bool asc = config->sortAscending();
 

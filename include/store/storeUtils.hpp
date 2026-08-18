@@ -46,33 +46,33 @@ namespace StoreUtils {
 
 	/* Grid. */
 	void DrawGrid();
-	void GridLogic(int &currentMode, int &lastMode, int &smallDelay);
+	void GridLogic(u32 hDown, u32 hRepeat, int &currentMode, int &lastMode, int &smallDelay);
 
 	/* Top List. */
 	void DrawList();
-	void ListLogic(int &currentMode, int &lastMode, int &smallDelay);
+	void ListLogic(u32 hDown, u32 hRepeat, int &currentMode, int &lastMode, int &smallDelay);
 
 	/* Entry Info. */
 	void DrawEntryInfo(const std::shared_ptr<StoreEntry> &entry);
-	void EntryHandle(bool &showMark, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry);
+	void EntryHandle(u32 hDown, touchPosition &touch, bool &showMark, bool &sFetch, int &mode, const std::shared_ptr<StoreEntry> &entry);
 
 	/* Side Menu. */
 	void DrawSideMenu(int currentMenu);
-	void SideMenuHandle(int &currentMenu, int &lastMenu);
+	void SideMenuHandle(u32 hDown, u32 hRepeat, touchPosition &touch, int &currentMenu, int &lastMenu);
 
 	/* Download entries. */
 	void DrawDownList(const std::shared_ptr<StoreEntry> &entry);
-	void DownloadHandle(const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay);
+	void DownloadHandle(u32 hDown, u32 hRepeat, touchPosition &touch, const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay);
 
 	/* Queue System. */
 	void DrawQueueMenu(const int queueIndex);
-	void QueueMenuHandle(int &queueIndex, int &storeMode);
+	void QueueMenuHandle(u32 hDown, touchPosition &touch, int &queueIndex, int &storeMode);
 
 	/* Search + Favorite Menu. */
 	void ResetSearch();
 	void DoSearch();
 	void DrawSearchMenu();
-	void SearchHandle();
+	void SearchHandle(u32 hDown, touchPosition &touch);
 
 	/* Mark Menu. */
 	void DisplayMarkBox(int marks);
@@ -83,22 +83,22 @@ namespace StoreUtils {
 
 	/* Screenshot menu. */
 	void DrawScreenshotMenu(const C2D_Image &img, const int sIndex, const bool sFetch, const int screenshotSize, const std::string &name, const int zoom, const bool canDisplay);
-	void ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom, bool &canDisplay);
+	void ScreenshotMenu(u32 hDown, C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom, bool &canDisplay);
 
 	/* Settings. */
 	void DrawSettings(int page, int selection, int sPos);
-	void SettingsHandle(int &page, bool &dspSettings, int &storeMode, int &selection, int &sPos);
+	void SettingsHandle(u32 hDown, u32 hRepeat, touchPosition &touch, int &page, int &storeMode, int &selection, int &sPos);
 
 	/* Sorting. */
 	void DrawSorting(void);
-	void SortHandle(void);
+	void SortHandle(u32 hDown, touchPosition &touch);
 
 	/* Release Notes. */
 	size_t FindSplitPoint(const std::string &str, const std::vector<std::string> splitters);
 	const std::vector<std::string> &ProcessReleaseNotes(std::string ReleaseNotes, float wrapWidth, float fontSize);
 
 	void DrawReleaseNotes(const float &scrollOffset, const std::shared_ptr<StoreEntry> &entry);
-	void ReleaseNotesLogic(float &scrollOffset, float &scrollDelta, int &storeMode);
+	void ReleaseNotesLogic(u32 hDown, u32 hHeld, touchPosition &touch, float &scrollOffset, float &scrollDelta, int &storeMode);
 
 	bool compareTitleDescending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);
 	bool compareTitleAscending(const std::shared_ptr<StoreEntry> &a, const std::shared_ptr<StoreEntry> &b);

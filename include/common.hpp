@@ -43,8 +43,6 @@
 #define UU_TITLE_ID 0x0004000004391700
 
 inline std::unique_ptr<Config> config;
-inline uint32_t hRepeat, hUp, hDown, hHeld;
-inline touchPosition touch;
 inline C2D_Font font;
 
 extern Thread helperThread;
