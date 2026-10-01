@@ -28,6 +28,7 @@
 #include "download.hpp"
 #include "fileBrowse.hpp"
 #include "mainScreen.hpp"
+#include "tutorial.hpp"
 #include "queueSystem.hpp"
 #include "screenshot.hpp"
 #include "storeUtils.hpp"
@@ -118,6 +119,7 @@ void MainScreen::Draw(void) const {
 	GFX::DrawBattery();
 	GFX::DrawWifi();
 	Animation::QueueEntryDone();
+	Tutorial::DrawTop();
 
 	if (this->storeMode == 1) {
 		// The downloads list is special because it also draws on the top screen.
@@ -167,14 +169,19 @@ void MainScreen::Draw(void) const {
 	}
 	if (this->showMarks && StoreUtils::store && StoreUtils::store->GetValid()) StoreUtils::DisplayMarkBox(StoreUtils::entries[StoreUtils::store->GetEntry()]->GetMarks());
 	if (fadeAlpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, fadeAlpha));
+	Tutorial::DrawBottom();
 }
 
 /*
 	MainScreen Logic.
 */
-void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+void MainScreen::Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) {
 	Animation::HandleQueueEntryDone();
 	GFX::HandleBattery();
+	Tutorial::Logic(hDown, touch, *this);
+	hDown = hDown & Tutorial::GetKeyMask();
+	hRepeat = hRepeat & Tutorial::GetKeyMask();
+	hHeld = hHeld & Tutorial::GetKeyMask();
 
 	/* Screenshots Menu. */
 	if (this->storeMode == 6) {
@@ -206,13 +213,13 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			this->screenshotFetch = false;
 		}
 
-		StoreUtils::ScreenshotMenu(this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->storeMode, this->sSize, this->zoom, this->canDisplay);
+		StoreUtils::ScreenshotMenu(hDown, this->Screenshot, this->screenshotIndex, this->screenshotFetch, this->storeMode, this->sSize, this->zoom, this->canDisplay);
 		return;
 	}
 
 	/* Release Notes. */
 	if (this->storeMode == 7) {
-		StoreUtils::ReleaseNotesLogic(this->scrollOffset, this->scrollDelta, this->storeMode);
+		StoreUtils::ReleaseNotesLogic(hDown, hHeld, touch, this->scrollOffset, this->scrollDelta, this->storeMode);
 		return;
 	}
 
@@ -221,34 +228,35 @@ void MainScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (!this->showMarks) {
 		if (storeMode == 0 || storeMode == 3 || storeMode == 4) {
-			config->list() ? StoreUtils::ListLogic(storeMode, this->lastMode, this->smallDelay) : StoreUtils::GridLogic(storeMode, this->lastMode, this->smallDelay);
+			if (config->list()) StoreUtils::ListLogic(hDown, hRepeat, storeMode, this->lastMode, this->smallDelay);
+			else StoreUtils::GridLogic(hDown, hRepeat, storeMode, this->lastMode, this->smallDelay);
 		}
 
-		StoreUtils::SideMenuHandle(storeMode, this->lastMode);
+		StoreUtils::SideMenuHandle(hDown, hRepeat, touch, storeMode, this->lastMode);
 
 		switch(storeMode) {
 			case 0:
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::EntryHandle(this->showMarks, this->screenshotFetch, storeMode, StoreUtils::entries[StoreUtils::store->GetEntry()]);
+				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::EntryHandle(hDown, touch, this->showMarks, this->screenshotFetch, storeMode, StoreUtils::entries[StoreUtils::store->GetEntry()]);
 				break;
 
 			case 1:
-				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(StoreUtils::entries[StoreUtils::store->GetEntry()], storeMode, this->lastMode, this->smallDelay);
+				if (StoreUtils::store && StoreUtils::store->GetValid() && StoreUtils::entries.size() > 0) StoreUtils::DownloadHandle(hDown, hRepeat, touch, StoreUtils::entries[StoreUtils::store->GetEntry()], storeMode, this->lastMode, this->smallDelay);
 				break;
 
 			case 2:
-				StoreUtils::QueueMenuHandle(this->queueIndex, this->storeMode);
+				StoreUtils::QueueMenuHandle(hDown, touch, this->queueIndex, this->storeMode);
 				break;
 
 			case 3:
-				StoreUtils::SearchHandle();
+				StoreUtils::SearchHandle(hDown, touch);
 				break;
 
 			case 4:
-				StoreUtils::SortHandle();
+				StoreUtils::SortHandle(hDown, touch);
 				break;
 
 			case 5:
-				StoreUtils::SettingsHandle(this->sPage, this->showSettings, storeMode, this->sSelection, this->sPos);
+				StoreUtils::SettingsHandle(hDown, hRepeat, touch, this->sPage, storeMode, this->sSelection, this->sPos);
 				break;
 		}
 	}
