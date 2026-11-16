@@ -49,10 +49,12 @@ class MainScreen : public Screen {
 public:
 	MainScreen();
 	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	void Logic(u32 hDown, u32 hRepeat, u32 hHeld, touchPosition touch) override;
+
+	void SwitchPage(int mode, int page) { storeMode = mode; sPage = page; }
+
 private:
-	bool initialized = false, showMarks = false, showSettings = false,
-		 screenshotFetch = false, canDisplay = false;
+	bool initialized = false, showMarks = false, screenshotFetch = false, canDisplay = false;
 
 	int storeMode = 0, markIndex = 0, sPage = 0, lMode = 0, sSelection = 0,
 		lastMode = 0, smallDelay = 0, sPos = 0, screenshotIndex = 0, sSize = 0, zoom = 0, queueIndex = 0;

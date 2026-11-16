@@ -125,6 +125,7 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 /*
 	Screenshot Menu handle.
 
+	u32 hDown: Keys down.
 	C2D_Image &img: The C2D_Image of the screenshot.
 	int &sIndex: The Screenshot index.
 	bool &sFetch: If fetching screenshots or not.
@@ -132,7 +133,7 @@ void StoreUtils::DrawScreenshotMenu(const C2D_Image &img, const int sIndex, cons
 	int &zoom: The zoom level, zoom out, 1x scale, or zoom in.
 	bool &canDisplay: If can display or not.
 */
-void StoreUtils::ScreenshotMenu(C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom, bool &canDisplay) {
+void StoreUtils::ScreenshotMenu(u32 hDown, C2D_Image &img, int &sIndex, bool &sFetch, int &storeMode, const int screenshotSize, int &zoom, bool &canDisplay) {
 	if (hDown & KEY_B) {
 		canDisplay = false;
 		zoom = 0;

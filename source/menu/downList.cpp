@@ -167,13 +167,16 @@ void StoreUtils::DrawDownList(const std::shared_ptr<StoreEntry> &entry) {
 	- Execute an Entry of the download list.
 	- Return back to EntryInfo through `B`.
 
+	u32 hDown: Keys down.
+	u32 hRepeat: Keys down, repeating.
+	touchPosition &touch: Touch screen status.
 	const std::shared_ptr<StoreEntry> &entry: Const Reference to the current StoreEntry, since we do not modify anything in it.
 	int &currentMenu: Reference to the StoreMode / Menu, so we can switch back to EntryInfo with `B`.
 	const int &lastMode: Const Reference to the last mode.
 	int &smallDelay: Reference to the small delay. This helps to not directly press A.
 	std::vector<bool> &installs: Reference to the installed states.
 */
-void StoreUtils::DownloadHandle(const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay) {
+void StoreUtils::DownloadHandle(u32 hDown, u32 hRepeat, touchPosition &touch, const std::shared_ptr<StoreEntry> &entry, int &currentMenu, const int &lastMode, int &smallDelay) {
 	if (!StoreUtils::store || !entry) return; // Ensure, store & entry is not a nullptr.
 	if (smallDelay > 0) {
 		smallDelay--;

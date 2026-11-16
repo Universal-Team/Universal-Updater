@@ -201,7 +201,7 @@ void StoreUtils::DrawSearchMenu() {
 	bool &updateFilter: Reference to the update filter.
 	bool &isAND: Reference to isAND boolean for AND / OR mode.
 */
-void StoreUtils::SearchHandle() {
+void StoreUtils::SearchHandle(u32 hDown, touchPosition &touch) {
 	/* Checkboxes. */
 	if (hDown & KEY_TOUCH) {
 		bool didTouch = false;
